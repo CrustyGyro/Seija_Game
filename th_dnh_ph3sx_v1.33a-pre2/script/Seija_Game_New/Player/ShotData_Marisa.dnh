@@ -1,0 +1,19 @@
+//----------------------------------
+
+shot_image  = "./../Resource/img/Player/PL_Marisa.png"
+
+//----------------------------------
+
+//--Stars--
+
+ShotData { id = 1 rect = ( 160, 144, 176, 160 ) render = ALPHA alpha = 120 collision = 15 } 	//-Green-
+ShotData { id = 2 rect = ( 176, 144, 192, 160 ) render = ALPHA alpha = 120 collision = 15 }		//-Red-
+ShotData { id = 3 rect = ( 192, 144, 208, 160 ) render = ALPHA alpha = 120 collision = 15 }		//-Blue-
+
+//--Arrows--
+
+ShotData { id = 4 rect = ( 208, 144, 224, 176 ) render = ALPHA alpha = 120 collision = 18 } 	//-Green-
+ShotData { id = 5 rect = ( 224, 144, 240, 176 ) render = ALPHA alpha = 120 collision = 18 }		//-Red-
+ShotData { id = 6 rect = ( 240, 144, 256, 176 ) render = ALPHA alpha = 120 collision = 18 }		//-Blue-
+
+ShotData { id = 1 rect = ( 144, 144, 160, 176 ) render = ALPHA alpha = 120 collision = 24 }   	//-Missile-

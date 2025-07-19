@@ -1,0 +1,167 @@
+#TouhouDanmakufu[Stage]
+#ScriptVersion[3]
+#Title["Stage Enemies Test"]
+#Player[ "./Player/PL_Reimu.dnh" ]
+#Background["./Stage/STG_01/STG_BG.dnh"];
+#System["./System/System_Main_Hud.dnh"]
+
+//--------------------------------------------------Variables------------------------------------------------------
+
+//---------------------------------------------------Include-------------------------------------------------------
+
+	#include "./System/Common.dnh"
+	#include "./System/Constants.dnh"
+	#include "./lib/Lib_Shot.dnh"
+	#include "./lib/Lib_Enemy.dnh"
+	#include "./lib/Shot/shot_const.dnh"
+
+//----------------------------------------------------Start--------------------------------------------------------
+
+@Initialize {
+
+	SetPlayerLife( 8 );
+	T_Main;
+	//T_End;
+	
+}
+
+
+@MainLoop {
+
+	yield;
+	
+}
+
+@Finalize {
+} 
+
+//----------------------------------------------------Patterns--------------------------------------------------------
+
+task T_Main {
+
+	T_Wave_A;
+	wait( 5000 );
+	CloseScript( GetOwnScriptID() );
+
+}	
+
+task T_Wave_A{
+	
+		loop{
+
+		ascent( i in 0..2 ){
+
+			T_SomeGuys_A( -24, Get_MaxY/2, 0, -0.2, -0.3, ENEMY_RED, SHOT_RICE_RED );
+			T_SomeGuys_A( -24, Get_MaxY/2 - 64, 0, -0.2, -0.3, ENEMY_BLUE, SHOT_RICE_BLUE );
+
+			wait( 20 );
+			
+			T_SomeGuys_A( -24, Get_MaxY/2 - 64, 0, -0.2, -0.3, ENEMY_RED, SHOT_RICE_RED );
+			T_SomeGuys_A( -24, Get_MaxY/2, 0, -0.2, -0.3, ENEMY_BLUE, SHOT_RICE_BLUE );
+
+			wait( 20 );			
+		
+		}
+		
+		//T_SomeGuys_B( Get_CenterX - 64, -24, 90, 0.3, 0.5 );
+		
+		wait( 100 );
+		
+		ascent( i in 0..2 ){
+
+			T_SomeGuys_A( Get_MaxX + 24, Get_MaxY/2, 180, 0.2, 0.3, ENEMY_RED, SHOT_RICE_RED );
+			T_SomeGuys_A( Get_MaxX + 24, Get_MaxY/2 - 64, 180, 0.2, 0.3, ENEMY_BLUE, SHOT_RICE_BLUE );
+
+			wait( 20 );
+			
+			T_SomeGuys_A( Get_MaxX + 24, Get_MaxY/2 - 64, 180, 0.2, 0.3, ENEMY_RED, SHOT_RICE_RED );
+			T_SomeGuys_A( Get_MaxX + 24, Get_MaxY/2, 180, 0.2, 0.3, ENEMY_BLUE, SHOT_RICE_BLUE );
+
+			wait( 20 );			
+		
+		}		
+		
+		
+		//T_SomeGuys_B( Get_CenterX + 64, -24, 90, -0.3, -0.5 );
+		
+		wait( 500 );	
+		
+		}
+
+		task T_SomeGuys_A( X, Y, Angle, Wvel, NewWvel, Color, ShotColor ){
+			
+			//let Color_Array = [ ENEMY_RED, ENEMY_BLUE, ENEMY_YELLOW, ENEMY_GREEN ];
+			//let Shot_Color_Array = [ MAG_RED, MAG_BLUE, MAG_YELLOW, MAG_GREEN ];
+			
+			//int Color_Rng = rand_int( 0,3 );
+			int Shotcounter = 0;
+			
+			let Enemy = Create_Enemy_A1( X, Y, 25, FAIRY_S_NORMAL, Color, 1 );
+			T_Set_Enemy_Move_A1( Enemy, 1, 1, Angle, 0.01, 8, Wvel );
+			ObjMove_AddPatternA2( Enemy, 200, NO_CHANGE , NO_CHANGE , -0.04, 0.8, NewWvel );
+			
+			
+			wait( 60 );
+			
+			while( !Obj_IsDeleted( Enemy ) && Shotcounter < 6 ){
+					
+					if( !Obj_IsDeleted( Enemy ) ){
+								
+					Shotcounter += 1;	
+					T_PlaySE( SE_SHOT_00, 40 );
+					ascent( i in 0..4 ){
+						let Shot = ShotR1( ObjMove_GetX( Enemy ), ObjMove_GetY( Enemy ), 8, 0 + i/4, GetAngleToPlayer( Enemy ), ShotColor, 8, SHOT_CLOUD_MAGENTA );
+						ObjMove_AddPatternA2( Shot, 10, NO_CHANGE , NO_CHANGE, 0.08, 8 + i/5, 0 );
+		
+					}
+					}		
+	
+					wait( 70 );
+					yield;
+			}
+		
+			
+		}		
+			
+		task T_SomeGuys_B( X, Y, Angle, Wvel, NewWvel ){
+			
+			//let Color_Array = [ ENEMY_RED, ENEMY_BLUE, ENEMY_YELLOW, ENEMY_GREEN ];
+			//let Shot_Color_Array = [ MAG_RED, MAG_BLUE, MAG_YELLOW, MAG_GREEN ];
+			
+			//int Color_Rng = rand_int( 0,3 );
+			int Shotcounter = 0;
+			
+			let Enemy = Create_Enemy_A1( X, Y, 150, FAIRY_M_NORMAL, ENEMY_BLUE, 6 );
+			T_Set_Enemy_Move_A1( Enemy, 1, 2, Angle, -0.01, 0, Wvel );
+			ObjMove_AddPatternA2( Enemy, 270, NO_CHANGE , NO_CHANGE , 0.01, 8, NewWvel );
+
+			wait( 100 );
+
+			while( !Obj_IsDeleted( Enemy ) && Shotcounter < 3 ){
+					
+					if( !Obj_IsDeleted( Enemy ) ){
+					
+					float S_Angle = 0.4;
+					Shotcounter += 1;
+					T_PlaySE( SE_SHOT_01, 40 );
+					
+						ascent( c in 0..4 ){	
+							ascent( i in 0..8 ){
+								let Shot = ShotR1( ObjMove_GetX( Enemy ), ObjMove_GetY( Enemy ), 32, 0 + c/4, 90 + i * 360/8, SHOT_LARGE_DIAMOND_BLUE, 8, SHOT_CLOUD_MAGENTA );
+								ObjMove_AddPatternA2( Shot, 10, NO_CHANGE , NO_CHANGE, 0.08, 8 + i/5, S_Angle );
+				
+							}
+							S_Angle = -S_Angle;
+						}	
+					}		
+
+					wait( 30 );
+					yield;
+			}			
+
+		}	
+			
+}	
+	
+
+

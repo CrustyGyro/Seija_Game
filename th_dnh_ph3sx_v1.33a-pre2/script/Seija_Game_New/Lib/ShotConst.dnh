@@ -1,0 +1,1193 @@
+local {
+	
+	let Current = GetCurrentScriptDirectory();
+	LoadTextureEx( Current ~"./../Resource/Textures/ShotSheet_Alts.png",false,true);
+	
+	//let path = GetCurrentScriptDirectory() ~ "ShotData.dnh";
+	let path = [ Current ~ "ShotData.dnh", Current ~ "ShotData_Alt.dnh"];
+	ascent(p in 0..length(path))
+	{
+		LoadEnemyShotData(path[p]);
+	}
+}	
+	
+
+//-------------------------------------------------------------------------------------------------------------------------------
+	let DELAY_BLACK = 9000;
+	let DELAY_GRAY = 9001;
+	let DELAY_RED = 9002;
+	let DELAY_ORANGE = 9003;
+	let DELAY_YELLOW = 9004;
+	let DELAY_LIME = 9005;
+	let DELAY_GREEN = 9006;
+	let DELAY_CYAN = 9007;
+	let DELAY_BLUE = 9008;
+	let DELAY_PURPLE = 9009;
+	let DELAY_PINK = 9010;
+
+//-------------------------------------------------------------------------------------------------------------------------------
+
+	//Straight Lasers
+
+	let ST_LASER_WHITE = 1;
+	let ST_LASER_GRAY = 2;
+	let ST_LASER_RED = 3;
+	let ST_LASER_ORANGE = 4;
+	let ST_LASER_YELLOW = 5;
+	let ST_LASER_LIME = 6;
+	let ST_LASER_GREEN = 7;
+	let ST_LASER_CYAN = 8;
+	let ST_LASER_BLUE = 9;
+	let ST_LASER_PURPLE = 10;
+	let ST_LASER_PINK = 11;
+	let ST_LASER_BLACK = 12;
+	
+	let ST_LASER_WHITE_INV = 13;
+	let ST_LASER_GRAY_INV = 14;
+	let ST_LASER_RED_INV = 15;
+	let ST_LASER_ORANGE_INV = 16;
+	let ST_LASER_YELLOW_INV = 17;
+	let ST_LASER_LIME_INV = 18;
+	let ST_LASER_GREEN_INV = 19;
+	let ST_LASER_CYAN_INV = 20;
+	let ST_LASER_BLUE_INV = 21;
+	let ST_LASER_PURPLE_INV = 22;
+	let ST_LASER_PINK_INV = 23;
+	let ST_LASER_BLACK_INV = 24;	
+	
+
+	//Straight Lasers
+
+	let CURVE_LASER_WHITE = 661;
+	let CURVE_LASER_GRAY = 662;
+	let CURVE_LASER_RED = 663;
+	let CURVE_LASER_ORANGE = 664;
+	let CURVE_LASER_YELLOW = 665;
+	let CURVE_LASER_LIME = 666;
+	let CURVE_LASER_GREEN = 667;
+	let CURVE_LASER_CYAN = 668;
+	let CURVE_LASER_BLUE = 669;
+	let CURVE_LASER_PURPLE = 670;
+	let CURVE_LASER_PINK = 671;
+	let CURVE_LASER_BLACK = 672;	
+	
+	//Lightning
+
+	let LIGHTNING_LASER_WHITE = 673;
+	let LIGHTNING_LASER_GRAY = 674;
+	let LIGHTNING_LASER_RED = 675;
+	let LIGHTNING_LASER_ORANGE = 676;
+	let LIGHTNING_LASER_YELLOW = 677;
+	let LIGHTNING_LASER_LIME = 678;
+	let LIGHTNING_LASER_GREEN = 679;
+	let LIGHTNING_LASER_CYAN = 680;
+	let LIGHTNING_LASER_BLUE = 681;
+	let LIGHTNING_LASER_PURPLE = 682;
+	let LIGHTNING_LASER_PINK = 683;
+	let LIGHTNING_LASER_BLACK = 684;	
+	
+	//Spear
+
+	/*
+	Zanmu's thingies, ill add those later
+	
+	let SPEAR_LASER_WHITE = 685;
+	let SPEAR_LASER_GRAY = 686;
+	let SPEAR_LASER_RED = 687;
+	let SPEAR_LASER_ORANGE = 688;
+	let SPEAR_LASER_YELLOW = 689;
+	let SPEAR_LASER_LIME = 690;
+	let SPEAR_LASER_GREEN = 691;
+	let SPEAR_LASER_CYAN = 692;
+	let SPEAR_LASER_BLUE = 693;
+	let SPEAR_LASER_PURPLE = 694;
+	let SPEAR_LASER_PINK = 695;
+	let SPEAR_LASER_BLACK = 696;	
+	*/
+	
+//-------------------------------------------------------------------------------------------------------------------------------
+	
+	//Small Round
+	
+	let BALL_S_WHITE = 25;
+	let BALL_S_GRAY = 26;
+	let BALL_S_RED = 27;
+	let BALL_S_ORANGE = 28;	
+	let BALL_S_YELLOW = 29;
+	let BALL_S_LIME = 30;
+	let BALL_S_GREEN = 31;
+	let BALL_S_CYAN = 32;
+	let BALL_S_BLUE = 33;
+	let BALL_S_PURPLE = 34;
+	let BALL_S_PINK = 35;
+	let BALL_S_BLACK = 36;		
+	
+	let BALL_S_WHITE_INV = 37;
+	let BALL_S_GRAY_INV = 38;
+	let BALL_S_RED_INV = 39;
+	let BALL_S_ORANGE_INV = 40;	
+	let BALL_S_YELLOW_INV = 41;
+	let BALL_S_LIME_INV = 42;
+	let BALL_S_GREEN_INV = 43;
+	let BALL_S_CYAN_INV = 44;
+	let BALL_S_BLUE_INV = 45;
+	let BALL_S_PURPLE_INV = 46;
+	let BALL_S_PINK_INV = 47;
+	let BALL_S_BLACK_INV = 48;		
+	
+	//Small Round ( Ringed )
+	
+	let BALL_BS_WHITE = 49;
+	let BALL_BS_GRAY = 50;
+	let BALL_BS_RED = 51;
+	let BALL_BS_ORANGE = 52;	
+	let BALL_BS_YELLOW = 53;
+	let BALL_BS_LIME = 54;
+	let BALL_BS_GREEN = 55;
+	let BALL_BS_CYAN = 56;
+	let BALL_BS_BLUE = 57;
+	let BALL_BS_PURPLE = 58;
+	let BALL_BS_PINK = 59;
+	let BALL_BS_BLACK = 60;		
+	
+	let BALL_BS_WHITE_INV = 61;
+	let BALL_BS_GRAY_INV = 62;
+	let BALL_BS_RED_INV = 63;
+	let BALL_BS_ORANGE_INV = 64;	
+	let BALL_BS_YELLOW_INV = 65;
+	let BALL_BS_LIME_INV = 66;
+	let BALL_BS_GREEN_INV = 67;
+	let BALL_BS_CYAN_INV = 68;
+	let BALL_BS_BLUE_INV = 69;
+	let BALL_BS_PURPLE_INV = 70;
+	let BALL_BS_PINK_INV = 71;
+	let BALL_BS_BLACK_INV = 72;		
+
+	//Small Rice
+	
+	let RICE_S_WHITE = 73;
+	let RICE_S_GRAY = 74;
+	let RICE_S_RED = 75;
+	let RICE_S_ORANGE = 76;	
+	let RICE_S_YELLOW = 77;
+	let RICE_S_LIME = 78;
+	let RICE_S_GREEN = 79;
+	let RICE_S_CYAN = 80;
+	let RICE_S_BLUE = 81;
+	let RICE_S_PURPLE = 82;
+	let RICE_S_PINK = 83;
+	let RICE_S_BLACK = 84;		
+	
+	let RICE_S_WHITE_INV= 85;
+	let RICE_S_GRAY_INV = 86;
+	let RICE_S_RED_INV = 87;
+	let RICE_S_ORANGE_INV = 88;	
+	let RICE_S_YELLOW_INV = 89;
+	let RICE_S_LIME_INV = 90;
+	let RICE_S_GREEN_INV = 91;
+	let RICE_S_CYAN_INV = 92;
+	let RICE_S_BLUE_INV = 93;
+	let RICE_S_PURPLE_INV = 94;
+	let RICE_S_PINK_INV = 95;
+	let RICE_S_BLACK_INV = 96;
+	
+	//Medium Rice
+	
+	let RICE_M_WHITE = 337;
+	let RICE_M_GRAY = 338;
+	let RICE_M_RED = 339;
+	let RICE_M_ORANGE = 340;	
+	let RICE_M_YELLOW = 341;
+	let RICE_M_LIME = 342;
+	let RICE_M_GREEN = 343;
+	let RICE_M_CYAN = 344;
+	let RICE_M_BLUE = 345;
+	let RICE_M_PURPLE = 346;
+	let RICE_M_PINK = 347;
+	let RICE_M_BLACK = 348;		
+	
+	let RICE_M_WHITE_INV= 349;
+	let RICE_M_GRAY_INV = 350;
+	let RICE_M_RED_INV = 351;
+	let RICE_M_ORANGE_INV = 352;	
+	let RICE_M_YELLOW_INV = 353;
+	let RICE_M_LIME_INV = 354;
+	let RICE_M_GREEN_INV = 355;
+	let RICE_M_CYAN_INV = 356;
+	let RICE_M_BLUE_INV = 357;
+	let RICE_M_PURPLE_INV = 358;
+	let RICE_M_PINK_INV = 359;
+	let RICE_M_BLACK_INV = 360;
+	
+
+	//Small Amulet
+	
+	let AMULET_S_WHITE = 97;
+	let	AMULET_S_GRAY = 98;
+	let AMULET_S_RED = 99;
+	let AMULET_S_ORANGE = 100;	
+	let AMULET_S_YELLOW = 101;
+	let AMULET_S_LIME = 102;
+	let AMULET_S_GREEN = 103;
+	let AMULET_S_CYAN = 104;
+	let	AMULET_S_BLUE = 105;
+	let AMULET_S_PURPLE = 106;
+	let AMULET_S_PINK = 107;
+	let AMULET_S_BLACK = 108;		
+	
+	let AMULET_S_WHITE_INV = 109;
+	let AMULET_S_GRAY_INV = 110;
+	let AMULET_S_RED_INV = 111;
+	let AMULET_S_ORANGE_INV = 112;	
+	let AMULET_S_YELLOW_INV = 113;
+	let AMULET_S_LIME_INV = 114;
+	let AMULET_S_GREEN_INV = 115;
+	let AMULET_S_CYAN_INV = 116;
+	let AMULET_S_BLUE_INV = 117;
+	let AMULET_S_PURPLE_INV = 118;
+	let AMULET_S_PINK_INV = 119;
+	let AMULET_S_BLACK_INV = 120;			
+	
+	//Small Kunai
+	
+	let KUNAI_S_WHITE = 121;
+	let	KUNAI_S_GRAY = 122;
+	let KUNAI_S_RED = 123;
+	let KUNAI_S_ORANGE = 124;	
+	let KUNAI_S_YELLOW = 125;
+	let KUNAI_S_LIME = 126;
+	let KUNAI_S_GREEN = 127;
+	let KUNAI_S_CYAN = 128;
+	let	KUNAI_S_BLUE = 129;
+	let KUNAI_S_PURPLE = 130;
+	let KUNAI_S_PINK = 131;
+	let KUNAI_S_BLACK = 132;		
+	
+	let KUNAI_S_WHITE_INV = 133;
+	let KUNAI_S_GRAY_INV = 134;
+	let KUNAI_S_RED_INV = 135;
+	let KUNAI_S_ORANGE_INV = 136;	
+	let KUNAI_S_YELLOW_INV = 137;
+	let KUNAI_S_LIME_INV = 138;
+	let KUNAI_S_GREEN_INV = 139;
+	let KUNAI_S_CYAN_INV = 140;
+	let KUNAI_S_BLUE_INV = 141;
+	let KUNAI_S_PURPLE_INV = 142;
+	let KUNAI_S_PINK_INV = 143;
+	let KUNAI_S_BLACK_INV = 144;		
+	
+	//Small Scale
+	
+	let SCALE_S_WHITE = 145;
+	let	SCALE_S_GRAY = 146;
+	let SCALE_S_RED = 147;
+	let SCALE_S_ORANGE = 148;	
+	let SCALE_S_YELLOW = 149;
+	let SCALE_S_LIME = 150;
+	let SCALE_S_GREEN = 151;
+	let SCALE_S_CYAN = 152;
+	let	SCALE_S_BLUE = 153;
+	let SCALE_S_PURPLE = 154;
+	let SCALE_S_PINK = 155;
+	let SCALE_S_BLACK = 156;		
+	
+	let SCALE_S_WHITE_INV = 157;
+	let SCALE_S_GRAY_INV = 158;
+	let SCALE_S_RED_INV = 159;
+	let SCALE_S_ORANGE_INV = 160;	
+	let SCALE_S_YELLOW_INV = 161;
+	let SCALE_S_LIME_INV = 162;
+	let SCALE_S_GREEN_INV = 163;
+	let SCALE_S_CYAN_INV = 164;
+	let SCALE_S_BLUE_INV = 165;
+	let SCALE_S_PURPLE_INV = 166;
+	let SCALE_S_PINK_INV = 167;
+	let SCALE_S_BLACK_INV = 168;		
+	
+	//Mags
+	
+	let MAG_WHITE = 169;
+	let	MAG_GRAY = 170;
+	let MAG_RED = 171;
+	let MAG_ORANGE = 172;	
+	let MAG_YELLOW = 173;
+	let MAG_LIME = 174;
+	let MAG_GREEN = 175;
+	let MAG_CYAN = 176;
+	let	MAG_BLUE = 177;
+	let MAG_PURPLE = 178;
+	let MAG_PINK = 179;
+	let MAG_BLACK = 180;		
+	
+	let MAG_WHITE_INV = 181;
+	let MAG_GRAY_INV = 182;
+	let MAG_RED_INV = 183;
+	let MAG_ORANGE_INV = 184;	
+	let MAG_YELLOW_INV = 185;
+	let MAG_LIME_INV = 186;
+	let MAG_GREEN_INV = 187;
+	let MAG_CYAN_INV = 188;
+	let MAG_BLUE_INV = 189;
+	let MAG_PURPLE_INV = 190;
+	let MAG_PINK_INV = 191;
+	let MAG_BLACK_INV = 192;	
+
+	//Blurred Mags
+	
+	let MAG_S_WHITE_BLUR = 193;
+	let	MAG_S_GRAY_BLUR = 194;
+	let MAG_S_RED_BLUR = 195;
+	let MAG_S_ORANGE_BLUR = 196;	
+	let MAG_S_YELLOW_BLUR = 197;
+	let MAG_S_LIME_BLUR = 198;
+	let MAG_S_GREEN_BLUR = 199;
+	let MAG_S_CYAN_BLUR = 200;
+	let	MAG_S_BLUE_BLUR = 201;
+	let MAG_S_PURPLE_BLUR = 202;
+	let MAG_S_PINK_BLUR = 203;
+	let MAG_S_BLACK_BLUR = 204;		
+	
+	let MAG_S_WHITE_INV_BLUR = 205;
+	let MAG_S_GRAY_INV_BLUR = 206;
+	let MAG_S_RED_INV_BLUR = 207;
+	let MAG_S_ORANGE_INV_BLUR = 208;	
+	let MAG_S_YELLOW_INV_BLUR = 209;
+	let MAG_S_LIME_INV_BLUR = 210;
+	let MAG_S_GREEN_INV_BLUR = 211;
+	let MAG_S_CYAN_INV_BLUR = 212;
+	let MAG_S_BLUE_INV_BLUR = 213;
+	let MAG_S_PURPLE_INV_BLUR = 214;
+	let MAG_S_PINK_INV_BLUR = 215;
+	let MAG_S_BLACK_INV_BLUR = 216;
+	
+	//Ice
+	
+	let ICE_S_WHITE = 217;
+	let ICE_S_GRAY = 218;
+	let ICE_S_RED = 219;
+	let ICE_S_ORANGE = 220;	
+	let ICE_S_YELLOW = 221;
+	let ICE_S_LIME = 222;
+	let ICE_S_GREEN = 223;
+	let ICE_S_CYAN = 224;
+	let	ICE_S_BLUE = 225;
+	let ICE_S_PURPLE = 226;
+	let ICE_S_PINK = 227;
+	let ICE_S_BLACK = 228;		
+	
+	let ICE_S_WHITE_INV = 229;
+	let ICE_S_GRAY_INV = 230;
+	let ICE_S_RED_INV = 231;
+	let ICE_S_ORANGE_INV = 232;	
+	let ICE_S_YELLOW_INV = 233;
+	let ICE_S_LIME_INV = 234;
+	let ICE_S_GREEN_INV = 235;
+	let ICE_S_CYAN_INV = 236;
+	let ICE_S_BLUE_INV = 237;
+	let ICE_S_PURPLE_INV = 238;
+	let ICE_S_PINK_INV = 239;
+	let ICE_S_BLACK_INV = 240;	
+	
+	//Stars
+	
+	let STAR_S_WHITE = 241;
+	let STAR_S_GRAY = 242;
+	let STAR_S_RED = 243;
+	let STAR_S_ORANGE = 244;	
+	let STAR_S_YELLOW = 245;
+	let STAR_S_LIME = 246;
+	let STAR_S_GREEN = 247;
+	let STAR_S_CYAN = 248;
+	let	STAR_S_BLUE = 249;
+	let STAR_S_PURPLE = 250;
+	let STAR_S_PINK = 251;
+	let STAR_S_BLACK = 252;		
+	
+	let STAR_S_WHITE_INV = 253;
+	let STAR_S_GRAY_INV = 254;
+	let STAR_S_RED_INV = 255;
+	let STAR_S_ORANGE_INV = 256;	
+	let STAR_S_YELLOW_INV = 257;
+	let STAR_S_LIME_INV = 258;
+	let STAR_S_GREEN_INV = 259;
+	let STAR_S_CYAN_INV = 260;
+	let STAR_S_BLUE_INV = 261;
+	let STAR_S_PURPLE_INV = 262;
+	let STAR_S_PINK_INV = 263;
+	let STAR_S_BLACK_INV = 264;		
+	
+	//Droplets
+	
+	let DROPLET_S_WHITE = 265;
+	let DROPLET_S_GRAY = 266;
+	let DROPLET_S_RED = 267;
+	let DROPLET_S_ORANGE = 268;	
+	let DROPLET_S_YELLOW = 269;
+	let DROPLET_S_LIME = 270;
+	let DROPLET_S_GREEN = 271;
+	let DROPLET_S_CYAN = 272;
+	let	DROPLET_S_BLUE = 273;
+	let DROPLET_S_PURPLE = 274;
+	let DROPLET_S_PINK = 275;
+	let DROPLET_S_BLACK = 276;		
+	
+	let DROPLET_S_WHITE_INV = 277;
+	let DROPLET_S_GRAY_INV = 278;
+	let DROPLET_S_RED_INV = 279;
+	let DROPLET_S_ORANGE_INV = 280;	
+	let DROPLET_S_YELLOW_INV = 281;
+	let DROPLET_S_LIME_INV = 282;
+	let DROPLET_S_GREEN_INV = 283;
+	let DROPLET_S_CYAN_INV = 284;
+	let DROPLET_S_BLUE_INV = 285;
+	let DROPLET_S_PURPLE_INV = 286;
+	let DROPLET_S_PINK_INV = 287;
+	let DROPLET_S_BLACK_INV = 288;	
+	
+	//Coins
+	
+	let COIN_S_WHITE = 289;
+	let COIN_S_GRAY = 290;
+	let COIN_S_RED = 291;
+	let COIN_S_ORANGE = 292;	
+	let COIN_S_YELLOW = 293;
+	let COIN_S_LIME = 294;
+	let COIN_S_GREEN = 295;
+	let COIN_S_CYAN = 296;
+	let COIN_S_BLUE = 297;
+	let COIN_S_PURPLE = 298;
+	let COIN_S_PINK = 299;
+	let COIN_S_BLACK = 300;		
+	
+	//Glowy
+	
+	let GLOW_S_WHITE = 301;
+	let GLOW_S_GRAY = 302;
+	let GLOW_S_RED = 303;
+	let GLOW_S_ORANGE = 304;	
+	let GLOW_S_YELLOW = 305;
+	let GLOW_S_LIME = 306;
+	let GLOW_S_GREEN = 307;
+	let GLOW_S_CYAN = 308;
+	let GLOW_S_BLUE = 309;
+	let GLOW_S_PURPLE = 310;
+	let GLOW_S_PINK = 311;
+	let GLOW_S_BLACK = 312;		
+
+	//Mpp Shine
+
+	let SHINE_S_WHITE = 313;
+	let SHINE_S_GRAY = 314;
+	let SHINE_S_RED = 315;	
+	let SHINE_S_ORANGE = 316;	
+	let SHINE_S_YELLOW = 317;
+	let SHINE_S_LIME = 318;
+	let SHINE_S_GREEN = 319;
+	let SHINE_S_CYAN = 320;
+	let SHINE_S_BLUE = 321;
+	let SHINE_S_PURPLE = 322;
+	let SHINE_S_PINK = 323;
+	let SHINE_S_BLACK = 324;		
+	
+	//Flickering Scale
+	
+	let FLICKER_SCALE_S_WHITE = 325;
+	let	FLICKER_SCALE_S_GRAY = 326;
+	let FLICKER_SCALE_S_RED = 327;
+	let FLICKER_SCALE_S_ORANGE = 328;	
+	let FLICKER_SCALE_S_YELLOW = 329;
+	let FLICKER_SCALE_S_LIME = 330;
+	let FLICKER_SCALE_S_GREEN = 331;
+	let FLICKER_SCALE_S_CYAN = 332;
+	let	FLICKER_SCALE_S_BLUE = 333;
+	let FLICKER_SCALE_S_PURPLE = 334;
+	let FLICKER_SCALE_S_PINK = 335;
+	let FLICKER_SCALE_S_BLACK = 336;		
+	
+	//Knives
+	
+	let KNIFE_WHITE = 361;
+	let KNIFE_GRAY = 362;
+	let KNIFE_RED = 363;
+	let KNIFE_ORANGE = 364;	
+	let KNIFE_YELLOW = 365;
+	let KNIFE_LIME = 366;
+	let KNIFE_GREEN = 367;
+	let KNIFE_CYAN = 368;
+	let KNIFE_BLUE = 369;
+	let KNIFE_PURPLE = 370;
+	let KNIFE_PINK = 371;
+	let KNIFE_BLACK = 372;		
+	
+	//Arrows
+	
+	let ARROW_WHITE = 373;
+	let ARROW_GRAY = 374;
+	let ARROW_RED = 375;
+	let ARROW_ORANGE = 376;	
+	let ARROW_YELLOW = 377;
+	let ARROW_LIME = 378;
+	let ARROW_GREEN = 379;
+	let ARROW_CYAN = 380;
+	let ARROW_BLUE = 381;
+	let ARROW_PURPLE = 382;
+	let ARROW_PINK = 383;
+	let ARROW_BLACK = 384;		
+	
+	//Mpp Glowsticks
+	
+	let GLOWSTICK_WHITE = 385;
+	let GLOWSTICK_GRAY = 386;
+	let GLOWSTICK_RED = 387;
+	let GLOWSTICK_ORANGE = 388;	
+	let GLOWSTICK_YELLOW = 389;
+	let GLOWSTICK_LIME = 390;
+	let GLOWSTICK_GREEN = 391;
+	let GLOWSTICK_CYAN = 392;
+	let GLOWSTICK_BLUE = 393;
+	let GLOWSTICK_PURPLE = 394;
+	let GLOWSTICK_PINK = 395;
+	let GLOWSTICK_BLACK = 396;		
+	
+	//Dots
+	
+	let DOT_WHITE = 397;
+	let DOT_GRAY = 398;
+	let DOT_RED = 399;
+	let DOT_ORANGE = 400;	
+	let DOT_YELLOW = 401;
+	let DOT_LIME = 402;
+	let DOT_GREEN = 403;
+	let DOT_CYAN = 404;
+	let DOT_BLUE = 405;
+	let DOT_PURPLE = 406;
+	let DOT_PINK = 407;
+	let DOT_BLACK = 408;		
+	
+	//Berries
+	
+	let BERRY_WHITE = 409;
+	let BERRY_GRAY = 410;
+	let BERRY_RED = 411;
+	let BERRY_ORANGE = 412;	
+	let BERRY_YELLOW = 413;
+	let BERRY_LIME = 414;
+	let BERRY_GREEN = 415;
+	let BERRY_CYAN = 416;
+	let BERRY_BLUE = 417;
+	let BERRY_PURPLE = 418;
+	let BERRY_PINK = 419;
+	let BERRY_BLACK = 420;		
+	
+	//Medium Round
+	
+	let BALL_M_WHITE = 421;
+	let BALL_M_GRAY = 422;
+	let BALL_M_RED = 423;
+	let BALL_M_ORANGE = 424;	
+	let BALL_M_YELLOW = 425;
+	let BALL_M_LIME = 426;
+	let BALL_M_GREEN = 427;
+	let BALL_M_CYAN = 428;
+	let BALL_M_BLUE = 429;
+	let BALL_M_PURPLE = 430;
+	let BALL_M_PINK = 431;
+	let BALL_M_BLACK = 432;		
+	
+	//Medium Star
+	
+	let STAR_M_WHITE = 433;
+	let STAR_M_GRAY = 434;
+	let STAR_M_RED = 435;
+	let STAR_M_ORANGE = 436;	
+	let STAR_M_YELLOW = 437;
+	let STAR_M_LIME = 438;
+	let STAR_M_GREEN = 439;
+	let STAR_M_CYAN = 440;
+	let	STAR_M_BLUE = 441;
+	let STAR_M_PURPLE = 442;
+	let STAR_M_PINK = 443;
+	let STAR_M_BLACK = 444;		
+
+	//Hearts
+	
+	let HEART_WHITE = 445;
+	let HEART_GRAY = 446;
+	let HEART_RED = 447;
+	let HEART_ORANGE = 448;	
+	let HEART_YELLOW = 449;
+	let HEART_LIME = 450;
+	let HEART_GREEN = 451;
+	let HEART_CYAN = 452;
+	let	HEART_BLUE = 453;
+	let HEART_PURPLE = 454;
+	let HEART_PINK = 455;
+	let HEART_BLACK = 456;		
+	
+	//Flowers
+	
+	let FLOWER_WHITE = 457;
+	let FLOWER_GRAY = 458;
+	let FLOWER_RED = 459;
+	let FLOWER_ORANGE = 460;	
+	let FLOWER_YELLOW = 461;
+	let FLOWER_LIME = 462;
+	let FLOWER_GREEN = 463;
+	let FLOWER_CYAN = 464;
+	let	FLOWER_BLUE = 465;
+	let FLOWER_PURPLE = 466;
+	let FLOWER_PINK = 467;
+	let FLOWER_BLACK = 468;			
+		
+	//Medium Magatama
+	
+	let MAGATAMA_M_WHITE = 469;
+	let MAGATAMA_M_GRAY = 470;
+	let MAGATAMA_M_RED = 471;
+	let MAGATAMA_M_ORANGE = 472;	
+	let MAGATAMA_M_YELLOW = 473;
+	let MAGATAMA_M_LIME = 474;
+	let MAGATAMA_M_GREEN = 475;
+	let MAGATAMA_M_CYAN = 476;
+	let	MAGATAMA_M_BLUE = 477;
+	let MAGATAMA_M_PURPLE = 478;
+	let MAGATAMA_M_PINK = 479;
+	let MAGATAMA_M_BLACK = 480;		
+	
+	//Large Magatama
+	
+	let MAGATAMA_L_WHITE = 649;
+	let MAGATAMA_L_GRAY = 650;
+	let MAGATAMA_L_RED = 651;
+	let MAGATAMA_L_ORANGE = 652;	
+	let MAGATAMA_L_YELLOW = 653;
+	let MAGATAMA_L_LIME = 654;
+	let MAGATAMA_L_GREEN = 655;
+	let MAGATAMA_L_CYAN = 656;
+	let	MAGATAMA_L_BLUE = 657;
+	let MAGATAMA_L_PURPLE = 658;
+	let MAGATAMA_L_PINK = 659;
+	let MAGATAMA_L_BLACK = 660;		
+
+	//Medium YinYang
+	
+	let HANIWA_M_WHITE = 481;
+	let HANIWA_M_GRAY = 482;
+	let HANIWA_M_RED = 483;
+	let HANIWA_M_ORANGE = 484;	
+	let HANIWA_M_YELLOW = 485;
+	let HANIWA_M_LIME = 486;
+	let HANIWA_M_GREEN = 487;
+	let HANIWA_M_CYAN = 488;
+	let	HANIWA_M_BLUE = 489;
+	let HANIWA_M_PURPLE = 490;
+	let HANIWA_M_PINK = 491;
+	let HANIWA_M_BLACK = 492;		
+	
+	//Medium YinYang
+	
+	let YINYANG_M_WHITE = 493;
+	let YINYANG_M_GRAY = 494;
+	let YINYANG_M_RED = 495;
+	let YINYANG_M_ORANGE = 496;	
+	let YINYANG_M_YELLOW = 497;
+	let YINYANG_M_LIME = 498;
+	let YINYANG_M_GREEN = 499;
+	let YINYANG_M_CYAN = 500;
+	let	YINYANG_M_BLUE = 501;
+	let YINYANG_M_PURPLE = 502;
+	let YINYANG_M_PINK = 503;
+	let YINYANG_M_BLACK = 504;	
+	
+	//Medium YinYang
+	
+	let YINYANG_L_WHITE = 637;
+	let YINYANG_L_GRAY = 638;
+	let YINYANG_L_RED = 639;
+	let YINYANG_L_ORANGE = 640;	
+	let YINYANG_L_YELLOW = 641;
+	let YINYANG_L_LIME = 642;
+	let YINYANG_L_GREEN = 643;
+	let YINYANG_L_CYAN = 644;
+	let	YINYANG_L_BLUE = 645;
+	let YINYANG_L_PURPLE = 646;
+	let YINYANG_L_PINK = 647;
+	let YINYANG_L_BLACK = 648;		
+
+	//Butterfly
+	
+	let BUTTERFLY_WHITE = 505;
+	let BUTTERFLY_GRAY = 506;
+	let BUTTERFLY_RED = 507;
+	let BUTTERFLY_ORANGE = 508;	
+	let BUTTERFLY_YELLOW = 509;
+	let BUTTERFLY_LIME = 510;
+	let BUTTERFLY_GREEN = 511;
+	let BUTTERFLY_CYAN = 512;
+	let	BUTTERFLY_BLUE = 513;
+	let BUTTERFLY_PURPLE = 514;
+	let BUTTERFLY_PINK = 515;
+	let BUTTERFLY_BLACK = 516;
+
+	//Fireball
+	
+	let FIREBALL_WHITE = 517;
+	let FIREBALL_GRAY = 518;
+	let FIREBALL_RED = 519;
+	let FIREBALL_ORANGE = 520;	
+	let FIREBALL_YELLOW = 521;
+	let FIREBALL_LIME = 522;
+	let FIREBALL_GREEN = 523;
+	let FIREBALL_CYAN = 524;
+	let	FIREBALL_BLUE = 525;
+	let FIREBALL_PURPLE = 526;
+	let FIREBALL_PINK = 527;
+	let FIREBALL_BLACK = 528;		
+	
+	//Human
+	
+	let MAMIZOU_HUMAN_WHITE = 529;
+	let MAMIZOU_HUMAN_GRAY = 530;
+	let MAMIZOU_HUMAN_RED = 531;
+	let MAMIZOU_HUMAN_ORANGE = 532;	
+	let MAMIZOU_HUMAN_YELLOW = 533;
+	let MAMIZOU_HUMAN_LIME = 534;
+	let MAMIZOU_HUMAN_GREEN = 535;
+	let MAMIZOU_HUMAN_CYAN = 536;
+	let	MAMIZOU_HUMAN_BLUE = 537;
+	let MAMIZOU_HUMAN_PURPLE = 538;
+	let MAMIZOU_HUMAN_PINK = 539;
+	let MAMIZOU_HUMAN_BLACK = 540;		
+	
+	//Dog ( Left )
+	
+	let MAMIZOU_DOG_LEFT_WHITE = 541;
+	let MAMIZOU_DOG_LEFT_GRAY = 542;
+	let MAMIZOU_DOG_LEFT_RED = 543;
+	let MAMIZOU_DOG_LEFT_ORANGE = 544;	
+	let MAMIZOU_DOG_LEFT_YELLOW = 545;
+	let MAMIZOU_DOG_LEFT_LIME = 546;
+	let MAMIZOU_DOG_LEFT_GREEN = 547;
+	let MAMIZOU_DOG_LEFT_CYAN = 548;
+	let	MAMIZOU_DOG_LEFT_BLUE = 549;
+	let MAMIZOU_DOG_LEFT_PURPLE = 550;
+	let MAMIZOU_DOG_LEFT_PINK = 551;
+	let MAMIZOU_DOG_LEFT_BLACK = 552;		
+	
+	//Dog ( Right )
+	
+	let MAMIZOU_DOG_RIGHT_WHITE = 553;
+	let MAMIZOU_DOG_RIGHT_GRAY = 554;
+	let MAMIZOU_DOG_RIGHT_RED = 555;
+	let MAMIZOU_DOG_RIGHT_ORANGE = 556;	
+	let MAMIZOU_DOG_RIGHT_YELLOW = 557;
+	let MAMIZOU_DOG_RIGHT_LIME = 558;
+	let MAMIZOU_DOG_RIGHT_GREEN = 559;
+	let MAMIZOU_DOG_RIGHT_CYAN = 560;
+	let	MAMIZOU_DOG_RIGHT_BLUE = 561;
+	let MAMIZOU_DOG_RIGHT_PURPLE = 562;
+	let MAMIZOU_DOG_RIGHT_PINK = 563;
+	let MAMIZOU_DOG_RIGHT_BLACK = 564;	
+
+	//Bird
+	
+	let MAMIZOU_BIRD_WHITE = 565;
+	let MAMIZOU_BIRD_GRAY = 566;
+	let MAMIZOU_BIRD_RED = 567;
+	let MAMIZOU_BIRD_ORANGE = 568;	
+	let MAMIZOU_BIRD_YELLOW = 569;
+	let MAMIZOU_BIRD_LIME = 570;
+	let MAMIZOU_BIRD_GREEN = 571;
+	let MAMIZOU_BIRD_CYAN = 572;
+	let	MAMIZOU_BIRD_BLUE = 573;
+	let MAMIZOU_BIRD_PURPLE = 574;
+	let MAMIZOU_BIRD_PINK = 575;
+	let MAMIZOU_BIRD_BLACK = 576;	
+
+	//Frog
+	
+	let MAMIZOU_FROG_WHITE = 577;
+	let MAMIZOU_FROG_GRAY = 578;
+	let MAMIZOU_FROG_RED = 579;
+	let MAMIZOU_FROG_ORANGE = 580;	
+	let MAMIZOU_FROG_YELLOW = 581;
+	let MAMIZOU_FROG_LIME = 582;
+	let MAMIZOU_FROG_GREEN = 583;
+	let MAMIZOU_FROG_CYAN = 584;
+	let	MAMIZOU_FROG_BLUE = 585;
+	let MAMIZOU_FROG_PURPLE = 586;
+	let MAMIZOU_FROG_PINK = 587;
+	let MAMIZOU_FROG_BLACK = 588;	
+	
+	//Note
+	
+	let NOTE_WHITE = 589;
+	let NOTE_GRAY = 590;
+	let NOTE_RED = 591;
+	let NOTE_ORANGE = 592;	
+	let NOTE_YELLOW = 593;
+	let NOTE_LIME = 594;
+	let NOTE_GREEN = 595;
+	let NOTE_CYAN = 596;
+	let	NOTE_BLUE = 597;
+	let NOTE_PURPLE = 598;
+	let NOTE_PINK = 599;
+	let NOTE_BLACK = 600;	
+
+	//Rest
+	
+	let REST_WHITE = 601;
+	let REST_GRAY = 602;
+	let REST_RED = 603;
+	let REST_ORANGE = 604;	
+	let REST_YELLOW = 605;
+	let REST_LIME = 606;
+	let REST_GREEN = 607;
+	let REST_CYAN = 608;
+	let	REST_BLUE = 609;
+	let REST_PURPLE = 610;
+	let REST_PINK = 611;
+	let REST_BLACK = 612;	
+	
+	//Large Round ( Bubbles )
+	
+	let BALL_L_WHITE = 613;
+	let BALL_L_GRAY = 614;
+	let BALL_L_RED = 615;
+	let BALL_L_ORANGE = 616;	
+	let BALL_L_YELLOW = 617;
+	let BALL_L_LIME = 618;
+	let BALL_L_GREEN = 619;
+	let BALL_L_CYAN = 620;
+	let BALL_L_BLUE = 621;
+	let BALL_L_PURPLE = 622;
+	let BALL_L_PINK = 623;
+	let BALL_L_BLACK = 624;		
+	
+	
+	let LIGHT_WHITE = 625;
+	let LIGHT_GRAY = 626;
+	let LIGHT_RED = 627;
+	let LIGHT_ORANGE = 628;	
+	let LIGHT_YELLOW = 629;
+	let LIGHT_LIME = 630;
+	let LIGHT_GREEN = 631;
+	let LIGHT_CYAN = 632;
+	let LIGHT_BLUE = 633;
+	let LIGHT_PURPLE = 634;
+	let LIGHT_PINK = 635;
+	let LIGHT_BLACK = 636;	
+	
+//-------------------------------------------------------------------------------------------------------------------------------	
+
+	//Other Stuff
+
+	let CLOWNPIECE_MOON = 1000;
+	let MURASA_ANCHOR = 1001;
+	let TEWI_CIRCLE = 1002;
+	let CIRNO_ICICLE = 1003;
+	let EIKI_STICK = 1004;
+	
+	let YUUKA_L_FLOWER = 1005;
+	let YUUKA_M_FLOWER = 1006;
+	let YUUKA_S_FLOWER = 1007;
+	
+//-------------------------------------------------------------------------------------------------------------------------------	
+
+//-------------------------------------------------------------------------------------------------------------------------------
+
+	//Delays
+	
+	let KOISHI_ROSE_RED = 889;
+	let KOISHI_ROSE_BLUE = 890;
+	
+	let TEST_BULLET = 9999;
+	
+	//Straight Lasers
+
+	let ST_LASER_WHITE_D = 685;
+	let ST_LASER_GRAY_D = 686;
+	let ST_LASER_RED_D = 687;
+	let ST_LASER_ORANGE_D = 688;
+	let ST_LASER_YELLOW_D = 689;
+	let ST_LASER_LIME_D = 690;
+	let ST_LASER_GREEN_D = 691;
+	let ST_LASER_CYAN_D = 692;
+	let ST_LASER_BLUE_D = 693;
+	let ST_LASER_PURPLE_D = 694;
+	let ST_LASER_PINK_D = 695;
+	let ST_LASER_BLACK_D = 696;
+	
+	//Curved Lasers Longer
+
+	let CURVE_LASER_WHITE_ALT = 841;
+	let CURVE_LASER_GRAY_ALT = 842;
+	let CURVE_LASER_RED_ALT = 843;
+	let CURVE_LASER_ORANGE_ALT = 844;
+	let CURVE_LASER_YELLOW_ALT = 845;
+	let CURVE_LASER_LIME_ALT = 846;
+	let CURVE_LASER_GREEN_ALT = 847;
+	let CURVE_LASER_CYAN_ALT = 848;
+	let CURVE_LASER_BLUE_ALT = 849;
+	let CURVE_LASER_PURPLE_ALT = 850;
+	let CURVE_LASER_PINK_ALT = 851;
+	let CURVE_LASER_BLACK_ALT = 852;	
+
+	let CURVE_LASER_WHITE_D = 853;
+	let CURVE_LASER_GRAY_D = 854;
+	let CURVE_LASER_RED_D = 855;
+	let CURVE_LASER_ORANGE_D = 856;
+	let CURVE_LASER_YELLOW_D = 857;
+	let CURVE_LASER_LIME_D = 858;
+	let CURVE_LASER_GREEN_D = 859;
+	let CURVE_LASER_CYAN_D = 860;
+	let CURVE_LASER_BLUE_D = 861;
+	let CURVE_LASER_PURPLE_D = 862;
+	let CURVE_LASER_PINK_D = 863;
+	let CURVE_LASER_BLACK_D = 864;	
+
+	//Lightning
+
+	let LIGHTNING_LASER_WHITE_ALT = 865;
+	let LIGHTNING_LASER_GRAY_ALT = 866;
+	let LIGHTNING_LASER_RED_ALT = 867;
+	let LIGHTNING_LASER_ORANGE_ALT = 868;
+	let LIGHTNING_LASER_YELLOW_ALT = 869;
+	let LIGHTNING_LASER_LIME_ALT = 870;
+	let LIGHTNING_LASER_GREEN_ALT = 871;
+	let LIGHTNING_LASER_CYAN_ALT = 872;
+	let LIGHTNING_LASER_BLUE_ALT = 873;
+	let LIGHTNING_LASER_PURPLE_ALT = 874;
+	let LIGHTNING_LASER_PINK_ALT = 875;
+	let LIGHTNING_LASER_BLACK_ALT = 876;		
+
+//-------------------------------------------------------------------------------------------------------------------------------
+	
+	//Small Round
+	
+	let BALL_S_WHITE_D = 697;
+	let BALL_S_GRAY_D = 698;
+	let BALL_S_RED_D = 699;
+	let BALL_S_ORANGE_D = 700;	
+	let BALL_S_YELLOW_D = 701;
+	let BALL_S_LIME_D = 702;
+	let BALL_S_GREEN_D = 703;
+	let BALL_S_CYAN_D = 704;
+	let BALL_S_BLUE_D = 705;
+	let BALL_S_PURPLE_D = 706;
+	let BALL_S_PINK_D = 707;
+	let BALL_S_BLACK_D = 708;		
+
+	//Small Round ( Ringed )
+	
+	let BALL_BS_WHITE_D = 709;
+	let BALL_BS_GRAY_D = 710;
+	let BALL_BS_RED_D = 711;
+	let BALL_BS_ORANGE_D = 712;	
+	let BALL_BS_YELLOW_D = 713;
+	let BALL_BS_LIME_D = 714;
+	let BALL_BS_GREEN_D = 715;
+	let BALL_BS_CYAN_D = 716;
+	let BALL_BS_BLUE_D = 717;
+	let BALL_BS_PURPLE_D = 718;
+	let BALL_BS_PINK_D = 719;
+	let BALL_BS_BLACK_D = 720;		
+
+	//Small Rice
+	
+	let RICE_S_WHITE_D = 721;
+	let RICE_S_GRAY_D = 722;
+	let RICE_S_RED_D = 723;
+	let RICE_S_ORANGE_D = 724;	
+	let RICE_S_YELLOW_D = 725;
+	let RICE_S_LIME_D = 726;
+	let RICE_S_GREEN_D = 727;
+	let RICE_S_CYAN_D = 728;
+	let RICE_S_BLUE_D = 729;
+	let RICE_S_PURPLE_D = 730;
+	let RICE_S_PINK_D = 731;
+	let RICE_S_BLACK_D = 732;		
+	
+	//Small Amulet
+	
+	let AMULET_S_WHITE_D = 733;
+	let	AMULET_S_GRAY_D = 734;
+	let AMULET_S_RED_D = 735;
+	let AMULET_S_ORANGE_D = 736;	
+	let AMULET_S_YELLOW_D = 737;
+	let AMULET_S_LIME_D = 738;
+	let AMULET_S_GREEN_D = 739;
+	let AMULET_S_CYAN_D = 740;
+	let	AMULET_S_BLUE_D = 741;
+	let AMULET_S_PURPLE_D = 742;
+	let AMULET_S_PINK_D = 743;
+	let AMULET_S_BLACK_D = 744;				
+	
+	//Small Kunai
+	
+	let KUNAI_S_WHITE_D = 745;
+	let	KUNAI_S_GRAY_D = 746;
+	let KUNAI_S_RED_D = 747;
+	let KUNAI_S_ORANGE_D = 748;	
+	let KUNAI_S_YELLOW_D = 749;
+	let KUNAI_S_LIME_D = 750;
+	let KUNAI_S_GREEN_D = 751;
+	let KUNAI_S_CYAN_D = 752;
+	let	KUNAI_S_BLUE_D = 753;
+	let KUNAI_S_PURPLE_D = 754;
+	let KUNAI_S_PINK_D = 755;
+	let KUNAI_S_BLACK_D = 756;			
+	
+	//Small Scale
+	
+	let SCALE_S_WHITE_D = 757;
+	let	SCALE_S_GRAY_D = 758;
+	let SCALE_S_RED_D = 759;
+	let SCALE_S_ORANGE_D = 760;	
+	let SCALE_S_YELLOW_D = 761;
+	let SCALE_S_LIME_D = 762;
+	let SCALE_S_GREEN_D = 763;
+	let SCALE_S_CYAN_D = 764;
+	let	SCALE_S_BLUE_D = 765;
+	let SCALE_S_PURPLE_D = 766;
+	let SCALE_S_PINK_D = 767;
+	let SCALE_S_BLACK_D = 768;			
+	
+	//Mags
+	
+	let MAG_WHITE_D = 769;
+	let	MAG_GRAY_D = 770;
+	let MAG_RED_D = 771;
+	let MAG_ORANGE_D = 772;	
+	let MAG_YELLOW_D = 773;
+	let MAG_LIME_D = 774;
+	let MAG_GREEN_D = 775;
+	let MAG_CYAN_D = 776;
+	let	MAG_BLUE_D = 777;
+	let MAG_PURPLE_D = 778;
+	let MAG_PINK_D = 779;
+	let MAG_BLACK_D = 780;	
+
+	//Blurred Mags
+	
+	let MAG_S_WHITE_BLUR_D = 781;
+	let	MAG_S_GRAY_BLUR_D = 782;
+	let MAG_S_RED_BLUR_D = 783;
+	let MAG_S_ORANGE_BLUR_D = 784;	
+	let MAG_S_YELLOW_BLUR_D = 785;
+	let MAG_S_LIME_BLUR_D = 786;
+	let MAG_S_GREEN_BLUR_D = 787;
+	let MAG_S_CYAN_BLUR_D = 788;
+	let	MAG_S_BLUE_BLUR_D = 789;
+	let MAG_S_PURPLE_BLUR_D = 790;
+	let MAG_S_PINK_BLUR_D = 791;
+	let MAG_S_BLACK_BLUR_D = 792;		
+	
+	//Ice
+	
+	let ICE_S_WHITE_D = 793;
+	let ICE_S_GRAY_D = 794;
+	let ICE_S_RED_D = 795;
+	let ICE_S_ORANGE_D = 796;	
+	let ICE_S_YELLOW_D = 797;
+	let ICE_S_LIME_D = 799;
+	let ICE_S_GREEN_D = 799;
+	let ICE_S_CYAN_D = 800;
+	let	ICE_S_BLUE_D = 801;
+	let ICE_S_PURPLE_D = 802;
+	let ICE_S_PINK_D = 803;
+	let ICE_S_BLACK_D = 804;		
+
+	//Stars
+	
+	let STAR_S_WHITE_D = 805;
+	let STAR_S_GRAY_D = 806;
+	let STAR_S_RED_D = 807;
+	let STAR_S_ORANGE_D = 808;	
+	let STAR_S_YELLOW_D = 809;
+	let STAR_S_LIME_D = 810;
+	let STAR_S_GREEN_D = 811;
+	let STAR_S_CYAN_D = 812;
+	let	STAR_S_BLUE_D = 813;
+	let STAR_S_PURPLE_D = 814;
+	let STAR_S_PINK_D = 815;
+	let STAR_S_BLACK_D = 816;		
+
+	//Droplets
+	
+	let DROPLET_S_WHITE_D = 817;
+	let DROPLET_S_GRAY_D = 818;
+	let DROPLET_S_RED_D = 819;
+	let DROPLET_S_ORANGE_D = 820;	
+	let DROPLET_S_YELLOW_D = 821;
+	let DROPLET_S_LIME_D = 822;
+	let DROPLET_S_GREEN_D = 823;
+	let DROPLET_S_CYAN_D = 824;
+	let	DROPLET_S_BLUE_D = 825;
+	let DROPLET_S_PURPLE_D = 826;
+	let DROPLET_S_PINK_D = 827;
+	let DROPLET_S_BLACK_D = 828;		
+	
+	//DDP_STAR
+	
+	let DDP_STAR_WHITE = 891;
+	let DDP_STAR_GRAY = 892;
+	let DDP_STAR_RED = 893;
+	let DDP_STAR_ORANGE = 894;	
+	let DDP_STAR_YELLOW = 895;
+	let DDP_STAR_LIME= 896;
+	let DDP_STAR_GREEN = 897;
+	let DDP_STAR_CYAN = 898;
+	let DDP_STAR_BLUE = 899;
+	let DDP_STAR_PURPLE = 900;
+	let DDP_STAR_PINK = 901;
+	let DDP_STAR_BLACK = 902;	
+	
+	let DDP_STAR_WHITE_D = 903;
+	let DDP_STAR_GRAY_D = 904;
+	let DDP_STAR_RED_D = 905;
+	let DDP_STAR_ORANGE_D = 906;	
+	let DDP_STAR_YELLOW_D = 907;
+	let DDP_STAR_LIME_D = 908;
+	let DDP_STAR_GREEN_D = 909;
+	let DDP_STAR_CYAN_D = 910;
+	let DDP_STAR_BLUE_D = 911;
+	let DDP_STAR_PURPLE_D = 912;
+	let DDP_STAR_PINK_D = 913;
+	let DDP_STAR_BLACK_D = 914;		
+
+	//Coins
+	
+	/*
+	let COIN_S_WHITE = 829;
+	let COIN_S_GRAY = 830;
+	let COIN_S_RED = 831;
+	let COIN_S_ORANGE = 832;	
+	let COIN_S_YELLOW = 833;
+	let COIN_S_LIME = 834;
+	let COIN_S_GREEN = 835;
+	let COIN_S_CYAN = 836;
+	let COIN_S_BLUE = 837;
+	let COIN_S_PURPLE = 838;
+	let COIN_S_PINK = 839;
+	let COIN_S_BLACK = 840;		
+	*/
+	
+	//Small Round
+
+//-------------------------------------------------------------------------------------------------------------------------------	
+	
+	let RING_S_WHITE = 877;
+	let RING_S_GRAY = 878;
+	let DIAMOND_S_RED = 879;
+	let DIAMOND_S_ORANGE = 880;	
+	let DIAMOND_S_YELLOW = 881;
+	let DIAMOND_S_LIME = 882;
+	let DIAMOND_S_GREEN = 883;
+	let DIAMOND_S_CYAN = 884;
+	let DIAMOND_S_BLUE = 885;
+	let DIAMOND_S_PURPLE = 886;
+	let DIAMOND_S_PINK = 887;
+	let DIAMOND_S_BLACK = 888;		
+	
+//-------------------------------------------------------------------------------------------------------------------------------	

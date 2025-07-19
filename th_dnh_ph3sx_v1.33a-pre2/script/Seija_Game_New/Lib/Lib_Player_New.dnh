@@ -1,0 +1,805 @@
+
+#include "./../System/Common.dnh"
+
+//---------------------------------------
+
+let CanFire = true;
+let IsDead = false;
+let IsBombActive = true;
+
+//-----------------
+
+let PL_Power = GetPlayerPower();
+let PL_PowerLevel = 0;
+//let PL_Speed = [ 4, 2 ];
+
+let PL_Tex = GetCurrentScriptDirectory() ~ "./../Resource/img/Player/PL_Gen.png";
+let PL_Bomb_Tex = GetCurrentScriptDirectory() ~ "./../Resource/img/Player/PL_Bomb.png";
+let Eff_Circle = GetCurrentScriptDirectory() ~ "./../Resource/img/Effect/Invert.png";
+
+//---------------------------------------
+
+function T_InitMain(){
+	
+	//ObjPlayer_AddIntersectionCircleA1( GetPlayerObjectID, 0, 0, 3, 25 );
+	
+	SetPlayerClip( 8, 32, GetStgFrameWidth - 8, GetStgFrameHeight - 18 );
+	SetPlayerDownStateFrame( 50 );
+	
+	SetPlayerRebirthLossFrame( 0 );
+	SetPlayerDownStateFrame( 50 );
+	
+	T_InitPL();
+	
+}	
+
+function T_LoopMain(){
+	
+	//PL_Fire();
+	//PL_HaniwaBomb();
+	//POW_Tracker();
+	
+}
+
+function T_FinMain(){
+	
+	RemoveTexture( PL_Tex );
+	RemoveTexture( Eff_Circle );
+	
+}
+
+function T_EventMain(){
+	
+    alternative( GetEventType() )
+
+    case( EV_GRAZE ) {
+		
+		//Play_SFX( SFX_PL_GRAZE, 60 );
+		T_Graze;
+		
+    }
+	case( EV_REQUEST_SPELL ){
+
+
+		let Spell_Count = GetPlayerSpell();
+		if( Spell_Count >= 1 && IsBombActive == true ){
+			
+			//Play_SFX( SFX_SPELL_CALL, 50 );
+			
+			IsBombActive = true;
+			SetScriptResult( true );
+			SetPlayerSpell( Spell_Count - 1 );
+			T_Bomb_Reimu();
+
+		}
+		else{
+			
+			SetScriptResult( false );
+		}
+		//SetScriptResult( false );
+	}
+    case( EV_PLAYER_SHOOTDOWN ){
+		
+        IsDead = true;
+		CanFire = false;
+		//Play_SFX( SFX_PL_DEAD, 60 );
+        T_PL_Shotdown;
+    }
+    case( EV_PLAYER_REBIRTH ){
+		
+        IsDead = false;
+        SetPlayerInvincibilityFrame( 240 );
+		T_PL_Respawn();
+		
+    }	
+
+}	
+
+//---------------------------------------
+
+task T_InitPL(){
+	
+	//RenderPL();
+	T_RenderHitox();
+	//PL_Respawn_Circle;
+
+}
+
+//---------------------------------------
+
+task T_Dim_Screen( Time, Color ){
+	
+	let Path = GetCurrentScriptDirectory() ~ "./../Resource/img/White_Rect.png";
+	
+	let Sprite_Obj = RenderImg2D_A1( Path, [ 0, 0, 512, 512 ], GetStgFrameWidth/2, GetStgFrameHeight/2, BLEND_SUBTRACT, 1, 0.28 );
+	
+	ObjRender_SetColor( Sprite_Obj, Color[ 0 ], Color[ 1 ], Color[ 2 ] );
+	
+	ImgFadeIn( Sprite_Obj, 20, 50 );
+	
+	wait( Time );
+	
+	ImgFadeOutDel_B( Sprite_Obj, 60, 50 );
+	
+	
+}	
+
+task T_Bomb_Reimu{
+	
+	//let Angle = rand( 0, 360 );
+	CanFire = false;
+	SetPlayerInvincibilityFrame( 400 );
+	T_Blink;
+	T_Dim_Screen( 300, [ 155, 255, 255 ] );
+	//Play_SFX( SFX_PL_BOMB_01, 60 );
+	//Play_SFX( SFX_WEIRD_01, 60 );
+	
+	yield;
+	//IsBombActive = true;
+	
+	ascent( a in 0..6 ){
+		
+		T_Bomb_Effect( 90 + 60 * a, a );
+		
+	}	
+	
+	wait( 300 );
+	
+	CanFire = true;
+	Obj_Delete( GetSpellManageObject() );
+	
+	task T_Bomb_Effect( Angle, Color ){
+	
+		let Spell_Obj = CreatePlayerShotA1( GetPlayerX, GetPlayerY, rand( 0, 1 ), rand( -150, -30 ) , 3, 9999, 50 );
+		//let Spell_Obj = CreatePlayerShotA1( GetPlayerX, GetPlayerY, rand( 0, 1 ), -90 , 8, 9999, 1 );
+		//ObjMove_AddPatternA2( Spell_Obj, 120, NO_CHANGE, NO_CHANGE, -0.08, 0, -5 );
+
+		ObjShot_SetEraseShot( Spell_Obj, true );
+		ObjShot_SetSpellFactor( Spell_Obj, true );
+		ObjShot_SetAutoDelete( Spell_Obj, false );
+		ObjShot_SetSpellResist( Spell_Obj, true );	
+		Obj_SetVisible( Spell_Obj, false );
+		
+		let X = GetPlayerX;
+		let Y = GetPlayerY;
+		let PL_X = GetPlayerX;
+		let PL_Y = GetPlayerY;		
+		let Radius = 128;
+
+		let FantasyObj = RenderImg2D_A1( PL_Bomb_Tex, [ 128 * ( Color * 1 ), 0, 128 * ( Color + 1 * 1 ), 128 ], PL_X, PL_Y, BLEND_ADD_ARGB, 1, 0.45 );
+		T_BombTrail( FantasyObj, Color );
+		//let Trail_Obj = RenderImg2D_A1( PL_Bomb_Tex, [ 128 * ( Color * 1 ), 0, 128 * ( Color + 1 * 1 ), 128 ], PL_X, PL_Y, BLEND_ADD_ARGB, 1, 0.45 );
+
+		let X_Radius = GetPlayerX;
+		let Y_Radius = GetPlayerY;
+		
+		ascent( i in 0..100 ){
+			
+			if( Obj_IsDeleted( Spell_Obj ) ){ return; }
+
+			PL_X = GetPlayerX;
+			PL_Y = GetPlayerY;	
+			
+			X = X_Radius + Radius * i/100 * cos( Angle );
+			Y = Y_Radius + Radius * i/100 *sin( Angle );
+			
+			X_Radius += ( GetPlayerX - X_Radius )/5;
+			Y_Radius += ( GetPlayerY - Y_Radius )/5;
+			
+			Angle += 5;
+			
+			
+			ObjSpell_SetIntersectionCircle( Spell_Obj, X, Y, 128 );
+			ObjMove_SetPosition( Spell_Obj, X, Y );	
+			ObjRender_SetPosition( FantasyObj, ObjRender_GetX( Spell_Obj ), ObjRender_GetY( Spell_Obj ), 0 );	
+			//ObjRender_SetPosition( FantasyObj, X, Y, 0 );			
+
+			yield;
+
+		}	
+		
+		//let Enemy = GetEnemyNearest( Spell_Obj );
+		
+		ObjMove_AddPatternA2( Spell_Obj, 100, NO_CHANGE, NO_CHANGE, -0.5, 0, 0.1 );
+		T_Homing_Spell( Spell_Obj, 130 );
+		//T_Homing( Spell_Obj );
+		
+		while( !Obj_IsDeleted( Spell_Obj ) ){
+			
+			ObjRender_SetPosition( FantasyObj, ObjRender_GetX( Spell_Obj ), ObjRender_GetY( Spell_Obj ), 0 );	
+			
+			
+			yield;
+		}	
+		
+		wait( rand( 1, 20 ) );
+		
+		//Play_SFX( SFX_PL_BOMB_00, 60 );
+		
+		T_ScreenShake;
+		T_Fantasy_Burst( FantasyObj, Color, 50 );
+		//T_Fantasy_Burst( FantasyObj, Color, 30 );
+		//T_Fantasy_Burst( FantasyObj, [ 255, 0, 0 ], 80 );
+		//T_Fantasy_Burst( FantasyObj, [ 0, 0, 255 ], 20 );
+
+		Obj_Delete( FantasyObj );
+		
+		wait( 100 );
+		
+		//IsBombActive = false;
+		//Obj_Delete( GetSpellManageObject() );
+
+	}
+	
+	task T_Fantasy_Burst( Target, Color, Time ){
+		
+		if( Obj_IsDeleted( Target ) ){ return; }
+		
+		let ScaleAdd = 0;
+	
+		//let Path = GetCurrentScriptDirectory() ~ "./../Resource/img/Effect/CircleEff.png";
+		let Obj_EffCircle = RenderImg2D_A1( PL_Bomb_Tex, [ 128 * ( Color * 1 ), 256, 128 * ( Color + 1 * 1 ), 384 ], ObjRender_GetX( Target ), ObjRender_GetY( Target ), BLEND_ADD_ARGB  , 1, 0.32 );	
+		let Obj_EffCircle_B = RenderImg2D_A1( PL_Bomb_Tex, [ 128 * ( Color * 1 ), 384, 128 * ( Color + 1 * 1 ), 512 ], ObjRender_GetX( Target ), ObjRender_GetY( Target ), BLEND_ADD_ARGB  , 1, 0.32 );	
+		ObjRender_SetAngleZ	( Obj_EffCircle, rand( 0, 360 ));	
+		
+		//ObjRender_SetColor( Obj_EffCircle, Color[ 0 ], Color[ 1 ], Color [2 ] );
+
+		ImgFadeOutDel( Obj_EffCircle, Time );
+		ImgFadeOutDel( Obj_EffCircle_B, Time -20 );
+			
+		loop( Time ){
+					
+			ObjRender_SetScaleXYZ( Obj_EffCircle, 0.1 + ScaleAdd * 1.4, 0.1 + ScaleAdd * 1.4, 0 );
+			ObjRender_SetScaleXYZ( Obj_EffCircle_B, 0.1 + ScaleAdd * 3, 0.1 + ScaleAdd *3, 0 );		
+					
+			ScaleAdd += 0.1;				
+				
+			yield;	
+		}
+		
+	}	
+	
+	task T_BombTrail( Obj, Color ){
+		
+		wait( 100 );
+		
+		while( !Obj_IsDeleted( Obj ) ){
+			
+			let Trail_Obj = RenderImg2D_A1( PL_Bomb_Tex, [ 128 * ( Color * 1 ), 128, 128 * ( Color + 1 * 1 ), 256 ], ObjRender_GetX( Obj ), ObjRender_GetY( Obj ), BLEND_ADD_ARGB, 1, 0.44 );	
+			ImgFadeOutDel( Trail_Obj, 20 );
+		
+			wait( 2 );
+		
+		}
+		
+	}	
+	
+	//T_Homing( Spell_Obj );
+		
+	
+}
+
+task T_Render_PL( Texture ){
+	
+	let Frame_Count = 0;
+	
+	ObjPrim_SetTexture( GetPlayerObjectID, Texture );
+	ObjSprite2D_SetDestCenter(GetPlayerObjectID);
+	
+	loop{
+
+		ascent( a in 0..8 ){
+			
+			ObjSprite2D_SetSourceRect( GetPlayerObjectID, 32*a, 0, 32*( a + 1 ), 48 );
+			ObjSprite2D_SetDestCenter( GetPlayerObjectID );
+			
+			if( GetVirtualKeyState( VK_LEFT ) == KEY_FREE && GetVirtualKeyState( VK_RIGHT ) == KEY_FREE ){
+				wait( 5 );
+			}
+			
+		}
+		ascent( b in 3..8 ){
+						
+			if( GetVirtualKeyState( VK_LEFT ) == KEY_FREE && GetVirtualKeyState( VK_RIGHT ) == KEY_FREE ){
+				
+				ObjSprite2D_SetSourceRect( GetPlayerObjectID, 32*b, 0, 32*( b + 1 ), 48 );
+				ObjSprite2D_SetDestCenter( GetPlayerObjectID );
+				
+			}			
+			
+			if( GetVirtualKeyState( VK_LEFT ) == KEY_HOLD ){
+
+				ObjSprite2D_SetSourceRect( GetPlayerObjectID, 32*b, 48, 32*( b + 1 ), 96 );
+				ObjSprite2D_SetDestCenter( GetPlayerObjectID );	
+	
+			}	
+			
+			if( GetVirtualKeyState( VK_RIGHT ) == KEY_HOLD ){
+
+				ObjSprite2D_SetSourceRect( GetPlayerObjectID, 32*b, 96, 32*( b + 1 ), 144 );
+				ObjSprite2D_SetDestCenter( GetPlayerObjectID );	
+
+			}	
+			
+			wait( 5 );
+		}
+		
+		yield;
+	}
+}	
+
+task T_Render_Cirno( Texture ){
+	
+	let Frame_Count = 0;
+	
+	ObjPrim_SetTexture( GetPlayerObjectID, Texture );
+	ObjSprite2D_SetDestCenter(GetPlayerObjectID);
+	
+	loop{
+
+		ascent( a in 0..8 ){
+			
+			ObjSprite2D_SetSourceRect( GetPlayerObjectID, 32*a, 0, 32*( a + 1 ), 48 );
+			ObjSprite2D_SetDestCenter( GetPlayerObjectID );
+			
+			if( GetVirtualKeyState( VK_LEFT ) == KEY_FREE && GetVirtualKeyState( VK_RIGHT ) == KEY_FREE ){
+				wait( 5 );
+			}
+			
+		}
+		ascent( b in 0..8 ){
+						
+			if( GetVirtualKeyState( VK_LEFT ) == KEY_FREE && GetVirtualKeyState( VK_RIGHT ) == KEY_FREE ){
+				
+				ObjSprite2D_SetSourceRect( GetPlayerObjectID, 32*b, 0, 32*( b + 1 ), 48 );
+				ObjSprite2D_SetDestCenter( GetPlayerObjectID );
+				
+			}			
+			
+			if( GetVirtualKeyState( VK_LEFT ) == KEY_HOLD ){
+
+				if ( Frame_Count >= 8 ){
+					
+					ObjSprite2D_SetSourceRect( GetPlayerObjectID, 224, 48, 256, 96 );
+					ObjSprite2D_SetDestCenter( GetPlayerObjectID );
+					
+					//Frame_Count = 8;
+					
+				}	
+				else{
+					
+					ObjSprite2D_SetSourceRect( GetPlayerObjectID, 32*b, 48, 32*( b + 1 ), 96 );
+					ObjSprite2D_SetDestCenter( GetPlayerObjectID );	
+					
+					//Frame_Count = 0;
+					
+				}
+				
+				Frame_Count += 1;
+	
+			}	
+			
+			if( GetVirtualKeyState( VK_RIGHT ) == KEY_HOLD ){
+
+				ObjSprite2D_SetSourceRect( GetPlayerObjectID, 32*b, 96, 32*( b + 1 ), 144 );
+				ObjSprite2D_SetDestCenter( GetPlayerObjectID );	
+
+			}	
+			
+			//Frame_Count += 1;
+			
+			wait( 5 );
+		}
+		
+		yield;
+	}
+}	
+
+task T_RenderHitox{
+
+	let Obj_01 = ObjPrim_Create( OBJ_SPRITE_2D );
+	ObjRender_SetBlendType( Obj_01, BLEND_ALPHA);
+	Obj_SetRenderPriority( Obj_01, 0.39 );
+	//ObjRender_SetAlpha( Obj_01, 255);
+	ObjPrim_SetTexture( Obj_01, PL_Tex );
+	ObjSprite2D_SetSourceRect( Obj_01, 0, 0, 64, 64 );
+	ObjSprite2D_SetDestCenter( Obj_01 );
+	
+	let Obj_02 = ObjPrim_Create( OBJ_SPRITE_2D );
+	ObjRender_SetBlendType( Obj_02, BLEND_ALPHA );
+	Obj_SetRenderPriority( Obj_02, 0.38 );
+	//ObjRender_SetAlpha( Obj_02, 240);
+	ObjPrim_SetTexture( Obj_02, PL_Tex );
+	ObjSprite2D_SetSourceRect( Obj_02, 0, 64, 64, 128 );
+	ObjSprite2D_SetDestCenter( Obj_02 );	
+
+	let Spin = 0;
+	
+	let Alpha = 0;
+	let Scale = 1;
+	
+	loop{
+		
+		if( GetPlayerState == STATE_DOWN || GetPlayerState == STATE_END ){
+			
+			Obj_SetVisible( Obj_01, false );
+			Obj_SetVisible( Obj_02, false );
+		}
+		else{
+			
+			Obj_SetVisible( Obj_01, true );
+			Obj_SetVisible( Obj_02, true );
+		}		
+		if( GetVirtualKeyState( VK_SLOWMOVE ) == KEY_HOLD ){
+;
+			Obj_SetVisible( Obj_01, true );
+			Obj_SetVisible( Obj_02, true );
+			
+			Scale += 0.1;
+			Spin += 3;
+			if( Scale >= 1.1 ) { Scale = 1.1; }
+			ObjRender_SetAngleZ( Obj_01, Spin );
+			ObjRender_SetScaleXYZ( Obj_01, 0 + Scale, 0 + Scale, 0 + Scale );
+			ObjRender_SetPosition( Obj_01, GetPlayerX(), GetPlayerY(), 0 );
+			
+			ObjRender_SetAngleZ( Obj_02, -Spin*1.3 );
+			ObjRender_SetScaleXYZ( Obj_02, 0 + Scale, 0 + Scale, 0 + Scale );
+			ObjRender_SetPosition( Obj_02, GetPlayerX(), GetPlayerY(), 0 );			
+
+		}
+		else{
+			
+			Spin -= 18;
+			Scale -= 0.1;
+			if( Scale <= 0 ) { Scale = 0; Obj_SetVisible( Obj_01, false ); Obj_SetVisible( Obj_02, false ); }
+			ObjRender_SetAngleZ( Obj_01, Spin );
+			ObjRender_SetScaleXYZ( Obj_01, 0 + Scale, 0 + Scale, 0 + Scale );
+			ObjRender_SetPosition( Obj_01, GetPlayerX(), GetPlayerY(), 0 );
+			
+			ObjRender_SetAngleZ( Obj_02, -Spin*1.3 );
+			ObjRender_SetScaleXYZ( Obj_02, 0 + Scale, 0 + Scale, 0 + Scale );
+			ObjRender_SetPosition( Obj_02, GetPlayerX(), GetPlayerY(), 0 );			
+		}				
+
+		yield;
+	}
+	
+	
+}	
+
+//---------------------------------------
+
+task T_Graze{
+	
+	let Particle = ObjPrim_Create( OBJ_SPRITE_2D );
+	Obj_SetRenderPriority( Particle, 0.49 );
+	ObjPrim_SetTexture( Particle, PL_Tex );
+	ObjSprite2D_SetSourceRect( Particle, 64, 0, 80, 16 );
+	ObjRender_SetPosition( Particle, GetPlayerX(), GetPlayerY(), 0 );
+	
+	let X_Pos = GetPlayerX();
+	let Y_Pos = GetPlayerY();
+	let RNG_X = rand( 2, 6 );
+	let RNG_Y = rand( 2, 6 );	
+	let Angle = rand( 0, 360 );	
+	let Scale = 1.4;
+	
+	while( !Obj_IsDeleted( Particle ) ){
+		
+		if( Scale <= 0.1 ) { break; }
+		
+		X_Pos = X_Pos + ( RNG_X ) * cos( Angle );
+		Y_Pos = Y_Pos + ( RNG_Y ) * sin( Angle );
+		
+		ObjSprite2D_SetDestCenter( Particle );
+		ObjRender_SetPosition( Particle, X_Pos, Y_Pos, 0 );
+		ObjRender_SetScaleXYZ( Particle, Scale, Scale, Scale );
+
+		
+		Scale -= 0.1; 
+		
+		yield;
+	}	
+	
+	Obj_Delete( Particle );	
+	
+}	
+
+task T_PowTracker{
+	
+	//alternative(GetPlayerPower())
+	if( GetPlayerPower() < 100)
+	{
+		PL_PowerLevel = 0;
+	}		
+	if( GetPlayerPower() >= 100)
+	{
+		PL_PowerLevel = 1;
+	}	
+	if( GetPlayerPower() >= 200)
+	{
+		PL_PowerLevel = 2;
+	}	
+	if( GetPlayerPower() >= 300)
+	{
+		PL_PowerLevel = 3;
+	}
+	if( GetPlayerPower() >= 400)
+	{
+		PL_PowerLevel = 4;
+	}		
+
+}	
+
+//--------------------------
+
+task PL_Respawn_Circle{
+	
+	let Tex_Ring_00 = GetCurrentScriptDirectory() ~ "./../Resource/img/Stage/STG_04/world05c.png";
+	
+	BG_MagicCircle( Tex_Ring_00, GetPlayerX, GetPlayerY, 0, 0, 0, 100, 64, 128, 25, CC_RED, 8 );
+	
+	task BG_MagicCircle( Tex, X, Y, Z, X_Angle, Y_Angle, Alpha, V_Count, Radius, Width, Color, Speed ){
+		
+		let Vertex_Count = V_Count;
+		let Vertex_Count_B = 0;
+		let Dir = 0;
+		
+		let Obj_Tube = ObjPrim_Create( OBJ_PRIMITIVE_2D );
+		ObjPrim_SetPrimitiveType( Obj_Tube, PRIMITIVE_TRIANGLESTRIP );
+		ObjPrim_SetVertexCount( Obj_Tube, Vertex_Count );	
+		
+		ObjPrim_SetTexture( Obj_Tube, Tex );	
+		
+		ObjRender_SetAlpha( Obj_Tube, Alpha );
+		//ObjRender_SetAngleXYZ( Obj_Tube, X_Angle, Y_Angle, 0);
+		ObjRender_SetBlendType( Obj_Tube, BLEND_ADD_ARGB );
+		//Obj_SetRenderPriorityI( Obj_Tube,  26 );
+		
+		ObjRender_SetColor( Obj_Tube, Color[ 0 ], Color[ 1 ], Color[ 2 ] );
+		
+		ObjRender_SetPosition( Obj_Tube, X, Y, Z );
+		
+		//Scroll_A1( Obj_Tube, 256, 256, 6 );
+	
+		let Angle_Z = 0;
+		let PX = 0;
+		let PY = 0;
+		
+		ascent( a in 0 .. Vertex_Count/2 ){
+				
+				Vertex_Count_B = a*2;
+			
+				ObjPrim_SetVertexPosition( Obj_Tube, Vertex_Count_B, 0 + Radius * cos( Dir ), 0 + Radius * sin( Dir ), 0 );
+				ObjPrim_SetVertexPosition( Obj_Tube, Vertex_Count_B + 1, 0 + ( Radius + Width ) * cos( Dir ), 0 + ( Radius + Width ) * sin( Dir ), 0 );
+				
+				ObjPrim_SetVertexUVT( Obj_Tube, Vertex_Count_B, 2048/ ( Vertex_Count/2-1 )*a, 0 );
+				ObjPrim_SetVertexUVT( Obj_Tube, Vertex_Count_B + 1,  2048/ ( Vertex_Count/2-1 )*a, 64 );
+				
+				Dir += 360/( Vertex_Count/2-1 );			
+				
+		}		
+		
+		loop{
+			ascent( a in 0 .. Vertex_Count/2 ){
+				
+				Vertex_Count_B = a*2;
+			
+				ObjPrim_SetVertexPosition( Obj_Tube, Vertex_Count_B, 0 + Radius * cos( Dir ), 0 + Radius * sin( Dir ), 0 );
+				ObjPrim_SetVertexPosition( Obj_Tube, Vertex_Count_B + 1, 0 + ( Radius + Width ) * cos( Dir ), 0 + ( Radius + Width ) * sin( Dir ), 0 );
+				
+				//ObjPrim_SetVertexUVT( Obj_Tube, Vertex_Count_B, 2048/ ( Vertex_Count/2-1 )*a, 0 );
+			//	ObjPrim_SetVertexUVT( Obj_Tube, Vertex_Count_B + 1,  2048/ ( Vertex_Count/2-1 )*a, 64 );
+				
+				Dir += 360/( Vertex_Count/2-1 );			
+				
+			}
+			Radius -= 0.5;
+			ObjRender_SetPosition( Obj_Tube, GetPlayerX, GetPlayerY, 0 );
+			Dir -= 360/( Vertex_Count/2-1 ) + Speed;			
+			//ObjRender_SetAngleZ( Obj_Tube, Angle_Z );
+			//Angle_Z += Speed;
+			yield;
+		}	
+
+		
+	}	
+	yield;	
+	
+}	
+
+task T_PL_Respawn(){
+	
+	let YAdd = 0;
+	Blink;
+	CanFire = false;
+	
+	ObjMove_SetPosition( GetPlayerObjectID, GetStgFrameWidth/2, GetStgFrameHeight + 30 );
+	loop(39){
+		
+		ObjMove_SetPosition( GetPlayerObjectID, GetStgFrameWidth/2, GetStgFrameHeight + 30 - YAdd );
+		YAdd += 2;
+		yield;
+	}	
+	
+	CanFire = true;
+	
+	task Blink{
+		
+		let Frame = GetPlayerInvincibilityFrame();
+
+		while( Frame >  0 ){
+			
+			Frame = GetPlayerInvincibilityFrame();
+			
+			ascent(i in 0..2){
+				
+				ObjRender_SetColor( GetPlayerObjectID, 255*i, 255*i, 255 );
+				wait( 2 );
+				
+			}
+			wait( 1 );
+		}
+	}
+
+
+}	
+
+task T_PL_Shotdown{
+	
+	InvCircle( GetPlayerX, GetPlayerY, 0.1, 40 );
+	loop( 20 ){ yield; }
+	InvCircle( GetPlayerX, GetPlayerY, 0.1, 20 );
+	
+	
+	task InvCircle( X, Y, Scale, DeleteTime ){
+		
+		let obj = ObjPrim_Create(OBJ_SPRITE_2D);
+		let Time = 0;
+		let ScaleAdd = 0;
+
+		let mx = ObjRender_GetX(obj);
+		let my = ObjRender_GetY(obj);
+
+
+		ObjPrim_SetTexture(obj, Eff_Circle);
+		ObjSprite2D_SetSourceRect(obj, 0, 0, 512, 512);
+		Obj_SetRenderPriorityI(obj, 79);
+		ObjSprite2D_SetDestCenter(obj);
+		
+		ObjRender_SetBlendType(obj, BLEND_INV_DESTRGB);
+
+
+		ObjRender_SetPosition(obj, X, Y,0);
+		ObjRender_SetScaleXYZ(obj, ScaleAdd, ScaleAdd, ScaleAdd);
+		
+		loop{
+			
+			ObjRender_SetScaleXYZ(obj, ScaleAdd, ScaleAdd, ScaleAdd);
+			Time++;
+			ScaleAdd += Scale;
+
+			if(Time == DeleteTime){
+				Obj_Delete(obj);
+				break;
+			}
+				yield;
+			}
+		}	
+}	
+
+
+task T_Blink{
+		
+	let Frame = GetPlayerInvincibilityFrame();
+
+	while( Frame >  0 ){
+			
+		Frame = GetPlayerInvincibilityFrame();
+			
+		ascent(i in 0..2){
+				
+			ObjRender_SetColor( GetPlayerObjectID, 255*i, 255*i, 255 );
+			wait( 2 );
+				
+		}
+		wait( 1 );
+	}
+}
+
+//--------------
+
+function GetEnemyNearest( Obj ){
+	
+	let E_Pos = GetEnemyIntersectionPosition( ObjRender_GetX( Obj ), ObjRender_GetY( Obj ), 1 );
+	let Angle = atan2( E_Pos[0][1]-ObjRender_GetY( Obj ), E_Pos[0][0] - ObjRender_GetX( Obj ) );
+	return Angle;
+	
+}
+
+//--------------
+
+task T_Shot_Spawn_A1( Obj, Time ){
+	
+	//ObjShot_SetIntersectionEnable( Obj, false );
+	//ObjRender_SetAlpha( Obj, 0 );
+	
+	ascent( i in 0..Time ){
+		
+		ObjRender_SetAlpha( Obj, 255 * ( i / Time ) );
+		ObjRender_SetScaleXYZ( Obj,( i / Time ) * 1, ( i / Time ) * 1, 1 );
+		
+		yield;
+	}
+	
+    //ObjRender_SetAlpha( Obj,255 );
+	ObjRender_SetScaleXYZ( Obj, 1, 1, 0 );
+	//ObjShot_SetIntersectionEnable( Obj, true );
+	
+}
+
+//--------------
+
+task T_Homing( Shot_Obj ){
+	
+	//HELL - Seija
+	//let Frame = 0;
+	
+	while( !Obj_IsDeleted( Shot_Obj ) ){
+		
+		float Angle = ObjMove_GetAngle( Shot_Obj );
+		let ID = GetIntersectionRegistedEnemyID;
+		
+		ascent( i in 0..length( ID ) ){
+			
+			if( !Obj_IsDeleted( ID[ i ]) ){
+				
+				Angle = GetEnemyNearest( Shot_Obj );
+				
+			}
+		}
+		
+		ObjMove_SetAngle( Shot_Obj ,Homeing_Angle( Angle, ObjMove_GetAngle( Shot_Obj ),( ObjMove_GetSpeed( Shot_Obj )/6 )^6 ) );
+
+		
+		ObjMove_SetSpeed( Shot_Obj ,ObjMove_GetSpeed( Shot_Obj ) + 10/80 );
+		//Frame += 1;
+		yield;
+	}
+}
+
+function Homeing_Angle( float To_Angle, float Angle, float D_Angle ){
+	
+	To_Angle %= 360;
+	Angle %= 360;
+
+	float ret = To_Angle - Angle;
+	
+	if( ret >= 180 ){ ret -= 360; }
+	if( ret < -180 ){ ret += 360; }
+
+	if( (|ret|) < D_Angle ){
+		
+		Angle = To_Angle;
+		
+	}
+	else{
+		
+		if( sin( ret ) > 0 ){
+			Angle += D_Angle;
+		}
+		else{
+			Angle -= D_Angle;
+		}
+	}
+	
+	if( Angle >= 360 ){ Angle -= 360; }
+	if( Angle < 0 ){ Angle += 360; }
+
+	return Angle;
+}
+
+//--------------
+
+
+//--------------

@@ -1,0 +1,472 @@
+
+
+let ANIM_IDLE = "Idle";
+let ANIM_MOVE = "Move";
+let ANIM_MOVE_RIGHT = "MoveRight";
+let ANIM_MOVE_LEFT = "MoveLeft";
+let ANIM_MOVEEND = "MoveToIdle";
+let ANIM_MOVEEND_RIGHT = "MoveRightToIdle";
+let ANIM_MOVEEND_LEFT = "MoveLeftToIdle";
+let ANIM_ATTACK = "Attack";
+let ANIM_ATTACKEND = "AttackToIdle";
+let ANIM_CHARGE = "Charge";
+let ANIM_CHARGEEND = "ChargeToIdle";
+let fl = false;
+
+
+function ObjAnim_AddFrameA1(objID, type, left, top, right, bot){
+	let aarr = Obj_GetValueD(objID, "anim_"~type, []);
+	Obj_SetValue(objID, "anim_"~type, aarr~[[left, top, right, bot, 0, 0]]);
+}
+
+function ObjAnim_AddFrameA2(objID, type, left, top, right, bot, xoff, yoff){
+	let aarr = Obj_GetValueD(objID, "anim_"~type, []);
+	Obj_SetValue(objID, "anim_"~type, aarr~[[left, top, right, bot, xoff, yoff]]);
+}
+
+function ObjAnim_SetLoopPointA1(objID, type, frame){
+	Obj_SetValue(objID, "anim_"~type~"_loop", frame);
+}
+
+function ObjAnim_SetSpeedA1(objID, type, speed){
+	Obj_SetValue(objID, "anim_"~type~"_speed", speed);
+}
+
+function ObjAnim_FlipMoveImage(objID, cond){
+	Obj_SetValue(objID, "anim_flip", cond);
+}
+
+function ObjAnim_ForceStop(objID){
+	Obj_SetValue(objID, "anim_forcestop", true);
+
+	Obj_SetValue(objID, "anim_Idle", []);
+	Obj_SetValue(objID, "anim_Move", []);
+	Obj_SetValue(objID, "anim_MoveRight", []);
+	Obj_SetValue(objID, "anim_MoveLeft", []);
+	Obj_SetValue(objID, "anim_MoveToIdle", []);
+	Obj_SetValue(objID, "anim_MoveRightToIdle", []);
+	Obj_SetValue(objID, "anim_MoveLeftToIdle", []);
+	Obj_SetValue(objID, "anim_Attack", []);
+	Obj_SetValue(objID, "anim_AttackToIdle", []);
+	Obj_SetValue(objID, "anim_Charge", []);
+	Obj_SetValue(objID, "anim_ChargeToIdle", []);
+}
+
+function ObjAnim_SetAttackA1(objID, status){
+	DidUserSetFrames(objID, ANIM_ATTACK, "Attack");
+	DidUserSetFrames(objID, ANIM_ATTACKEND, "Attack");
+	if(!Obj_IsValueExists(objID, "anim_Attack_loop")){
+		RaiseError("Did not specify loop value for attack animation");
+	}
+	Obj_SetValue(objID, "anim_playattack", status);
+}
+
+task ObjAnim_SetAttackA2(objID, len){
+	DidUserSetFrames(objID, ANIM_ATTACK, "Attack");
+	DidUserSetFrames(objID, ANIM_ATTACKEND, "Attack To Idle (ATTACKEND)");
+	if(!Obj_IsValueExists(objID, "anim_Attack_loop")){
+		RaiseError("Did not specify loop value for attack animation");
+	}
+	Obj_SetValue(objID, "anim_playattack", true);
+	wait(len);
+	Obj_SetValue(objID, "anim_playattack", false);
+}
+
+function ObjAnim_SetChargeA1(objID, status){
+	DidUserSetFrames(objID, ANIM_ATTACK, "Charge");
+	DidUserSetFrames(objID, ANIM_ATTACKEND, "Charge");
+	if(!Obj_IsValueExists(objID, "anim_Charge_loop")){
+		RaiseError("Did not specify loop value for attack animation");
+	}
+	Obj_SetValue(objID, "anim_playcharge", status);
+}
+
+task ObjAnim_SetChargeA2(objID, len){
+	DidUserSetFrames(objID, ANIM_ATTACK, "Charge");
+	DidUserSetFrames(objID, ANIM_ATTACKEND, "Charge To Idle (CHARGEEND)");
+	if(!Obj_IsValueExists(objID, "anim_Charge_loop")){
+		RaiseError("Did not specify loop value for attack animation");
+	}
+	Obj_SetValue(objID, "anim_playcharge", true);
+	wait(len);
+	Obj_SetValue(objID, "anim_playcharge", false);
+}
+
+function ObjAnim_IsAttackPlaying(objID){
+	return Obj_GetValueD(objID, "anim_isattackplaying", false);
+}
+
+function ObjAnim_IsMovePlaying(objID){
+	return Obj_GetValueD(objID, "anim_ismoveplaying", false);
+}
+
+function ObjAnim_IsChargePlaying(objID){
+	return Obj_GetValueD(objID, "anim_ischargeplaying", false);
+}
+
+function ObjAnim_GetCurrentFrame(objID){
+	return Obj_GetValueD(objID, "activeRect", [0, 0, 0, 0]);
+}
+
+task ObjAnim_StartAnimationA1(objID, bob, bobspeed){
+	DidUserSetFrames(objID, ANIM_IDLE, "Idle");
+	DidUserSetFrames(objID, ANIM_MOVE, "Move");
+	DidUserSetFrames(objID, ANIM_MOVEEND, "Move To Idle (MOVEEND)");
+	DidUserSetValidLoop(objID, ANIM_MOVE, "");
+	
+	let anim_count = 0;
+	let anim_type = 0;
+	let anim_rend = 0;
+	
+	let idle = Obj_GetValueD(objID, "anim_"~ANIM_IDLE~"_speed", 3);
+	let move = Obj_GetValueD(objID, "anim_"~ANIM_MOVE~"_speed", 4);
+	let attack = Obj_GetValueD(objID, "anim_"~ANIM_ATTACK~"_speed", 6);
+	let charge = Obj_GetValueD(objID, "anim_"~ANIM_CHARGE~"_speed", 6);
+	
+	let AnimAttack = false;
+	let AnimCharge = false;
+	
+	let x = 0;
+	let y = 0;
+	let fr = [];
+	
+	let m = 0;
+	
+	Obj_SetValue(objID, "anim_isattackplaying", false);
+	Obj_SetValue(objID, "anim_ischargeplaying", false);
+	
+	while(!Obj_IsDeleted(objID)&&!Obj_GetValueD(objID, "anim_forcestop", false)){
+		AnimAttack = Obj_GetValueD(objID, "anim_playattack", false);
+		AnimCharge = Obj_GetValueD(objID, "anim_playcharge", false);
+
+		if(!AnimCharge){
+			if(!AnimAttack){
+				if(ObjMove_GetSpeed(objID) == 0 && !Obj_GetValueD(objID, "SimulateMovement", false)){
+					Obj_SetValue(objID, "anim_ismoveplaying", false);
+					if(anim_type == 1){
+						anim_count = 0;
+						anim_type = 2;
+					}
+				}
+				if(ObjMove_GetSpeed(objID) > 0 || Obj_GetValueD(objID, "SimulateMovement", false)){
+					Obj_SetValue(objID, "anim_ismoveplaying", true);
+					if(anim_type == 0){
+						anim_count = 0;
+						anim_type = 1;
+					}
+				}
+				if(anim_type == 3){
+					anim_type=4;
+					anim_count = 0;
+				}
+			}else{
+				Obj_SetValue(objID, "anim_ismoveplaying", false);
+				Obj_SetValue(objID, "anim_isattackplaying", true);
+				Obj_SetValue(objID, "anim_ischargeplaying", false);
+				if(anim_type != 3){
+					anim_type=3;
+					anim_count = 0;
+				}
+			}
+
+			if(anim_type == 5){
+				anim_type=6;
+				anim_count = 0;
+			}
+		}else{
+			Obj_SetValue(objID, "anim_ismoveplaying", false);
+			Obj_SetValue(objID, "anim_isattackplaying", false);
+			Obj_SetValue(objID, "anim_ischargeplaying", true);
+			if(anim_type != 5){
+				anim_type=5;
+				anim_count = 0;
+			}
+		}
+		
+		if(CheckDirectionAL1(objID, "right")){ObjRender_SetAngleY(objID, Obj_GetValueD(objID, "anim_flip", false) ? 180 : 0);}
+		if(CheckDirectionAL1(objID, "left")){ObjRender_SetAngleY(objID, Obj_GetValueD(objID, "anim_flip", false) ? 0 : 180);}
+		
+			
+		if(anim_type==1){ //Moving
+			anim_count+=1/move;
+			if(floor(anim_count)>length(Obj_GetValue(objID, "anim_"~ANIM_MOVE))-1){anim_count = Obj_GetValue(objID, "anim_"~ANIM_MOVE~"_loop");}
+			anim_rend = floor(anim_count);
+			if(Obj_IsDeleted(objID)){break;}
+			fr = Obj_GetValue(objID, "anim_"~ANIM_MOVE)[anim_rend];
+		}
+		if(anim_type==2){ //Moving to idle
+			anim_count+=1/move;
+			if(floor(anim_count)>length(Obj_GetValue(objID, "anim_"~ANIM_MOVEEND))-1){anim_count = 0;anim_type=0;}
+			anim_rend = floor(anim_count);
+			if(Obj_IsDeleted(objID)){break;}
+			fr = Obj_GetValue(objID, "anim_"~ANIM_MOVEEND)[anim_rend];
+		}
+		if(anim_type==3){ //Attack
+			anim_count+=1/attack;
+			if(floor(anim_count)>length(Obj_GetValue(objID, "anim_"~ANIM_ATTACK))-1){anim_count = Obj_GetValue(objID, "anim_"~ANIM_ATTACK~"_loop");}
+			anim_rend = floor(anim_count);
+			if(Obj_IsDeleted(objID)){break;}
+			fr = Obj_GetValue(objID, "anim_"~ANIM_ATTACK)[anim_rend];
+		}
+		if(anim_type==4){ //Attack to idle
+			anim_count+=1/attack;
+			if(floor(anim_count)>length(Obj_GetValue(objID, "anim_"~ANIM_ATTACKEND))-1){anim_count = 0;anim_type=0;Obj_SetValue(objID, "anim_isattackplaying", false);}
+			anim_rend = floor(anim_count);
+			if(Obj_IsDeleted(objID)){break;}
+			fr = Obj_GetValue(objID, "anim_"~ANIM_ATTACKEND)[anim_rend];
+		}
+		if(anim_type==5){ //Charge
+			anim_count+=1/charge;
+			if(floor(anim_count)>length(Obj_GetValue(objID, "anim_"~ANIM_CHARGE))-1){anim_count = Obj_GetValue(objID, "anim_"~ANIM_CHARGE~"_loop");}
+			anim_rend = floor(anim_count);
+			if(Obj_IsDeleted(objID)){break;}
+			fr = Obj_GetValue(objID, "anim_"~ANIM_CHARGE)[anim_rend];
+		}
+		if(anim_type==6){ //Charge to idle
+			anim_count+=1/charge;
+			if(floor(anim_count)>length(Obj_GetValue(objID, "anim_"~ANIM_CHARGEEND))-1){anim_count = 0;anim_type=0;Obj_SetValue(objID, "anim_ischargeplaying", false);}
+			anim_rend = floor(anim_count);
+			if(Obj_IsDeleted(objID)){break;}
+			fr = Obj_GetValue(objID, "anim_"~ANIM_CHARGEEND)[anim_rend];
+		}
+		if(anim_type==0){ //Idle
+			anim_count+=1/idle;
+			if(floor(anim_count)>length(Obj_GetValue(objID, "anim_"~ANIM_IDLE))-1){anim_count = Obj_GetValueD(objID, "anim_"~ANIM_IDLE~"_loop", 0);}
+			anim_rend = floor(anim_count);
+			if(Obj_IsDeleted(objID)){break;}
+			fr = Obj_GetValue(objID, "anim_"~ANIM_IDLE)[anim_rend];
+		}
+		x = fr[2]-fr[0];
+		y = fr[3]-fr[1];
+		
+		m+=bobspeed;
+		ObjSprite2D_SetSourceRect(objID, fr[0], fr[1], fr[2], fr[3]);
+		ObjSprite2D_SetDestRect(objID, -x/2+fr[4]/2, -y/2+(bob*sin(m))+fr[5]/2, x/2+fr[4]/2, y/2+(bob*sin(m))+fr[5]/2);
+		Obj_SetValue(objID, "activeRect", [fr[0], fr[1], fr[2], fr[3]]);
+		yield;
+	}	
+}
+
+task ObjAnim_StartAnimationA2(objID, bob, bobspeed){
+	//DidUserSetFrames(objID, ANIM_IDLE, "Idle");
+	//DidUserSetFrames(objID, ANIM_MOVE_RIGHT, "Move (right)");
+	//DidUserSetFrames(objID, ANIM_MOVE_LEFT, "Move (left)");
+	//DidUserSetFrames(objID, ANIM_MOVEEND_RIGHT, "Move To Idle (MOVEEND_RIGHT)");
+	//DidUserSetFrames(objID, ANIM_MOVEEND_LEFT, "Move To Idle (MOVEEND_LEFT)");
+	//DidUserSetValidLoop(objID, ANIM_MOVE_RIGHT, " (right)");
+	//DidUserSetValidLoop(objID, ANIM_MOVE_LEFT, " (left)");
+	
+	let anim_count = 0;
+	let anim_type = 0;
+	let anim_rend = 0;
+	
+	let idle = Obj_GetValueD(objID, "anim_"~ANIM_IDLE~"_speed", 3);
+	let mover = Obj_GetValueD(objID, "anim_"~ANIM_MOVE_RIGHT~"_speed", 4);
+	let movel = Obj_GetValueD(objID, "anim_"~ANIM_MOVE_LEFT~"_speed", 4);
+	let attack = Obj_GetValueD(objID, "anim_"~ANIM_ATTACK~"_speed", 6);
+	let charge = Obj_GetValueD(objID, "anim_"~ANIM_CHARGE~"_speed", 6);
+	
+	let AnimAttack = false;
+	let AnimCharge = false;
+	
+	let x = 0;
+	let y = 0;
+	let fr = [];
+	
+	let m = 0;
+	let LastDirection;
+			
+	Obj_SetValue(objID, "anim_isattackplaying", false);
+	Obj_SetValue(objID, "anim_ischargeplaying", false);
+	
+	while(!Obj_IsDeleted(objID)&&!Obj_GetValueD(objID, "anim_forcestop", false)){
+		AnimAttack = Obj_GetValueD(objID, "anim_playattack", false);
+		AnimCharge = Obj_GetValueD(objID, "anim_playcharge", false);
+
+		if(!AnimCharge){
+			if(!AnimAttack){
+				if(ObjMove_GetSpeed(objID) == 0 && !Obj_GetValueD(objID, "SimulateMovement", false)){
+					Obj_SetValue(objID, "anim_ismoveplaying", false);
+					if(anim_type == 1){
+						anim_count = 0;
+						anim_type = 2;
+					}
+				}
+				if(ObjMove_GetSpeed(objID) > 0 || Obj_GetValueD(objID, "SimulateMovement", false)){
+					Obj_SetValue(objID, "anim_ismoveplaying", true);
+					if(anim_type == 0){
+						anim_count = 0;
+						anim_type = 1;
+					}
+				}
+				if(anim_type == 3){
+					anim_type=4;
+					anim_count = 0;
+				}
+			}else{
+				Obj_SetValue(objID, "anim_ismoveplaying", false);
+				Obj_SetValue(objID, "anim_isattackplaying", true);
+				if(anim_type != 3){
+					anim_type=3;
+					anim_count = 0;
+				}
+			}
+
+			if(anim_type == 5){
+				anim_type=6;
+				anim_count = 0;
+			}
+		}else{
+			Obj_SetValue(objID, "anim_ismoveplaying", false);
+			Obj_SetValue(objID, "anim_isattackplaying", false);
+			Obj_SetValue(objID, "anim_ischargeplaying", true);
+			if(anim_type != 5){
+				anim_type=5;
+				anim_count = 0;
+			}
+		}
+		
+		if(CheckDirectionAL1(objID, "right")){LastDirection = "Right";}
+		if(CheckDirectionAL1(objID, "left")){LastDirection = "Left";}
+		
+			
+		if(anim_type==1){ //Moving
+			if(LastDirection == "Right"){
+				anim_count+=1/mover;
+				if(floor(anim_count)>length(Obj_GetValue(objID, "anim_"~ANIM_MOVE_RIGHT))-1){anim_count = Obj_GetValue(objID, "anim_"~ANIM_MOVE_RIGHT~"_loop");}
+				anim_rend = floor(anim_count);
+				if(Obj_IsDeleted(objID)){break;}
+				fr = Obj_GetValue(objID, "anim_"~ANIM_MOVE_RIGHT)[anim_rend];
+			}
+			else if(LastDirection == "Left"){
+				anim_count+=1/movel;
+				if(floor(anim_count)>length(Obj_GetValue(objID, "anim_"~ANIM_MOVE_LEFT))-1){anim_count = Obj_GetValue(objID, "anim_"~ANIM_MOVE_LEFT~"_loop");}
+				anim_rend = floor(anim_count);
+				if(Obj_IsDeleted(objID)){break;}
+				fr = Obj_GetValue(objID, "anim_"~ANIM_MOVE_LEFT)[anim_rend];
+			}
+			else{RaiseError("An error occurred when animating. If you cannot resolve the issue, please send the affected script to gtbot so he may fix it.");}
+		}
+		if(anim_type==2){ //Moving to idle
+			if(LastDirection == "Right"){
+				anim_count+=1/mover;
+				if(floor(anim_count)>length(Obj_GetValue(objID, "anim_"~ANIM_MOVEEND_RIGHT))-1){anim_count = 0;anim_type=0;}
+				anim_rend = floor(anim_count);
+				if(Obj_IsDeleted(objID)){break;}
+				fr = Obj_GetValue(objID, "anim_"~ANIM_MOVEEND_RIGHT)[anim_rend];
+			}
+			else if(LastDirection == "Left"){
+				anim_count+=1/movel;
+				if(floor(anim_count)>length(Obj_GetValue(objID, "anim_"~ANIM_MOVEEND_LEFT))-1){anim_count = 0;anim_type=0;}
+				anim_rend = floor(anim_count);
+				if(Obj_IsDeleted(objID)){break;}
+				fr = Obj_GetValue(objID, "anim_"~ANIM_MOVEEND_LEFT)[anim_rend];
+			}
+			else{RaiseError("An error occurred when animating. If you cannot resolve the issue, please send the affected script to gtbot so he may fix it.");}
+		}
+		if(anim_type==3){ //Attack
+			anim_count+=1/attack;
+			if(floor(anim_count)>length(Obj_GetValue(objID, "anim_"~ANIM_ATTACK))-1){anim_count = Obj_GetValue(objID, "anim_"~ANIM_ATTACK~"_loop");}
+			anim_rend = floor(anim_count);
+			if(Obj_IsDeleted(objID)){break;}
+			fr = Obj_GetValue(objID, "anim_"~ANIM_ATTACK)[anim_rend];
+		}
+		if(anim_type==4){ //Attack to idle
+			anim_count+=1/attack;
+			if(floor(anim_count)>length(Obj_GetValue(objID, "anim_"~ANIM_ATTACKEND))-1){anim_count = 0;anim_type=0;Obj_SetValue(objID, "anim_isattackplaying", false);}
+			anim_rend = floor(anim_count);
+			if(Obj_IsDeleted(objID)){break;}
+			fr = Obj_GetValue(objID, "anim_"~ANIM_ATTACKEND)[anim_rend];
+		}
+		if(anim_type==5){ //Charge
+			anim_count+=1/charge;
+			if(floor(anim_count)>length(Obj_GetValue(objID, "anim_"~ANIM_CHARGE))-1){anim_count = Obj_GetValue(objID, "anim_"~ANIM_CHARGE~"_loop");}
+			anim_rend = floor(anim_count);
+			if(Obj_IsDeleted(objID)){break;}
+			fr = Obj_GetValue(objID, "anim_"~ANIM_CHARGE)[anim_rend];
+		}
+		if(anim_type==6){ //Charge to idle
+			anim_count+=1/charge;
+			if(floor(anim_count)>length(Obj_GetValue(objID, "anim_"~ANIM_CHARGEEND))-1){anim_count = 0;anim_type=0;Obj_SetValue(objID, "anim_ischargeplaying", false);}
+			anim_rend = floor(anim_count);
+			if(Obj_IsDeleted(objID)){break;}
+			fr = Obj_GetValue(objID, "anim_"~ANIM_CHARGEEND)[anim_rend];
+		}
+		if(anim_type==0){ //Idle
+			anim_count+=1/idle;
+			if(floor(anim_count)>length(Obj_GetValue(objID, "anim_"~ANIM_IDLE))-1){anim_count = Obj_GetValueD(objID, "anim_"~ANIM_IDLE~"_loop", 0);}
+			anim_rend = floor(anim_count);
+			if(Obj_IsDeleted(objID)){break;}
+			fr = Obj_GetValue(objID, "anim_"~ANIM_IDLE)[anim_rend];
+		}
+		x = fr[2]-fr[0];
+		y = fr[3]-fr[1];
+		
+		m+=bobspeed;
+		ObjSprite2D_SetSourceRect(objID, fr[0], fr[1], fr[2], fr[3]);
+		ObjSprite2D_SetDestRect(objID, -x/2+fr[4]/2, -y/2+(bob*sin(m))+fr[5]/2, x/2+fr[4]/2, y/2+(bob*sin(m))+fr[5]/2);
+		Obj_SetValue(objID, "activeRect", [fr[0], fr[1], fr[2], fr[3]]);
+		yield;
+	}	
+}
+
+
+
+function GetAnimationFrames(objID, type){
+	return Obj_GetValue(objID, "anim_"~type);
+}
+
+function DidUserSetFrames(objID, type, str){
+	if(!(length(Obj_GetValueD(objID, "anim_"~type, []))>0)){
+		RaiseError("Did not specify frames for "~str~" Animation");
+	}
+}
+
+function DidUserSetValidLoop(objID, type, str){
+	if(!Obj_IsValueExists(objID, "anim_"~type)){
+		RaiseError("Did not specify loop value for movement ("~str~") animation");
+	}
+	let loopvar = Obj_GetValue(objID, "anim_"~type~"_loop");
+	let loopnum = length(Obj_GetValue(objID, "anim_"~type))-1;
+	if(loopvar>loopnum){
+		RaiseError("Specified loop value of "~IntToString(loopvar)~" for movement"~str~" exceeds total number of frame indices: "~IntToString(loopnum));
+	}
+	else if(loopvar<0){
+		RaiseError("Specified loop value of "~IntToString(loopvar)~" for movement"~str~" is invalid: cannot be less than 0");
+	}
+}
+
+function CheckDirectionAL1(checkid, direc){
+	let direction = false;
+	let enemyang = absolute(ObjMove_GetAngle(checkid));
+	let enemyspd = absolute(ObjMove_GetSpeed(checkid));
+	
+	
+	while(enemyang>360){
+		enemyang = enemyang-360;
+	}
+
+	if(enemyspd > 0 || Obj_GetValueD(checkid, "SimulateMovement", false)){
+		if(direc=="right"){
+			if(enemyang > 270 || enemyang-270 < 90){
+				direction=true;
+			}
+		}
+		if(direc=="left"){
+			if(enemyang < 270 && enemyang > 90){
+				direction=true;
+			}
+		}
+	}
+	if(direc=="none"){
+		if(enemyspd == 0){
+			direction=true;
+		}
+	}
+	
+	return direction;
+}
+
+function Animate(anim_count){
+	return max(0, floor(anim_count));
+}

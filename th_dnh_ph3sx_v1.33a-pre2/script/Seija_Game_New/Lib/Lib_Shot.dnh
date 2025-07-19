@@ -1,0 +1,289 @@
+
+//-------------------------------------------------------------------------------
+
+function ShotA1( X, Y, Speed, Angle, ShotID, Delay ){
+
+	let Obj = CreateShotA1( X, Y, 0, Angle, ShotID, 0 );
+	//ObjShot_SetPositionRounding( Obj, true );
+	T_ShotDelay_Sprite( Obj, ShotID, Delay, Speed );
+	
+	
+	//ObjShot_SetAngleRounding( Obj, true );
+	//ObjShot_SetPositionRounding( Obj, true );
+	
+	return Obj;
+	
+}
+
+function ShotA2( X, Y, Speed, Angle, ShotID, Delay, Delay_ID ){
+
+	let Obj = CreateShotA1( X, Y, 0, Angle, Delay_ID, 0 );
+	//ObjShot_SetDelayGraphic( Obj, Delay_ID );
+	//ObjShot_SetDelayMode( Obj, DELAY_LERP, LERP_DECELERATE, LERP_LINEAR );
+	//ObjShot_SetDelayColor( Obj, 1 );	
+	//ObjShot_SetPositionRounding( Obj, true );
+	T_ShotDelay_Sprite( Obj, ShotID, Delay, Speed );
+	
+	
+	//ObjShot_SetAngleRounding( Obj, true );
+	//ObjShot_SetPositionRounding( Obj, true );
+	
+	return Obj;
+	
+}
+
+function ShotA1_KeepSpeed( X, Y, Radius, Speed, Angle, ShotID, Delay ){
+
+	let Obj = CreateShotA1( X, Y, Speed, Angle, ShotID, 0 );
+	T_ShotDelay_Sprite_KeepSpeed( Obj, ShotID, Delay );
+	
+	return Obj;
+	
+}
+
+function ShotR1( X, Y, Radius, Speed, Angle, ShotID, Delay, Delay_Graphic ){
+
+	//Spawns Bullets at a radius away from Boss.
+	X += Radius *cos( Angle );
+	Y += Radius *sin( Angle );	
+
+	let Obj = CreateShotA1( X, Y, 0, Angle, Delay_Graphic, 0 );
+	ObjRender_SetTextureFilter( Obj, FILTER_NONE, FILTER_NONE, FILTER_NONE );
+	
+	T_ShotDelay_Sprite( Obj, ShotID, Delay, Speed );
+	
+	return Obj;
+	
+}
+
+function ShotR1_KeepSpeed( X, Y, Radius, Speed, Angle, ShotID, Delay, Delay_Graphic ){
+
+	//Spawns Bullets at a radius away from Boss, Keeps the bullet Speed as it is spawning.
+	X += Radius *cos( Angle );
+	Y += Radius *sin( Angle );	
+
+	let Obj = CreateShotA1( X, Y, Speed, Angle, Delay_Graphic, 0 );
+	
+	T_ShotDelay_Sprite_KeepSpeed( Obj, ShotID, Delay );
+	
+	return Obj;
+	
+}
+
+function ShotR2( X, Y, Radius_X, Radius_Y, Speed, Angle, ShotID, Delay, Delay_Graphic ){
+
+	//Spawns Bullets at a radius away from Boss.
+	X += Radius_X *cos( Angle );
+	Y += Radius_Y *sin( Angle );	
+
+	let Obj = CreateShotA1( X, Y, 0, Angle, Delay_Graphic, 0 );
+	ObjRender_SetTextureFilter( Obj, FILTER_NONE, FILTER_NONE, FILTER_NONE );
+	
+	T_ShotDelay_Sprite( Obj, ShotID, Delay, Speed );
+	
+	return Obj;
+	
+}
+
+function Pattern_Shot_A1( X, Y, Speed, Radius, Angle_A, Angle_B, ShotID, Pattern_Type, Way, Stack, Delay, Delay_Graphic ){
+
+	//I love you... Obj pattern shots...
+
+	let Obj = ObjPatternShot_Create();
+	ObjPatternShot_SetGraphic( Obj, Delay_Graphic );
+	ObjPatternShot_SetBasePoint( Obj, X, Y );
+	ObjPatternShot_SetPatternType( Obj, Pattern_Type );	
+	ObjPatternShot_SetShotCount( Obj, Way, Stack );
+	ObjPatternShot_SetShootRadius( Obj, Radius );
+	ObjPatternShot_SetAngle( Obj, Angle_A, Angle_B  );
+	ObjPatternShot_SetSpeed( Obj, Speed, Speed );
+	ObjPatternShot_SetShotType( Obj, OBJ_SHOT );
+
+	let Shot_Obj = ObjPatternShot_FireReturn( Obj );
+	
+	for( int i = 0; i < Way * Stack; i++ ) {
+		
+		//Goes through the shots in the array and applies the spawn animation.
+		//ObjShot_SetPositionRounding( Shot_Obj[i], true );
+		//ObjShot_SetAngleRounding( Shot_Obj[i], true );
+		T_ShotDelay_Sprite( Shot_Obj[i], ShotID, Delay, Speed );
+	}
+	return Shot_Obj;
+	
+}
+
+function Pattern_Laser_A1( X, Y, Speed, Laser_Width, Laser_Length, Radius, Angle_A, Angle_B, ShotID, Pattern_Type, Way, Stack, Delay, Delay_Graphic ){
+
+	//I love you... Obj pattern shots...
+
+	let Obj = ObjPatternShot_Create();
+	ObjPatternShot_SetGraphic( Obj, Delay_Graphic );
+	ObjPatternShot_SetBasePoint( Obj, X, Y );
+	ObjPatternShot_SetPatternType( Obj, Pattern_Type );	
+	ObjPatternShot_SetShotCount( Obj, Way, Stack );
+	ObjPatternShot_SetShootRadius( Obj, Radius );
+	ObjPatternShot_SetAngle( Obj, Angle_A, Angle_B  );
+	ObjPatternShot_SetSpeed( Obj, Speed, Speed );
+	ObjPatternShot_SetShotType( Obj, OBJ_LOOSE_LASER );
+	ObjPatternShot_SetLaserParameter( Obj, Laser_Width, Laser_Length );
+
+	let Shot_Obj = ObjPatternShot_FireReturn( Obj );
+	
+	for( int i = 0; i < Way * Stack; i++ ) {
+		
+		//Goes through the shots in the array and applies the spawn animation.
+		//ObjShot_SetPositionRounding( Shot_Obj[i], true );
+		//ObjShot_SetAngleRounding( Shot_Obj[i], true );
+		T_ShotDelay_Sprite( Shot_Obj[i], ShotID, Delay, Speed );
+	}
+	return Shot_Obj;
+	
+}
+
+function Pattern_Shot_A1_KeepSpeed( X, Y, Speed, Radius, Angle_A, Angle_B, ShotID, Pattern_Type, Way, Stack, Delay, Delay_Graphic ){
+
+	//I love you... Obj pattern shots...
+
+	let Obj = ObjPatternShot_Create();
+	ObjPatternShot_SetGraphic( Obj, Delay_Graphic );
+	ObjPatternShot_SetBasePoint( Obj, X, Y );
+	ObjPatternShot_SetPatternType( Obj, Pattern_Type );	
+	ObjPatternShot_SetShotCount( Obj, Way, Stack );
+	ObjPatternShot_SetShootRadius( Obj, Radius );
+	ObjPatternShot_SetAngle( Obj, Angle_A, Angle_B  );
+	ObjPatternShot_SetSpeed( Obj, Speed, Speed );
+	ObjPatternShot_SetShotType( Obj, OBJ_SHOT );
+
+	let Shot_Obj = ObjPatternShot_FireReturn( Obj );
+	
+	for( int i = 0; i < Way * Stack; i++ ) {
+		
+		//Goes through the shots in the array and applies the spawn animation.
+		//ObjShot_SetPositionRounding( Shot_Obj[i], true );
+		//ObjShot_SetAngleRounding( Shot_Obj[i], true );
+		T_ShotDelay_Sprite_KeepSpeed( Shot_Obj[i], ShotID, Delay );
+	}
+	return Shot_Obj;
+	
+}
+
+function Pattern_Shot_A2( X, Y, Speed_A, Speed_B, Radius, Angle_A, Angle_B, ShotID, Pattern_Type, Way, Stack, Delay, Delay_Graphic ){
+
+	//I love you... Obj pattern shots...
+
+	let Obj = ObjPatternShot_Create();
+	ObjPatternShot_SetGraphic( Obj, Delay_Graphic );
+	ObjPatternShot_SetBasePoint( Obj, X, Y );
+	ObjPatternShot_SetPatternType( Obj, Pattern_Type );	
+	ObjPatternShot_SetShotCount( Obj, Way, Stack );
+	ObjPatternShot_SetShootRadius( Obj, Radius );
+	ObjPatternShot_SetAngle( Obj, Angle_A, Angle_B  );
+	ObjPatternShot_SetSpeed( Obj, Speed_A, Speed_B );
+	ObjPatternShot_SetShotType( Obj, OBJ_SHOT );
+
+	let Shot_Obj = ObjPatternShot_FireReturn( Obj );
+	
+	for( int i = 0; i < Way * Stack; i++ ) {
+		
+		//Goes through the shots in the array and applies the spawn animation.
+		//ObjShot_SetPositionRounding( Shot_Obj[i], true );
+		//ObjShot_SetAngleRounding( Shot_Obj[i], true );
+		T_ShotDelay_Sprite_KeepSpeed( Shot_Obj[i], ShotID, Delay );
+	}
+	return Shot_Obj;
+	
+}
+
+//-------------------------------------------------------------------------------
+
+task T_ShotDelay_Sprite( Obj, Color, Delay, Speed ){
+	
+	//Custom delay Cloud graphic that can be specified per shot. 
+	//Delay cloud graphics themselves are shots defined in ShotConst_Alt.dnh - Seija
+	//ObjShot_SetPositionRounding( Obj, true );
+	ObjShot_SetIntersectionEnable( Obj, false );
+	ObjRender_SetAlpha( Obj, 0 );
+	
+	ascent( i in 0..Delay ){
+		
+		ObjRender_SetAlpha( Obj, 255 * ( i / Delay ) );
+		ObjRender_SetScaleXYZ( Obj, ( 2 - ( i / Delay ) ), ( 2 - ( i / Delay )), 1 );
+		
+		yield;
+	}
+	
+    ObjRender_SetAlpha( Obj,255 );
+	ObjRender_SetScaleXYZ( Obj, 1, 1, 0 );
+	ObjShot_SetIntersectionEnable( Obj, true );
+	ObjShot_SetGraphic( Obj, Color );
+	ObjMove_SetSpeed( Obj, Speed );
+	
+}
+
+task T_ShotDelay_Sprite_KeepSpeed( Obj, Color, Delay ){
+	
+	//Custom delay Cloud graphic that can be specified per shot. 
+	//Delay cloud graphics themselves are shots defined in Lib/ShotConst.dnh
+	//Same as T_ShotDelay_Sprite, but usd in _KeepSpeed functions to mantain the bullet speed as it is doing its spawning animation.
+	//Is there a better way of doing this? - Yes, am i going to do it? - Prob no Lol. - Seija
+	ObjShot_SetIntersectionEnable( Obj, false );
+	ObjRender_SetAlpha( Obj, 0 );
+	
+	ascent( i in 0..Delay ){
+		
+		ObjRender_SetAlpha( Obj, 255 * ( i / Delay ) );
+		ObjRender_SetScaleXYZ( Obj, 2 - ( i / Delay ), 2 - ( i / Delay ), 1 );
+		
+		yield;
+	}
+	
+    ObjRender_SetAlpha( Obj,255 );
+	ObjRender_SetScaleXYZ( Obj, 1, 1, 0 );
+	ObjShot_SetIntersectionEnable( Obj, true );
+	ObjShot_SetGraphic( Obj, Color );
+	//ObjMove_SetSpeed( Obj, Speed );
+	
+}
+
+//-------------------------------------------------------------------------------
+
+function Laser_A1( X, Y, Angle, Length, Width, Time, Color, Delay ){
+
+	let Laser_Obj = CreateStraightLaserA1( X, Y, Angle, Length, Width, Time, Color, Delay );
+	//let Laser = CreateStraightLaserA1( X, Y, Angle, length, Width, Time, Color, Delay );
+	let Laser_Dummy = CreateStraightLaserA1( X, Y, Angle, Length, Width * 2, 5, Color, Delay );
+	
+	T_LaserReady( Laser_Obj, Length, Delay/3 );
+	T_LaserReady( Laser_Dummy, Length, Delay/3 );
+	T_LaserDespawn( Laser_Obj, Width, Time, Delay );
+	ObjStLaser_SetSource( Laser_Dummy, false );
+	return Laser_Obj;
+	
+}
+
+task T_LaserReady( Laser, Length, Delay ){
+	
+	//wait( Time + Delay -1 );
+	if( Delay > 0 ){
+		ascent( a in 0..Delay ){
+			
+			ObjLaser_SetLength( Laser, Length*a/( Delay ) );
+			yield;
+		
+		}
+	}	
+	
+	ObjLaser_SetLength( Laser, Length );
+	
+}	
+
+task T_LaserDespawn( Laser, Width, Time, Delay ){
+	
+	wait( Time + Delay -1 );
+	descent( i in 0..Width ){
+		
+		ObjLaser_SetRenderWidth( Laser, i );
+		yield;
+	}	
+	
+}	

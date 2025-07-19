@@ -1,0 +1,433 @@
+//--------------------------------------------------------------------------------------------------------------------------------------------
+
+task T_Boss_Magiccircle( Obj, Texture ){
+
+	//let Boss = GetEnemyBossObjectID[ 0 ];
+	//let Circle = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Effect/MagicCircle.png";
+	
+	let Effect_Obj = Render2D_Texture_A1( Texture, [ 0, 0, 256, 256 ], ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0, 0.30 );
+	ObjRender_SetBlendType( Effect_Obj, BLEND_ADD_ARGB  );
+	
+	float X_R = 0;
+	float Y_R = 0;
+	float Scale_XY = 0;
+
+	T_FadeIn_A1( Effect_Obj, 40, 130 );
+	
+	ascent( a in 0..60 ){
+		
+		Scale_XY = Interpolate_Decelerate( 0.1, 1, a/60 );
+		
+		ObjRender_SetPosition( Effect_Obj, ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0 );
+		ObjRender_SetScaleXYZ( Effect_Obj, Scale_XY, Scale_XY, 0 );
+		ObjRender_SetAngleXYZ( Effect_Obj, cos( X_R )*60, cos( Y_R )*60, ObjRender_GetAngleZ( Effect_Obj ) + 4 );
+		
+		
+		X_R += 0.8;
+		Y_R -= 0.8;
+		yield;
+	}	
+
+	while( GetEnemyBossSceneObjectID != ID_INVALID  ){
+
+		//Boss = GetEnemyBossObjectID[ 0 ];// This dosent work anymore for keeping the circle in between scripts and i dont know why.
+		// So im doing some common data horribleness to accomodate.
+
+		ObjSprite2D_SetDestCenter( Effect_Obj );
+		
+		//ObjRender_SetPosition( Effect_Obj, ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0 );
+		ObjRender_SetPosition( Effect_Obj, GetCommonData( "Effect_X", 0 ), GetCommonData( "Effect_Y", 0 ), 0 );
+		ObjRender_SetAngleXYZ( Effect_Obj, cos( X_R )*60, cos( Y_R )*60, ObjRender_GetAngleZ( Effect_Obj ) + 1 );
+		
+		X_R += 0.2;
+		Y_R -= 0.2;
+		
+		yield;
+		
+	}
+	
+	T_FadeOut_Delete( Effect_Obj, 30, 130 );
+	
+	ascent( a in 0..30 ){
+		
+		Scale_XY = Interpolate_Decelerate( 1, 0.1, a/60 );
+		
+		ObjRender_SetScaleXYZ( Effect_Obj, Scale_XY, Scale_XY, 0 );
+
+		yield;
+	}		
+	
+	Obj_Delete( Effect_Obj );
+}
+
+//------------------------------------------------------------------------------
+
+task T_Boss_Dragon_Aura( Obj ){
+
+	//let Boss = GetEnemyBossObjectID[ 0 ];
+	let Texture = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Effect/Dragon_Aura.png";
+	let Texture_B = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Effect/Dragon_Aura_Red.png";
+	
+	let Effect_Obj = Render2D_Texture_A1( Texture, [ 0, 0, 512, 512 ], ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0.8, 0.29 );
+	let Effect_Obj_B = Render2D_Texture_A1( Texture_B, [ 0, 0, 512, 512 ], GetCommonData( "Effect_X", 0 ), GetCommonData( "Effect_Y", 0 ) -32, 0.85, 0.29 );
+	ObjRender_SetBlendType( Effect_Obj, BLEND_ADD_ARGB  );
+	
+	//ObjRender_SetColor( Effect_Obj_B, 255, 0, 0 );
+	ObjRender_SetBlendType( Effect_Obj_B, BLEND_ADD_ARGB  );
+	
+	float X_R = 0;
+	float Y_R = 0;
+	float Scale_XY = 0;
+
+	T_FadeIn_A1( Effect_Obj, 40, 255 );
+
+	async{
+		while( GetEnemyBossSceneObjectID != ID_INVALID  ){
+
+			T_FadeOut_A1( Effect_Obj_B, 60, 255 );
+			//T_GrowToScale_A1( Effect_Obj_B, 100, 0.9 );
+		
+			wait( 80 );
+			
+			T_FadeIn_A1( Effect_Obj_B, 60, 255 );
+			//T_GrowToScale_A1( Effect_Obj_B, 100, 0.9 );
+			
+			wait( 80 );
+
+		}
+	}	
+
+	while( GetEnemyBossSceneObjectID != ID_INVALID  ){
+
+		//Boss = GetEnemyBossObjectID[ 0 ];// This dosent work anymore for keeping the circle in between scripts and i dont know why.
+		// So im doing some common data horribleness to accomodate.
+
+		ObjSprite2D_SetDestCenter( Effect_Obj );
+		
+		//ObjRender_SetPosition( Effect_Obj, ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0 );
+		ObjRender_SetPosition( Effect_Obj, GetCommonData( "Effect_X", 0 ), GetCommonData( "Effect_Y", 0 ) -32, 0 );
+		ObjRender_SetPosition( Effect_Obj_B, GetCommonData( "Effect_X", 0 ), GetCommonData( "Effect_Y", 0 ) -32, 0 );		
+		ObjRender_SetAngleZ( Effect_Obj_B, 0 + 5 * sin( X_R ) );
+		ObjRender_SetAngleZ( Effect_Obj, 0 + 5 * sin( X_R ) );
+		
+		X_R += 1;
+		Y_R -= 0.2;
+		
+		yield;
+		
+	}
+	
+	
+	T_FadeOut_Delete( Effect_Obj, 30, 130 );
+	T_FadeOut_Delete( Effect_Obj_B, 30, 130 );
+	
+	ascent( a in 0..30 ){
+		
+		Scale_XY = Interpolate_Decelerate( 0.6, 0.1, a/60 );
+		
+		ObjRender_SetScaleXYZ( Effect_Obj, Scale_XY, Scale_XY, 0 );
+		ObjRender_SetScaleXYZ( Effect_Obj_B, Scale_XY, Scale_XY, 0 );
+
+		yield;
+	}		
+	
+	Obj_Delete( Effect_Obj );
+	Obj_Delete( Effect_Obj_B );
+}
+
+
+
+//------------------------------------------------------------------------------
+
+task T_Boss_Flame_Wings( Obj ){
+
+	//let Boss = GetEnemyBossObjectID[ 0 ];
+	let Texture = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Effect/Flame_Aura.png";
+	let Texture_Glow = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Effect/Flame_Aura_Glow.png";
+	let Texture_B = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Effect/Flame_Aura_Mirror.png";
+	let Texture_B_Glow = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Effect/Flame_Aura_Glow_Mirror.png";
+	
+	let Effect_Obj = Render2D_Texture_A1( Texture, [ 0, 0, 512, 512 ], ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0.4, 0.29 );
+	let Effect_Obj_Glow = Render2D_Texture_A1( Texture_Glow, [ 0, 0, 512, 512 ], ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0.4, 0.29 );
+	
+	let Effect_Obj_B = Render2D_Texture_A1( Texture_B, [ 0, 0, 512, 512 ], GetCommonData( "Effect_X", 0 ), GetCommonData( "Effect_Y", 0 ) -32, 0.4, 0.29 );
+	let Effect_Obj_B_Glow = Render2D_Texture_A1( Texture_B_Glow, [ 0, 0, 512, 512 ], ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0.4, 0.29 );
+	
+	ObjRender_SetBlendType( Effect_Obj, BLEND_ADD_ARGB  );
+	ObjRender_SetBlendType( Effect_Obj_Glow, BLEND_ADD_ARGB  );
+	
+	ObjRender_SetBlendType( Effect_Obj_B, BLEND_ADD_ARGB  );
+	ObjRender_SetBlendType( Effect_Obj_B_Glow, BLEND_ADD_ARGB  );
+	
+	float X_R = 0;
+	float Y_R = 0;
+	float Scale_XY = 0;
+
+	T_FadeIn_A1( Effect_Obj, 40, 255 );
+	T_FadeIn_A1( Effect_Obj_B, 40, 255 );
+
+	
+	async{
+		while( GetEnemyBossSceneObjectID != ID_INVALID  ){
+
+			T_FadeOut_A1( Effect_Obj_Glow, 30, 255 );
+			T_FadeOut_A1( Effect_Obj_B_Glow, 30, 255 );
+			//T_GrowToScale_A1( Effect_Obj_B, 100, 0.9 );
+		
+			wait( 40 );
+			
+			T_FadeIn_A1( Effect_Obj_Glow, 30, 255 );
+			T_FadeIn_A1( Effect_Obj_B_Glow, 30, 255 );
+			//T_GrowToScale_A1( Effect_Obj_B, 100, 0.9 );
+			
+			wait( 40 );
+
+		}
+	}	
+
+	while( GetEnemyBossSceneObjectID != ID_INVALID  ){
+
+		//Boss = GetEnemyBossObjectID[ 0 ];// This dosent work anymore for keeping the circle in between scripts and i dont know why.
+		// So im doing some common data horribleness to accomodate.
+
+		ObjSprite2D_SetDestCenter( Effect_Obj );
+		
+		//ObjRender_SetPosition( Effect_Obj, ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0 );
+		ObjRender_SetPosition( Effect_Obj, GetCommonData( "Effect_X", 0 ) - 80, GetCommonData( "Effect_Y", 0 ) -32 + 8 * sin( X_R ), 0 );
+		ObjRender_SetPosition( Effect_Obj_Glow, GetCommonData( "Effect_X", 0 ) - 80, GetCommonData( "Effect_Y", 0 ) -32 + 8 * sin( X_R ), 0 );
+		
+		ObjRender_SetPosition( Effect_Obj_B, GetCommonData( "Effect_X", 0 ) + 80, GetCommonData( "Effect_Y", 0 ) -32 + 8 * sin( X_R ), 0 );	
+		ObjRender_SetPosition( Effect_Obj_B_Glow, GetCommonData( "Effect_X", 0 ) + 80, GetCommonData( "Effect_Y", 0 ) -32 + 8 * sin( X_R ), 0 );		
+		//ObjRender_SetAngleZ( Effect_Obj, 0 + 8 * sin( X_R ) );
+		ObjRender_SetAngleY( Effect_Obj, 0 + 32 * sin( X_R ) );
+		ObjRender_SetAngleY( Effect_Obj_Glow, 0 + 32 * sin( X_R ) );
+		
+		//ObjRender_SetAngleX( Effect_Obj_B, 180 );
+		//ObjRender_SetAngleZ( Effect_Obj_B, 0 + 8 * sin( X_R ) );
+		ObjRender_SetAngleY( Effect_Obj_B, 0 + 32 * sin( X_R ) );		
+		ObjRender_SetAngleY( Effect_Obj_B_Glow, 0 + 32 * sin( X_R ) );
+		
+		X_R += 2;
+		Y_R -= 0.2;
+		
+		yield;
+		
+	}
+	
+	
+	T_FadeOut_Delete( Effect_Obj, 30, 130 );
+	T_FadeOut_Delete( Effect_Obj_B, 30, 130 );
+	//T_FadeOut_Delete( Effect_Obj_B, 30, 130 );
+	
+	ascent( a in 0..30 ){
+		
+		Scale_XY = Interpolate_Decelerate( 0.6, 0.1, a/60 );
+		
+		ObjRender_SetScaleXYZ( Effect_Obj, Scale_XY, Scale_XY, 0 );
+		//ObjRender_SetScaleXYZ( Effect_Obj_B, Scale_XY, Scale_XY, 0 );
+
+		yield;
+	}		
+	
+	Obj_Delete( Effect_Obj );
+	//Obj_Delete( Effect_Obj_B );
+}
+
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+
+
+task T_FlameAura( Obj, Color, Scale ){	
+
+	float Angle = prand( 0, 360 );
+	
+	while( GetEnemyBossSceneObjectID != ID_INVALID  ){
+		
+		T_FlameTail_A( Obj, Color );
+		T_FlameTail_B( Obj, Color, Angle  + prand( -90, 90 ));
+		T_FlameTail_C( Obj, Angle  + prand( -90, 90 ) );
+
+		Angle += prand( 55, 90 );
+		wait( 5 );
+	}
+}
+
+task T_FlameTail_A( Obj, Color ){
+	
+	//ZUN ASSET, MUST BE CHANGED 
+	let Texture = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Effect/Aura.png";
+	
+	let Effect_Obj = Render2D_Texture_A1( Texture, [ 0, 0, 48, 64 ], GetCommonData( "Effect_X", 0 ), GetCommonData( "Effect_Y", 0 ), 1, 0.29 );
+	ObjRender_SetBlendType( Effect_Obj, BLEND_ADD_ARGB  );	
+	
+	float Scale = 1;
+	float Alpha = 255;
+	
+	ObjRender_SetColor( Effect_Obj, Color[0], Color[1], Color[2] );
+	ObjRender_SetAngleXYZ( Effect_Obj, 0, 0, prand( -16, 16 ) );
+	
+	loop( 30 ){
+		
+		if( !Obj_IsDeleted( Obj ) ){ ObjRender_SetPosition( Effect_Obj, GetCommonData( "Effect_X", 0 ), GetCommonData( "Effect_Y", 0 ), 0 ); }
+		ObjRender_SetScaleXYZ( Effect_Obj, Scale/2, Scale, 1 );
+		ObjRender_SetAlpha( Effect_Obj, Alpha );
+		Alpha -= 255/30;
+		Scale += 3/30;
+		
+		yield;
+		
+	}	
+	
+	Obj_Delete( Effect_Obj );
+	
+}	
+
+task T_FlameTail_B( Obj, Color, Angle ){
+	
+	//ZUN ASSET, MUST BE CHANGED 
+	let Texture = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Effect/Aura.png";
+	
+	let Effect_Obj = Render2D_Texture_A1( Texture, [ 48, 0, 96, 64 ], GetCommonData( "Effect_X", 0 ), GetCommonData( "Effect_Y", 0 ), 1, 0.29 );
+	ObjRender_SetBlendType( Effect_Obj, BLEND_ADD_ARGB  );	
+	
+	float Scale = 2.5;
+	float Alpha = 0;
+	
+	ObjRender_SetColor( Effect_Obj, Color[0], Color[1], Color[2] );
+	ObjRender_SetAngleXYZ( Effect_Obj, 0, 0, Angle );
+	
+	loop( 50 ){
+		
+		if( !Obj_IsDeleted( Obj ) ){ ObjRender_SetPosition( Effect_Obj, GetCommonData( "Effect_X", 0 ), GetCommonData( "Effect_Y", 0 ), 0 ); }
+		ObjRender_SetScaleXYZ( Effect_Obj, Scale, Scale, 1 );
+		ObjRender_SetAlpha( Effect_Obj, Alpha );
+		Alpha += 255/50;
+		Scale -= 1.4/50;
+		
+		yield;
+		
+	}	
+	
+	Obj_Delete( Effect_Obj );
+	
+}
+
+
+task T_FlameTail_C( Obj, Angle ){
+	
+	//ZUN ASSET, MUST BE CHANGED 
+	let Texture = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Effect/Aura.png";
+	
+	let Effect_Obj = Render2D_Texture_A1( Texture, [ 48, 0, 96, 64 ], GetCommonData( "Effect_X", 0 ), GetCommonData( "Effect_Y", 0 ), 1, 0.29 );
+	ObjRender_SetBlendType( Effect_Obj, BLEND_ADD_ARGB  );	
+	
+	float Scale = 0.5;
+	float Alpha = 255;
+	
+	ObjRender_SetColor( Effect_Obj, 155, 155, 155 );
+	ObjRender_SetAngleXYZ( Effect_Obj, 0, 0, Angle );
+	
+	loop( 20 ){
+		
+		if( !Obj_IsDeleted( Obj ) ){ ObjRender_SetPosition( Effect_Obj, GetCommonData( "Effect_X", 0 ), GetCommonData( "Effect_Y", 0 ), 0 ); }
+		ObjRender_SetScaleXYZ( Effect_Obj, Scale, Scale, 1 );
+		ObjRender_SetAlpha( Effect_Obj, Alpha );
+		Alpha -= 255/20;
+		Scale += 1.5/20;
+		
+		yield;
+		
+	}	
+	
+	Obj_Delete( Effect_Obj );
+	
+}
+
+task T_WaveShader( Target ){
+	
+	let Frame = 0;
+	let R_Tex = GetReservedRenderTargetName( 0 );
+	
+	let Out_Fluct = 16; 
+	let Eff_Radius = 0; 
+	let Base_Eff_Radius = 132; 	
+	
+	let P_EffMin = 20; 
+	let P_EffMax = 26; 
+	
+	let FrameWidth = GetStgFrameWidth();
+	let FrameHight = GetStgFrameHeight();
+	let FrameLeft = GetStgFrameLeft();
+	let FrameRight = FrameLeft + FrameWidth;
+	let FrameTop = GetStgFrameTop();
+	let FrameBottom = FrameTop + FrameHight;
+
+	let AuraPath = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Effect/Distortion.png";
+	let AuraWave = Render2D_Texture_A1( AuraPath, [ 0, 0, 384, 384 ], ObjMove_GetX( Target ), ObjMove_GetY( Target ), 1, 0.29 );
+
+	let ObjWave = ObjPrim_Create( OBJ_SPRITE_2D );
+	Obj_SetRenderPriorityI( ObjWave, 20 );
+	ObjPrim_SetTexture( ObjWave, R_Tex );
+	ObjSprite2D_SetSourceRect( ObjWave, FrameLeft, FrameTop, FrameRight, FrameBottom );
+	ObjSprite2D_SetDestRect( ObjWave, FrameLeft, FrameTop, FrameRight, FrameBottom );
+	Obj_SetRenderPriorityI( ObjWave, P_EffMax + 1 );
+	ObjRender_SetPermitCamera( ObjWave, false );
+	
+	//ObjRender_SetColor( AuraWave, Color[0], Color[1], Color[2] );
+	ObjRender_SetAlpha( AuraWave, 100 );
+	ObjRender_SetBlendType( AuraWave, BLEND_MULTIPLY );
+	
+	let Path = GetCurrentScriptDirectory() ~ "./Shader/S_Boss_Distortion.dnh";
+	ObjShader_SetShaderF( ObjWave, Path );
+	ObjShader_SetTechnique( ObjWave, "TecWave" );	
+
+	//let objEnemy = GetEnemyBossObjectID[0];
+	
+	while( GetEnemyBossSceneObjectID != ID_INVALID  ){
+		
+		ObjRender_SetPosition( AuraWave, GetCommonData( "Effect_X", 0 ), GetCommonData( "Effect_Y", 0 ), 0);
+		Eff_Radius = Base_Eff_Radius + Out_Fluct * sin( Frame * 8 );
+
+		let X = GetCommonData( "Effect_X", 0 );
+		let Y = GetCommonData( "Effect_Y", 0 );
+
+		//---------------------------
+		
+		RenderToTextureA1( R_Tex, P_EffMin, P_EffMax, true );
+
+		//---------------------------
+		
+		ObjShader_SetFloat( ObjWave, "frame_", Frame );
+		ObjShader_SetFloat( ObjWave, "Xpos_", X + FrameLeft );
+		ObjShader_SetFloat( ObjWave, "Ypos_", Y + FrameTop );
+		ObjShader_SetFloat( ObjWave, "waveRadius_", Eff_Radius );
+
+		Frame++;
+		yield;
+		
+	}
+	
+	Obj_Delete( ObjWave );
+	
+	float Scale_Effect = 0;
+	//float Alpha_Effect = 0;
+	
+	descent( i in 0..30 ){
+		
+		Scale_Effect = (i / 30) * 1.2;
+		//Alpha_Effect = (i / 30) * 155;
+		
+		//ObjRender_SetAlpha( AuraWave, Alpha_Effect );
+		ObjRender_SetScaleXYZ( AuraWave, Scale_Effect, Scale_Effect, 1 );
+		yield;
+	}
+
+	Obj_Delete( AuraWave );
+	
+	ClearInvalidRenderPriority();
+}	
+
+
+
+//--------------------------------------------------------------------------------------------------------------------------------------------

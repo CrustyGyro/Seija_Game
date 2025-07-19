@@ -1,0 +1,266 @@
+#TouhouDanmakufu[Single]
+#Title["Hinoya_Spell_02"]
+#Background["./Stage/STG_01/STG_BG.dnh"];
+#Player[ "./Player/PL_Reimu.dnh" ]
+#System["./System/System_Main_Hud.dnh"]
+
+//--------------------------------------------------Variables------------------------------------------------------
+
+let bossObj;
+let objScene = GetEnemyBossSceneObjectID();
+let bossX = 0;
+let bossY = 0;
+
+//SetIntersectionVisualization( true );
+
+let BossTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Test_Boss.png";
+let Prism_Tex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Prism.png";
+let CutinTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Cutin/Hinoya.png";
+
+//---------------------------------------------------Include-------------------------------------------------------
+
+	#include "./lib/Index_Boss.dnh"
+	#include "./lib/Lib_Spell.dnh"
+	#include "./lib/Lib_SpellCutin.dnh"
+
+//----------------------------------------------------Start--------------------------------------------------------
+
+@Loading{
+	
+	LoadTexture( CutinTex );
+	
+}	
+
+@Initialize {
+
+	bossObj = ObjEnemy_Create(OBJ_ENEMY_BOSS);	
+	
+	ObjEnemy_Regist( bossObj );	
+
+	T_Lifebar( bossObj );
+	ObjEnemy_SetDamageRate( bossObj, 0, 0 );	
+	//ObjPrim_SetTexture( bossObj, BossTex );
+	Render_Boss_Chimi( bossObj );
+	//Render_WheelGhost_A1( bossObj, ENEMY_RED );
+	//ObjSprite2D_SetSourceRect( bossObj, 0, 0, 128, 128 );
+	//ObjSprite2D_SetDestCenter( bossObj );
+	//ObjRender_SetScaleX( bossObj, 2 );
+	//ObjRender_SetScaleY( bossObj, 2);	
+	//T_Render_AtInt( bossObj, Resolution );
+	
+	ObjRender_SetTextureFilter( bossObj, FILTER_POINT, FILTER_POINT, FILTER_POINT );
+	
+	ObjMove_SetDestAtWeight( bossObj, GetStgFrameWidth/2, Get_CenterY/2 + 16, 15, 8 );
+	
+	
+	SetPlayerLife( 8 );
+	T_Main;
+	T_End;
+	
+}
+
+@Event { 
+
+	alternative(GetEventType()) 
+	case( EV_REQUEST_LIFE ) { 
+		SetScriptResult( 3200 ); // 2500
+	}
+	case( EV_REQUEST_TIMER ) { 
+		SetScriptResult( 50 );
+	}	
+	case( EV_REQUEST_SPELL_SCORE ){
+       SetScriptResult( 5400000 );
+    }	
+
+} 
+
+@MainLoop {
+
+	bossX = ObjMove_GetX( bossObj );
+	bossY = ObjMove_GetY( bossObj );
+	
+	SetCommonData( "Effect_X", bossX );
+	SetCommonData( "Effect_Y", bossY );
+
+	ObjEnemy_SetIntersectionCircleToShot( bossObj, bossX, bossY, 16 );
+	ObjEnemy_SetIntersectionCircleToPlayer( bossObj, bossX, bossY, 8 );
+	
+	yield;
+}
+
+@Finalize {
+} 
+
+//----------------------------------------------------Patterns--------------------------------------------------------
+
+task T_Main {
+
+	
+	float ShotAngle = 0;
+	float X = 0;
+	float Y = 0;
+
+	NotifyEventAll( EV_BOSS_EFFECT, bossObj, CC_RED );
+	
+	yield;
+
+	wait( 60 );	
+
+
+	T_PlaySE( SE_CHARGE_00, 30 );
+	T_Charge_A1( bossObj, 20, "Petal", CC_YELLOW );	
+		
+	wait( 60 );	
+	
+	ObjEnemyBossScene_StartSpell( objScene );
+	
+	T_CallSpell_A1( "Waterfall \"Niagra Of Light\"", 0, "Normal", objScene );
+	T_Call_Spell_Cutin( CutinTex, [ 0, 0, 969, 1084 ], 0.4, CC_ORANGE );
+	
+	yield;
+	T_SpellBG_Hinoya();
+	
+	wait( 100 );	
+	
+	ObjEnemy_SetDamageRate( bossObj, 1, 1 );
+		
+	T_Boss_Shot_A( 90, 30 );	
+	
+	while( Boss_Is_Alive( bossObj )){
+		
+		
+		T_Boss_Shot_A( 90, 30 );
+		
+		wait( 160 );
+				
+		
+	}	
+	
+	/*
+	while(Boss_Is_Alive( bossObj )){
+		
+		//T_PlaySE( SE_CHARGE_00, 30 );
+		//T_Charge_A1( bossObj, 20, "Petal", CC_YELLOW );	
+		
+		T_Boss_Shot_A( bossX + rand( -256, 256 ), bossY + 128 , 60, 64 );
+		
+		wait( 100 );
+		
+	}		
+	*/
+}	
+
+task T_Boss_Shot_A( Angle, Delay ){
+		
+	let Firework_A = ShotA1( GetPlayerX(), Get_MaxY, 4, -90, SHOT_ORB_YELLOW, 80 );
+	
+	ObjShot_SetSpellResist( Firework_A, true );
+	ObjMove_AddPatternC2( Firework_A, 145, NO_CHANGE, NO_CHANGE, NO_CHANGE, 0.08, 0, 0, 0, 0  ); 
+	//ObjMove_AddPatternC2( Firework_A, 190, NO_CHANGE, NO_CHANGE, NO_CHANGE, 0.1, 0, 1, 0, 0  ); 
+	
+	T_Telegraph();
+	//T_Manage_Fireworks_A( Firework_A );
+	//T_Manage_Fireworks_B( Firework_A );
+	
+	wait( 80 );
+	
+	T_PlaySE( SE_FIREWORKS_01, 35 );		
+	
+	
+	//-----------------------------------------------------------
+	
+	task T_Telegraph(){
+		
+		ascent( i in 0..8 ){
+			let Warning_Laser_A = CreateStraightLaserA1( ObjMove_GetX( Firework_A ) + 4*i, Get_MaxY, -90, 480, 16, 10, SHOT_LASER_RED, 10 );
+			ObjStLaser_SetPermitExpand( Warning_Laser_A, false  );
+			ObjStLaser_SetSource( Warning_Laser_A, false );	
+			
+			T_FadeIn_A1( Warning_Laser_A, 8, 255 );
+			
+			let Warning_Laser_B = CreateStraightLaserA1( ObjMove_GetX( Firework_A ) - 4*i, Get_MaxY, -90, 480, 16, 10, SHOT_LASER_RED, 10 );
+			ObjStLaser_SetPermitExpand( Warning_Laser_B, false  );
+			ObjStLaser_SetSource( Warning_Laser_B, false );	
+
+			T_FadeIn_A1( Warning_Laser_B, 8, 255 );
+			
+			wait( 3 );
+		}
+		
+	}	
+	
+	//-----------------------------------------------------------	
+	
+}	
+
+
+task T_Boss_Shot_B( X, Y, Time, Delay ){
+		
+	//T_PlaySE( SE_CHIME_02, 30 );	
+	
+	yield;
+	
+}	
+
+
+
+//-----------------------------------------------------Death---------------------------------------------------------
+
+task T_End {
+	
+    while( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ) {
+	     yield;
+	}
+	
+	if( ObjEnemyBossScene_GetInfo( GetEnemyBossSceneObjectID, INFO_IS_LAST_STEP ) ){
+
+		NotifyEventAll( EV_CLEAR_ENEMY_SHOTS, GetPlayerObjectID(), 60, 12 );
+		//NotifyEventAll( EV_CLEAR_ENEMIES ); // WIll add proper functionality to this later - Seija
+		//NotifyEventAll( EV_CLEAR_ENEMY_SHOTS, bossObj, 60, 14 );
+		
+		yield;
+		
+		SetAutoDeleteObject(true);
+		
+		//wait( 60 );
+		
+		Obj_Delete( bossObj );	
+		
+		ENEMY_CLEAR = true;
+		
+		yield;
+		
+		ENEMY_CLEAR = false;
+		
+		wait( 360 );
+		
+		CloseScript( GetOwnScriptID() );
+		
+	}	
+	else{
+	
+		NotifyEventAll( EV_CLEAR_ENEMY_SHOTS, GetPlayerObjectID(), 60, 12 );
+		//NotifyEventAll( EV_CLEAR_ENEMIES ); // WIll add proper functionality to this later - Seija
+		//NotifyEventAll( EV_CLEAR_ENEMY_SHOTS, bossObj, 60, 14 );
+		
+		yield;
+		
+		SetAutoDeleteObject(true);
+		
+		//wait( 60 );
+		
+		Obj_Delete( bossObj );	
+
+		wait( 360 );
+		
+		CloseScript( GetOwnScriptID() );
+	
+	}
+	
+	//SetAutoDeleteObject(true);
+	
+	//Obj_Delete( bossObj );	
+	//CloseScript( GetOwnScriptID() );
+	
+}
+

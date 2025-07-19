@@ -1,0 +1,80 @@
+//---------------------------------------------------------------------------------------------------------------------
+
+	#include "./../System/Common.dnh"	
+	#include "./../System/Constants.dnh"	
+
+//---------------------------------------------------------------------------------------------------------------------
+
+
+task T_Call_Spell_Cutin( Path, Rect, Scale, Color ){
+	
+	//VERY WIP!!!
+	
+	let Cutin_Obj = Render2D_Texture_A1( Path, Rect, Get_MaxX, Get_MaxY, Scale,  0.78 );
+	T_FadeIn_A1( Cutin_Obj, 30, 255 );
+	
+	T_Cutin_Trail( Path, Rect, Scale );
+	
+	//let Scale_Modifier = 1.5;
+	
+	//ObjSprite2D_SetDestRect( Cutin_Obj, 0, 0, 1024, 1024 );
+
+	//SpellAttack_Cutin_AfterImage_B( Obj, Path, 0.30, Color );
+
+	//let I_X = Interpolate_Overshoot( Get_MaxX, Y, )
+
+	ascent( i in 0..90 ){
+		ObjRender_SetX( Cutin_Obj, Interpolate_X( Get_MaxX, Get_CenterX, i/90, LERP_DECELERATE ) );
+		ObjRender_SetY( Cutin_Obj, Interpolate_Decelerate( -100, Get_CenterY, i/90) );
+		yield;
+	}
+	
+	//wait( 30 );
+	
+	T_FadeOut_Delete( Cutin_Obj, 60, 255 );
+	
+	ascent( i in 0..100 ){
+		ObjRender_SetX( Cutin_Obj, Interpolate_X( Get_CenterX, -512, i/100, LERP_SMOOTHER ));
+		//ObjRender_SetX( Cutin_Obj, Interpolate_Accelerate( Get_CenterX, -512, i/100));
+		ObjRender_SetY( Cutin_Obj, Interpolate_Decelerate( Get_CenterY, Get_MaxY, i/100));
+		yield;
+	}	
+	
+	task T_Cutin_Trail( Path, Rect, Scale ){
+		
+		wait( 10 );
+		
+		while( !Obj_IsDeleted( Cutin_Obj ) ){
+			
+			let Effect_Obj = Render2D_Texture_A1( Path, Rect, ObjRender_GetX( Cutin_Obj ), ObjRender_GetY( Cutin_Obj ), Scale,  0.77 );
+			T_Manage_Effect( Effect_Obj );
+			//T_FadeOut_Delete( Effect_Obj, 30, 100 );
+			
+			ObjRender_SetBlendType( Effect_Obj, BLEND_ADD_ARGB );
+			ObjRender_SetColor( Effect_Obj, Color[0], Color[1], Color[2] );
+		
+			wait( 3 );
+		
+		}
+		
+		task T_Manage_Effect( Obj ){
+			
+			//Lol. Lmao.
+			
+			let Alpha = ObjRender_GetAlpha( Cutin_Obj );
+			
+			T_FadeIn_A1( Obj, 10, Alpha/2 );
+			
+			wait( 12 );
+			
+			T_FadeOut_Delete( Obj, 10, Alpha/2 );
+			
+			
+		}	
+		
+	}	
+	
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+

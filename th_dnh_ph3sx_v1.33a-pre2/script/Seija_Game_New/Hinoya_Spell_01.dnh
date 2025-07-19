@@ -1,0 +1,539 @@
+#TouhouDanmakufu[Single]
+#Title["Hinoya_Spell_01"]
+#Background["./Stage/STG_01/STG_BG.dnh"];
+#Player[ "./Player/PL_Reimu.dnh" ]
+#System["./System/System_Main_Hud.dnh"]
+
+//--------------------------------------------------Variables------------------------------------------------------
+
+let bossObj;
+let objScene = GetEnemyBossSceneObjectID();
+let bossX = 0;
+let bossY = 0;
+
+//SetIntersectionVisualization( true );
+
+let BossTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Test_Boss.png";
+let Prism_Tex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Prism.png";
+let CutinTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Cutin/Hinoya.png";
+
+//---------------------------------------------------Include-------------------------------------------------------
+
+	#include "./lib/Index_Boss.dnh"
+	#include "./lib/Lib_Spell.dnh"
+	#include "./lib/Lib_SpellCutin.dnh"
+
+//----------------------------------------------------Start--------------------------------------------------------
+
+@Loading{
+	
+	LoadTexture( CutinTex );
+	
+}	
+
+@Initialize {
+
+	bossObj = ObjEnemy_Create(OBJ_ENEMY_BOSS);	
+	
+	ObjEnemy_Regist( bossObj );	
+
+	T_Lifebar( bossObj );
+	ObjEnemy_SetDamageRate( bossObj, 0, 0 );	
+	//ObjPrim_SetTexture( bossObj, BossTex );
+	Render_Boss_Chimi( bossObj );
+	//Render_WheelGhost_A1( bossObj, ENEMY_RED );
+	//ObjSprite2D_SetSourceRect( bossObj, 0, 0, 128, 128 );
+	//ObjSprite2D_SetDestCenter( bossObj );
+	//ObjRender_SetScaleX( bossObj, 2 );
+	//ObjRender_SetScaleY( bossObj, 2);	
+	//T_Render_AtInt( bossObj, Resolution );
+	
+	ObjRender_SetTextureFilter( bossObj, FILTER_POINT, FILTER_POINT, FILTER_POINT );
+	
+	ObjMove_SetDestAtWeight( bossObj, GetStgFrameWidth/2, Get_CenterY/2 + 16, 15, 8 );
+	
+	
+	SetPlayerLife( 8 );
+	T_Main;
+	T_End;
+	
+}
+
+@Event { 
+
+	alternative(GetEventType()) 
+	case( EV_REQUEST_LIFE ) { 
+		SetScriptResult( 3200 ); // 2500
+	}
+	case( EV_REQUEST_TIMER ) { 
+		SetScriptResult( 45 );
+	}	
+	case( EV_REQUEST_SPELL_SCORE ){
+       SetScriptResult( 5000000 );
+    }	
+
+} 
+
+@MainLoop {
+
+	bossX = ObjMove_GetX( bossObj );
+	bossY = ObjMove_GetY( bossObj );
+	
+	SetCommonData( "Effect_X", bossX );
+	SetCommonData( "Effect_Y", bossY );
+
+	ObjEnemy_SetIntersectionCircleToShot( bossObj, bossX, bossY, 16 );
+	ObjEnemy_SetIntersectionCircleToPlayer( bossObj, bossX, bossY, 8 );
+	
+	yield;
+}
+
+@Finalize {
+} 
+
+//----------------------------------------------------Patterns--------------------------------------------------------
+
+task T_Main {
+
+	
+	float ShotAngle = 0;
+	float Radius = 64;
+	float WaitTime = 10;
+	float Dir = 3;
+	float Wvel = 2;
+	
+	float X = 0;
+	float Y = 0;
+	
+	//NotifyEventAll( EV_BOSS_EFFECT, bossObj, CC_RED );
+	
+	//let Color = [ DOT_GRAY, DOT_RED, DOT_YELLOW, DOT_CYAN, DOT_PURPLE, DOT_GREEN ];
+
+	yield;
+
+	wait( 60 );	
+	
+	ObjEnemy_SetDamageRate( bossObj, 1, 1 );
+	
+	ObjEnemyBossScene_StartSpell( objScene );
+	
+	T_CallSpell_A1( "Fire Sign \"Fugue of Chrysanthemum and Peony\"", 0, "Normal", objScene );
+	T_Call_Spell_Cutin( CutinTex, [ 0, 0, 969, 1084 ], 0.4, CC_ORANGE );
+	
+	yield;
+	T_SpellBG_Hinoya();
+	
+	wait( 100 );	
+		
+	
+	while( Boss_Is_Alive( bossObj )){
+		
+		//T_PlaySE( SE_CHARGE_00, 30 );
+		//T_Charge_A1( bossObj, 20, "Petal", CC_YELLOW );	
+		
+		//wait( 60 );
+		
+		T_Boss_Shot_A( Get_CenterX + 100, Get_MaxY, 60, 120 );
+		
+		wait( 260 );
+		
+		T_Boss_Shot_B( Get_CenterX - 100, Get_MaxY, 60, 120 );
+				
+		wait( 260 );
+		
+		T_Boss_Shot_A( Get_CenterX - 100, Get_MaxY, 60, 120 );
+		
+		wait( 260 );
+		
+		T_Boss_Shot_B( Get_CenterX + 100, Get_MaxY, 60, 120 );
+		
+		wait( 260 );
+				
+		
+	}	
+	
+	/*
+	while(Boss_Is_Alive( bossObj )){
+		
+		//T_PlaySE( SE_CHARGE_00, 30 );
+		//T_Charge_A1( bossObj, 20, "Petal", CC_YELLOW );	
+		
+		T_Boss_Shot_A( bossX + rand( -256, 256 ), bossY + 128 , 60, 64 );
+		
+		wait( 100 );
+		
+	}		
+	*/
+}	
+
+task T_Boss_Shot_A( X, Y, Time, Delay ){
+		
+	//T_PlaySE( SE_CHIME_02, 30 );	
+	
+	let Firework_A = ShotA1( X, Y, 4, -90, SHOT_ORB_YELLOW, 80 );
+	
+	ObjShot_SetSpellResist( Firework_A, true );
+	ObjMove_AddPatternC2( Firework_A, Delay, NO_CHANGE, NO_CHANGE, NO_CHANGE, 0.05, 0, 4, 0, 0  ); 
+	
+	T_Telegraph();
+	T_Manage_Fireworks_A( Firework_A );
+	T_Manage_Fireworks_B( Firework_A );
+	
+	wait( 80 );
+	
+	T_PlaySE( SE_FIREWORKS_01, 35 );
+	
+	//-----------------------------------------------------------
+	
+	task T_Telegraph(){
+		
+		ascent( i in 0..8 ){
+			let Warning_Laser_A = CreateStraightLaserA1( X + 4*i, Y, -90, 480, 16, 10, SHOT_LASER_RED, 10 );
+			ObjStLaser_SetPermitExpand( Warning_Laser_A, false  );
+			ObjStLaser_SetSource( Warning_Laser_A, false );	
+			
+			T_FadeIn_A1( Warning_Laser_A, 8, 255 );
+			
+			let Warning_Laser_B = CreateStraightLaserA1( X - 4*i, Y, -90, 480, 16, 10, SHOT_LASER_RED, 10 );
+			ObjStLaser_SetPermitExpand( Warning_Laser_B, false  );
+			ObjStLaser_SetSource( Warning_Laser_B, false );	
+
+			T_FadeIn_A1( Warning_Laser_B, 8, 255 );
+			
+			wait( 3 );
+		}
+		
+	}	
+	
+	//-----------------------------------------------------------
+	
+	task T_Manage_Fireworks_A( Obj ){
+
+		wait( 80 );
+		
+		async{
+			
+			loop( 5 ){
+
+				if( !Obj_IsDeleted( Obj ) ){
+					
+					T_PlaySE( SE_CHIME_02, 35 );
+					
+					ascent( i in 0..4 ){
+						
+						let Fire_A = ShotA1( ObjMove_GetX( Obj ) + rand( -8, 8 ), ObjMove_GetY( Obj ) + rand( -8, 8 ), 0, 0, SHOT_FIREBALL_GREEN, 10 );
+						let Fire_B = ShotA1( ObjMove_GetX( Obj ) + rand( -8, 8 ), ObjMove_GetY( Obj ) + rand( -8, 8 ), 0, 180, SHOT_FIREBALL_GREEN, 10 );
+						
+						ObjMove_AddPatternA2( Fire_A, 30, NO_CHANGE, NO_CHANGE, 0.05, 1 + i/16, 0 );
+						ObjMove_AddPatternA2( Fire_B, 30, NO_CHANGE, NO_CHANGE, 0.05, 1 + i/16, 0 );
+					}
+					wait( 20 );
+				}
+			}				
+				
+		}	
+		
+		while( !Obj_IsDeleted( Obj )){
+		
+			let Shot_Trail_A = ShotA2( ObjMove_GetX( Obj ) + rand( -8, 8 ), ObjMove_GetY( Obj ) + rand( -8, 8 ), 1, ObjMove_GetAngle( Obj ) -180 + rand( -24, 24 ), SHOT_FIREBALL_YELLOW, 20, SHOT_FIREBALL_YELLOW );	
+			//ObjRender_SetBlendType( Shot_Trail_A, BLEND_ADD_ARGB );
+			
+			//ShotA1( ObjMove_GetX( Obj ) + rand( -8, 8 ), ObjMove_GetY( Obj ) + rand( -8, 8 ), 1, 0, SHOT_FIREBALL_GREEN, 10 );
+			//ShotA1( ObjMove_GetX( Obj ) + rand( -8, 8 ), ObjMove_GetY( Obj ) + rand( -8, 8 ), 1, 180, SHOT_FIREBALL_GREEN, 10 );
+				
+			ObjShot_SetDeleteFrame( Shot_Trail_A, 10 );	
+		
+			wait( 2 );
+		
+		}		
+	}	
+	
+	//-----------------------------------------------------------
+	
+	task T_Manage_Fireworks_B( Obj ){
+
+		//int Burst_Way = 5;
+		//int Burst_Stack = 8;	
+
+		wait( Delay*1.5 );
+		
+		if( !Obj_IsDeleted( Obj ) ){
+			
+			T_PlaySE( SE_CHIME_01, 35 );
+			T_PlaySE( SE_FIREWORKS_00, 30 );
+
+			int Burst_Way = 5;
+			int Burst_Stack = 10;				
+
+			ascent( a in 0..3 ){
+				let Pattern_Obj_A = Pattern_Shot_A1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0, 64, -90, 2, SHOT_BALL_DRED, PATTERN_POLYGON, Burst_Way, Burst_Stack, 20, SHOT_BALL_DRED );
+				for( int i = 0; i < Burst_Way * Burst_Stack; i++ ) { ObjMove_AddPatternA2( Pattern_Obj_A[i], 30, NO_CHANGE, NO_CHANGE, 0.05, 1 + a/12, 0 ); }	
+			}	
+
+			let Pattern_Obj_B = Pattern_Shot_A1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0, 64, -90, 2, SHOT_FIREBALL_RED, PATTERN_POLYGON, Burst_Way, Burst_Stack*2, 20, SHOT_FIREBALL_RED );
+				for( int i = 0; i < Burst_Way * Burst_Stack*2; i++ ) {
+					ObjShot_SetDeleteFrame( Pattern_Obj_B[i], 10 ); 
+					Obj_SetRenderPriorityI( Pattern_Obj_B[i], Obj_GetRenderPriorityI( Pattern_Obj_B[i] ) + 1);
+			}			
+			
+			ascent( i in 0..5 ){
+
+				let Firework_B = ShotA1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 2, -90 + i * 360/5, SHOT_ORB_GREEN, 20 );
+				T_Manage_Fireworks_C( Firework_B );
+
+			}
+		
+		}
+		
+		Obj_Delete( Obj );
+	}	
+	
+	//-----------------------------------------------------------
+	
+	task T_Manage_Fireworks_C( Obj ){
+
+		int Burst_Way = 5;
+		int Burst_Stack = 4;	
+
+		wait( 80 );
+		
+		if( !Obj_IsDeleted( Obj ) ){
+			
+			T_PlaySE( SE_CHIME_01, 35 );
+			T_PlaySE( SE_FIREWORKS_00, 30 );			
+			
+			ascent( a in 0..3 ){
+				let Pattern_Obj_A = Pattern_Shot_A1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0, 32, -90, 2, SHOT_BALL_DBLUE, PATTERN_POLYGON, Burst_Way, Burst_Stack, 20, SHOT_BALL_DBLUE );
+				for( int i = 0; i < Burst_Way * Burst_Stack; i++ ) { ObjMove_AddPatternA2( Pattern_Obj_A[i], 30, NO_CHANGE, NO_CHANGE, 0.05, 1 + a/12, 0 ); }	
+			}
+			
+			let Pattern_Obj_B = Pattern_Shot_A1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0, 32, -90, 2, SHOT_FIREBALL_BLUE, PATTERN_POLYGON, Burst_Way, Burst_Stack*2, 20, SHOT_FIREBALL_BLUE );
+			for( int i = 0; i < Burst_Way * Burst_Stack*2; i++ ) {
+				ObjShot_SetDeleteFrame( Pattern_Obj_B[i], 10 ); 
+				Obj_SetRenderPriorityI( Pattern_Obj_B[i], Obj_GetRenderPriorityI( Pattern_Obj_B[i] ) + 1);
+			}				
+		
+		}
+		
+		Obj_Delete( Obj );
+	}	
+	
+	
+	
+}	
+
+
+task T_Boss_Shot_B( X, Y, Time, Delay ){
+		
+	//T_PlaySE( SE_CHIME_02, 30 );	
+	
+	let Firework_A = ShotA1( X, Y, 4, -90, SHOT_ORB_YELLOW, 80 );
+	
+	ObjShot_SetSpellResist( Firework_A, true );
+	ObjMove_AddPatternC2( Firework_A, Delay, NO_CHANGE, NO_CHANGE, NO_CHANGE, 0.05, 0, 4, 0, 0  ); 
+	
+	T_Telegraph();
+	T_Manage_Fireworks_A( Firework_A );
+	T_Manage_Fireworks_B( Firework_A );
+	
+	wait( 80 );
+	
+	T_PlaySE( SE_FIREWORKS_01, 35 );
+	
+	//-----------------------------------------------------------
+	
+	task T_Telegraph(){
+		
+		ascent( i in 0..8 ){
+			let Warning_Laser_A = CreateStraightLaserA1( X + 4*i, Y, -90, 480, 16, 10, SHOT_LASER_RED, 10 );
+			ObjStLaser_SetPermitExpand( Warning_Laser_A, false  );
+			ObjStLaser_SetSource( Warning_Laser_A, false );	
+			
+			T_FadeIn_A1( Warning_Laser_A, 8, 255 );
+			
+			let Warning_Laser_B = CreateStraightLaserA1( X - 4*i, Y, -90, 480, 16, 10, SHOT_LASER_RED, 10 );
+			ObjStLaser_SetPermitExpand( Warning_Laser_B, false  );
+			ObjStLaser_SetSource( Warning_Laser_B, false );	
+
+			T_FadeIn_A1( Warning_Laser_B, 8, 255 );
+			
+			wait( 3 );
+		}
+		
+	}	
+	
+	//-----------------------------------------------------------
+	
+	task T_Manage_Fireworks_A( Obj ){
+
+		wait( 80 );
+		
+		async{
+			
+			loop( 5 ){
+
+				if( !Obj_IsDeleted( Obj ) ){
+					
+					T_PlaySE( SE_CHIME_02, 35 );
+					
+					ascent( i in 0..4 ){
+						
+						
+						let Fire_A = ShotA1( ObjMove_GetX( Obj ) + rand( -8, 8 ), ObjMove_GetY( Obj ) + rand( -8, 8 ), 0, 0, SHOT_FIREBALL_GREEN, 10 );
+						let Fire_B = ShotA1( ObjMove_GetX( Obj ) + rand( -8, 8 ), ObjMove_GetY( Obj ) + rand( -8, 8 ), 0, 180, SHOT_FIREBALL_GREEN, 10 );
+						
+						ObjMove_AddPatternA2( Fire_A, 30, NO_CHANGE, NO_CHANGE, 0.05, 1 + i/16, 0 );
+						ObjMove_AddPatternA2( Fire_B, 30, NO_CHANGE, NO_CHANGE, 0.05, 1 + i/16, 0 );
+					}
+					wait( 20 );
+				}
+			}				
+				
+		}	
+		
+		while( !Obj_IsDeleted( Obj )){
+		
+			let Shot_Trail_A = ShotA2( ObjMove_GetX( Obj ) + rand( -8, 8 ), ObjMove_GetY( Obj ) + rand( -8, 8 ), 1, ObjMove_GetAngle( Obj ) -180 + rand( -24, 24 ), SHOT_FIREBALL_YELLOW, 20, SHOT_FIREBALL_YELLOW );	
+			//ObjRender_SetBlendType( Shot_Trail_A, BLEND_ADD_ARGB );
+			
+			//ShotA1( ObjMove_GetX( Obj ) + rand( -8, 8 ), ObjMove_GetY( Obj ) + rand( -8, 8 ), 1, 0, SHOT_FIREBALL_GREEN, 10 );
+			//ShotA1( ObjMove_GetX( Obj ) + rand( -8, 8 ), ObjMove_GetY( Obj ) + rand( -8, 8 ), 1, 180, SHOT_FIREBALL_GREEN, 10 );
+				
+			ObjShot_SetDeleteFrame( Shot_Trail_A, 10 );	
+		
+			wait( 2 );
+		
+		}		
+	}	
+	
+	//-----------------------------------------------------------
+	
+	task T_Manage_Fireworks_B( Obj ){
+
+		//int Burst_Way = 5;
+		//int Burst_Stack = 8;	
+
+		wait( Delay*1.5 );
+		
+		if( !Obj_IsDeleted( Obj ) ){
+			
+			T_PlaySE( SE_CHIME_01, 35 );
+			T_PlaySE( SE_FIREWORKS_00, 30 );
+
+			ascent( i in 0..24 ){
+
+				let Laser_A =  CreateLooseLaserA1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 5, i * 360/24, 300, 10, SHOT_FIREBALL_GREEN, 1 ) ;
+				let Laser_B =  CreateLooseLaserA1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 3, i * 360/24 + 24, 300, 10, SHOT_FIREBALL_OLIVE, 1 )  ;
+
+			}
+		
+		}
+		
+		Obj_Delete( Obj );
+	}	
+	
+	//-----------------------------------------------------------
+	
+	
+	
+}	
+
+
+task T_LightShots( Obj, Color, Color_Shot ){
+	
+	T_PlaySE( SE_CHIME_01, 35 );
+	
+	int Burst_Way = 5;
+	int Burst_Stack = 6;	
+	
+	let Pattern_Obj_A = Pattern_Shot_A1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 1, 16, -90, 2, Color_Shot, PATTERN_POLYGON, Burst_Way, Burst_Stack, 20, Color_Shot );
+	for( int i = 0; i < Burst_Way * Burst_Stack; i++ ) { ObjMove_AddPatternA2( Pattern_Obj_A[i], 60, NO_CHANGE, NO_CHANGE, 0.05, rand( 1.5, 2.5 ), 0 ); }		
+	let Pattern_Obj_B = Pattern_Shot_A1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 1, 16, -90, 2, Color, PATTERN_POLYGON, Burst_Way, Burst_Stack*2, 20, Color );
+	for( int i = 0; i < Burst_Way * Burst_Stack*2; i++ ) {ObjShot_SetDeleteFrame( Pattern_Obj_B[i], 40 ); Obj_SetRenderPriorityI( Pattern_Obj_B[i], Obj_GetRenderPriorityI( Pattern_Obj_B[i] ) + 1);}		
+	
+	/*
+	ascent( i in 0..16 ){
+			
+		ShotA1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 1.5, 90 + i * 360/16, SHOT_ORB_ORANGE, 24 );
+		ShotA1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 1, 90 + i * 360/16 + 45, SHOT_ORB_OLIVE, 24 );	
+			
+	}	
+	*/
+}	
+
+task T_LightShots_B( Obj ){
+	
+	T_PlaySE( SE_CHIME_01, 35 );
+
+	ascent( i in 0..16 ){
+			
+		let Light_A = ShotA1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 1.5, 90 + i * 360/16, SHOT_ORB_ORANGE, 24 );
+		let Light_B = ShotA1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 1, 90 + i * 360/16 + 45, SHOT_ORB_OLIVE, 24 );	
+		
+		ObjShot_SetDeleteFrame( Light_A, 60 );
+		ObjShot_SetDeleteFrame( Light_B, 60 );
+			
+	}	
+	
+}	
+
+//-----------------------------------------------------Death---------------------------------------------------------
+
+task T_End {
+	
+    while( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ) {
+	     yield;
+	}
+	
+	if( ObjEnemyBossScene_GetInfo( GetEnemyBossSceneObjectID, INFO_IS_LAST_STEP ) ){
+
+		NotifyEventAll( EV_CLEAR_ENEMY_SHOTS, GetPlayerObjectID(), 60, 12 );
+		//NotifyEventAll( EV_CLEAR_ENEMIES ); // WIll add proper functionality to this later - Seija
+		//NotifyEventAll( EV_CLEAR_ENEMY_SHOTS, bossObj, 60, 14 );
+		
+		yield;
+		
+		SetAutoDeleteObject(true);
+		
+		//wait( 60 );
+		
+		Obj_Delete( bossObj );	
+		
+		ENEMY_CLEAR = true;
+		
+		yield;
+		
+		ENEMY_CLEAR = false;
+		
+		wait( 360 );
+		
+		CloseScript( GetOwnScriptID() );
+		
+	}	
+	else{
+	
+		NotifyEventAll( EV_CLEAR_ENEMY_SHOTS, GetPlayerObjectID(), 60, 12 );
+		//NotifyEventAll( EV_CLEAR_ENEMIES ); // WIll add proper functionality to this later - Seija
+		//NotifyEventAll( EV_CLEAR_ENEMY_SHOTS, bossObj, 60, 14 );
+		
+		yield;
+		
+		SetAutoDeleteObject(true);
+		
+		//wait( 60 );
+		
+		Obj_Delete( bossObj );	
+
+		wait( 360 );
+		
+		CloseScript( GetOwnScriptID() );
+	
+	}
+	
+	//SetAutoDeleteObject(true);
+	
+	//Obj_Delete( bossObj );	
+	//CloseScript( GetOwnScriptID() );
+	
+}
+

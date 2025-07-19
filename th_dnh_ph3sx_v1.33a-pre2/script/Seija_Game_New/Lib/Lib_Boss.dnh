@@ -1,0 +1,141 @@
+
+//--------------------------------------------------------------------------------------------------
+
+task T_Lifebar( Target ){
+	
+	let path = GetCurrentScriptDirectory() ~ "./../Resource/Textures/System/Lifebar.png";
+	let pathSpell = GetCurrentScriptDirectory() ~ "./../Resource/Textures/System/StepCount.png";
+    let NUM_VERTEX = 90; 
+    float LB_RADIUS = 72; 
+    float LB_WIDTH = 8; 
+    float LB_WIDTH_BORDER = 6; 
+    let lastRemStep = -1;
+    float lifeRateRender = 0;
+    let objScene = ID_INVALID;		
+
+    let obj = ObjPrim_Create(OBJ_PRIMITIVE_2D);
+    ObjPrim_SetPrimitiveType(obj, PRIMITIVE_TRIANGLESTRIP);
+	ObjPrim_SetTexture(obj, path);	
+	ObjPrim_SetVertexCount(obj, NUM_VERTEX);
+    Obj_SetRenderPriority(obj, 0.68);
+	
+    let objBorder = ObjPrim_Create(OBJ_PRIMITIVE_2D);
+    ObjPrim_SetPrimitiveType(objBorder, PRIMITIVE_TRIANGLESTRIP);
+    ObjPrim_SetTexture(objBorder, path);
+    ObjPrim_SetVertexCount(objBorder, NUM_VERTEX);	
+    Obj_SetRenderPriority(objBorder, 0.7);
+	ObjPrim_SetTexture(objBorder, path);
+ 
+    let objDiv = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
+    ObjPrim_SetTexture(objDiv, path);	
+    Obj_SetRenderPriority(objDiv, 0.7);
+	ObjSpriteList2D_SetSourceRect(objDiv, 33, 0, 47, 16);
+	
+    let objRemLB = ObjPrim_Create( OBJ_SPRITE_LIST_2D );
+    ObjPrim_SetTexture( objRemLB, pathSpell );
+    Obj_SetRenderPriority( objRemLB, 0.7 );
+	ObjSpriteList2D_SetSourceRect( objRemLB, 0, 0, 16, 16);
+	
+
+	
+    loop{
+        objScene = GetEnemyBossSceneObjectID();
+        ObjSpriteList2D_ClearVertexCount(objDiv);
+        ObjSpriteList2D_ClearVertexCount(objRemLB);
+		if(  !Obj_IsDeleted( Target ) ) {
+			if(objScene != ID_INVALID) {
+				RenderLife();
+				RenderRemainingLifebars();
+			}
+		}
+		else{ break; }	
+        yield;
+    }	
+	
+	Obj_Delete( obj );	
+	Obj_Delete( objBorder );	
+	Obj_Delete( objDiv );	
+	Obj_Delete( objRemLB );	
+	
+	function RenderLife() {
+	  
+        let objBosses = GetEnemyBossObjectID();
+        let objBoss = ID_INVALID;
+		
+        if (length(objBosses) == 0) {return;} 
+			else {objBoss = objBosses[0];}
+			
+			let countRemStep = ObjEnemyBossScene_GetInfo(objScene, INFO_REMAIN_STEP_COUNT);
+		
+        if(lastRemStep != countRemStep) {
+            lifeRateRender = 0;
+        }
+		
+			float lifeTotalMax = ObjEnemyBossScene_GetInfo(objScene, INFO_ACTIVE_STEP_TOTAL_MAX_LIFE);
+			float lifeTotal = ObjEnemyBossScene_GetInfo(objScene, INFO_ACTIVE_STEP_TOTAL_LIFE);
+			float lifeRate = min(lifeTotal / lifeTotalMax, lifeRateRender);
+			
+        ascent(iVert in 0..NUM_VERTEX / 2) {
+            let left = 1 + iVert * 16/NUM_VERTEX; 
+            let indexVert = iVert * 2; 
+            ObjPrim_SetVertexUVT(obj, indexVert + 0, left, 0);
+            ObjPrim_SetVertexUVT(obj, indexVert + 1, left, 16);
+            ObjPrim_SetVertexUVT(objBorder, indexVert + 0, 16 + left, 0);
+            ObjPrim_SetVertexUVT(objBorder, indexVert + 1, 16 + left, 16);
+			
+        }
+		
+			ObjRender_SetPosition(obj, ObjMove_GetX( Target ), ObjMove_GetY( Target ), 1);
+			ObjRender_SetPosition(objBorder, ObjMove_GetX( Target ), ObjMove_GetY( Target ), 1);
+		
+        ascent(iVert in 0..NUM_VERTEX / 2) {
+            let indexVert = iVert * 2;
+            float angle = -360 / (NUM_VERTEX / 2 - 1) * iVert;
+            float vx1 = (LB_RADIUS + LB_WIDTH/2) * cos(angle*lifeRate);
+            float vy1 = (LB_RADIUS + LB_WIDTH/2) * sin(angle*lifeRate);
+			
+            ObjPrim_SetVertexPosition(obj, indexVert + 0, vx1, vy1, 0);
+			
+            float vx2 = (LB_RADIUS - LB_WIDTH/2) * cos(angle*lifeRate);
+            float vy2 = (LB_RADIUS - LB_WIDTH/2) * sin(angle*lifeRate);
+			
+            ObjPrim_SetVertexPosition(obj, indexVert + 1, vx2, vy2, 0);
+			
+            float vx1b = (LB_RADIUS + LB_WIDTH_BORDER/2) * cos(angle);
+            float vy1b = (LB_RADIUS + LB_WIDTH_BORDER/2) * sin(angle);
+			
+            ObjPrim_SetVertexPosition(objBorder, indexVert + 0, vx1b, vy1b, 0);
+			
+            float vx2b = (LB_RADIUS - LB_WIDTH_BORDER/2) * cos(angle);
+            float vy2b = (LB_RADIUS - LB_WIDTH_BORDER/2) * sin(angle);
+			
+            ObjPrim_SetVertexPosition(objBorder, indexVert + 1, vx2b, vy2b, 0);
+        }
+
+        float[] listLifeDiv = [ 0.0f ] ~ ObjEnemyBossScene_GetInfo(objScene, INFO_ACTIVE_STEP_LIFE_RATE_LIST);
+        ascent(iDiv in 0 .. length(listLifeDiv)) {
+            float rate = listLifeDiv[iDiv];
+            float targetangle = 360 * rate;
+            ObjSpriteList2D_SetDestCenter(objDiv);
+            ObjRender_SetAngleZ(objDiv, targetangle + 90);
+            ObjRender_SetPosition(objDiv, ObjMove_GetX( Target ) + LB_RADIUS * cos(targetangle), ObjMove_GetY( Target ) + LB_RADIUS * sin(targetangle), 1);
+            ObjSpriteList2D_AddVertex(objDiv);
+        }
+        lifeRateRender += 0.02;
+        lifeRateRender = min(lifeRateRender, 1);
+        lastRemStep = countRemStep;
+	}	
+	
+    function RenderRemainingLifebars() {
+		
+        let countRemStep = ObjEnemyBossScene_GetInfo(objScene, INFO_REMAIN_STEP_COUNT);
+        ascent(iStep in 0 .. countRemStep) {
+			ObjRender_SetPosition( objRemLB, 16 * iStep, 0, 0 );
+            //let remStepRate = 58 / countRemStep;
+			ObjSpriteList2D_SetDestRect(objRemLB, 0, 0, 16, 16);
+            ObjSpriteList2D_AddVertex( objRemLB );
+        }
+    }	
+}
+
+//--------------------------------------------------------------------------------------------------

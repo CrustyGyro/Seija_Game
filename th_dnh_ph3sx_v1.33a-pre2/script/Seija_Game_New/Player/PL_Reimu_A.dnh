@@ -1,0 +1,478 @@
+#TouhouDanmakufu[ Player ]
+#ScriptVersion[ 3 ]
+#ID["S_Reimu_A"]
+#Title["Reimu A"]
+#ReplayName["S_Reimu_A"]
+
+//----------------------------------------------------------------------------------
+
+#include"./../Lib/Lib_Player.dnh"
+
+//----------------------------------------------------------------------------------
+
+let PL_Tex_Reimu = GetCurrentScriptDirectory() ~ "./../Resource/img/Player/PL_Reimu.png";
+
+//let PL_Speed = [ 3.8, 2 ];
+let PL_Speed = [ 4.2, 2 ];
+
+let Shot_Count_Main = -1;
+let Shot_Count_F = -1;
+
+//----------------------------------------------------------------------------------
+
+@Initialize{
+	
+	ObjPlayer_AddIntersectionCircleA1( GetPlayerObjectID, 0, 0, 4, 20 );
+	
+	LoadPlayerShotData( GetCurrentScriptDirectory() ~ "ShotData_Reimu.dnh" );
+	T_InitMain();
+	T_Render_PL( PL_Tex_Reimu );
+	
+	T_Familiar_A;
+	
+	SetPlayerAutoItemCollectLine( 100 );
+	SetPlayerSpeed( PL_Speed[ 0 ], PL_Speed[ 1 ] );
+	
+}
+
+@MainLoop{
+	
+	//LoopMain();
+	
+	T_PL_Fire_A();
+	yield;
+	
+}
+
+@Finalize{
+	
+	T_FinMain();
+	
+}
+
+@Event{
+	
+	T_EventMain();
+	
+}
+
+function T_PL_Fire_A(){
+	
+	if(GetVirtualKeyState( VK_SHOT ) == KEY_PUSH || GetVirtualKeyState( VK_SHOT ) == KEY_HOLD && GetPlayerState == STATE_NORMAL && CanFire == true){
+		
+		Shot_Count_Main++;
+		
+		if( Shot_Count_Main >= 15 ){
+			
+			Shot_Count_Main = 0;
+			
+		}
+		
+		if( Shot_Count_Main == 0 || Shot_Count_Main == 5 || Shot_Count_Main == 10 ){
+			
+			//Play_SFX( SFX_PL_SHOT01, 55 );
+			PL_Reimu_Shot_A1( GetPlayerX - 8, GetPlayerY, 23.5, -90, 2 );
+			PL_Reimu_Shot_A1( GetPlayerX + 8, GetPlayerY, 23.5, -90, 2 );
+			
+		}	
+	}	
+}	
+
+function T_FA_Fire_A( X, Y, Angle, Focus_Angle ){
+	
+	if(GetVirtualKeyState( VK_SHOT ) == KEY_PUSH || GetVirtualKeyState( VK_SHOT ) == KEY_HOLD && GetPlayerState == STATE_NORMAL && CanFire == true){
+		
+		Shot_Count_F++;
+		
+		if( Shot_Count_F >= 15 ){
+			
+			Shot_Count_F = 0;
+			
+		}
+		
+		if( Shot_Count_F == 0 || Shot_Count_F == 8 ){
+			
+			if( GetVirtualKeyState( VK_SLOWMOVE ) == KEY_PUSH || GetVirtualKeyState( VK_SLOWMOVE ) == KEY_HOLD ) {
+				//PL_Reimu_Homing_A1( X, Y, 0.5, Angle, 1.4 );
+			}
+			else{
+				
+				PL_Reimu_Homing_A1( X, Y, 0.5, Angle, 1.4 );
+				
+			}	
+		}	
+		
+		if( Shot_Count_F == 0 || Shot_Count_F == 5 || Shot_Count_F == 10 ){
+			
+			if( GetVirtualKeyState( VK_SLOWMOVE ) == KEY_PUSH || GetVirtualKeyState( VK_SLOWMOVE ) == KEY_HOLD ) {
+				
+				//PL_Reimu_FShot_A1( X, Y, 23.5, -90, 1.5 );
+				PL_Reimu_FShot_A1( X, Y, 23.5, -90, 1.5 );
+				//PL_Reimu_FShot_A1( X, Y, 23.5, -90, 0.7 );
+				
+			}
+			
+		}	
+		
+	}	
+}
+
+task PL_Reimu_Shot_A1( X, Y, Speed, Angle, Dmg ){
+	
+	let Shot_X = 0;
+	let Shot_Y = 0;
+	let Anim_Frame = 0;	
+	let Move_Y = 12;
+	
+	let Shot_Obj = CreatePlayerShotA1( X, Y, Speed, Angle, Dmg, 2, 2 );
+	Obj_SetRenderPriorityI( Shot_Obj, 47 );	
+	
+	T_Impact( Shot_Obj );
+	
+	task T_Impact( Shot_Obj ){
+	
+		let Scale = 1;
+	
+		while( !Obj_IsDeleted( Shot_Obj ) ){
+			
+			Shot_X = ObjMove_GetX( Shot_Obj );
+			Shot_Y = ObjMove_GetY( Shot_Obj );
+			//Shot_Angle_Z = ObjRender_GetAngleZ( Shot_Obj );
+			//Shot_Angle_Z = ObjRender_GetAngleZ( Shot_Obj );
+			
+			yield;
+		}	
+			
+		let E_Impact = RenderImg2D_A1( PL_Tex_Reimu, [ 32, 192, 48, 208 ], Shot_X , Shot_Y, BLEND_ADD_ARGB, 1.4, 0.47 );
+		
+		ObjSprite2D_SetDestCenter( E_Impact );
+		ImgFadeOutDel( E_Impact, 20 );
+		
+		while( !Obj_IsDeleted( E_Impact ) ){
+			
+			ObjRender_SetPosition( E_Impact, ObjRender_GetX( E_Impact ), ObjRender_GetY( E_Impact ) - 4 , 0 );
+			ObjRender_SetScaleXYZ( E_Impact, Scale, Scale, Scale );
+			
+			Scale += 0.1;
+			
+			wait( 2 );
+			
+		}	
+	
+	}	
+	
+	/*
+	while( !Obj_IsDeleted( Shot_Obj ) ){
+		
+		Shot_X = ObjMove_GetX( Shot_Obj );
+		Shot_Y = ObjMove_GetY( Shot_Obj );
+		
+		yield;
+	}	
+	
+	
+	let E_Impact = ObjPrim_Create( OBJ_SPRITE_2D );
+	ObjPrim_SetTexture( E_Impact, PL_Tex_Reimu );
+	Obj_SetRenderPriorityI( E_Impact, 50 );
+	ObjRender_SetScaleXYZ( E_Impact, 1.3, 1.3, 0 );
+	ObjRender_SetPosition( E_Impact, Shot_X, Shot_Y, 0 );
+	ObjRender_SetAlpha( E_Impact, 100 );
+	ObjRender_SetBlendType( E_Impact, BLEND_ADD_ARGB );
+	//ObjMove_SetAngle( E_Impact, -90 );	
+	//ObjMove_SetSpeed( E_Impact, 4 );
+	
+	loop( 4 ){
+		
+		ObjSprite2D_SetSourceRect( E_Impact, 32, 144 + Anim_Frame, 48, 160 + Anim_Frame );
+		ObjSprite2D_SetDestCenter( E_Impact );
+		ObjRender_SetPosition( E_Impact, ObjRender_GetX( E_Impact ), ObjRender_GetY( E_Impact ) - Move_Y ,0);
+		
+		Anim_Frame += 16;
+		
+		wait( 3 );
+	}	
+	
+	*/
+	//Obj_Delete( E_Impact );		
+	
+}	
+
+task PL_Reimu_FShot_A1( X, Y, Speed, Angle, Dmg ){
+	
+	let Shot_X = 0;
+	let Shot_Y = 0;
+	let Anim_Frame = 0;	
+	let Move_Y = 1;
+	
+	let Shot_Obj = CreatePlayerShotA1( X, Y, Speed, Angle, Dmg, 3, 6 );
+	Obj_SetRenderPriorityI( Shot_Obj, 47 );	
+
+	T_Impact( Shot_Obj );	
+	
+	/*
+	while( !Obj_IsDeleted( Shot_Obj ) ){
+		
+		Shot_X = ObjMove_GetX( Shot_Obj );
+		Shot_Y = ObjMove_GetY( Shot_Obj );
+		
+		yield;
+	}	
+		
+	let E_Impact = RenderImg2D_A1( PL_Tex_Reimu, [ 80, 144, 96, 208 ], Shot_X , Shot_Y + 32, BLEND_ADD_ARGB, 1.4, 0.47 );
+	//ObjRender_SetPosition( E_Impact, Shot_X, Shot_Y, 0 );
+	ObjRender_SetAngleZ( E_Impact, 360 + rand( -15, 15 ));
+	
+	ObjSprite2D_SetDestCenter( E_Impact );
+	ImgFadeOutDel( E_Impact, 30 );	
+	
+	*/
+	
+	task T_Impact( Shot_Obj ){
+	
+		let Scale = 1;
+	
+		while( !Obj_IsDeleted( Shot_Obj ) ){
+			
+			Shot_X = ObjMove_GetX( Shot_Obj );
+			Shot_Y = ObjMove_GetY( Shot_Obj );
+			//Shot_Angle_Z = ObjRender_GetAngleZ( Shot_Obj );
+			//Shot_Angle_Z = ObjRender_GetAngleZ( Shot_Obj );
+			
+			yield;
+		}	
+			
+		let E_Impact = RenderImg2D_A1( PL_Tex_Reimu, [ 80, 144, 96, 208 ], Shot_X , Shot_Y + 32, BLEND_ADD_ARGB, 1.4, 0.47 );
+		//ObjRender_SetPosition( E_Impact, Shot_X, Shot_Y, 0 );
+		ObjRender_SetAngleZ( E_Impact, 360 + rand( -8, 8 ));
+		
+		ObjSprite2D_SetDestCenter( E_Impact );
+		ImgFadeOutDel( E_Impact, 10 );
+		
+		while( !Obj_IsDeleted( E_Impact ) ){
+			
+			ObjRender_SetPosition( E_Impact, ObjRender_GetX( E_Impact ), ObjRender_GetY( E_Impact ) - 12, 0 );
+			ObjRender_SetScaleXYZ( E_Impact, Scale, Scale*1.8, Scale );
+			
+			Scale += 0.2;
+			
+			wait( 2 );
+			
+		}	
+	
+	}	
+	
+}	
+
+task PL_Reimu_Homing_A1( X, Y, Speed, Angle, Dmg ){
+	
+	let Shot_X = 0;
+	let Shot_Y = 0;
+	let Shot_Angle_Z = 0;
+	
+	let Shot_Obj = CreatePlayerShotA1( X, Y, Speed, Angle, Dmg, 2, 7 );
+	ObjMove_AddPatternA2( Shot_Obj, 1, NO_CHANGE, NO_CHANGE, 0.05, 0, 11 );	
+	Obj_SetRenderPriorityI( Shot_Obj, 47 );	
+
+	T_Shot_Spawn_A1( Shot_Obj, 15 );
+	T_Homing( Shot_Obj );
+	T_Impact( Shot_Obj );
+	
+	task T_Impact( Shot_Obj ){
+	
+		let Scale = 0.5;
+	
+		while( !Obj_IsDeleted( Shot_Obj ) ){
+			
+			Shot_X = ObjMove_GetX( Shot_Obj );
+			Shot_Y = ObjMove_GetY( Shot_Obj );
+			Shot_Angle_Z = ObjMove_GetAngle( Shot_Obj );
+			//Shot_Angle_Z = ObjRender_GetAngleZ( Shot_Obj );
+			
+			yield;
+		}	
+			
+		let E_Impact = RenderImg2D_A1( PL_Tex_Reimu, [ 48, 192, 64, 208 ], Shot_X , Shot_Y, BLEND_ADD_ARGB, 1.4, 0.47 );
+		//ObjRender_SetPosition( E_Impact, Shot_X, Shot_Y, 0 );
+		ObjRender_SetAngleZ( E_Impact, Shot_Angle_Z + 90 );
+		//ObjMove_SetAngle( E_Impact, Shot_Angle_Z );
+		//ObjMove_SetSpeed( E_Impact, 3 );
+		
+		ObjSprite2D_SetDestCenter( E_Impact );
+		ImgFadeOutDel( E_Impact, 16 );
+		//T_Impact_Animate( E_Impact );
+		
+		while( !Obj_IsDeleted( E_Impact ) ){
+			
+			ObjRender_SetScaleXYZ( E_Impact, Scale, Scale *1.2, Scale );
+			
+			Scale += 0.2;
+			
+			wait( 2 );
+			
+		}	
+		
+		task T_Impact_Animate( Obj ){
+			
+			let Anim_Add = 0;
+			
+			loop( 4 ){
+			
+				ObjSprite2D_SetSourceRect( Obj, 176, 144 + Anim_Add, 208, 176 + Anim_Add );
+				
+				Anim_Add += 32; 
+				
+				wait( 6 );
+				
+			}
+		}	
+		
+	
+	}
+	
+}	
+
+function T_Familiar_A{
+	
+	ascent( i in 0..4 ) {
+	
+		let PLF_Obj = ObjPrim_Create(OBJ_SPRITE_2D);
+		
+		ObjPrim_SetTexture( PLF_Obj, PL_Tex_Reimu );
+		ObjSprite2D_SetSourceRect( PLF_Obj, 32, 256, 48, 272 );	
+		ObjSprite2D_SetDestCenter( PLF_Obj );
+		
+		//let Fam_Effect = RenderImg2D_A1( PL_Tex_Reimu, [ 128, 144, 144, 160 ], ObjMove_GetX( PLF_Obj ), ObjMove_GetY( PLF_Obj ), BLEND_ADD_ARGB, 1.3, 0.46 );
+		let Fam_Effect = RenderImg2D_A1( PL_Tex_Reimu, [ 32, 256, 48, 272 ], ObjMove_GetX( PLF_Obj ), ObjMove_GetY( PLF_Obj ), BLEND_ADD_ARGB, 1.3, 0.46 );
+		
+		
+		T_ManageFamiliar( PLF_Obj, Fam_Effect, i );
+		//T_Familiar_Effect( PLF_Obj );
+		
+	}	
+	
+	//T_ManageFamiliar( Obj, i );
+	
+	task T_ManageFamiliar( Obj, Effect, ID ){
+		
+		//------------------------
+		
+		let FX_Pos = [ -30, -12, 12, 30 ];
+		let FY_Pos = [ 16, 32, 32, 16 ];
+		
+		let FY_Pos_S = [ -22, -30, -30, -22 ];
+		let FX_Pos_S = [ -24, -8, 8, 24 ];
+		
+		//let Angle_Array = [ -105, -135, -45, -75 ];
+		let Angle_Array = [ -106, -100, -80, -74 ];
+		//let Focus_Angle_Array = [ -86, -90, -90, -94 ];
+		let Focus_Angle_Array = [ -88, -90, -90, -92 ];
+		
+		//------------------------
+		
+		let Obj_AngleZ = 0;
+		let Eff_AngleZ = 0;
+		
+		loop{
+			
+			T_FA_Fire_A( ObjRender_GetX( Obj ),  ObjRender_GetY( Obj ), Angle_Array[ ID ], Focus_Angle_Array[ ID ] );
+			
+			if( GetVirtualKeyState( VK_SLOWMOVE ) == KEY_PUSH || GetVirtualKeyState( VK_SLOWMOVE ) == KEY_HOLD ){
+			
+				//-----
+				FY_Pos += [ -22/5, -30/5, -30/5, -22/5 ];
+				if( FY_Pos[ 0 ] <= -22 ) { FY_Pos[ 0 ] = -22; }
+				if( FY_Pos[ 1 ] <= -30 ) { FY_Pos[ 1 ] = -30; }
+				if( FY_Pos[ 2 ] <= -30 ) { FY_Pos[ 2 ] = -30; }
+				if( FY_Pos[ 3 ] <= -22 ) { FY_Pos[ 3 ] = -22; }
+				//-----
+				FX_Pos += [ -24/8, -8/5, 8/5, 24/8 ];
+				if( FX_Pos[ 0 ] <= -24 ) { FX_Pos[ 0 ] = -24; }
+				if( FX_Pos[ 1 ] <= -8 ) { FX_Pos[ 1 ] = -8; }
+				if( FX_Pos[ 2 ] >= 8 ) { FX_Pos[ 2 ] = 8; }
+				if( FX_Pos[ 3 ] >= 24 ) { FX_Pos[ 3 ] = 24; }
+				//-----				
+			
+				ObjRender_SetPosition( Obj, GetPlayerX() + FX_Pos[ ID ], GetPlayerY() + FY_Pos[ ID ], 0 );
+				ObjRender_SetPosition( Effect, GetPlayerX() + FX_Pos[ ID ], GetPlayerY() + FY_Pos[ ID ], 0 );
+			
+			}
+			else{
+				
+				//-----
+				FY_Pos += [ 16/5, 32/5, 32/5, 16/5 ];
+				if( FY_Pos[ 0 ] >= 16 ) { FY_Pos[ 0 ] = 16; }
+				if( FY_Pos[ 1 ] >= 32 ) { FY_Pos[ 1 ] = 32; }	
+				if( FY_Pos[ 2 ] >= 32 ) { FY_Pos[ 2 ] = 32; }
+				if( FY_Pos[ 3 ] >= 16 ) { FY_Pos[ 3 ] = 16; }
+				//-----
+				FX_Pos += [ -30/8, -12/5, 12/5, 30/8 ];
+				if( FX_Pos[ 0 ] <= -30 ) { FX_Pos[ 0 ] = -30; }
+				if( FX_Pos[ 1 ] <= -12 ) { FX_Pos[ 1 ] = -12; }
+				if( FX_Pos[ 2 ] >= 12 ) { FX_Pos[ 2 ] = 12; }
+				if( FX_Pos[ 3 ] >= 30 ) { FX_Pos[ 3 ] = 30; }
+				//-----		
+
+				ObjRender_SetPosition( Obj, GetPlayerX() + FX_Pos[ ID ], GetPlayerY() + FY_Pos[ ID ], 0 );
+				ObjRender_SetPosition( Effect, GetPlayerX() + FX_Pos[ ID ], GetPlayerY() + FY_Pos[ ID ], 0 );
+				
+			}
+			
+			//------------------------
+			
+			
+			ObjRender_SetAngleZ( Obj, Obj_AngleZ );
+			ObjRender_SetAngleZ( Effect, -Eff_AngleZ );
+			//ObjRender_SetAngleZ( Obj, 0.5*( 32*sin( Obj_AngleZ )) );
+			//ObjRender_SetScaleXYZ( Effect, 1*( 1.8*sin( Obj_AngleZ/2 )), 1*( 1.8*sin( Obj_AngleZ/2 )), 0 );
+		
+			if( Obj_AngleZ >= 360 ){  Obj_AngleZ = 0; } 
+			Obj_AngleZ += 8;
+			if( Eff_AngleZ >= 360 ){  Eff_AngleZ = 0; } 
+			Eff_AngleZ += 4;
+		
+			//------------------------
+			
+			if( GetPlayerState == STATE_DOWN||GetPlayerState == STATE_END ){
+				
+				Obj_SetVisible( Obj, false );
+				Obj_SetVisible( Effect, false );
+				
+			}
+			else{
+				
+				Obj_SetVisible( Obj, true );
+				Obj_SetVisible( Effect, true );
+				
+			}		
+			
+			//------------------------
+		
+			yield;
+			
+		}
+	}	
+	
+	task T_Familiar_Effect( Obj ){
+		
+		let Fam_X = 0;
+		let Fam_Y = 0;
+		
+		let E_Impact = RenderImg2D_A1( PL_Tex_Reimu, [ 32, 256, 48, 272 ], Fam_X , Fam_Y, BLEND_ADD_ARGB, 1.8, 0.46 );
+
+		while( !Obj_IsDeleted( Obj ) ){
+			
+			Fam_X = ObjMove_GetX( Obj );
+			Fam_Y = ObjMove_GetY( Obj );
+			
+			ObjRender_SetPosition( E_Impact, Fam_X, Fam_Y, 0 );
+			
+			yield;
+		}		
+		
+		
+	}	
+	
+}
+
+
+//----------------------------------------------------------------------------------

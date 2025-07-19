@@ -1,0 +1,109 @@
+//-------------------------------------------------------------------------------------------------------------------------------------------
+
+	#include "./../System/Common.dnh"		
+	#include "./../System/Constants.dnh"	
+	
+//-------------------------------------------------------------------------------------------------------------------------------------------	
+
+// -- Enemy Stuff --
+
+task T_Enemy_Death_A1( Obj, Type, Color ){
+	
+	//Play_SFX( SFX_ENEMDIE_01, 50 );
+	
+	T_Explode_Circle_A1( ObjRender_GetX( Obj ), ObjRender_GetY( Obj ), Color );
+	
+	ascent( i in 0..5 ) {
+			T_Explode_Particle_A1( ObjRender_GetX( Obj ), ObjRender_GetY( Obj ), prand( 1, 3 ), Type, Color );
+			T_Explode_Particle_A1( ObjRender_GetX( Obj ), ObjRender_GetY( Obj ), prand( 2, 3.2 ), Type, [ 255, 255, 255 ] );
+	}
+
+	ObjEnemy_SetLife( Obj, 0 );
+	Obj_Delete( Obj );
+
+}
+
+//-------------------------------------------------------------------------------------------------------------------------------------------
+
+task T_Explode_Circle_A1( X, Y, Color ){
+	
+	float ScaleAdd = 0;
+	float Alpha = 0;
+
+	let Path = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Effect/CircleEff.png";
+	let Effect_Obj = Render2D_Texture_A1( Path, [ 0, 0, 128, 128 ], X, Y, 0.3, 0.32 );
+	ObjRender_SetBlendType( Effect_Obj, BLEND_ADD_RGB );
+
+	ObjRender_SetColor( Effect_Obj, Color[ 0 ], Color[ 1 ], Color [ 2 ] );
+	ObjRender_SetAngleZ( Effect_Obj, prand( 0, 360 ) );
+	
+	let Effect_Obj_2 = Render2D_Texture_A1( Path, [ 0, 0, 128, 128 ], X, Y, 0.3, 0.32 );
+	ObjRender_SetBlendType( Effect_Obj_2, BLEND_ADD_RGB );
+
+	ObjRender_SetColor( Effect_Obj_2, Color[ 0 ], Color[ 1 ], Color [ 2 ] );
+	ObjRender_SetAngleZ( Effect_Obj_2, ObjRender_GetAngleZ( Effect_Obj) + 90 );	
+	//T_FadeOut_Delete( Effect_Obj, 20, 0 );
+		
+	descent( i in 0..24 ){
+				
+		ObjRender_SetColor( Effect_Obj, ( i/24 ) * Color[0], ( i/24 ) * Color[1], ( i/24 ) * Color[2] );		
+		ObjRender_SetScaleXYZ( Effect_Obj, 0.3 - ScaleAdd/0.2, 0.3 + ScaleAdd*0.2, 0 );
+		
+		ObjRender_SetColor( Effect_Obj_2, ( i/24 ) * Color[0], ( i/24 ) * Color[1], ( i/24 ) * Color[2] );		
+		ObjRender_SetScaleXYZ( Effect_Obj_2, 0.3 - ScaleAdd/0.2, 0.3 + ScaleAdd*0.2, 0 );		
+				
+		ScaleAdd += 0.02;	
+		//Alpha --;
+			
+		yield;
+				
+	}
+
+	 Obj_Delete( Effect_Obj );	
+	
+}
+
+
+task T_Explode_Particle_A1( X, Y, Speed, Type, Color ){
+	
+	//let Effect_Obj = Render2D_Texture_A1( Path, [ 0, 0, 128, 128 ], X, Y, 0.4, 0.32 );
+	
+	let Path;
+	if( Type == "Maple" ) { Path = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Effect/Maple.png"; }
+	if( Type == "Petal" ) { Path = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Effect/Petal.png"; }
+	if( Type == "Snow" ) { Path = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Effect/Snow.png"; }
+	if( Type == "Star" ) { Path = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Effect/Star.png"; }	
+	
+	let Angle = prand( 0, 360 );
+	let Alpha = 200;
+
+	let AngX_R = prand( 0, 200 );
+	let AngY_R = prand( 0, 200 );	
+	
+	let Effect_Obj = Render2D_Texture_A1( Path, [ 0, 0, 128, 128 ], X, Y, 0.4, 0.32 );
+	ObjRender_SetBlendType( Effect_Obj, BLEND_ADD_RGB );
+	
+	//ObjRender_SetColor( Obj, Color[0], Color[1], Color[2] );
+	
+	while( !Obj_IsDeleted( Effect_Obj ) ) {
+		
+		ObjRender_SetPosition( Effect_Obj, X, Y, 0 );
+		ObjRender_SetAngleXYZ( Effect_Obj, AngX_R, AngY_R, AngX_R );
+		ObjRender_SetColor( Effect_Obj, Color[0] * ( Alpha/255 ), Color[1] * ( Alpha/255 ), Color[2] * ( Alpha/255 ) );
+		ObjSprite2D_SetDestCenter( Effect_Obj );
+		ObjRender_SetAlpha( Effect_Obj, Alpha );
+		Speed -= 0.1;
+		
+		AngX_R += prand( 2, 2 );
+		AngY_R += prand( -2, -2 );		
+		
+		X += Speed *cos( Angle );
+		Y += Speed *sin( Angle );
+		//Alpha -= 2;
+		
+		if( Speed <= 1.8 ) { Alpha -= 5; }
+		if( Speed <= 1 && Alpha <= 0) { Obj_Delete( Effect_Obj ); }
+		yield;
+	}	
+	
+}	

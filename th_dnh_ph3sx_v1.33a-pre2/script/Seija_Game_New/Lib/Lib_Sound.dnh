@@ -1,0 +1,26 @@
+//---------------------------------------------------------------------------------------------------------------------
+
+	#include "./../System/Constants.dnh"	
+
+//---------------------------------------------------------------------------------------------------------------------
+
+
+	let SE_Obj = ObjSound_Create;
+
+
+//---------------------------------------------------------------------------------------------------------------------
+
+
+task T_PlaySE( Name, Volume ){
+	
+   	let Path = GetCurrentScriptDirectory() ~ "./../Resource/Sound/";
+
+	ObjSound_SetSoundDivision( SE_Obj, SOUND_SE );
+   	ObjSound_Load( SE_Obj, Path ~ Name );
+  	ObjSound_SetVolumeRate( SE_Obj, ( Volume - 20 ) * ( GetAreaCommonData( "Settings", SETTING_SE_VOLUME, 100 ) / 100 ) );
+  	ObjSound_Play( SE_Obj );
+
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+

@@ -1,0 +1,57 @@
+//-----------------------------------------
+
+sampler sampler0_ : register(s0);
+
+//-----------------------------------------
+static const float RENDER_WIDTH = 1024;
+static const float RENDER_HEIGHT = 1024;
+
+float frame_;
+float Xpos_;
+float Ypos_;
+float waveRadius_;
+
+struct PS_INPUT
+{
+	float4 diffuse : COLOR0;
+	float2 texCoord : TEXCOORD0;
+	float2 vPos : VPOS;
+};
+
+struct PS_OUTPUT
+{
+    float4 color : COLOR0;
+};
+
+PS_OUTPUT PsWave( PS_INPUT In ) : COLOR0
+{
+	
+	PS_OUTPUT Out;
+
+	//I have no idea what im doing....
+
+	float dist2 = pow( In.vPos.x - Xpos_ , 2 ) + pow( In.vPos.y - Ypos_ , 2 );
+	float dist = sqrt( dist2 );
+
+	float biasX = lerp( ( Xpos_ - In.vPos.x), 0, smoothstep( 0, waveRadius_, dist ) );
+	float biasY = lerp( ( Ypos_ - In.vPos.y), 0, smoothstep( 0, waveRadius_, dist ) );
+
+	float2 texUV;
+	texUV.x = biasX / RENDER_WIDTH + In.texCoord.x;
+	texUV.y = biasY / RENDER_HEIGHT + In.texCoord.y;
+
+	Out.color = tex2D( sampler0_, texUV );
+
+	return Out;
+	
+}
+
+technique TecWave
+{
+	pass P0
+	{
+		PixelShader = compile ps_3_0 PsWave();
+	}
+	
+}
+

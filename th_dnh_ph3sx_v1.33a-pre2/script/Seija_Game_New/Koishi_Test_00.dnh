@@ -1,0 +1,246 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title["Koishi_Test_00"]
+//#Background["./Stage/BG/STG_00.dnh"];
+#Player[ "./Player/PL_Reimu.dnh" ]
+#System["./System/System_Main_Hud.dnh"]
+
+//--------------------------------------------------Variables------------------------------------------------------
+
+let bossObj;
+let objScene = GetEnemyBossSceneObjectID();
+let bossX = 0;
+let bossY = 0;
+
+//SetIntersectionVisualization( true );
+
+let BossTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Test_Boss.png";
+
+//---------------------------------------------------Include-------------------------------------------------------
+
+	#include "./lib/Index_Boss.dnh"
+
+//----------------------------------------------------Start--------------------------------------------------------
+
+@Initialize {
+
+	bossObj = ObjEnemy_Create(OBJ_ENEMY_BOSS);	
+	
+	ObjEnemy_Regist( bossObj );	
+
+	T_Lifebar( bossObj );
+	ObjEnemy_SetDamageRate( bossObj, 0, 0 );	
+
+	Render_WheelGhost_A1( bossObj, ENEMY_BLUE );
+
+	ObjRender_SetTextureFilter( bossObj, FILTER_NONE, FILTER_NONE, FILTER_NONE );
+	
+	ObjMove_SetDestAtWeight( bossObj, GetStgFrameWidth/2, Get_CenterY/2 + 16, 15, 8 );
+	
+	
+	//SetPlayerLife( 8 );
+	T_Main;
+	T_End;
+	
+}
+
+@Event { 
+
+	alternative(GetEventType()) 
+	case( EV_REQUEST_LIFE ) { 
+		SetScriptResult( 4500 ); // 3000-4500 For Nons ( At 100% Damage Rate. )
+	}
+	case( EV_REQUEST_TIMER ) { 
+		SetScriptResult( 50 ); //40-50 For standard Nons.
+	}	
+
+
+} 
+
+@MainLoop {
+
+	bossX = ObjMove_GetX( bossObj );
+	bossY = ObjMove_GetY( bossObj );
+
+	ObjEnemy_SetIntersectionCircleToShot( bossObj, bossX, bossY, 16 );
+	ObjEnemy_SetIntersectionCircleToPlayer( bossObj, bossX, bossY, 8 );
+	
+	yield;
+}
+
+@Finalize {
+} 
+
+//----------------------------------------------------Patterns--------------------------------------------------------
+
+task T_Main {
+
+
+	NotifyEventAll( EV_BOSS_EFFECT, bossObj, CC_CYAN );
+	
+	//let Color = [ DOT_GRAY, DOT_RED, DOT_YELLOW, DOT_CYAN, DOT_PURPLE, DOT_GREEN ];
+
+	yield;
+
+	wait( 45 );	
+	
+	//T_PlaySE( SE_CHARGE_00, 30 );
+	//T_Charge_A1( bossObj, 20, "Petal", CC_PINK );
+
+	//wait( 100 );	
+	let Way = 32;
+	let Stack = 1;
+	
+	//let Shots = Pattern_Shot_A1( bossX, bossY, 2, 32, 90, 0, SHOT_ARROW_BLUE, PATTERN_RING, Way, Stack, 50, SHOT_ARROW_BLUE );
+
+	//let Obj = ShotA1( bossX, bossY, 2, rand( 0, 360 ), SHOT_ORB_BLUE, 200 );
+
+	T_Create_Cage_Wall( Get_MaxX, Get_MaxY, -90, 50, 0, -512 );
+	T_Create_Cage_Wall( 0, Get_MaxY, -90, 50, 0, -512 );
+	
+	
+	//ObjEnemy_SetDamageRate( bossObj, 1, 1 );
+
+	while( Boss_Is_Alive( bossObj ) ){
+		
+		//Do Stuff, fire some bullets or something.
+		yield;
+
+	}
+}	
+
+task T_Create_Cage_Wall( X, Y, Angle, Time, X_Offset, Y_Offset ){
+	
+	
+	let Dummy_Shot = ShotR1( bossX, bossY, 0, 0, Angle, SHOT_ORB_RED, 160, SHOT_ORB_RED );
+	T_Manage_Collision( Dummy_Shot );
+	
+	async{
+		
+		ascent( i in 0..Time ){
+			
+			ObjMove_SetX( Dummy_Shot, Interpolate_Smoother( bossX, X, i/Time ));
+			ObjMove_SetY( Dummy_Shot, Interpolate_Smoother( bossY, Y, i/Time ));
+				
+			yield;
+		}		
+	
+	
+		wait( Time*1.5 );
+		
+		ascent( i in 0..1000 ){
+			
+			ObjMove_SetX( Dummy_Shot, Interpolate_Linear( X, Get_CenterX, i/1000 ));
+			//ObjMove_SetY( Dummy_Shot, Interpolate_Linear( Y, Get_CenterY, i/1000 ));
+				
+			yield;
+		}			
+	
+	
+	}
+	
+	task T_Manage_Collision( Dummy_Shot ){
+		
+		//ObjShot_SetIntersectionEnable( Star_End_B, false );
+		let Connector = CreateStraightLaserA1(  ObjMove_GetX( Dummy_Shot ), ObjMove_GetY( Dummy_Shot ), Angle, 512, 32, 99999, SHOT_LASER_RED, 10 );	
+		let Laser_End_Dummy = ShotA1( ObjMove_GetX( Connector ), ObjMove_GetY( Connector ) + 128, 0, 0, SHOT_ORB_RED, 30 );		
+		
+		ObjShot_SetAutoDelete(  Laser_End_Dummy, false );
+		
+		ObjStLaser_SetSource( Connector, false );
+		
+		while( !Obj_IsDeleted( Dummy_Shot ) ){
+			
+			
+			ObjMove_SetPosition( Connector, ObjMove_GetX( Dummy_Shot ), ObjMove_GetY( Dummy_Shot ) ); 	
+			ObjMove_SetPosition( Laser_End_Dummy, ObjMove_GetX( Dummy_Shot ) + X_Offset, ObjMove_GetY( Dummy_Shot ) + Y_Offset );
+
+			//T_Check_Intersection( Shot_Obj, Laser_End_Dummy, way, stack );			
+			
+			
+			yield;
+		}
+		
+		
+	}	
+	/*
+	task T_Check_Intersection( Obj, Laser_End_Dummy, way, stack ){
+		
+		wait( 100 );
+		
+		for( int i = 0; i < way * stack; i++ ){
+			let Intersection = IsIntersected_Point_Line( ObjMove_GetX( Obj[i] ), ObjMove_GetY( Obj[i] ),  ObjMove_GetX( Dummy_Shot ), ObjMove_GetY( Dummy_Shot ), ObjMove_GetX( Laser_End_Dummy ), ObjMove_GetY( Laser_End_Dummy ), 32  );
+			if( Intersection == true ){ 
+			
+				ShotA1( ObjMove_GetX( Obj[i] ), ObjMove_GetY( Obj[i] ), 2, ObjMove_GetAngle( Obj[i] ) +180, SHOT_ORB_BLUE, 200 );
+				break;
+				//ObjMove_SetAngle( Obj[i], ObjMove_GetAngle( Obj[i] ) +180 ); 
+				
+			}
+			//yield;
+		}
+		
+		
+	}	
+	*/
+	//return Dummy_Shot;
+	
+}	
+
+
+//-----------------------------------------------------Death---------------------------------------------------------
+
+task T_End {
+	
+    while( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ) {
+	     yield;
+	}
+	
+	if( ObjEnemyBossScene_GetInfo( GetEnemyBossSceneObjectID, INFO_IS_LAST_STEP ) ){
+
+		NotifyEventAll( EV_CLEAR_ENEMY_SHOTS, GetPlayerObjectID(), 60, 12 );
+		
+		yield;
+		
+		SetAutoDeleteObject(true);
+		
+		//wait( 60 );
+		
+		Obj_Delete( bossObj );	
+		
+		ENEMY_CLEAR = true;
+		
+		yield;
+		
+		ENEMY_CLEAR = false;
+		
+		wait( 500 );
+		
+		CloseScript( GetOwnScriptID() );
+		
+	}	
+	else{
+	
+	
+		NotifyEventAll( EV_CLEAR_ENEMY_SHOTS, GetPlayerObjectID(), 60, 12 );
+		//DeleteShotAll( TYPE_ALL, TYPE_ITEM );
+		
+		yield;
+		
+		SetAutoDeleteObject(true);
+		
+		Obj_Delete( bossObj );	
+		
+		wait( 500 );
+		
+		CloseScript( GetOwnScriptID() );
+	
+	}
+	
+	//SetAutoDeleteObject(true);
+	
+	//Obj_Delete( bossObj );	
+	//CloseScript( GetOwnScriptID() );
+	
+}
+

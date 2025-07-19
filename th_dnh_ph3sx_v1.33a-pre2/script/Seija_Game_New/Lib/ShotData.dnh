@@ -1,0 +1,2151 @@
+#UserShotData
+
+shot_image = "./../Resource/Textures/ShotSheet.png"
+delay_rect = (992, 992, 1024, 1024 )
+
+//-------------------------------------------------------------------------------------------------------------------------------
+//Laser
+//-------------------------------------------------------------------------------------------------------------------------------
+
+	//Straight Lasers
+	ShotData { id = 1 rect = ( 0, 0, 16, 16 ) render = ADD_ARGB angular_velocity = 0 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 2 rect = ( 16, 0, 32, 16 ) render = ADD_ARGB angular_velocity = 0 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 3 rect = ( 32, 0, 48, 16 ) render = ADD_ARGB angular_velocity = 0 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 4 rect = ( 48, 0, 64, 16 ) render = ADD_ARGB angular_velocity = 0 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 5 rect = ( 64, 0, 80, 16 ) render = ADD_ARGB angular_velocity = 0 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 6 rect = ( 80, 0, 96, 16 ) render = ADD_ARGB angular_velocity = 0 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 7 rect = ( 96, 0, 112, 16 ) render = ADD_ARGB angular_velocity = 0 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 8 rect = ( 112, 0, 128, 16 ) render = ADD_ARGB angular_velocity = 0 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 9 rect = ( 128, 0, 144, 16 ) render = ADD_ARGB angular_velocity = 0 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 10 rect = ( 144, 0, 160, 16 ) render = ADD_ARGB angular_velocity = 0 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 11 rect = ( 160, 0, 176, 16 ) render = ADD_ARGB angular_velocity = 0 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 12 rect = ( 176, 0, 192, 16 ) render = ADD_ARGB angular_velocity = 0 delay_color = ( 0,0,0 )} //-Black-
+	
+	//Straight Lasers ( Inverted ) 
+	ShotData { id = 13 rect = ( 192, 0, 208, 16 ) render = ADD_ARGB angular_velocity = 0 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 14 rect = ( 208, 0, 224, 16 ) render = ADD_ARGB angular_velocity = 0 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 15 rect = ( 224, 0, 240, 16 ) render = ADD_ARGB angular_velocity = 0 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 16 rect = ( 240, 0, 255, 16 ) render = ADD_ARGB angular_velocity = 0 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 17 rect = ( 255, 0, 272, 16 ) render = ADD_ARGB angular_velocity = 0 delay_color = ( 255,340,15 )} //-Yellow-
+	ShotData { id = 18 rect = ( 272, 0, 288, 16 ) render = ADD_ARGB angular_velocity = 0 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 19 rect = ( 288, 0, 304, 16 ) render = ADD_ARGB angular_velocity = 0 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 20 rect = ( 304, 0, 320, 16 ) render = ADD_ARGB angular_velocity = 0 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 21 rect = ( 320, 0, 336, 16 ) render = ADD_ARGB angular_velocity = 0 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 22 rect = ( 336, 0, 352, 16 ) render = ADD_ARGB angular_velocity = 0 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 23 rect = ( 352, 0, 368, 16 ) render = ADD_ARGB angular_velocity = 0 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 24 rect = ( 368, 0, 384, 16 ) render = ADD_ARGB angular_velocity = 0 delay_color = ( 0,0,0 )} //-Black-	
+
+//-------------------------------------------------------------------------------------------------------------------------------
+//Bullet
+//-------------------------------------------------------------------------------------------------------------------------------
+
+	//Small Round
+	ShotData { id = 25 rect = ( 0, 16, 16, 32 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 26 rect = ( 16, 16, 32, 32 ) render = ALPHA angular_velocity = 0 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 27 rect = ( 32, 16, 48, 32 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 28 rect = ( 48, 16, 64, 32 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 29 rect = ( 64, 16, 80, 32 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 30 rect = ( 80, 16, 96, 32 ) render = ALPHA angular_velocity = 0 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 31 rect = ( 96, 16, 112, 32 ) render = ALPHA angular_velocity = 0 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 32 rect = ( 112, 16, 128, 32 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 33 rect = ( 128, 16, 144, 32 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 34 rect = ( 144, 16, 160, 32 ) render = ALPHA angular_velocity = 0 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 35 rect = ( 160, 16, 176, 32 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 36 rect = ( 176, 16, 192, 32 ) render = ALPHA angular_velocity = 0 delay_color = ( 0,0,0 )} //-Black-	
+	
+	//Small Round ( Inverted ) 
+	ShotData { id = 37 rect = ( 192, 16, 208, 32 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 38 rect = ( 208, 16, 224, 32 ) render = ALPHA angular_velocity = 0 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 39 rect = ( 224, 16, 240, 32 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 40 rect = ( 240, 16, 255, 32 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 41 rect = ( 255, 16, 272, 32 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 42 rect = ( 272, 16, 288, 32 ) render = ALPHA angular_velocity = 0 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 43 rect = ( 288, 16, 304, 32 ) render = ALPHA angular_velocity = 0 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 44 rect = ( 304, 16, 320, 32 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 45 rect = ( 320, 16, 336, 32 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 46 rect = ( 336, 16, 352, 32 ) render = ALPHA angular_velocity = 0 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 47 rect = ( 352, 16, 368, 32 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 48 rect = ( 368, 16, 384, 32 ) render = ALPHA angular_velocity = 0 delay_color = ( 0,0,0 )} //-Black-	
+
+	//-------------------------------------------------------------------------------------------------------------------
+
+	//Small Ringed
+	ShotData { id = 49 rect = ( 0, 32, 16, 48 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 50 rect = ( 16, 32, 32, 48 ) render = ALPHA angular_velocity = 0 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 51 rect = ( 32, 32, 48, 48 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 52 rect = ( 48, 32, 64, 48 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 53 rect = ( 64, 32, 80, 48 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 54 rect = ( 80, 32, 96, 48 ) render = ALPHA angular_velocity = 0 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 55 rect = ( 96, 32, 112, 48 ) render = ALPHA angular_velocity = 0 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 56 rect = ( 112, 32, 128, 48 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 57 rect = ( 128, 32, 144, 48 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 58 rect = ( 144, 32, 160, 48 ) render = ALPHA angular_velocity = 0 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 59 rect = ( 160, 32, 176, 48 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 60 rect = ( 176, 32, 192, 48 ) render = ALPHA angular_velocity = 0 delay_color = ( 0,0,0 )} //-Black-	
+	
+	//Small Ringed ( Inverted ) 
+	ShotData { id = 61 rect = ( 192, 32, 208, 48 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 62 rect = ( 208, 32, 224, 48 ) render = ALPHA angular_velocity = 0 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 63 rect = ( 224, 32, 240, 48 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 64 rect = ( 240, 32, 255, 48 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 65 rect = ( 255, 32, 272, 48 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 66 rect = ( 272, 32, 288, 48 ) render = ALPHA angular_velocity = 0 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 67 rect = ( 288, 32, 304, 48 ) render = ALPHA angular_velocity = 0 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 68 rect = ( 304, 32, 320, 48 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 69 rect = ( 320, 32, 336, 48 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 70 rect = ( 336, 32, 352, 48 ) render = ALPHA angular_velocity = 0 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 71 rect = ( 352, 32, 368, 48 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 72 rect = ( 368, 32, 384, 48 ) render = ALPHA angular_velocity = 0 delay_color = ( 0,0,0 )} //-Black-	
+	
+	//-------------------------------------------------------------------------------------------------------------------
+	
+	//Small Rice
+	ShotData { id = 73 rect = ( 0, 48, 16, 63 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 74 rect = ( 16, 48, 32, 63 ) render = ALPHA angular_velocity = 0 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 75 rect = ( 32, 48, 48, 63 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 76 rect = ( 48, 48, 64, 63 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 77 rect = ( 64, 48, 80, 63 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 78 rect = ( 80, 48, 96, 63 ) render = ALPHA angular_velocity = 0 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 79 rect = ( 96, 48, 112, 63 ) render = ALPHA angular_velocity = 0 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 80 rect = ( 112, 48, 128, 63 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 81 rect = ( 128, 48, 144, 63 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 82 rect = ( 144, 48, 160, 63 ) render = ALPHA angular_velocity = 0 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 83 rect = ( 160, 48, 176, 63 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 84 rect = ( 176, 48, 192, 63 ) render = ALPHA angular_velocity = 0 delay_color = ( 0,0,0 )} //-Black-	
+	
+	//Small Rice ( Inverted ) 
+	ShotData { id = 85 rect = ( 192, 48, 208, 63 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 86 rect = ( 208, 48, 224, 63 ) render = ALPHA angular_velocity = 0 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 87 rect = ( 224, 48, 240, 63 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 88 rect = ( 240, 48, 255, 63 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 89 rect = ( 255, 48, 272, 63 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 90 rect = ( 272, 48, 288, 63 ) render = ALPHA angular_velocity = 0 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 91 rect = ( 288, 48, 304, 63 ) render = ALPHA angular_velocity = 0 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 92 rect = ( 304, 48, 320, 63 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 93 rect = ( 320, 48, 336, 63 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 94 rect = ( 336, 48, 352, 63 ) render = ALPHA angular_velocity = 0 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 95 rect = ( 352, 48, 368, 63 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 96 rect = ( 368, 48, 384, 63 ) render = ALPHA angular_velocity = 0 delay_color = ( 0,0,0 )} //-Black-	
+	
+	
+
+	//-------------------------------------------------------------------------------------------------------------------	
+	
+	//Small Amulet
+	ShotData { id = 97 rect = ( 0, 64, 16, 80 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 98 rect = ( 16, 64, 32, 80 ) render = ALPHA angular_velocity = 0 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 99 rect = ( 32, 64, 48, 80 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 100 rect = ( 48, 64, 64, 80 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 101 rect = ( 64, 64, 80, 80 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 102 rect = ( 80, 64, 96, 80 ) render = ALPHA angular_velocity = 0 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 103 rect = ( 96, 64, 112, 80 ) render = ALPHA angular_velocity = 0 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 104 rect = ( 112, 64, 128, 80 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 105 rect = ( 128, 64, 144, 80 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 106 rect = ( 144, 64, 160, 80 ) render = ALPHA angular_velocity = 0 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 107 rect = ( 160, 64, 176, 80 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 108 rect = ( 176, 64, 192, 80 ) render = ALPHA angular_velocity = 0 delay_color = ( 0,0,0 )} //-Black-	
+	
+	//Small Amulet ( Inverted ) 
+	ShotData { id = 109 rect = ( 192, 64, 208, 80 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 110 rect = ( 208, 64, 224, 80 ) render = ALPHA angular_velocity = 0 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 111 rect = ( 224, 64, 240, 80 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 112 rect = ( 240, 64, 255, 80 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 113 rect = ( 255, 64, 272, 80 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 114 rect = ( 272, 64, 288, 80 ) render = ALPHA angular_velocity = 0 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 115 rect = ( 288, 64, 304, 80 ) render = ALPHA angular_velocity = 0 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 116 rect = ( 304, 64, 320, 80 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 117 rect = ( 320, 64, 336, 80 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 118 rect = ( 336, 64, 352, 80 ) render = ALPHA angular_velocity = 0 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 119 rect = ( 352, 64, 368, 80 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 120 rect = ( 368, 64, 384, 80 ) render = ALPHA angular_velocity = 0 delay_color = ( 0,0,0 )} //-Black-	
+	
+	//-------------------------------------------------------------------------------------------------------------------		
+	
+	//Small Kunai
+	ShotData { id = 121 rect = ( 0, 80, 16, 96 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 122 rect = ( 16, 80, 32, 96 ) render = ALPHA angular_velocity = 0 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 123 rect = ( 32, 80, 48, 96 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 124 rect = ( 48, 80, 64, 96 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 125 rect = ( 64, 80, 80, 96 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 126 rect = ( 80, 80, 96, 96 ) render = ALPHA angular_velocity = 0 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 127 rect = ( 96, 80, 112, 96 ) render = ALPHA angular_velocity = 0 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 128 rect = ( 112, 80, 128, 96 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 129 rect = ( 128, 80, 144, 96 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 130 rect = ( 144, 80, 160, 96 ) render = ALPHA angular_velocity = 0 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 131 rect = ( 160, 80, 176, 96 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 132 rect = ( 176, 80, 192, 96 ) render = ALPHA angular_velocity = 0 delay_color = ( 0,0,0 )} //-Black-	
+	
+	//Small Kunai ( Inverted ) 
+	ShotData { id = 133 rect = ( 192, 80, 208, 96 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 134 rect = ( 208, 80, 224, 96 ) render = ALPHA angular_velocity = 0 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 135 rect = ( 224, 80, 240, 96 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 136 rect = ( 240, 80, 255, 96 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 137 rect = ( 255, 80, 272, 96 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 138 rect = ( 272, 80, 288, 96 ) render = ALPHA angular_velocity = 0 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 139 rect = ( 288, 80, 304, 96 ) render = ALPHA angular_velocity = 0 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 140 rect = ( 304, 80, 320, 96 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 141 rect = ( 320, 80, 336, 96 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 142 rect = ( 336, 80, 352, 96 ) render = ALPHA angular_velocity = 0 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 143 rect = ( 352, 80, 368, 96 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 144 rect = ( 368, 80, 384, 96 ) render = ALPHA angular_velocity = 0 delay_color = ( 0,0,0 )} //-Black-	
+	
+	//-------------------------------------------------------------------------------------------------------------------		
+	
+	//Small Arrowhead
+	ShotData { id = 145 rect = ( 0, 96, 16, 112 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 146 rect = ( 16, 96, 32, 112 ) render = ALPHA angular_velocity = 0 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 147 rect = ( 32, 96, 48, 112 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 148 rect = ( 48, 96, 64, 112 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 149 rect = ( 64, 96, 80, 112 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 150 rect = ( 80, 96, 96, 112 ) render = ALPHA angular_velocity = 0 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 151 rect = ( 96, 96, 112, 112 ) render = ALPHA angular_velocity = 0 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 152 rect = ( 112, 96, 128, 112 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 153 rect = ( 128, 96, 144, 112 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 154 rect = ( 144, 96, 160, 112 ) render = ALPHA angular_velocity = 0 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 155 rect = ( 160, 96, 176, 112 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 156 rect = ( 176, 96, 192, 112 ) render = ALPHA angular_velocity = 0 delay_color = ( 0,0,0 )} //-Black-	
+	
+	//Small Arrowhead ( Inverted ) 
+	ShotData { id = 157 rect = ( 192, 96, 208, 112 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 158 rect = ( 208, 96, 224, 112 ) render = ALPHA angular_velocity = 0 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 159 rect = ( 224, 96, 240, 112 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 160 rect = ( 240, 96, 255, 112 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 161 rect = ( 255, 96, 272, 112 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 162 rect = ( 272, 96, 288, 112 ) render = ALPHA angular_velocity = 0 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 163 rect = ( 288, 96, 304, 112 ) render = ALPHA angular_velocity = 0 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 164 rect = ( 304, 96, 320, 112 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 165 rect = ( 320, 96, 336, 112 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 166 rect = ( 336, 96, 352, 112 ) render = ALPHA angular_velocity = 0 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 167 rect = ( 352, 96, 368, 112 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 168 rect = ( 368, 96, 384, 112 ) render = ALPHA angular_velocity = 0 delay_color = ( 0,0,0 )} //-Black-	
+	
+	//-------------------------------------------------------------------------------------------------------------------	
+
+	//Mags
+	ShotData { id = 169 rect = ( 0, 112, 16, 128 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 170 rect = ( 16, 112, 32, 128 ) render = ALPHA angular_velocity = 0 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 171 rect = ( 32, 112, 48, 128 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 172 rect = ( 48, 112, 64, 128 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 173 rect = ( 64, 112, 80, 128 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 174 rect = ( 80, 112, 96, 128 ) render = ALPHA angular_velocity = 0 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 175 rect = ( 96, 112, 112, 128 ) render = ALPHA angular_velocity = 0 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 176 rect = ( 112, 112, 128, 128 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 177 rect = ( 128, 112, 144, 128 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 178 rect = ( 144, 112, 160, 128 ) render = ALPHA angular_velocity = 0 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 179 rect = ( 160, 112, 176, 128 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 180 rect = ( 176, 112, 192, 128 ) render = ALPHA angular_velocity = 0 delay_color = ( 0,0,0 )} //-Black-	
+	
+	//Mags ( Inverted ) 
+	ShotData { id = 181 rect = ( 192, 112, 208, 128 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 182 rect = ( 208, 112, 224, 128 ) render = ALPHA angular_velocity = 0 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 183 rect = ( 224, 112, 240, 128 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 184 rect = ( 240, 112, 255, 128 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 185 rect = ( 255, 112, 272, 128 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 186 rect = ( 272, 112, 288, 128 ) render = ALPHA angular_velocity = 0 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 187 rect = ( 288, 112, 304, 128 ) render = ALPHA angular_velocity = 0 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 188 rect = ( 304, 112, 320, 128 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 189 rect = ( 320, 112, 336, 128 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 190 rect = ( 336, 112, 352, 128 ) render = ALPHA angular_velocity = 0 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 191 rect = ( 352, 112, 368, 128 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 192 rect = ( 368, 112, 384, 128 ) render = ALPHA angular_velocity = 0 delay_color = ( 0,0,0 )} //-Black-	
+	
+	//-------------------------------------------------------------------------------------------------------------------	
+
+	//Blurred Mags 
+	ShotData { id = 193 rect = ( 0, 128, 16, 144 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 194 rect = ( 16, 128, 32, 144 ) render = ALPHA angular_velocity = 0 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 195 rect = ( 32, 128, 48, 144 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 196 rect = ( 48, 128, 64, 144 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 197 rect = ( 64, 128, 80, 144 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 198 rect = ( 80, 128, 96, 144 ) render = ALPHA angular_velocity = 0 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 199 rect = ( 96, 128, 112, 144 ) render = ALPHA angular_velocity = 0 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 200 rect = ( 112, 128, 128, 144 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 201 rect = ( 128, 128, 144, 144 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 202 rect = ( 144, 128, 160, 144 ) render = ALPHA angular_velocity = 0 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 203 rect = ( 160, 128, 176, 144 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 204 rect = ( 176, 128, 192, 144 ) render = ALPHA angular_velocity = 0 delay_color = ( 0,0,0 )} //-Black-	
+	
+	//Blurred Mags ( Inverted ) 
+	ShotData { id = 205 rect = ( 192, 128, 208, 144 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 206 rect = ( 208, 128, 224, 144 ) render = ALPHA angular_velocity = 0 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 207 rect = ( 224, 128, 240, 144 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 208 rect = ( 240, 128, 255, 144 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 209 rect = ( 255, 128, 272, 144 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 210 rect = ( 272, 128, 288, 144 ) render = ALPHA angular_velocity = 0 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 211 rect = ( 288, 128, 304, 144 ) render = ALPHA angular_velocity = 0 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 212 rect = ( 304, 128, 320, 144 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 213 rect = ( 320, 128, 336, 144 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 214 rect = ( 336, 128, 352, 144 ) render = ALPHA angular_velocity = 0 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 215 rect = ( 352, 128, 368, 144 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 216 rect = ( 368, 128, 384, 144 ) render = ALPHA angular_velocity = 0 delay_color = ( 0,0,0 )} //-Black-	
+	
+	//-------------------------------------------------------------------------------------------------------------------	
+
+	//Ice Small
+	ShotData { id = 217 rect = ( 0, 144, 16, 160 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 218 rect = ( 16, 144, 32, 160 ) render = ALPHA angular_velocity = 0 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 219 rect = ( 32, 144, 48, 160 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 220 rect = ( 48, 144, 64, 160 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 221 rect = ( 64, 144, 80, 160 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 222 rect = ( 80, 144, 96, 160 ) render = ALPHA angular_velocity = 0 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 223 rect = ( 96, 144, 112, 160 ) render = ALPHA angular_velocity = 0 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 224 rect = ( 112, 144, 128, 160 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 225 rect = ( 128, 144, 144, 160 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 226 rect = ( 144, 144, 160, 160 ) render = ALPHA angular_velocity = 0 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 227 rect = ( 160, 144, 176, 160 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 228 rect = ( 176, 144, 192, 160 ) render = ALPHA angular_velocity = 0 delay_color = ( 0,0,0 )} //-Black-	
+	
+	//Ice Small ( Inverted ) 
+	ShotData { id = 229 rect = ( 192, 144, 208, 160 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 230 rect = ( 208, 144, 224, 160 ) render = ALPHA angular_velocity = 0 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 231 rect = ( 224, 144, 240, 160 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 232 rect = ( 240, 144, 255, 160 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 233 rect = ( 255, 144, 272, 160 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 234 rect = ( 272, 144, 288, 160 ) render = ALPHA angular_velocity = 0 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 235 rect = ( 288, 144, 304, 160 ) render = ALPHA angular_velocity = 0 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 236 rect = ( 304, 144, 320, 160 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 237 rect = ( 320, 144, 336, 160 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 238 rect = ( 336, 144, 352, 160 ) render = ALPHA angular_velocity = 0 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 239 rect = ( 352, 144, 368, 160 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 240 rect = ( 368, 144, 384, 160 ) render = ALPHA angular_velocity = 0 delay_color = ( 0,0,0 )} //-Black-	
+	
+	//-------------------------------------------------------------------------------------------------------------------	
+
+	//Star Small
+	ShotData { id = 241 rect = ( 0, 160, 16, 176 ) render = ALPHA angular_velocity = 4 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 242 rect = ( 16, 160, 32, 176 ) render = ALPHA angular_velocity = 4 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 243 rect = ( 32, 160, 48, 176 ) render = ALPHA angular_velocity = 4 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 244 rect = ( 48, 160, 64, 176 ) render = ALPHA angular_velocity = 4 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 245 rect = ( 64, 160, 80, 176 ) render = ALPHA angular_velocity = 4 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 246 rect = ( 80, 160, 96, 176 ) render = ALPHA angular_velocity = 4 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 247 rect = ( 96, 160, 112, 176 ) render = ALPHA angular_velocity = 4 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 248 rect = ( 112, 160, 128, 176 ) render = ALPHA angular_velocity = 4 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 249 rect = ( 128, 160, 144, 176 ) render = ALPHA angular_velocity = 4 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 250 rect = ( 144, 160, 160, 176 ) render = ALPHA angular_velocity = 4 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 251 rect = ( 160, 160, 176, 176 ) render = ALPHA angular_velocity = 4 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 252 rect = ( 176, 160, 192, 176 ) render = ALPHA angular_velocity = 4 delay_color = ( 0,0,0 )} //-Black-	
+	
+	//Star Small ( Inverted ) 
+	ShotData { id = 253 rect = ( 192, 160, 208, 176 ) render = ALPHA angular_velocity = 4 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 254 rect = ( 208, 160, 224, 176 ) render = ALPHA angular_velocity = 4 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 255 rect = ( 224, 160, 240, 176 ) render = ALPHA angular_velocity = 4 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 256 rect = ( 240, 160, 255, 176 ) render = ALPHA angular_velocity = 4 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 257 rect = ( 255, 160, 272, 176 ) render = ALPHA angular_velocity = 4 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 258 rect = ( 272, 160, 288, 176 ) render = ALPHA angular_velocity = 4 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 259 rect = ( 288, 160, 304, 176 ) render = ALPHA angular_velocity = 4 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 260 rect = ( 304, 160, 320, 176 ) render = ALPHA angular_velocity = 4 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 261 rect = ( 320, 160, 336, 176 ) render = ALPHA angular_velocity = 4 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 262 rect = ( 336, 160, 352, 176 ) render = ALPHA angular_velocity = 4 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 263 rect = ( 352, 160, 368, 176 ) render = ALPHA angular_velocity = 4 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 264 rect = ( 368, 160, 384, 176 ) render = ALPHA angular_velocity = 4 delay_color = ( 0,0,0 )} //-Black-	
+	
+	//-------------------------------------------------------------------------------------------------------------------		
+	
+	//Small Droplet
+	ShotData { id = 265 rect = ( 0, 176, 16, 192 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 266 rect = ( 16, 176, 32, 192 ) render = ALPHA angular_velocity = 0 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 267 rect = ( 32, 176, 48, 192 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 268 rect = ( 48, 176, 64, 192 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 269 rect = ( 64, 176, 80, 192 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 270 rect = ( 80, 176, 96, 192 ) render = ALPHA angular_velocity = 0 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 271 rect = ( 96, 176, 112, 192 ) render = ALPHA angular_velocity = 0 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 272 rect = ( 112, 176, 128, 192 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 273 rect = ( 128, 176, 144, 192 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 274 rect = ( 144, 176, 160, 192 ) render = ALPHA angular_velocity = 0 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 275 rect = ( 160, 176, 176, 192 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 276 rect = ( 176, 176, 192, 192 ) render = ALPHA angular_velocity = 0 delay_color = ( 0,0,0 )} //-Black-	
+	
+	//Small Droplet ( Inverted ) 
+	ShotData { id = 277 rect = ( 192, 176, 208, 192 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 278 rect = ( 208, 176, 224, 192 ) render = ALPHA angular_velocity = 0 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 279 rect = ( 224, 176, 240, 192 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 280 rect = ( 240, 176, 255, 192 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 281 rect = ( 255, 176, 272, 192 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 282 rect = ( 272, 176, 288, 192 ) render = ALPHA angular_velocity = 0 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 283 rect = ( 288, 176, 304, 192 ) render = ALPHA angular_velocity = 0 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 284 rect = ( 304, 176, 320, 192 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 285 rect = ( 320, 176, 336, 192 ) render = ALPHA angular_velocity = 0 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 286 rect = ( 336, 176, 352, 192 ) render = ALPHA angular_velocity = 0 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 287 rect = ( 352, 176, 368, 192 ) render = ALPHA angular_velocity = 0 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 288 rect = ( 368, 176, 384, 192 ) render = ALPHA angular_velocity = 0 delay_color = ( 0,0,0 )} //-Black-	
+	
+	//-------------------------------------------------------------------------------------------------------------------		
+	
+	//Coins
+	ShotData { id = 289 rect = ( 0, 192, 16, 208 ) render = ALPHA angular_velocity = 4 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 290 rect = ( 16, 192, 32, 208 ) render = ALPHA angular_velocity = 4 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 291 rect = ( 32, 192, 48, 208 ) render = ALPHA angular_velocity = 4 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 292 rect = ( 48, 192, 64, 208 ) render = ALPHA angular_velocity = 4 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 293 rect = ( 64, 192, 80, 208 ) render = ALPHA angular_velocity = 4 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 294 rect = ( 80, 192, 96, 208 ) render = ALPHA angular_velocity = 4 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 295 rect = ( 96, 192, 112, 208 ) render = ALPHA angular_velocity = 4 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 296 rect = ( 112, 192, 128, 208 ) render = ALPHA angular_velocity = 4 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 297 rect = ( 128, 192, 144, 208 ) render = ALPHA angular_velocity = 4 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 298 rect = ( 144, 192, 160, 208 ) render = ALPHA angular_velocity = 4 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 299 rect = ( 160, 192, 176, 208 ) render = ALPHA angular_velocity = 4 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 300 rect = ( 176, 192, 192, 208 ) render = ALPHA angular_velocity = 4 delay_color = ( 0,0,0 )} //-Black-	
+	
+	//Circle with Dot
+	ShotData { id = 301 rect = ( 192, 192, 208, 208 ) render = ALPHA angular_velocity = 4 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 302 rect = ( 208, 192, 224, 208 ) render = ALPHA angular_velocity = 4 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 303 rect = ( 224, 192, 240, 208 ) render = ALPHA angular_velocity = 4 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 304 rect = ( 240, 192, 255, 208 ) render = ALPHA angular_velocity = 4 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 305 rect = ( 255, 192, 272, 208 ) render = ALPHA angular_velocity = 4 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 306 rect = ( 272, 192, 288, 208 ) render = ALPHA angular_velocity = 4 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 307 rect = ( 288, 192, 304, 208 ) render = ALPHA angular_velocity = 4 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 308 rect = ( 304, 192, 320, 208 ) render = ALPHA angular_velocity = 4 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 309 rect = ( 320, 192, 336, 208 ) render = ALPHA angular_velocity = 4 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 310 rect = ( 336, 192, 352, 208 ) render = ALPHA angular_velocity = 4 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 311 rect = ( 352, 192, 368, 208 ) render = ALPHA angular_velocity = 4 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 312 rect = ( 368, 192, 384, 208 ) render = ALPHA angular_velocity = 4 delay_color = ( 0,0,0 )} //-Black-	
+	
+	//-------------------------------------------------------------------------------------------------------------------	
+	
+	//Med Rice
+	ShotData { id = 337 rect = ( 0, 272, 16, 304 ) render = ALPHA collision = 12 angular_velocity = 0 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 338 rect = ( 16, 272, 32, 304 ) render = ALPHA collision = 12 angular_velocity = 0 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 339 rect = ( 32, 272, 48, 304 ) render = ALPHA collision = 12 angular_velocity = 0 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 340 rect = ( 48, 272, 64, 304 ) render = ALPHA collision = 12 angular_velocity = 0 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 341 rect = ( 64, 272, 80, 304 ) render = ALPHA collision = 12 angular_velocity = 0 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 342 rect = ( 80, 272, 96, 304 ) render = ALPHA collision = 12 angular_velocity = 0 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 343 rect = ( 96, 272, 112, 304 ) render = ALPHA collision = 12 angular_velocity = 0 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 344 rect = ( 112, 272, 128, 304 ) render = ALPHA collision = 12 angular_velocity = 0 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 345 rect = ( 128, 272, 144, 304 ) render = ALPHA collision = 12 angular_velocity = 0 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 346 rect = ( 144, 272, 160, 304 ) render = ALPHA collision = 12 angular_velocity = 0 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 347 rect = ( 160, 272, 176, 304 ) render = ALPHA collision = 12 angular_velocity = 0 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 348 rect = ( 176, 272, 192, 304 ) render = ALPHA collision = 12 angular_velocity = 0 delay_color = ( 0,0,0 )} //-Black-	
+	
+	//Med Rice ( Inverted ) 
+	ShotData { id = 349 rect = ( 192, 272, 208, 304 ) render = ALPHA collision = 12 angular_velocity = 0 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 350 rect = ( 208, 272, 224, 304 ) render = ALPHA collision = 12 angular_velocity = 0 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 351 rect = ( 224, 272, 240, 304 ) render = ALPHA collision = 12 angular_velocity = 0 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 352 rect = ( 240, 272, 255, 304 ) render = ALPHA collision = 12 angular_velocity = 0 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 353 rect = ( 255, 272, 272, 304 ) render = ALPHA collision = 12 angular_velocity = 0 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 354 rect = ( 272, 272, 288, 304 ) render = ALPHA collision = 12 angular_velocity = 0 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 355 rect = ( 288, 272, 304, 304 ) render = ALPHA collision = 12 angular_velocity = 0 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 356 rect = ( 304, 272, 320, 304 ) render = ALPHA collision = 12 angular_velocity = 0 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 357 rect = ( 320, 272, 336, 304 ) render = ALPHA collision = 12 angular_velocity = 0 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 358 rect = ( 336, 272, 352, 304 ) render = ALPHA collision = 12 angular_velocity = 0 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 359 rect = ( 352, 272, 368, 304 ) render = ALPHA collision = 12 angular_velocity = 0 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 360 rect = ( 368, 272, 384, 304 ) render = ALPHA collision = 12 angular_velocity = 0 delay_color = ( 0,0,0 )} //-Black-	
+	
+	//-------------------------------------------------------------------------------------------------------------------	
+	
+	//Knives
+	ShotData { id = 361 rect = ( 0, 304, 16, 336 ) render = ALPHA collision = 12 angular_velocity = 0 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 362 rect = ( 16, 304, 32, 336 ) render = ALPHA collision = 12 angular_velocity = 0 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 363 rect = ( 32, 304, 48, 336 ) render = ALPHA collision = 12 angular_velocity = 0 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 364 rect = ( 48, 304, 64, 336 ) render = ALPHA collision = 12 angular_velocity = 0 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 365 rect = ( 64, 304, 80, 336 ) render = ALPHA collision = 12 angular_velocity = 0 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 366 rect = ( 80, 304, 96, 336 ) render = ALPHA collision = 12 angular_velocity = 0 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 367 rect = ( 96, 304, 112, 336 ) render = ALPHA collision = 12 angular_velocity = 0 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 368 rect = ( 112, 304, 128, 336 ) render = ALPHA collision = 12 angular_velocity = 0 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 369 rect = ( 128, 304, 144, 336 ) render = ALPHA collision = 12 angular_velocity = 0 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 370 rect = ( 144, 304, 160, 336 ) render = ALPHA collision = 12 angular_velocity = 0 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 371 rect = ( 160, 304, 176, 336 ) render = ALPHA collision = 12 angular_velocity = 0 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 372 rect = ( 176, 304, 192, 336 ) render = ALPHA collision = 12 angular_velocity = 0 delay_color = ( 0,0,0 )} //-Black-		
+
+	//-------------------------------------------------------------------------------------------------------------------	
+	
+	//Arrows
+	ShotData { id = 373 rect = ( 0, 336, 16, 368 ) render = ALPHA collision = ( 6, 0, 8 ) angular_velocity = 0 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 374 rect = ( 16, 336, 32, 368 ) render = ALPHA collision = ( 6, 0, 8 ) angular_velocity = 0 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 375 rect = ( 32, 336, 48, 368 ) render = ALPHA collision = ( 6, 0, 8 ) angular_velocity = 0 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 376 rect = ( 48, 336, 64, 368 ) render = ALPHA collision = ( 6, 0, 8 ) angular_velocity = 0 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 377 rect = ( 64, 336, 80, 368 ) render = ALPHA collision = ( 6, 0, 8 ) angular_velocity = 0 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 378 rect = ( 80, 336, 96, 368 ) render = ALPHA collision = ( 6, 0, 8 ) angular_velocity = 0 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 379 rect = ( 96, 336, 112, 368 ) render = ALPHA collision = ( 6, 0, 8 ) angular_velocity = 0 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 380 rect = ( 112, 336, 128, 368 ) render = ALPHA collision = ( 6, 0, 8 ) angular_velocity = 0 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 381 rect = ( 128, 336, 144, 368 ) render = ALPHA collision = ( 6, 0, 8 ) angular_velocity = 0 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 382 rect = ( 144, 336, 160, 368 ) render = ALPHA collision = ( 6, 0, 8 ) angular_velocity = 0 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 383 rect = ( 160, 336, 176, 368 ) render = ALPHA collision = ( 6, 0, 8 ) angular_velocity = 0 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 384 rect = ( 176, 336, 192, 368 ) render = ALPHA collision = ( 6, 0, 8 ) angular_velocity = 0 delay_color = ( 0,0,0 )} //-Black-		
+
+	//-------------------------------------------------------------------------------------------------------------------		
+	
+	//Dots
+	ShotData { id = 397 rect = ( 0, 368, 8, 376 ) render = ALPHA fixed_angle = true collision = 1 angular_velocity = 0 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 398 rect = ( 8, 368, 16, 376 ) render = ALPHA fixed_angle = true collision = 1 angular_velocity = 0 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 399 rect = ( 16, 368, 24, 376 ) render = ALPHA fixed_angle = true collision = 1 angular_velocity = 0 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 400 rect = ( 24, 368, 32, 376 ) render = ALPHA fixed_angle = true collision = 1 angular_velocity = 0 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 401 rect = ( 32, 368, 40, 376 ) render = ALPHA fixed_angle = true collision = 1 angular_velocity = 0 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 402 rect = ( 40, 368, 48, 376 ) render = ALPHA fixed_angle = true collision = 1 angular_velocity = 0 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 403 rect = ( 48, 368, 56, 376 ) render = ALPHA fixed_angle = true collision = 1 angular_velocity = 0 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 404 rect = ( 56, 368, 64, 376 ) render = ALPHA fixed_angle = true collision = 1 angular_velocity = 0 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 405 rect = ( 64, 368, 72, 376 ) render = ALPHA fixed_angle = true collision = 1 angular_velocity = 0 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 406 rect = ( 72, 368, 80, 376 ) render = ALPHA fixed_angle = true collision = 1 angular_velocity = 0 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 407 rect = ( 80, 368, 88, 376 ) render = ALPHA fixed_angle = true collision = 1 angular_velocity = 0 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 408 rect = ( 88, 368, 96, 376 ) render = ALPHA fixed_angle = true collision = 1 angular_velocity = 0 delay_color = ( 0,0,0 )} //-Black-	
+
+	//Berries
+	ShotData { id = 409 rect = ( 0, 376, 8, 384 ) render = ALPHA collision = 1 angular_velocity = 8 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 410 rect = ( 8, 376, 16, 384 ) render = ALPHA collision = 1 angular_velocity = 8 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 411 rect = ( 16, 376, 24, 384 ) render = ALPHA collision = 1 angular_velocity = 8 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 412 rect = ( 24, 376, 32, 384 ) render = ALPHA collision = 1 angular_velocity = 8 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 413 rect = ( 32, 376, 40, 384 ) render = ALPHA collision = 1 angular_velocity = 8 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 414 rect = ( 40, 376, 48, 384 ) render = ALPHA collision = 1 angular_velocity = 8 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 415 rect = ( 48, 376, 56, 384 ) render = ALPHA collision = 1 angular_velocity = 8 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 416 rect = ( 56, 376, 64, 384 ) render = ALPHA collision = 1 angular_velocity = 8 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 417 rect = ( 64, 376, 72, 384 ) render = ALPHA collision = 1 angular_velocity = 8 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 418 rect = ( 72, 376, 80, 384 ) render = ALPHA collision = 1 angular_velocity = 8 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 419 rect = ( 80, 376, 88, 384 ) render = ALPHA collision = 1 angular_velocity = 8 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 420 rect = ( 88, 376, 96, 384 ) render = ALPHA collision = 1 angular_velocity = 8 delay_color = ( 0,0,0 )} //-Black-		
+
+	//-------------------------------------------------------------------------------------------------------------------			
+
+	//Medium Round
+	ShotData { id = 421 rect = ( 384, 0, 416, 32 ) render = ALPHA angular_velocity = 0 collision = 17 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 422 rect = ( 416, 0, 448, 32 ) render = ALPHA angular_velocity = 0 collision = 17 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 423 rect = ( 448, 0, 480, 32 ) render = ALPHA angular_velocity = 0 collision = 17 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 424 rect = ( 480, 0, 512, 32 ) render = ALPHA angular_velocity = 0 collision = 17 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 425 rect = ( 512, 0, 544, 32 ) render = ALPHA angular_velocity = 0 collision = 17 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 426 rect = ( 544, 0, 576, 32 ) render = ALPHA angular_velocity = 0 collision = 17 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 427 rect = ( 576, 0, 608, 32 ) render = ALPHA angular_velocity = 0 collision = 17 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 428 rect = ( 608, 0, 640, 32 ) render = ALPHA angular_velocity = 0 collision = 17 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 429 rect = ( 640, 0, 672, 32 ) render = ALPHA angular_velocity = 0 collision = 17 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 430 rect = ( 672, 0, 704, 32 ) render = ALPHA angular_velocity = 0 collision = 17 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 431 rect = ( 704, 0, 736, 32 ) render = ALPHA angular_velocity = 0 collision = 17 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 432 rect = ( 736, 0, 768, 32 ) render = ALPHA angular_velocity = 0 collision = 17 delay_color = ( 0,0,0 )} //-Black-
+
+	//-------------------------------------------------------------------------------------------------------------------	
+	
+	//Medium Stars
+	ShotData { id = 433 rect = ( 384, 32, 416, 64 ) render = ALPHA angular_velocity = 5 collision = 12 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 434 rect = ( 416, 32, 448, 64 ) render = ALPHA angular_velocity = 5 collision = 12 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 435 rect = ( 448, 32, 480, 64 ) render = ALPHA angular_velocity = 5 collision = 12 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 436 rect = ( 480, 32, 512, 64 ) render = ALPHA angular_velocity = 5 collision = 12 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 437 rect = ( 512, 32, 544, 64 ) render = ALPHA angular_velocity = 5 collision = 12 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 438 rect = ( 544, 32, 576, 64 ) render = ALPHA angular_velocity = 5 collision = 12 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 439 rect = ( 576, 32, 608, 64 ) render = ALPHA angular_velocity = 5 collision = 12 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 440 rect = ( 608, 32, 640, 64 ) render = ALPHA angular_velocity = 5 collision = 12 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 441 rect = ( 640, 32, 672, 64 ) render = ALPHA angular_velocity = 5 collision = 12 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 442 rect = ( 672, 32, 704, 64 ) render = ALPHA angular_velocity = 5 collision = 12 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 443 rect = ( 704, 32, 736, 64 ) render = ALPHA angular_velocity = 5 collision = 12 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 444 rect = ( 736, 32, 768, 64 ) render = ALPHA angular_velocity = 5 collision = 12 delay_color = ( 0,0,0 )} //-Black-	
+
+	//-------------------------------------------------------------------------------------------------------------------
+	
+	//Heart
+	ShotData { id = 445 rect = ( 384, 64, 416, 96 ) render = ALPHA angular_velocity = 0 collision = 17 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 446 rect = ( 416, 64, 448, 96 ) render = ALPHA angular_velocity = 0 collision = 17 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 447 rect = ( 448, 64, 480, 96 ) render = ALPHA angular_velocity = 0 collision = 17 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 448 rect = ( 480, 64, 512, 96 ) render = ALPHA angular_velocity = 0 collision = 17 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 449 rect = ( 512, 64, 544, 96 ) render = ALPHA angular_velocity = 0 collision = 17 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 450 rect = ( 544, 64, 576, 96 ) render = ALPHA angular_velocity = 0 collision = 17 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 451 rect = ( 576, 64, 608, 96 ) render = ALPHA angular_velocity = 0 collision = 17 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 452 rect = ( 608, 64, 640, 96 ) render = ALPHA angular_velocity = 0 collision = 17 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 453 rect = ( 640, 64, 672, 96 ) render = ALPHA angular_velocity = 0 collision = 17 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 454 rect = ( 672, 64, 704, 96 ) render = ALPHA angular_velocity = 0 collision = 17 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 455 rect = ( 704, 64, 736, 96 ) render = ALPHA angular_velocity = 0 collision = 17 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 456 rect = ( 736, 64, 768, 96 ) render = ALPHA angular_velocity = 0 collision = 17 delay_color = ( 0,0,0 )} //-Black-	
+	
+	//-------------------------------------------------------------------------------------------------------------------
+	
+	//Flower
+	ShotData { id = 457 rect = ( 384, 96, 416, 128 ) render = ALPHA angular_velocity = -7 collision = 12 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 458 rect = ( 416, 96, 448, 128 ) render = ALPHA angular_velocity = -7 collision = 12 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 459 rect = ( 448, 96, 480, 128 ) render = ALPHA angular_velocity = -7 collision = 12 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 460 rect = ( 480, 96, 512, 128 ) render = ALPHA angular_velocity = -7 collision = 12 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 461 rect = ( 512, 96, 544, 128 ) render = ALPHA angular_velocity = -7 collision = 12 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 462 rect = ( 544, 96, 576, 128 ) render = ALPHA angular_velocity = -7 collision = 12 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 463 rect = ( 576, 96, 608, 128 ) render = ALPHA angular_velocity = -7 collision = 12 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 464 rect = ( 608, 96, 640, 128 ) render = ALPHA angular_velocity = -7 collision = 12 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 465 rect = ( 640, 96, 672, 128 ) render = ALPHA angular_velocity = -7 collision = 12 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 466 rect = ( 672, 96, 704, 128 ) render = ALPHA angular_velocity = -7 collision = 12 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 467 rect = ( 704, 96, 736, 128 ) render = ALPHA angular_velocity = -7 collision = 12 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 468 rect = ( 736, 96, 768, 128 ) render = ALPHA angular_velocity = -7 collision = 12 delay_color = ( 0,0,0 )} //-Black-	
+
+	//-------------------------------------------------------------------------------------------------------------------	
+	
+	//Magatama Med
+	ShotData { id = 469 rect = ( 384, 128, 416, 160 ) render = ALPHA angular_velocity = -7 collision = 10 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 470 rect = ( 416, 128, 448, 160 ) render = ALPHA angular_velocity = -7 collision = 10 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 471 rect = ( 448, 128, 480, 160 ) render = ALPHA angular_velocity = -7 collision = 10 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 472 rect = ( 480, 128, 512, 160 ) render = ALPHA angular_velocity = -7 collision = 10 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 473 rect = ( 512, 128, 544, 160 ) render = ALPHA angular_velocity = -7 collision = 10 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 474 rect = ( 544, 128, 576, 160 ) render = ALPHA angular_velocity = -7 collision = 10 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 475 rect = ( 576, 128, 608, 160 ) render = ALPHA angular_velocity = -7 collision = 10 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 476 rect = ( 608, 128, 640, 160 ) render = ALPHA angular_velocity = -7 collision = 10 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 477 rect = ( 640, 128, 672, 160 ) render = ALPHA angular_velocity = -7 collision = 10 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 478 rect = ( 672, 128, 704, 160 ) render = ALPHA angular_velocity = -7 collision = 10 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 479 rect = ( 704, 128, 736, 160 ) render = ALPHA angular_velocity = -7 collision = 10 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 480 rect = ( 736, 128, 768, 160 ) render = ALPHA angular_velocity = -7 collision = 10 delay_color = ( 0,0,0 )} //-Black-	
+	
+	//-------------------------------------------------------------------------------------------------------------------
+	
+	//Haniwa
+	ShotData { id = 481 rect = ( 384, 160, 416, 192 ) render = ALPHA angular_velocity = 0 collision = 17 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 482 rect = ( 416, 160, 448, 192 ) render = ALPHA angular_velocity = 0 collision = 17 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 483 rect = ( 448, 160, 480, 192 ) render = ALPHA angular_velocity = 0 collision = 17 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 484 rect = ( 480, 160, 512, 192 ) render = ALPHA angular_velocity = 0 collision = 17 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 485 rect = ( 512, 160, 544, 192 ) render = ALPHA angular_velocity = 0 collision = 17 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 486 rect = ( 544, 160, 576, 192 ) render = ALPHA angular_velocity = 0 collision = 17 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 487 rect = ( 576, 160, 608, 192 ) render = ALPHA angular_velocity = 0 collision = 17 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 488 rect = ( 608, 160, 640, 192 ) render = ALPHA angular_velocity = 0 collision = 17 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 489 rect = ( 640, 160, 672, 192 ) render = ALPHA angular_velocity = 0 collision = 17 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 490 rect = ( 672, 160, 704, 192 ) render = ALPHA angular_velocity = 0 collision = 17 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 491 rect = ( 704, 160, 736, 192 ) render = ALPHA angular_velocity = 0 collision = 17 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 492 rect = ( 736, 160, 768, 192 ) render = ALPHA angular_velocity = 0 collision = 17 delay_color = ( 0,0,0 )} //-Black-	
+
+	//-------------------------------------------------------------------------------------------------------------------		
+	
+	//YinYang Med
+	ShotData { id = 493 rect = ( 384, 192, 416, 224 ) render = ALPHA angular_velocity = -7 collision = 17 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 494 rect = ( 416, 192, 448, 224 ) render = ALPHA angular_velocity = -7 collision = 17 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 495 rect = ( 448, 192, 480, 224 ) render = ALPHA angular_velocity = -7 collision = 17 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 496 rect = ( 480, 192, 512, 224 ) render = ALPHA angular_velocity = -7 collision = 17 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 497 rect = ( 512, 192, 544, 224 ) render = ALPHA angular_velocity = -7 collision = 17 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 498 rect = ( 544, 192, 576, 224 ) render = ALPHA angular_velocity = -7 collision = 17 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 499 rect = ( 576, 192, 608, 224 ) render = ALPHA angular_velocity = -7 collision = 17 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 500 rect = ( 608, 192, 640, 224 ) render = ALPHA angular_velocity = -7 collision = 17 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 501 rect = ( 640, 192, 672, 224 ) render = ALPHA angular_velocity = -7 collision = 17 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 502 rect = ( 672, 192, 704, 224 ) render = ALPHA angular_velocity = -7 collision = 17 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 503 rect = ( 704, 192, 736, 224 ) render = ALPHA angular_velocity = -7 collision = 17 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 504 rect = ( 736, 192, 768, 224 ) render = ALPHA angular_velocity = -7 collision = 17 delay_color = ( 0,0,0 )} //-Black-		
+		
+	//-------------------------------------------------------------------------------------------------------------------
+
+	//Bubbles
+	ShotData { id = 613 rect = ( 768, 0, 832, 64 ) render = ADD_ARGB  angular_velocity = 2 collision = 22 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 614 rect = ( 768, 64, 832, 128 ) render = ADD_ARGB  angular_velocity = 2 collision = 22 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 615 rect = ( 768, 128, 832, 192 ) render = ADD_ARGB  angular_velocity = 2 collision = 22 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 616 rect = ( 768, 192, 832, 256 ) render = ADD_ARGB  angular_velocity = 2 collision = 22 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 617 rect = ( 768, 256, 832, 320 ) render = ADD_ARGB  angular_velocity = 2 collision = 22 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 618 rect = ( 768, 320, 832, 384 ) render = ADD_ARGB  angular_velocity = 2 collision = 22 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 619 rect = ( 768, 384, 832, 447 ) render = ADD_ARGB  angular_velocity = 2 collision = 22 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 620 rect = ( 768, 447, 832, 512 ) render = ADD_ARGB  angular_velocity = 2 collision = 22 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 621 rect = ( 768, 512, 832, 576 ) render = ADD_ARGB  angular_velocity = 2 collision = 22 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 622 rect = ( 768, 576, 832, 640 ) render = ADD_ARGB  angular_velocity = 2 collision = 22 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 623 rect = ( 768, 640, 832, 704 ) render = ADD_ARGB  angular_velocity = 2 collision = 22 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 624 rect = ( 768, 704, 832, 768 ) render = ADD_ARGB  angular_velocity = 2 collision = 22 delay_color = ( 0,0,0 )} //-Black-		
+	
+	//-------------------------------------------------------------------------------------------------------------------------------	
+
+	//Miko Orb
+	ShotData { id = 625 rect = ( 832, 0, 896, 64 ) render = ADD_ARGB collision = 12 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 626 rect = ( 832, 64, 896, 128 ) render = ADD_ARGB collision = 12 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 627 rect = ( 832, 128, 896, 192 ) render = ADD_ARGB collision = 12 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 628 rect = ( 832, 192, 896, 256 ) render = ADD_ARGB collision = 12 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 629 rect = ( 832, 256, 896, 320 ) render = ADD_ARGB collision = 12 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 630 rect = ( 832, 320, 896, 384 ) render = ADD_ARGB collision = 12 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 631 rect = ( 832, 384, 896, 447 ) render = ADD_ARGB collision = 12 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 632 rect = ( 832, 447, 896, 512 ) render = ADD_ARGB collision = 12 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 633 rect = ( 832, 512, 896, 576 ) render = ADD_ARGB collision = 12 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 634 rect = ( 832, 576, 896, 640 ) render = ADD_ARGB collision = 12 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 635 rect = ( 832, 640, 896, 704 ) render = ADD_ARGB collision = 12 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 636 rect = ( 832, 704, 896, 768 ) render = ADD_ARGB collision = 12 delay_color = ( 0,0,0 )} //-Black-		
+	
+	//-------------------------------------------------------------------------------------------------------------------------------	
+
+	//Big YinYang
+	ShotData { id = 637 rect = ( 896, 0, 960, 64 ) render = ALPHA angular_velocity = -3 collision = 23 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 638 rect = ( 896, 64, 960, 128 ) render = ALPHA angular_velocity = -3 collision = 23 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 639 rect = ( 896, 128, 960, 192 ) render = ALPHA angular_velocity = -3 collision = 23 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 640 rect = ( 896, 192, 960, 256 ) render = ALPHA angular_velocity = -3 collision = 23 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 641 rect = ( 896, 256, 960, 320 ) render = ALPHA angular_velocity = -3 collision = 23 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 642 rect = ( 896, 320, 960, 384 ) render = ALPHA angular_velocity = -3 collision = 23 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 643 rect = ( 896, 384, 960, 447 ) render = ALPHA angular_velocity = -3 collision = 23 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 644 rect = ( 896, 447, 960, 512 ) render = ALPHA angular_velocity = -3 collision = 23 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 645 rect = ( 896, 512, 960, 576 ) render = ALPHA angular_velocity = -3 collision = 23 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 646 rect = ( 896, 576, 960, 640 ) render = ALPHA angular_velocity = -3 collision = 23 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 647 rect = ( 896, 640, 960, 704 ) render = ALPHA angular_velocity = -3 collision = 23 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 648 rect = ( 896, 704, 960, 768 ) render = ALPHA angular_velocity = -3 collision = 23 delay_color = ( 0,0,0 )} //-Black-	
+
+	//-------------------------------------------------------------------------------------------------------------------------------	
+
+	//Big Magatama
+	ShotData { id = 649 rect = ( 960, 0, 1023, 64 ) render = ALPHA angular_velocity = -3 collision = 23 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 650 rect = ( 960, 64, 1023, 128 ) render = ALPHA angular_velocity = -3 collision = 23 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 651 rect = ( 960, 128, 1023, 192 ) render = ALPHA angular_velocity = -3 collision = 23 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 652 rect = ( 960, 192, 1023, 256 ) render = ALPHA angular_velocity = -3 collision = 23 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 653 rect = ( 960, 256, 1023, 320 ) render = ALPHA angular_velocity = -3 collision = 23 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 654 rect = ( 960, 320, 1023, 384 ) render = ALPHA angular_velocity = -3 collision = 23 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 655 rect = ( 960, 384, 1023, 447 ) render = ALPHA angular_velocity = -3 collision = 23 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 656 rect = ( 960, 447, 1023, 512 ) render = ALPHA angular_velocity = -3 collision = 23 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 657 rect = ( 960, 512, 1023, 576 ) render = ALPHA angular_velocity = -3 collision = 23 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 658 rect = ( 960, 576, 1023, 640 ) render = ALPHA angular_velocity = -3 collision = 23 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 659 rect = ( 960, 640, 1023, 704 ) render = ALPHA angular_velocity = -3 collision = 23 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 660 rect = ( 960, 704, 1023, 768 ) render = ALPHA angular_velocity = -3 collision = 23 delay_color = ( 0,0,0 )} //-Black-	
+
+	//-------------------------------------------------------------------------------------------------------------------	
+	
+	//Curvy Lasers
+	ShotData { id = 661 rect = ( 0, 384, 16, 496 ) render = ALPHA delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 662 rect = ( 16, 384, 32, 496 ) render = ALPHA delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 663 rect = ( 32, 384, 48, 496 ) render = ALPHA delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 664 rect = ( 48, 384, 64, 496 ) render = ALPHA delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 665 rect = ( 64, 384, 80, 496 ) render = ALPHA delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 666 rect = ( 80, 384, 96, 496 ) render = ALPHA delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 667 rect = ( 96, 384, 112, 496 ) render = ALPHA delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 668 rect = ( 112, 384, 128, 496 ) render = ALPHA delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 669 rect = ( 128, 384, 144, 496 ) render = ALPHA delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 670 rect = ( 144, 384, 160, 496 ) render = ALPHA delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 671 rect = ( 160, 384, 176, 496 ) render = ALPHA delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 672 rect = ( 176, 384, 192, 496 ) render = ALPHA delay_color = ( 0,0,0 )} //-Black-	
+	
+//-------------------------------------------------------------------------------------------------------------------------------	
+
+
+//-------------------------------------------------------------------------------------------------------------------		
+	
+	//Shine
+	
+	//-White-
+	ShotData { id = 313  render = ALPHA angular_velocity = 8 delay_color = ( 255,255,255 ) 
+		AnimationData{ 
+			animation_data = (8, 0, 208, 16, 224 )
+			animation_data = (8, 0, 224, 16, 240 )
+			animation_data = (8, 0, 240, 16, 256 )
+			animation_data = (8, 0, 256, 16, 272 )
+		}
+	} 
+	//-Gray-
+	ShotData { id = 314  render = ALPHA angular_velocity = 8 delay_color = ( 155,155,155 )
+		AnimationData{ 
+			animation_data = (8, 16, 208, 32, 224 )
+			animation_data = (8, 16, 224, 32, 240 )
+			animation_data = (8, 16, 240, 32, 256 )
+			animation_data = (8, 16, 256, 32, 272 )
+		}
+	} 	
+	//-Red-
+	ShotData { id = 315  render = ALPHA angular_velocity = 8 delay_color = ( 255,55,55 )
+		AnimationData{ 
+			animation_data = (8, 32, 208, 48, 224 )
+			animation_data = (8, 32, 224, 48, 240 )
+			animation_data = (8, 32, 240, 48, 256 )
+			animation_data = (8, 32, 256, 48, 272 )
+		}
+	} 		
+	//-Orange-
+	ShotData { id = 316  render = ALPHA angular_velocity = 8 delay_color = ( 255,155,15 )
+		AnimationData{ 
+			animation_data = (8, 48, 208, 64, 224 )
+			animation_data = (8, 48, 224, 64, 240 )
+			animation_data = (8, 48, 240, 64, 256 )
+			animation_data = (8, 48, 256, 64, 272 )
+		}
+	} 	
+	//-Yellow-
+	ShotData { id = 317  render = ALPHA angular_velocity = 8 delay_color = ( 255,185,35 )
+		AnimationData{ 
+			animation_data = (8, 64, 208, 80, 224 )
+			animation_data = (8, 64, 224, 80, 240 )
+			animation_data = (8, 64, 240, 80, 256 )
+			animation_data = (8, 64, 256, 80, 272 )
+		}
+	} 		
+	//-Lime-
+	ShotData { id = 318  render = ALPHA angular_velocity = 8 delay_color = ( 95,255,160 )
+		AnimationData{ 
+			animation_data = (8, 80, 208, 96, 224 )
+			animation_data = (8, 80, 224, 96, 240 )
+			animation_data = (8, 80, 240, 96, 256 )
+			animation_data = (8, 80, 256, 96, 272 )
+		}
+	}
+	//-Green-
+	ShotData { id = 319  render = ALPHA angular_velocity = 8 delay_color = ( 60,200,55 )
+		AnimationData{ 
+			animation_data = (8, 96, 208, 112, 224 )
+			animation_data = (8, 96, 224, 112, 240 )
+			animation_data = (8, 96, 240, 112, 256 )
+			animation_data = (8, 96, 256, 112, 272 )
+		}
+	}  	
+	//-Cyan-
+	ShotData { id = 320  render = ALPHA angular_velocity = 8 delay_color = ( 15,225,230 )
+		AnimationData{ 
+			animation_data = (8, 112, 208, 128, 224 )
+			animation_data = (8, 112, 224, 128, 240 )
+			animation_data = (8, 112, 240, 128, 256 )
+			animation_data = (8, 112, 256, 128, 272 )
+		}
+	} 	
+	//-Blue-
+	ShotData { id = 321  render = ALPHA angular_velocity = 8 delay_color = ( 15,145,230 )
+		AnimationData{ 
+			animation_data = (8, 128, 208, 144, 224 )
+			animation_data = (8, 128, 224, 144, 240 )
+			animation_data = (8, 128, 240, 144, 256 )
+			animation_data = (8, 128, 256, 144, 272 )
+		}
+	} 	
+	//-Purple-
+	ShotData { id = 322  render = ALPHA angular_velocity = 8 delay_color = ( 175,0,245 )
+		AnimationData{ 
+			animation_data = (8, 144, 208, 160, 224 )
+			animation_data = (8, 144, 224, 160, 240 )
+			animation_data = (8, 144, 240, 160, 256 )
+			animation_data = (8, 144, 256, 160, 272 )
+		}
+	} 	
+	//-Pink-
+	ShotData { id = 323  render = ALPHA angular_velocity = 8 delay_color = ( 255,0,250 )
+		AnimationData{ 
+			animation_data = (8, 160, 208, 176, 224 )
+			animation_data = (8, 160, 224, 176, 240 )
+			animation_data = (8, 160, 240, 176, 256 )
+			animation_data = (8, 160, 256, 176, 272 )
+		}
+	} 	
+	//-Black-
+	ShotData { id = 324  render = ALPHA angular_velocity = 8 delay_color = ( 0,0,0 )
+		AnimationData{ 
+			animation_data = (8, 176, 208, 192, 224 )
+			animation_data = (8, 176, 224, 192, 240 )
+			animation_data = (8, 176, 240, 192, 256 )
+			animation_data = (8, 176, 256, 192, 272 )
+		}
+	} 		
+	
+//-------------------------------------------------------------------------------------------------------------------	
+
+	//Flickering Scales
+	
+	//-White-
+	ShotData { id = 325  render = ALPHA angular_velocity = 0 delay_color = ( 255,255,255 ) 
+		AnimationData{ 
+			animation_data = (8, 192, 208, 208, 224 )
+			animation_data = (8, 192, 224, 208, 240 )
+			animation_data = (8, 192, 240, 208, 256 )
+			animation_data = (8, 192, 256, 208, 272 )
+		}
+	} 
+	//-Gray-
+	ShotData { id = 326  render = ALPHA angular_velocity = 0 delay_color = ( 155,155,155 )
+		AnimationData{ 
+			animation_data = (8, 208, 208, 224, 224 )
+			animation_data = (8, 208, 224, 224, 240 )
+			animation_data = (8, 208, 240, 224, 256 )
+			animation_data = (8, 208, 256, 224, 272 )
+		}
+	} 	
+	//-Red-
+	ShotData { id = 327  render = ALPHA angular_velocity = 0 delay_color = ( 255,55,55 )
+		AnimationData{ 
+			animation_data = (8, 224, 208, 240, 224 )
+			animation_data = (8, 224, 224, 240, 240 )
+			animation_data = (8, 224, 240, 240, 256 )
+			animation_data = (8, 224, 256, 240, 272 )
+		}
+	} 		
+	//-Orange-
+	ShotData { id = 328  render = ALPHA angular_velocity = 0 delay_color = ( 255,155,15 )
+		AnimationData{ 
+			animation_data = (8, 240, 208, 256, 224 )
+			animation_data = (8, 240, 224, 256, 240 )
+			animation_data = (8, 240, 240, 256, 256 )
+			animation_data = (8, 240, 256, 256, 272 )
+		}
+	} 	
+	//-Yellow-
+	ShotData { id = 329  render = ALPHA angular_velocity = 0 delay_color = ( 255,185,35 )
+		AnimationData{ 
+			animation_data = (8, 256, 208, 272, 224 )
+			animation_data = (8, 256, 224, 272, 240 )
+			animation_data = (8, 256, 240, 272, 256 )
+			animation_data = (8, 256, 256, 272, 272 )
+		}
+	} 		
+	//-Lime-
+	ShotData { id = 330  render = ALPHA angular_velocity = 0 delay_color = ( 95,255,160 )
+		AnimationData{ 
+			animation_data = (8, 272, 208, 288, 224 )
+			animation_data = (8, 272, 224, 288, 240 )
+			animation_data = (8, 272, 240, 288, 256 )
+			animation_data = (8, 272, 256, 288, 272 )
+		}
+	}
+	//-Green-
+	ShotData { id = 331  render = ALPHA angular_velocity = 0 delay_color = ( 60,200,55 )
+		AnimationData{ 
+			animation_data = (8, 288, 208, 304, 224 )
+			animation_data = (8, 288, 224, 304, 240 )
+			animation_data = (8, 288, 240, 304, 256 )
+			animation_data = (8, 288, 256, 304, 272 )
+		}
+	}  	
+	//-Cyan-
+	ShotData { id = 332  render = ALPHA angular_velocity = 0 delay_color = ( 15,225,230 )
+		AnimationData{ 
+			animation_data = (8, 304, 208, 320, 224 )
+			animation_data = (8, 304, 224, 320, 240 )
+			animation_data = (8, 304, 240, 320, 256 )
+			animation_data = (8, 304, 256, 320, 272 )
+		}
+	} 	
+	//-Blue-
+	ShotData { id = 333  render = ALPHA angular_velocity = 0 delay_color = ( 15,145,230 )
+		AnimationData{ 
+			animation_data = (8, 320, 208, 336, 224 )
+			animation_data = (8, 320, 224, 336, 240 )
+			animation_data = (8, 320, 240, 336, 256 )
+			animation_data = (8, 320, 256, 336, 272 )
+		}
+	} 	
+	//-Purple-
+	ShotData { id = 334  render = ALPHA angular_velocity = 0 delay_color = ( 175,0,245 )
+		AnimationData{ 
+			animation_data = (8, 336, 208, 352, 224 )
+			animation_data = (8, 336, 224, 352, 240 )
+			animation_data = (8, 336, 240, 352, 256 )
+			animation_data = (8, 336, 256, 352, 272 )
+		}
+	} 	
+	//-Pink-
+	ShotData { id = 335  render = ALPHA angular_velocity = 0 delay_color = ( 255,0,250 )
+		AnimationData{ 
+			animation_data = (8, 352, 208, 368, 224 )
+			animation_data = (8, 352, 224, 368, 240 )
+			animation_data = (8, 352, 240, 368, 256 )
+			animation_data = (8, 352, 256, 368, 272 )
+		}
+	} 	
+	//-Black-
+	ShotData { id = 336  render = ALPHA angular_velocity = 0 delay_color = ( 0,0,0 )
+		AnimationData{ 
+			animation_data = (8, 368, 208, 384, 224 )
+			animation_data = (8, 368, 224, 384, 240 )
+			animation_data = (8, 368, 240, 384, 256 )
+			animation_data = (8, 368, 256, 384, 272 )
+		}
+	} 		
+	
+//-------------------------------------------------------------------------------------------------------------------
+
+	//Mpp Glowstick
+
+	//-White-
+	ShotData { id = 385  render = ALPHA angular_velocity = 0 delay_color = ( 255,255,255 ) 
+		AnimationData{ 
+			animation_data = (8, 192, 304, 208, 336 )
+			animation_data = (8, 192, 336, 208, 368 )
+			animation_data = (8, 192, 368, 208, 400 )
+			animation_data = (8, 192, 400, 208, 432 )
+			animation_data = (8, 192, 432, 208, 464 )
+			animation_data = (8, 192, 464, 208, 496 )			
+		}
+	} 
+	//-Gray-
+	ShotData { id = 386  render = ALPHA angular_velocity = 0 delay_color = ( 155,155,155 )
+		AnimationData{ 
+			animation_data = (8, 208, 304, 224, 336 )
+			animation_data = (8, 208, 336, 224, 368 )
+			animation_data = (8, 208, 368, 224, 400 )
+			animation_data = (8, 208, 400, 224, 432 )
+			animation_data = (8, 208, 432, 224, 464 )
+			animation_data = (2, 208, 464, 224, 496 )			
+		}
+	} 	
+	//-Red-
+	ShotData { id = 387  render = ALPHA angular_velocity = 0 delay_color = ( 255,55,55 )
+		AnimationData{ 
+			animation_data = ( 4, 224, 304, 240, 336 )
+			animation_data = ( 4, 224, 336, 240, 368 )		
+		}
+	} 		
+	//-Orange-
+	ShotData { id = 388  render = ALPHA angular_velocity = 0 delay_color = ( 255,155,15 )
+		AnimationData{ 
+			animation_data = ( 4, 240, 304, 256, 336 )
+			animation_data = ( 4, 240, 336, 256, 368 )
+		
+		}
+	} 	
+	//-Yellow-
+	ShotData { id = 389  render = ALPHA angular_velocity = 0 delay_color = ( 255,185,35 )
+		AnimationData{ 
+			animation_data = ( 4, 256, 304, 272, 336 )
+			animation_data = ( 4, 256, 336, 272, 368 )
+		
+		}
+	} 		
+	//-Lime-
+	ShotData { id = 390  render = ALPHA angular_velocity = 0 delay_color = ( 95,255,160 )
+		AnimationData{ 
+			animation_data = ( 4, 272, 304, 288, 336 )
+			animation_data = ( 4, 272, 336, 288, 368 )		
+		}
+	}
+	//-Green-
+	ShotData { id = 391  render = ALPHA angular_velocity = 0 delay_color = ( 60,200,55 )
+		AnimationData{ 
+			animation_data = ( 4, 288, 304, 304, 336 )
+			animation_data = ( 4, 288, 336, 304, 368 )
+			
+		}
+	}  	
+	//-Cyan-
+	ShotData { id = 392  render = ALPHA angular_velocity = 0 delay_color = ( 15,225,230 )
+		AnimationData{ 
+			animation_data = ( 4, 304, 304, 320, 336 )
+			animation_data = ( 4, 304, 336, 320, 368 )		
+		}
+	} 	
+	//-Blue-
+	ShotData { id = 393  render = ALPHA angular_velocity = 0 delay_color = ( 15,145,230 )
+		AnimationData{ 
+			animation_data = ( 4, 320, 304, 336, 336 )
+			animation_data = ( 4, 320, 336, 336, 368 )
+		
+		}
+	} 	
+	//-Purple-
+	ShotData { id = 394  render = ALPHA angular_velocity = 0 delay_color = ( 175,0,245 )
+		AnimationData{ 
+			animation_data = ( 4, 336, 304, 352, 336 )
+			animation_data = ( 4, 336, 336, 352, 368 )		
+		}
+	} 	
+	//-Pink-
+	ShotData { id = 395  render = ALPHA angular_velocity = 0 delay_color = ( 255,0,250 )
+		AnimationData{ 
+			animation_data = ( 4, 352, 304, 368, 336 )
+			animation_data = ( 4, 352, 336, 368, 368 )			
+		}
+	} 	
+	//-Black-
+	ShotData { id = 396  render = ALPHA angular_velocity = 0 delay_color = ( 0,0,0 )
+		AnimationData{ 
+			animation_data = (2, 368, 304, 384, 336 )
+			animation_data = (2, 368, 336, 384, 368 )
+			animation_data = (2, 368, 368, 384, 400 )
+			animation_data = (2, 368, 400, 384, 432 )
+			animation_data = (2, 368, 432, 384, 464 )
+			animation_data = (2, 368, 464, 384, 496 )			
+		}
+	} 
+
+//-------------------------------------------------------------------------------------------------------------------		
+	
+	//Butterfly
+	
+	//-White-
+	ShotData { id = 505  render = ALPHA angular_velocity = 0 delay_color = ( 255,255,255 ) 
+		AnimationData{ 
+			animation_data = (4, 384, 224, 416, 256 )
+			animation_data = (4, 384, 256, 416, 288 )
+			animation_data = (4, 384, 288, 416, 320 )
+			animation_data = (4, 384, 256, 416, 288 )
+		}
+	} 		
+	//-Gray-
+	ShotData { id = 506  render = ALPHA angular_velocity = 0 delay_color = ( 155,155,155 )
+		AnimationData{ 
+			animation_data = (4, 416, 224, 448, 256 )
+			animation_data = (4, 416, 256, 448, 288 )
+			animation_data = (4, 416, 288, 448, 320 )
+			animation_data = (4, 416, 256, 448, 288 )		
+		}
+	} 		
+	//-Red-
+	ShotData { id = 507  render = ALPHA angular_velocity = 0 delay_color = ( 255,55,55 )
+		AnimationData{ 
+			animation_data = (4, 448, 224, 480, 256 )
+			animation_data = (4, 448, 256, 480, 288 )
+			animation_data = (4, 448, 288, 480, 320 )
+			animation_data = (4, 448, 256, 480, 288 )				
+		}
+	} 			
+	//-Orange-
+	ShotData { id = 508  render = ALPHA angular_velocity = 0 delay_color = ( 255,155,15 )
+		AnimationData{ 
+			animation_data = (4, 480, 224, 512, 256 )
+			animation_data = (4, 480, 256, 512, 288 )
+			animation_data = (4, 480, 288, 512, 320 )
+			animation_data = (4, 480, 256, 512, 288 )		
+		}
+	} 	
+	//-Yellow-
+	ShotData { id = 509  render = ALPHA angular_velocity = 0 delay_color = ( 255,185,35 )
+		AnimationData{ 
+			animation_data = (4, 512, 224, 544, 256 )
+			animation_data = (4, 512, 256, 544, 288 )
+			animation_data = (4, 512, 288, 544, 320 )
+			animation_data = (4, 512, 256, 544, 288 )		
+		}
+	} 		
+	//-Lime-
+	ShotData { id = 510  render = ALPHA angular_velocity = 0 delay_color = ( 95,255,160 )
+		AnimationData{ 
+			animation_data = (4, 544, 224, 576, 256 )
+			animation_data = (4, 544, 256, 576, 288 )
+			animation_data = (4, 544, 288, 576, 320 )
+			animation_data = (4, 544, 256, 576, 288 )			
+		}
+	}
+	//-Green-
+	ShotData { id = 511  render = ALPHA angular_velocity = 0 delay_color = ( 60,200,55 )
+		AnimationData{ 
+			animation_data = (4, 576, 224, 608, 256 )
+			animation_data = (4, 576, 256, 608, 288 )
+			animation_data = (4, 576, 288, 608, 320 )
+			animation_data = (4, 576, 256, 608, 288 )				
+		}
+	}  	
+	//-Cyan-
+	ShotData { id = 512  render = ALPHA angular_velocity = 0 delay_color = ( 15,225,230 )
+		AnimationData{ 
+			animation_data = (4, 608, 224, 640, 256 )
+			animation_data = (4, 608, 256, 640, 288 )
+			animation_data = (4, 608, 288, 640, 320 )
+			animation_data = (4, 608, 256, 640, 288 )			
+		}
+	} 	
+	//-Blue-
+	ShotData { id = 513  render = ALPHA angular_velocity = 0 delay_color = ( 15,145,230 )
+		AnimationData{ 
+			animation_data = (4, 640, 224, 672, 256 )
+			animation_data = (4, 640, 256, 672, 288 )
+			animation_data = (4, 640, 288, 672, 320 )
+			animation_data = (4, 640, 256, 672, 288 )			
+		}
+	} 	
+	//-Purple-
+	ShotData { id = 514  render = ALPHA angular_velocity = 0 delay_color = ( 175,0,245 )
+		AnimationData{ 
+			animation_data = (4, 672, 224, 704, 256 )
+			animation_data = (4, 672, 256, 704, 288 )
+			animation_data = (4, 672, 288, 704, 320 )
+			animation_data = (4, 672, 256, 704, 288 )			
+		}
+	} 	
+	//-Pink-
+	ShotData { id = 515  render = ALPHA angular_velocity = 0 delay_color = ( 255,0,250 )
+		AnimationData{ 
+			animation_data = (4, 704, 224, 736, 256 )
+			animation_data = (4, 704, 256, 736, 288 )
+			animation_data = (4, 704, 288, 736, 320 )
+			animation_data = (4, 704, 256, 736, 288 )			
+		}
+	} 	
+	//-Black-
+	ShotData { id = 516  render = ALPHA angular_velocity = 0 delay_color = ( 0,0,0 )
+		AnimationData{ 
+			animation_data = (4, 736, 224, 768, 256 )
+			animation_data = (4, 736, 256, 768, 288 )
+			animation_data = (4, 736, 288, 768, 320 )
+			animation_data = (4, 736, 256, 768, 288 )			
+		}
+	} 
+	
+//-------------------------------------------------------------------------------------------------------------------	
+	
+	//Fireballs
+	
+	//-White-
+	ShotData { id = 517  render = ADD_ARGB angular_velocity = 0 delay_color = ( 255,255,255 ) 
+		AnimationData{ 
+			animation_data = (4, 384, 320, 416, 352 )
+			animation_data = (4, 384, 352, 416, 384 )
+			animation_data = (4, 384, 384, 416, 416 )
+		}
+	} 		
+	//-Gray-
+	ShotData { id = 518  render = ADD_ARGB angular_velocity = 0 delay_color = ( 155,155,155 )
+		AnimationData{ 
+			animation_data = (4, 416, 320, 448, 352 )
+			animation_data = (4, 416, 352, 448, 384 )
+			animation_data = (4, 416, 384, 448, 416 )		
+		}
+	} 		
+	//-Red-
+	ShotData { id = 519  render = ADD_ARGB angular_velocity = 0 delay_color = ( 255,55,55 )
+		AnimationData{ 
+			animation_data = (4, 448, 320, 480, 352 )
+			animation_data = (4, 448, 352, 480, 384 )
+			animation_data = (4, 448, 384, 480, 416 )			
+		}
+	} 			
+	//-Orange-
+	ShotData { id = 520  render = ADD_ARGB angular_velocity = 0 delay_color = ( 255,155,15 )
+		AnimationData{ 
+			animation_data = (4, 480, 320, 512, 352 )
+			animation_data = (4, 480, 352, 512, 384 )
+			animation_data = (4, 480, 384, 512, 416 )	
+		}
+	} 	
+	//-Yellow-
+	ShotData { id = 521  render = ADD_ARGB angular_velocity = 0 delay_color = ( 255,185,35 )
+		AnimationData{ 
+			animation_data = (4, 512, 320, 544, 352 )
+			animation_data = (4, 512, 352, 544, 384 )
+			animation_data = (4, 512, 384, 544, 416 )			
+		}
+	} 		
+	//-Lime-
+	ShotData { id = 522  render = ADD_ARGB angular_velocity = 0 delay_color = ( 95,255,160 )
+		AnimationData{ 
+			animation_data = (4, 544, 320, 576, 352 )
+			animation_data = (4, 544, 352, 576, 384 )
+			animation_data = (4, 544, 384, 576, 416 )			
+		}
+	}
+	//-Green-
+	ShotData { id = 523  render = ADD_ARGB angular_velocity = 0 delay_color = ( 60,200,55 )
+		AnimationData{ 
+			animation_data = (4, 576, 320, 608, 352 )
+			animation_data = (4, 576, 352, 608, 384 )
+			animation_data = (4, 576, 384, 608, 416 )					
+		}
+	}  	
+	//-Cyan-
+	ShotData { id = 524  render = ADD_ARGB angular_velocity = 0 delay_color = ( 15,225,230 )
+		AnimationData{ 
+			animation_data = (4, 608, 320, 640, 352 )
+			animation_data = (4, 608, 352, 640, 384 )
+			animation_data = (4, 608, 384, 640, 416 )			
+		}
+	} 	
+	//-Blue-
+	ShotData { id = 525  render = ADD_ARGB angular_velocity = 0 delay_color = ( 15,145,230 )
+		AnimationData{ 
+			animation_data = (4, 640, 320, 672, 352 )
+			animation_data = (4, 640, 352, 672, 384 )
+			animation_data = (4, 640, 384, 672, 416 )			
+		}
+	} 	
+	//-Purple-
+	ShotData { id = 526  render = ADD_ARGB angular_velocity = 0 delay_color = ( 175,0,245 )
+		AnimationData{ 
+			animation_data = (4, 672, 320, 704, 352 )
+			animation_data = (4, 672, 352, 704, 384 )
+			animation_data = (4, 672, 384, 704, 416 )			
+		}
+	} 	
+	//-Pink-
+	ShotData { id = 527  render = ADD_ARGB angular_velocity = 0 delay_color = ( 255,0,250 )
+		AnimationData{ 
+			animation_data = (4, 704, 320, 736, 352 )
+			animation_data = (4, 704, 352, 736, 384 )
+			animation_data = (4, 704, 384, 736, 416 )		
+		}
+	} 	
+	//-Black-
+	ShotData { id = 528  render = ADD_ARGB angular_velocity = 0 delay_color = ( 0,0,0 )
+		AnimationData{ 
+			animation_data = (4, 736, 320, 768, 352 )
+			animation_data = (4, 736, 352, 768, 384 )
+			animation_data = (4, 736, 384, 768, 416 )		
+		}
+	} 
+	
+//-------------------------------------------------------------------------------------------------------------------	
+
+	//Mamizou Human
+	
+	//-White-
+	ShotData { id = 529  render = ALPHA fixed_angle = true angular_velocity = 0 collision = 12 delay_color = ( 255,255,255 ) 
+		AnimationData{ 
+			animation_data = (5, 384, 416, 416, 448 )
+			animation_data = (5, 384, 448, 416, 480 )
+			animation_data = (5, 384, 416, 416, 448 )			
+			animation_data = (5, 384, 480, 416, 512 )
+		}
+	} 	
+	//-Gray-
+	ShotData { id = 530  render = ALPHA fixed_angle = true angular_velocity = 0 collision = 12 delay_color = ( 155,155,155 )
+		AnimationData{ 
+			animation_data = (5, 416, 416, 448, 448 )
+			animation_data = (5, 416, 448, 448, 480 )
+			animation_data = (5, 416, 416, 448, 448 )			
+			animation_data = (5, 416, 480, 448, 512 )	
+		}
+	} 		
+	//-Red-
+	ShotData { id = 531  render = ALPHA fixed_angle = true angular_velocity = 0 collision = 12 delay_color = ( 255,55,55 )
+		AnimationData{ 
+			animation_data = (5, 448, 416, 480, 448 )
+			animation_data = (5, 448, 448, 480, 480 )
+			animation_data = (5, 448, 416, 480, 448 )			
+			animation_data = (5, 448, 480, 480, 512 )		
+		}
+	} 	
+	//-Orange-
+	ShotData { id = 532  render = ALPHA fixed_angle = true angular_velocity = 0 collision = 12 delay_color = ( 255,155,15 )
+		AnimationData{ 
+			animation_data = (5, 480, 416, 512, 448 )
+			animation_data = (5, 480, 448, 512, 480 )
+			animation_data = (5, 480, 416, 512, 448 )			
+			animation_data = (5, 480, 480, 512, 512 )	
+		}
+	} 	
+	//-Yellow-
+	ShotData { id = 533  render = ALPHA fixed_angle = true angular_velocity = 0 collision = 12 delay_color = ( 255,185,35 )
+		AnimationData{ 
+			animation_data = (5, 512, 416, 544, 448 )
+			animation_data = (5, 512, 448, 544, 480 )
+			animation_data = (5, 512, 416, 544, 448 )			
+			animation_data = (5, 512, 480, 544, 512 )			
+		}
+	} 		
+	//-Lime-
+	ShotData { id = 534  render = ALPHA fixed_angle = true angular_velocity = 0 collision = 12 delay_color = ( 95,255,160 )
+		AnimationData{ 
+			animation_data = (5, 544, 416, 576, 448 )
+			animation_data = (5, 544, 448, 576, 480 )
+			animation_data = (5, 544, 416, 576, 448 )			
+			animation_data = (5, 544, 480, 576, 512 )		
+		}
+	}
+	//-Green-
+	ShotData { id = 535  render = ALPHA fixed_angle = true angular_velocity = 0 collision = 12 delay_color = ( 60,200,55 )
+		AnimationData{ 
+			animation_data = (5, 576, 416, 608, 448 )
+			animation_data = (5, 576, 448, 608, 480 )
+			animation_data = (5, 576, 416, 608, 448 )			
+			animation_data = (5, 576, 480, 608, 512 )						
+		}
+	}  	
+	//-Cyan-
+	ShotData { id = 536  render = ALPHA fixed_angle = true angular_velocity = 0 collision = 12 delay_color = ( 15,225,230 )
+		AnimationData{ 
+			animation_data = (5, 608, 416, 640, 448 )
+			animation_data = (5, 608, 448, 640, 480 )
+			animation_data = (5, 608, 416, 640, 448 )			
+			animation_data = (5, 608, 480, 640, 512 )		
+		}
+	} 	
+	//-Blue-
+	ShotData { id = 537  render = ALPHA fixed_angle = true angular_velocity = 0 collision = 12 delay_color = ( 15,145,230 )
+		AnimationData{ 
+			animation_data = (5, 640, 416, 672, 448 )
+			animation_data = (5, 640, 448, 672, 480 )
+			animation_data = (5, 640, 416, 672, 448 )			
+			animation_data = (5, 640, 480, 672, 512 )		
+		}
+	} 	
+	//-Purple-
+	ShotData { id = 538  render = ALPHA fixed_angle = true angular_velocity = 0 collision = 12 delay_color = ( 175,0,245 )
+		AnimationData{ 
+			animation_data = (5, 672, 416, 704, 448 )
+			animation_data = (5, 672, 448, 704, 480 )
+			animation_data = (5, 672, 416, 704, 448 )			
+			animation_data = (5, 672, 480, 704, 512 )			
+		}
+	} 	
+	//-Pink-
+	ShotData { id = 539  render = ALPHA fixed_angle = true angular_velocity = 0 collision = 12 delay_color = ( 255,0,250 )
+		AnimationData{ 
+			animation_data = (5, 704, 416, 736, 448 )
+			animation_data = (5, 704, 448, 736, 480 )
+			animation_data = (5, 704, 416, 736, 448 )			
+			animation_data = (5, 704, 480, 736, 512 )		
+		}
+	} 	
+	//-Black-
+	ShotData { id = 540  render = ALPHA fixed_angle = true angular_velocity = 0 collision = 12 delay_color = ( 0,0,0 )
+		AnimationData{ 
+			animation_data = (5, 736, 416, 768, 448 )
+			animation_data = (5, 736, 448, 768, 480 )
+			animation_data = (5, 736, 416, 768, 448 )			
+			animation_data = (5, 736, 480, 768, 512 )	
+		}
+	} 
+	
+//-------------------------------------------------------------------------------------------------------------------
+
+	//Mamizou Dog ( Left )
+	
+	//-White-
+	ShotData { id = 541  render = ALPHA angular_velocity = 0 collision = 12 delay_color = ( 255,255,255 ) 
+		AnimationData{ 
+			animation_data = (5, 384, 512, 416, 544 )
+			animation_data = (5, 384, 544, 416, 576 )
+			//animation_data = (5, 384, 512, 416, 544 )			
+			animation_data = (5, 384, 576, 416, 608 )
+		}
+	} 	
+	//-Gray-
+	ShotData { id = 542  render = ALPHA angular_velocity = 0 collision = 12 delay_color = ( 155,155,155 )
+		AnimationData{ 
+			animation_data = (5, 416, 512, 448, 544 )
+			animation_data = (5, 416, 544, 448, 576 )
+			//animation_data = (5, 416, 512, 448, 544 )			
+			animation_data = (5, 416, 576, 448, 608 )	
+		}
+	} 		
+	//-Red-
+	ShotData { id = 543  render = ALPHA angular_velocity = 0 collision = 12 delay_color = ( 255,55,55 )
+		AnimationData{ 
+			animation_data = (5, 448, 512, 480, 544 )
+			animation_data = (5, 448, 544, 480, 576 )
+			//animation_data = (5, 448, 512, 480, 544 )			
+			animation_data = (5, 448, 576, 480, 608 )			
+		}
+	} 	
+	//-Orange-
+	ShotData { id = 544  render = ALPHA angular_velocity = 0 collision = 12 delay_color = ( 255,155,15 )
+		AnimationData{ 
+			animation_data = (5, 480, 512, 512, 544 )
+			animation_data = (5, 480, 544, 512, 576 )
+			//animation_data = (5, 480, 512, 512, 544 )			
+			animation_data = (5, 480, 576, 512, 608 )	
+		}
+	} 	
+	//-Yellow-
+	ShotData { id = 545  render = ALPHA angular_velocity = 0 collision = 12 delay_color = ( 255,185,35 )
+		AnimationData{ 
+			animation_data = (5, 512, 512, 544, 544 )
+			animation_data = (5, 512, 544, 544, 576 )
+			//animation_data = (5, 512, 512, 544, 544 )			
+			animation_data = (5, 512, 576, 544, 608 )		
+		}
+	} 		
+	//-Lime-
+	ShotData { id = 546  render = ALPHA angular_velocity = 0 collision = 12 delay_color = ( 95,255,160 )
+		AnimationData{ 
+			animation_data = (5, 544, 512, 576, 544 )
+			animation_data = (5, 544, 544, 576, 576 )
+			//animation_data = (5, 544, 512, 576, 544 )			
+			animation_data = (5, 544, 576, 576, 608 )		
+		}
+	}
+	//-Green-
+	ShotData { id = 547  render = ALPHA angular_velocity = 0 collision = 12 delay_color = ( 60,200,55 )
+		AnimationData{ 
+			animation_data = (5, 576, 512, 608, 544 )
+			animation_data = (5, 576, 544, 608, 576 )
+			//animation_data = (5, 576, 512, 608, 544 )			
+			animation_data = (5, 576, 576, 608, 608 )						
+		}
+	}  	
+	//-Cyan-
+	ShotData { id = 548  render = ALPHA angular_velocity = 0 collision = 12 delay_color = ( 15,225,230 )
+		AnimationData{ 
+			animation_data = (5, 608, 512, 640, 544 )
+			animation_data = (5, 608, 544, 640, 576 )
+			//animation_data = (5, 608, 512, 640, 544 )			
+			animation_data = (5, 608, 576, 640, 608 )			
+		}
+	} 	
+	//-Blue-
+	ShotData { id = 549  render = ALPHA angular_velocity = 0 collision = 12 delay_color = ( 15,145,230 )
+		AnimationData{ 
+			animation_data = (5, 640, 512, 672, 544 )
+			animation_data = (5, 640, 544, 672, 576 )
+			//animation_data = (5, 640, 512, 672, 544 )			
+			animation_data = (5, 640, 576, 672, 608 )		
+		}
+	} 	
+	//-Purple-
+	ShotData { id = 550  render = ALPHA angular_velocity = 0 collision = 12 delay_color = ( 175,0,245 )
+		AnimationData{ 
+			animation_data = (5, 672, 512, 704, 544 )
+			animation_data = (5, 672, 544, 704, 576 )
+			//animation_data = (5, 672, 512, 704, 544 )			
+			animation_data = (5, 672, 576, 704, 608 )		
+		}
+	} 	
+	//-Pink-
+	ShotData { id = 551  render = ALPHA angular_velocity = 0 collision = 12 delay_color = ( 255,0,250 )
+		AnimationData{ 
+			animation_data = (5, 704, 512, 736, 544 )
+			animation_data = (5, 704, 544, 736, 576 )
+			//animation_data = (5, 704, 512, 736, 544 )			
+			animation_data = (5, 704, 576, 736, 608 )			
+		}
+	} 	
+	//-Black-
+	ShotData { id = 552  render = ALPHA angular_velocity = 0 collision = 12 delay_color = ( 0,0,0 )
+		AnimationData{ 
+			animation_data = (5, 736, 512, 768, 544 )
+			animation_data = (5, 736, 544, 768, 576 )
+			//animation_data = (5, 736, 512, 768, 544 )			
+			animation_data = (5, 736, 576, 768, 608 )
+		}
+	} 
+	
+	//Mamizou Dog ( Right )
+	
+	//-White-
+	ShotData { id = 553  render = ALPHA angular_velocity = 0 collision = 12 delay_color = ( 255,255,255 ) 
+		AnimationData{ 
+			animation_data = (5, 384, 608, 416, 640 )
+			animation_data = (5, 384, 640, 416, 672 )		
+			animation_data = (5, 384, 672, 416, 704 )
+		}
+	} 	
+	//-Gray-
+	ShotData { id = 554  render = ALPHA angular_velocity = 0 collision = 12 delay_color = ( 155,155,155 )
+		AnimationData{ 
+			animation_data = (5, 416, 608, 448, 640 )
+			animation_data = (5, 416, 640, 448, 672 )		
+			animation_data = (5, 416, 672, 448, 704 )
+		}
+	} 		
+	//-Red-
+	ShotData { id = 555  render = ALPHA angular_velocity = 0 collision = 12 delay_color = ( 255,55,55 )
+		AnimationData{ 
+			animation_data = (5, 448, 608, 480, 640 )
+			animation_data = (5, 448, 640, 480, 672 )		
+			animation_data = (5, 448, 672, 480, 704 )			
+		}
+	} 	
+	//-Orange-
+	ShotData { id = 556  render = ALPHA angular_velocity = 0 collision = 12 delay_color = ( 255,155,15 )
+		AnimationData{ 
+			animation_data = (5, 480, 608, 512, 640 )
+			animation_data = (5, 480, 640, 512, 672 )		
+			animation_data = (5, 480, 672, 512, 704 )	
+		}
+	} 	
+	//-Yellow-
+	ShotData { id = 557  render = ALPHA angular_velocity = 0 collision = 12 delay_color = ( 255,185,35 )
+		AnimationData{ 
+			animation_data = (5, 512, 608, 544, 640 )
+			animation_data = (5, 512, 640, 544, 672 )		
+			animation_data = (5, 512, 672, 544, 704 )		
+		}
+	} 		
+	//-Lime-
+	ShotData { id = 558 render = ALPHA angular_velocity = 0 collision = 12 delay_color = ( 95,255,160 )
+		AnimationData{ 
+			animation_data = (5, 544, 608, 576, 640 )
+			animation_data = (5, 544, 640, 576, 672 )		
+			animation_data = (5, 544, 672, 576, 704 )		
+		}
+	}
+	//-Green-
+	ShotData { id = 559  render = ALPHA angular_velocity = 0 collision = 12 delay_color = ( 60,200,55 )
+		AnimationData{ 
+			animation_data = (5, 544, 608, 608, 640 )
+			animation_data = (5, 544, 640, 608, 672 )		
+			animation_data = (5, 544, 672, 608, 704 )						
+		}
+	}  	
+	//-Cyan-
+	ShotData { id = 560  render = ALPHA angular_velocity = 0 collision = 12 delay_color = ( 15,225,230 )
+		AnimationData{ 
+			animation_data = (5, 608, 608, 640, 640 )
+			animation_data = (5, 608, 640, 640, 672 )		
+			animation_data = (5, 608, 672, 640, 704 )			
+		}
+	} 	
+	//-Blue-
+	ShotData { id = 561  render = ALPHA angular_velocity = 0 collision = 12 delay_color = ( 15,145,230 )
+		AnimationData{ 
+			animation_data = (5, 640, 608, 672, 640 )
+			animation_data = (5, 640, 640, 672, 672 )		
+			animation_data = (5, 640, 672, 672, 704 )			
+		}
+	} 	
+	//-Purple-
+	ShotData { id = 562  render = ALPHA angular_velocity = 0 collision = 12 delay_color = ( 175,0,245 )
+		AnimationData{ 
+			animation_data = (5, 672, 608, 704, 640 )
+			animation_data = (5, 672, 640, 704, 672 )		
+			animation_data = (5, 672, 672, 704, 704 )			
+		}
+	} 	
+	//-Pink-
+	ShotData { id = 563  render = ALPHA angular_velocity = 0 collision = 12 delay_color = ( 255,0,250 )
+		AnimationData{ 
+			animation_data = (5, 704, 608, 736, 640 )
+			animation_data = (5, 704, 640, 736, 672 )		
+			animation_data = (5, 704, 672, 736, 704 )		
+		}
+	} 	
+	//-Black-
+	ShotData { id = 564  render = ALPHA angular_velocity = 0 collision = 12 delay_color = ( 0,0,0 )
+		AnimationData{ 
+			animation_data = (5, 736, 608, 768, 640 )
+			animation_data = (5, 736, 640, 768, 672 )		
+			animation_data = (5, 736, 672, 768, 704 )
+		}
+	} 	
+	
+	
+	//Mamizou Bird
+
+	//-White-
+	ShotData { id = 565  render = ALPHA angular_velocity = 0 collision = 12 delay_color = ( 255,255,255 ) 
+		AnimationData{ 
+			animation_data = (5, 384, 704, 416, 736 )
+			animation_data = (5, 384, 736, 416, 768 )		
+			animation_data = (5, 384, 768, 416, 800 )
+			animation_data = (5, 384, 736, 416, 768 )
+		}
+	} 	
+	//-Gray-
+	ShotData { id = 566  render = ALPHA angular_velocity = 0 collision = 12 delay_color = ( 155,155,155 )
+		AnimationData{ 
+			animation_data = (5, 416, 704, 448, 736 )
+			animation_data = (5, 416, 736, 448, 768 )		
+			animation_data = (5, 416, 768, 448, 800 )
+			animation_data = (5, 416, 736, 448, 768 )
+		}
+	} 		
+	//-Red-
+	ShotData { id = 567  render = ALPHA angular_velocity = 0 collision = 12 delay_color = ( 255,55,55 )
+		AnimationData{ 
+			animation_data = (5, 448, 704, 480, 736 )
+			animation_data = (5, 448, 736, 480, 768 )		
+			animation_data = (5, 448, 768, 480, 800 )	
+			animation_data = (5, 448, 736, 480, 768 )
+		}
+	} 	
+	//-Orange-
+	ShotData { id = 568  render = ALPHA angular_velocity = 0 collision = 12 delay_color = ( 255,155,15 )
+		AnimationData{ 
+			animation_data = (5, 480, 704, 512, 736 )
+			animation_data = (5, 480, 736, 512, 768 )		
+			animation_data = (5, 480, 768, 512, 800 )
+			animation_data = (5, 480, 736, 512, 768 )
+		}
+	} 	
+	//-Yellow-
+	ShotData { id = 569  render = ALPHA angular_velocity = 0 collision = 12 delay_color = ( 255,185,35 )
+		AnimationData{ 
+			animation_data = (5, 512, 704, 544, 736 )
+			animation_data = (5, 512, 736, 544, 768 )		
+			animation_data = (5, 512, 768, 544, 800 )	
+			animation_data = (5, 512, 736, 544, 768 )
+		}
+	} 		
+	//-Lime-
+	ShotData { id = 570 render = ALPHA angular_velocity = 0 collision = 12 delay_color = ( 95,255,160 )
+		AnimationData{ 
+			animation_data = (5, 544, 704, 576, 736 )
+			animation_data = (5, 544, 736, 576, 768 )		
+			animation_data = (5, 544, 768, 576, 800 )	
+			animation_data = (5, 544, 736, 576, 768 )
+		}
+	}
+	//-Green-
+	ShotData { id = 571  render = ALPHA angular_velocity = 0 collision = 12 delay_color = ( 60,200,55 )
+		AnimationData{ 
+			animation_data = (5, 576, 704, 608, 736 )
+			animation_data = (5, 576, 736, 608, 768 )		
+			animation_data = (5, 576, 768, 608, 800 )		
+			animation_data = (5, 576, 736, 608, 768 )		
+		}
+	}  	
+	//-Cyan-
+	ShotData { id = 572 render = ALPHA angular_velocity = 0 collision = 12 delay_color = ( 15,225,230 )
+		AnimationData{ 
+			animation_data = (5, 608, 704, 640, 736 )
+			animation_data = (5, 608, 736, 640, 768 )		
+			animation_data = (5, 608, 768, 640, 800 )	
+			animation_data = (5, 608, 736, 640, 768 )	
+		}
+	} 	
+	//-Blue-
+	ShotData { id = 573  render = ALPHA angular_velocity = 0 collision = 12 delay_color = ( 15,145,230 )
+		AnimationData{ 
+			animation_data = (5, 640, 704, 672, 736 )
+			animation_data = (5, 640, 736, 672, 768 )		
+			animation_data = (5, 640, 768, 672, 800 )
+			animation_data = (5, 640, 736, 672, 768 )	
+		}
+	} 	
+	//-Purple-
+	ShotData { id = 574  render = ALPHA angular_velocity = 0 collision = 12 delay_color = ( 175,0,245 )
+		AnimationData{ 
+			animation_data = (5, 672, 704, 704, 736 )
+			animation_data = (5, 672, 736, 704, 768 )		
+			animation_data = (5, 672, 768, 704, 800 )			
+		}
+	} 	
+	//-Pink-
+	ShotData { id = 575  render = ALPHA angular_velocity = 0 collision = 12 delay_color = ( 255,0,250 )
+		AnimationData{ 
+			animation_data = (5, 704, 704, 736, 736 )
+			animation_data = (5, 704, 736, 736, 768 )		
+			animation_data = (5, 704, 768, 736, 800 )	
+			animation_data = (5, 704, 736, 736, 768 )
+		}
+	} 	
+	//-Black-
+	ShotData { id = 576  render = ALPHA angular_velocity = 0 collision = 12 delay_color = ( 0,0,0 )
+		AnimationData{ 
+			animation_data = (5, 736, 704, 768, 736 )
+			animation_data = (5, 736, 736, 768, 768 )		
+			animation_data = (5, 736, 768, 768, 800 )	
+			animation_data = (5, 736, 736, 768, 768 )			
+		}
+	} 		
+	
+	//Mamizou Frog
+
+	//-White-
+	ShotData { id = 577  render = ALPHA angular_velocity = 0 fixed_angle = true collision = 12 delay_color = ( 255,255,255 ) 
+		AnimationData{ 
+			animation_data = (5, 384, 800, 416, 832 )
+			animation_data = (5, 384, 832, 416, 864 )		
+			animation_data = (5, 384, 864, 416, 896 )
+			animation_data = (5, 384, 832, 416, 864 )
+		}
+	} 	
+	//-Gray-
+	ShotData { id = 578  render = ALPHA angular_velocity = 0 fixed_angle = true collision = 12 delay_color = ( 155,155,155 )
+		AnimationData{ 
+			animation_data = (5, 416, 800, 448, 832 )
+			animation_data = (5, 416, 832, 448, 864 )		
+			animation_data = (5, 416, 864, 448, 896 )
+			animation_data = (5, 416, 832, 448, 864 )
+		}
+	} 		
+	//-Red-
+	ShotData { id = 579  render = ALPHA angular_velocity = 0 fixed_angle = true collision = 12 delay_color = ( 255,55,55 )
+		AnimationData{ 
+			animation_data = (5, 448, 800, 480, 832 )
+			animation_data = (5, 448, 832, 480, 864 )		
+			animation_data = (5, 448, 864, 480, 896 )
+			animation_data = (5, 448, 832, 480, 864 )
+		}
+	} 	
+	//-Orange-
+	ShotData { id = 580  render = ALPHA angular_velocity = 0 fixed_angle = true collision = 12 delay_color = ( 255,155,15 )
+		AnimationData{ 
+			animation_data = (5, 480, 800, 512, 832 )
+			animation_data = (5, 480, 832, 512, 864 )		
+			animation_data = (5, 480, 864, 512, 896 )
+			animation_data = (5, 480, 832, 512, 864 )
+		}
+	} 	
+	//-Yellow-
+	ShotData { id = 581  render = ALPHA angular_velocity = 0 fixed_angle = true collision = 12 delay_color = ( 255,185,35 )
+		AnimationData{ 
+			animation_data = (5, 512, 800, 544, 832 )
+			animation_data = (5, 512, 832, 544, 864 )		
+			animation_data = (5, 512, 864, 544, 896 )
+			animation_data = (5, 512, 832, 544, 864 )
+		}
+	} 		
+	//-Lime-
+	ShotData { id = 582 render = ALPHA angular_velocity = 0 fixed_angle = true collision = 12 delay_color = ( 95,255,160 )
+		AnimationData{ 
+			animation_data = (5, 544, 800, 576, 832 )
+			animation_data = (5, 544, 832, 576, 864 )		
+			animation_data = (5, 544, 864, 576, 896 )
+			animation_data = (5, 544, 832, 576, 864 )
+		}
+	}
+	//-Green-
+	ShotData { id = 583  render = ALPHA angular_velocity = 0 fixed_angle = true collision = 12 delay_color = ( 60,200,55 )
+		AnimationData{ 
+			animation_data = (5, 576, 800, 608, 832 )
+			animation_data = (5, 576, 832, 608, 864 )		
+			animation_data = (5, 576, 864, 608, 896 )
+			animation_data = (5, 576, 832, 608, 864 )			
+		}
+	}  	
+	//-Cyan-
+	ShotData { id = 584  render = ALPHA angular_velocity = 0 fixed_angle = true collision = 12 delay_color = ( 15,225,230 )
+		AnimationData{ 
+			animation_data = (5, 608, 800, 640, 832 )
+			animation_data = (5, 608, 832, 640, 864 )		
+			animation_data = (5, 608, 864, 640, 896 )
+			animation_data = (5, 608, 832, 640, 864 )		
+		}
+	} 	
+	//-Blue-
+	ShotData { id = 585  render = ALPHA angular_velocity = 0 fixed_angle = true collision = 12 delay_color = ( 15,145,230 )
+		AnimationData{ 
+			animation_data = (5, 640, 800, 672, 832 )
+			animation_data = (5, 640, 832, 672, 864 )		
+			animation_data = (5, 640, 864, 672, 896 )
+			animation_data = (5, 640, 832, 672, 864 )
+		}
+	} 	
+	//-Purple-
+	ShotData { id = 586  render = ALPHA angular_velocity = 0 fixed_angle = true collision = 12 delay_color = ( 175,0,245 )
+		AnimationData{ 
+			animation_data = (5, 672, 800, 704, 832 )
+			animation_data = (5, 672, 832, 704, 864 )		
+			animation_data = (5, 672, 864, 704, 896 )
+			animation_data = (5, 672, 832, 704, 864 )		
+		}
+	} 	
+	//-Pink-
+	ShotData { id = 587  render = ALPHA angular_velocity = 0 fixed_angle = true collision = 12 delay_color = ( 255,0,250 )
+		AnimationData{ 
+			animation_data = (5, 704, 800, 736, 832 )
+			animation_data = (5, 704, 832, 736, 864 )		
+			animation_data = (5, 704, 864, 736, 896 )
+			animation_data = (5, 704, 832, 736, 864 )
+		}
+	} 	
+	//-Black-
+	ShotData { id = 588  render = ALPHA angular_velocity = 0 fixed_angle = true collision = 12 delay_color = ( 0,0,0 )
+		AnimationData{ 
+			animation_data = (5, 736, 800, 768, 832 )
+			animation_data = (5, 736, 832, 768, 864 )		
+			animation_data = (5, 736, 864, 768, 896 )
+			animation_data = (5, 736, 832, 768, 864 )			
+		}
+	} 			
+
+	
+//-------------------------------------------------------------------------------------------------------------------
+	
+	//Notes
+
+	//-White-
+	ShotData { id = 589  render = ALPHA angular_velocity = 0 fixed_angle = true collision = ( 5, 0, -10) delay_color = ( 255,255,255 ) 
+		AnimationData{ 
+			animation_data = (5, 384, 896, 416, 928 )
+			animation_data = (5, 384, 928, 416, 960 )		
+			animation_data = (5, 384, 896, 416, 928 )
+			animation_data = (5, 384, 960, 416, 992 )
+		}
+	} 	
+	//-Gray-
+	ShotData { id = 590  render = ALPHA angular_velocity = 0 fixed_angle = true collision = ( 5, 0, -10) delay_color = ( 155,155,155 )
+		AnimationData{ 
+			animation_data = (5, 416, 896, 448, 928 )
+			animation_data = (5, 416, 928, 448, 960 )		
+			animation_data = (5, 416, 896, 448, 928 )
+			animation_data = (5, 416, 960, 448, 992 )
+		}
+	} 		
+	//-Red-
+	ShotData { id = 591  render = ALPHA angular_velocity = 0 fixed_angle = true collision = ( 5, 0, -10) delay_color = ( 255,55,55 )
+		AnimationData{ 
+			animation_data = ( 5, 448, 896, 480, 928 )
+			animation_data = ( 10, 448, 928, 480, 960 )		
+			animation_data = ( 5, 448, 960, 480, 992 )
+			animation_data = ( 10, 448, 928, 480, 960 )
+		}
+	} 	
+	//-Orange-
+	ShotData { id = 592  render = ALPHA angular_velocity = 0 fixed_angle = true collision = ( 5, 0, -10) delay_color = ( 255,155,15 )
+		AnimationData{ 
+			animation_data = ( 5, 480, 896, 512, 928 )
+			animation_data = ( 10, 480, 928, 512, 960 )		
+			animation_data = ( 5, 480, 960, 512, 992 )
+			animation_data = ( 10, 480, 928, 512, 960 )
+		}
+	} 	
+	//-Yellow-
+	ShotData { id = 593  render = ALPHA angular_velocity = 0 fixed_angle = true collision = ( 5, 0, -10) delay_color = ( 255,185,35 )
+		AnimationData{ 
+			animation_data = ( 5, 512, 896, 544, 928 )
+			animation_data = ( 10, 512, 928, 544, 960 )		
+			animation_data = ( 5, 512, 960, 544, 992 )
+			animation_data = ( 10, 512, 928, 544, 960 )
+		}
+	} 		
+	//-Lime-
+	ShotData { id = 594 render = ALPHA angular_velocity = 0 fixed_angle = true collision = ( 5, 0, -10) delay_color = ( 95,255,160 )
+		AnimationData{ 
+			animation_data = ( 5, 544, 896, 576, 928 )
+			animation_data = ( 10, 544, 928, 576, 960 )		
+			animation_data = ( 5, 544, 960, 576, 992 )
+			animation_data = ( 10, 544, 928, 576, 960 )
+		}
+	}
+	//-Green-
+	ShotData { id = 595  render = ALPHA angular_velocity = 0 fixed_angle = true collision = ( 5, 0, -10) delay_color = ( 60,200,55 )
+		AnimationData{ 
+			animation_data = ( 5, 576, 896, 608, 928 )
+			animation_data = ( 10, 576, 928, 608, 960 )		
+			animation_data = ( 5, 576, 960, 608, 992 )
+			animation_data = ( 10, 576, 928, 608, 960 )		
+		}
+	}  	
+	//-Cyan-
+	ShotData { id = 596  render = ALPHA angular_velocity = 0 fixed_angle = true collision = ( 5, 0, -10) delay_color = ( 15,225,230 )
+		AnimationData{ 
+			animation_data = ( 5, 608, 896, 640, 928 )
+			animation_data = ( 10, 608, 928, 640, 960 )		
+			animation_data = ( 5, 608, 960, 640, 992 )
+			animation_data = ( 10, 608, 928, 640, 960 )		
+		}
+	} 	
+	//-Blue-
+	ShotData { id = 597  render = ALPHA angular_velocity = 0 fixed_angle = true collision = ( 5, 0, -10) delay_color = ( 15,145,230 )
+		AnimationData{ 
+			animation_data = ( 5, 640, 896, 672, 928 )
+			animation_data = ( 10, 640, 928, 672, 960 )		
+			animation_data = ( 5, 640, 960, 672, 992 )
+			animation_data = ( 10, 640, 928, 672, 960 )
+		}
+	} 	
+	//-Purple-
+	ShotData { id = 598  render = ALPHA angular_velocity = 0 fixed_angle = true collision = ( 5, 0, -10) delay_color = ( 175,0,245 )
+		AnimationData{ 
+			animation_data = ( 5, 672, 896, 704, 928 )
+			animation_data = ( 10, 672, 928, 704, 960 )		
+			animation_data = ( 5, 672, 960, 704, 992 )
+			animation_data = ( 10, 672, 928, 704, 960 )	
+		}
+	} 	
+	//-Pink-
+	ShotData { id = 599  render = ALPHA angular_velocity = 0 fixed_angle = true collision = ( 5, 0, -10) delay_color = ( 255,0,250 )
+		AnimationData{ 
+			animation_data = ( 5, 704, 896, 736, 928 )
+			animation_data = ( 10, 704, 928, 736, 960 )		
+			animation_data = ( 5, 704, 960, 736, 992 )
+			animation_data = ( 10, 704, 928, 736, 960 )	
+		}
+	} 	
+	//-Black-
+	ShotData { id = 600  render = ALPHA angular_velocity = 0 fixed_angle = true collision = ( 5, 0, -10) delay_color = ( 0,0,0 )
+		AnimationData{ 
+			animation_data = (5, 736, 896, 768, 928 )
+			animation_data = (5, 736, 928, 768, 960 )		
+			animation_data = (5, 736, 896, 768, 928 )
+			animation_data = (5, 736, 960, 768, 992 )		
+		}
+	} 			
+	
+	//-------------------------------------------------------------------------------------------------------------------
+	
+	//Rests
+	ShotData { id = 601 rect = ( 384, 992, 416, 1024 ) render = ALPHA angular_velocity = 0 collision = 5 delay_color = ( 255,255,255 )} //-White-
+	ShotData { id = 602 rect = ( 416, 992, 448, 1024 ) render = ALPHA angular_velocity = 0 collision = 5 delay_color = ( 155,155,155 )} //-Gray-
+	ShotData { id = 603 rect = ( 448, 992, 480, 1024 ) render = ALPHA angular_velocity = 0 collision = 5 delay_color = ( 255,55,55 )} //-Red-
+	ShotData { id = 604 rect = ( 480, 992, 512, 1024 ) render = ALPHA angular_velocity = 0 collision = 5 delay_color = ( 255,155,15 )} //-Orange-
+	ShotData { id = 605 rect = ( 512, 992, 544, 1024 ) render = ALPHA angular_velocity = 0 collision = 5 delay_color = ( 255,185,35 )} //-Yellow-
+	ShotData { id = 606 rect = ( 544, 992, 576, 1024 ) render = ALPHA angular_velocity = 0 collision = 5 delay_color = ( 95,255,160 )} //-Lime-
+	ShotData { id = 607 rect = ( 576, 992, 608, 1024 ) render = ALPHA angular_velocity = 0 collision = 5 delay_color = ( 60,200,55 )} //-Green-
+	ShotData { id = 608 rect = ( 608, 992, 640, 1024 ) render = ALPHA angular_velocity = 0 collision = 5 delay_color = ( 15,225,230 )} //-Cyan-
+	ShotData { id = 609 rect = ( 640, 992, 672, 1024 ) render = ALPHA angular_velocity = 0 collision = 5 delay_color = ( 15,145,230 )} //-Blue-
+	ShotData { id = 610 rect = ( 672, 992, 704, 1024 ) render = ALPHA angular_velocity = 0 collision = 5 delay_color = ( 175,0,245 )} //-Purple-
+	ShotData { id = 611 rect = ( 704, 992, 736, 1024 ) render = ALPHA angular_velocity = 0 collision = 5 delay_color = ( 255,0,250 )} //-Pink-
+	ShotData { id = 612 rect = ( 736, 992, 768, 1024 ) render = ALPHA angular_velocity = 0 collision = 5 delay_color = ( 0,0,0 )} //-Black-
+
+	//-------------------------------------------------------------------------------------------------------------------		
+	
+	//Misc Stuff
+	
+	//MOON
+	ShotData { id = 1000 rect = ( 768, 768, 896, 896 ) render = ALPHA collision = 86 delay_color = ( 255,55,55 )} 
+	//ANCHOR
+	ShotData { id = 1001 rect = ( 896, 768, 1023, 896 ) render = ALPHA collision = 60 delay_color = ( 0,0,255 )}
+	//TEWI CIRCLE THINGAMAJIG
+	ShotData { id = 1002 rect = ( 0, 832, 48, 880 )  angular_velocity = -5 render = ALPHA collision = 24 delay_color = ( 255,55,55 )}
+	//ICICLES
+	ShotData { id = 1003 rect = ( 48, 832, 64, 880 ) render = ALPHA collision = 16 delay_color = ( 15,145,230 )}
+	//JUDGEMENT STICK
+	ShotData { id = 1004 rect = ( 64, 832, 80, 864 ) render = ALPHA collision = 10 delay_color = ( 244,135,35 )}
+	//YUUKA FLOWERS L-M-S
+	ShotData { id = 1005 rect = ( 0, 880, 128, 1008 ) angular_velocity = -1 render = ALPHA collision = 54 delay_color = ( 255,112,118 )}
+	ShotData { id = 1006 rect = ( 128, 880, 192, 944 ) angular_velocity = -1 render = ALPHA collision = 21 delay_color = ( 255,112,118 )}
+	ShotData { id = 1007 rect = ( 128, 944, 160, 976 ) angular_velocity = -1 render = ALPHA collision = 12 delay_color = ( 255,112,118 )}
+
+	//-------------------------------------------------------------------------------------------------------------------		
+
+	
+//-------------------------------------------------------------------------------------------------------------------
+
+	//lightning
+	
+	//-White-
+	ShotData { id = 673  render = ALPHA delay_color = ( 255,255,255 ) 
+		AnimationData{ 
+			animation_data = (5, 0, 496, 16, 608 )
+			animation_data = (5, 0, 608, 16, 720 )
+			animation_data = (5, 0, 720, 16, 832 )
+		}
+	} 
+	//-Gray-
+	ShotData { id = 674  render = ALPHA delay_color = ( 155,155,155 )
+		AnimationData{ 
+			animation_data = (5, 16, 496, 32, 608 )
+			animation_data = (5, 16, 608, 32, 720 )
+			animation_data = (5, 16, 720, 32, 832 )
+		}
+	} 	
+	//-Red-
+	ShotData { id = 675  render = ALPHA delay_color = ( 255,55,55 )
+		AnimationData{ 
+			animation_data = (5, 32, 496, 48, 608 )
+			animation_data = (5, 32, 608, 48, 720 )
+			animation_data = (5, 32, 720, 48, 832 )
+		}
+	} 		
+	//-Orange-
+	ShotData { id = 676  render = ALPHA delay_color = ( 255,155,15 )
+		AnimationData{ 
+			animation_data = (5, 48, 496, 64, 608 )
+			animation_data = (5, 48, 608, 64, 720 )
+			animation_data = (5, 48, 720, 64, 832 )
+		}
+	} 	
+	//-Yellow-
+	ShotData { id = 677  render = ALPHA delay_color = ( 255,185,35 )
+		AnimationData{ 
+			animation_data = (5, 64, 496, 80, 608 )
+			animation_data = (5, 64, 608, 80, 720 )
+			animation_data = (5, 64, 720, 80, 832 )
+		}
+	} 		
+	//-Lime-
+	ShotData { id = 678  render = ALPHA delay_color = ( 95,255,160 )
+		AnimationData{ 
+			animation_data = (5, 80, 496, 96, 608 )
+			animation_data = (5, 80, 608, 96, 720 )
+			animation_data = (5, 80, 720, 96, 832 )
+		}
+	}
+	//-Green-
+	ShotData { id = 679  render = ALPHA delay_color = ( 60,200,55 )
+		AnimationData{ 
+			animation_data = (5, 96, 496, 112, 608 )
+			animation_data = (5, 96, 608, 112, 720 )
+			animation_data = (5, 96, 720, 112, 832 )
+		}
+	}  	
+	//-Cyan-
+	ShotData { id = 680  render = ALPHA delay_color = ( 15,225,230 )
+		AnimationData{ 
+			animation_data = (5, 112, 496, 128, 608 )
+			animation_data = (5, 112, 608, 128, 720 )
+			animation_data = (5, 112, 720, 128, 832 )
+		}
+	} 	
+	//-Blue-
+	ShotData { id = 681  render = ALPHA delay_color = ( 15,145,230 )
+		AnimationData{ 
+			animation_data = (5, 128, 496, 144, 608 )
+			animation_data = (5, 128, 608, 144, 720 )
+			animation_data = (5, 128, 720, 144, 832 )
+		}
+	} 	
+	//-Purple-
+	ShotData { id = 682  render = ALPHA delay_color = ( 175,0,245 )
+		AnimationData{ 
+			animation_data = (5, 144, 496, 160, 608 )
+			animation_data = (5, 144, 608, 160, 720 )
+			animation_data = (5, 144, 720, 160, 832 )
+		}
+	} 	
+	//-Pink-
+	ShotData { id = 683  render = ALPHA delay_color = ( 255,0,250 )
+		AnimationData{ 
+			animation_data = (5, 160, 496, 176, 608 )
+			animation_data = (5, 160, 608, 176, 720 )
+			animation_data = (5, 160, 720, 176, 832 )
+		}
+	} 	
+	//-Black-
+	ShotData { id = 684  render = ALPHA delay_color = ( 0,0,0 )
+		AnimationData{ 
+			animation_data = (5, 176, 496, 192, 608 )
+			animation_data = (5, 176, 608, 192, 720 )
+			animation_data = (5, 176, 720, 192, 832 )
+		}
+	} 		
+	
+//-------------------------------------------------------------------------------------------------------------------
+
+	//Spear
+	
+	/*
+	//-White-
+	ShotData { id = 685  render = ALPHA delay_color = ( 255,255,255 ) 
+		AnimationData{ 
+			animation_data = (5, 192, 496, 208, 608 )
+			animation_data = (5, 192, 608, 208, 720 )
+			animation_data = (5, 192, 720, 208, 832 )
+			animation_data = (5, 192, 832, 208, 944 )
+		}
+	} 
+	//-Gray-
+	ShotData { id = 686  render = ALPHA delay_color = ( 155,155,155 )
+		AnimationData{ 
+			animation_data = (5, 208, 496, 224, 608 )
+			animation_data = (5, 208, 608, 224, 720 )
+			animation_data = (5, 208, 720, 224, 832 )
+			animation_data = (5, 208, 832, 224, 944 )
+		}
+	} 	
+	//-Red-
+	ShotData { id = 687  render = ALPHA delay_color = ( 255,55,55 )
+		AnimationData{ 
+			animation_data = (5, 224, 496, 240, 608 )
+			animation_data = (5, 224, 608, 240, 720 )
+			animation_data = (5, 224, 720, 240, 832 )
+			animation_data = (5, 224, 832, 240, 944 )
+		}
+	} 		
+	//-Orange-
+	ShotData { id = 688  render = ALPHA delay_color = ( 255,155,15 )
+		AnimationData{ 
+			animation_data = (5, 240, 496, 256, 608 )
+			animation_data = (5, 240, 608, 256, 720 )
+			animation_data = (5, 240, 720, 256, 832 )
+			animation_data = (5, 240, 832, 256, 944 )
+		}
+	} 	
+	//-Yellow-
+	ShotData { id = 689  render = ALPHA delay_color = ( 255,185,35 )
+		AnimationData{ 
+			animation_data = (5, 256, 496, 272, 608 )
+			animation_data = (5, 256, 608, 272, 720 )
+			animation_data = (5, 256, 720, 272, 832 )
+			animation_data = (5, 256, 832, 272, 944 )
+		}
+	} 		
+	//-Lime-
+	ShotData { id = 690  render = ALPHA delay_color = ( 40,255,0 )
+		AnimationData{ 
+			animation_data = (5, 272, 496, 288, 608 )
+			animation_data = (5, 272, 608, 288, 720 )
+			animation_data = (5, 272, 720, 288, 832 )
+			animation_data = (5, 272, 832, 288, 944 )
+		}
+	}
+	//-Green-
+	ShotData { id = 691  render = ALPHA delay_color = ( 60,200,55 )
+		AnimationData{ 
+			animation_data = (5, 288, 496, 304, 608 )
+			animation_data = (5, 288, 608, 304, 720 )
+			animation_data = (5, 288, 720, 304, 832 )
+			animation_data = (5, 288, 832, 304, 944 )
+		}
+	}  	
+	//-Cyan-
+	ShotData { id = 692  render = ALPHA delay_color = ( 15,225,230 )
+		AnimationData{ 
+			animation_data = (5, 304, 496, 320, 608 )
+			animation_data = (5, 304, 608, 320, 720 )
+			animation_data = (5, 304, 720, 320, 832 )
+			animation_data = (5, 304, 832, 320, 944 )
+		}
+	} 	
+	//-Blue-
+	ShotData { id = 693  render = ALPHA delay_color = ( 15,145,230 )
+		AnimationData{ 
+			animation_data = (5, 320, 496, 336, 608 )
+			animation_data = (5, 320, 608, 336, 720 )
+			animation_data = (5, 320, 720, 336, 832 )
+			animation_data = (5, 320, 832, 336, 944 )
+		}
+	} 	
+	//-Purple-
+	ShotData { id = 694  render = ALPHA delay_color = ( 175,0,245 )
+		AnimationData{ 
+			animation_data = (5, 336, 496, 352, 608 )
+			animation_data = (5, 336, 608, 352, 720 )
+			animation_data = (5, 336, 720, 352, 832 )
+			animation_data = (5, 336, 832, 352, 944 )
+		}
+	} 	
+	//-Pink-
+	ShotData { id = 695  render = ALPHA delay_color = ( 255,0,250 )
+		AnimationData{ 
+			animation_data = (5, 352, 496, 368, 608 )
+			animation_data = (5, 352, 608, 368, 720 )
+			animation_data = (5, 352, 720, 368, 832 )
+			animation_data = (5, 352, 832, 368, 944 )
+		}
+	} 	
+	//-Black-
+	ShotData { id = 696  render = ALPHA delay_color = ( 0,0,0 )
+		AnimationData{ 
+			animation_data = (5, 368, 496, 384, 608 )
+			animation_data = (5, 368, 608, 384, 720 )
+			animation_data = (5, 368, 720, 384, 832 )
+			animation_data = (5, 368, 832, 384, 944 )
+		}
+	} 	
+	*/	
+	
+//-------------------------------------------------------------------------------------------------------------------		
+	
+//-------------------------------------------------------------------------------------------------------------------	

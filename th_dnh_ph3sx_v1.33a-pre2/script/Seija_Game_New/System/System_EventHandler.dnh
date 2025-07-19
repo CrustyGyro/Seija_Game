@@ -1,0 +1,416 @@
+//-----------------------------------------------------------------------------
+
+	#include "./Common.dnh"	
+	#include "./Constants.dnh"	
+	#include "./../Lib/Lib_Sound.dnh"
+	#include "./../Lib/Lib_Item.dnh"
+	#include "./../Lib/Lib_Boss_Effect.dnh"
+
+//-----------------------------------------------------------------------------
+
+let Break_Tex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/System/BulletDelete_Nixxiam.png";
+let Item_Tex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/System/Items.png";
+let Circle_Tex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Effect/MagicCircle.png";
+
+//-----------------------------------------------------------------------------
+
+@Loading {
+	
+	//Pre-loads some important System and Effect textures used throughout the entire game - Seija
+	
+    LoadTexture( Break_Tex );
+	LoadTexture( Item_Tex );
+	LoadTexture( Circle_Tex );
+}
+
+
+@Initialize{
+
+	SetDefaultBonusItemEnable( false );	
+	
+}
+
+@MainLoop{
+	
+	yield;
+}
+
+
+@Event{
+	
+	alternative(GetEventType())			
+	case( EV_SPAWN_ITEM_GENERIC ){
+		//For Enemies and stuff.
+		let X = GetEventArgument( 0 );
+		let Y = GetEventArgument( 1 );
+		let Type = GetEventArgument( 2 );
+		Create_Item_A1( X, Y, Type );
+	}
+    case( EV_DELETE_SHOT_TO_ITEM ) {
+        let Shot = GetEventArgument( 0 );
+		Create_Item_A1( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), ITEM_S_BONUS );
+        T_BulletBreak_A1( Shot );
+    }
+    case( EV_DELETE_SHOT_IMMEDIATE ) {
+        let Shot = GetEventArgument( 0 );
+        T_BulletBreak_A1( Shot );
+    }	
+    case( EV_BOSS_EFFECT ) {
+		//Spawns the visual effects behind the boss.
+		//This way they don't reset inbetween single scripts
+		//and only need to be called once the fight starts. - Seija
+		
+		//Boss shaders also go here. - Seija
+		
+		let Boss_Obj = GetEventArgument( 0 );
+		let Color_Aura = GetEventArgument( 1 );
+		//let Texture = GetEventArgument( 0 );
+		T_FlameAura( Boss_Obj, Color_Aura, 1 );
+		//T_Boss_Dragon_Aura( Boss_Obj );
+		//T_Boss_Flame_Wings( Boss_Obj );
+        T_Boss_Magiccircle( GetEnemyBossObjectID[0], Circle_Tex  );
+		T_WaveShader(  Boss_Obj );
+    }	
+    case( EV_CLEAR_ENEMY_SHOTS ) {
+
+		let Center_Obj = GetEventArgument( 0 );
+		let Time = GetEventArgument( 1 );
+		let Speed = GetEventArgument( 2 );
+	
+        T_Clear_Shot_Non( Center_Obj, Time, Speed );
+    }		
+    case( EV_CLEAR_ENEMIES ) {
+		
+		//TBA - Seija
+		yield;
+    }	
+	case( EV_PL_GRAZE_CUSTOM ){
+		//For Enemies and stuff.
+		LINE_MODIFIER += 20;
+
+	}	
+	
+}
+
+//-----------------------------------------------------------------------------
+
+	// -- Shot Clears --
+
+task T_Clear_Shot_Non( Center_Obj, Time, Speed ){
+	
+	let Radius = 0;
+	//let X_Pos = ObjMove_GetX( Center_Obj ); 
+	//let Y_Pos = ObjMove_GetY( Center_Obj );
+	
+	//if( Obj_IsDeleted( Center_Obj ) ){ X_Pos = Get_CenterX; Y_Pos = Get_CenterY; }
+	
+	loop( Time ){
+	
+		let Shot_Array = GetShotIdInCircleA2( Get_CenterX, Get_CenterY, 1000, TARGET_ENEMY );
+		
+		ascent( a in 0..length( Shot_Array )){
+			
+			if( !Obj_IsDeleted( Center_Obj ) ) { 
+				if( !Obj_IsDeleted( Shot_Array[ a ]) && GetObjectDistance( Center_Obj, Shot_Array[ a ] ) < Radius ){
+					
+					ObjShot_ToItem( Shot_Array[ a ] );
+				
+				
+				}
+			}
+			else if( !Obj_IsDeleted( Shot_Array[ a ]) && GetObjectDistance( Get_CenterX, Shot_Array[ a ] ) < Radius ){
+				
+				ObjShot_ToItem( Shot_Array[ a ] );
+
+			}			
+			//yield;
+			
+		}	
+	
+		Radius += Speed;
+		yield;
+	}
+}	
+/*
+task T_Clear_Shot_Non( Center_Obj, Time, Speed ){
+	
+	let Radius = 0;
+	//let X_Pos = ObjMove_GetX( Center_Obj ); 
+	//let Y_Pos = ObjMove_GetY( Center_Obj );
+	
+	//if( Obj_IsDeleted( Center_Obj ) ){ X_Pos = Get_CenterX; Y_Pos = Get_CenterY; }
+	
+	loop( Time ){
+	
+		let Shot_Array = GetShotIdInCircleA2( Get_CenterX, Get_CenterY, 1000, TARGET_ENEMY );
+		
+		ascent( a in 0..length( Shot_Array )){
+			
+			if( !Obj_IsDeleted( Shot_Array[ a ]) && GetObjectDistance( Center_Obj, Shot_Array[ a ] ) < Radius ){
+				
+				ObjShot_ToItem( Shot_Array[ a ] );
+			
+			
+			}
+			//yield;
+			
+		}	
+	
+		Radius += Speed;
+		yield;
+	}
+}	
+*/
+
+task T_BulletBreak_A1( shot ){
+	
+	T_PlaySE( SE_BULLET_DELETE, 30 );
+	ObjShot_SetIntersectionEnable( shot, false );
+	
+	let Obj = ObjPrim_Create(OBJ_SPRITE_2D);
+	let Sprite = ObjShot_GetImageID( shot );
+	let Color = GetShotDataInfoA1( Sprite, TARGET_ENEMY, INFO_DELAY_COLOR );
+	let Size = 16 + GetShotDataInfoA1( Sprite, TARGET_ENEMY, INFO_COLLISION );
+	
+	let X = ObjMove_GetX( shot );
+	let Y = ObjMove_GetY( shot );
+	let Add = 0;
+	
+	//Create_Item_A1( ObjMove_GetX( shot ), ObjMove_GetY( shot ), ITEM_S_BONUS );
+	
+	ObjPrim_SetTexture( Obj, Break_Tex );
+	Obj_SetRenderPriority( Obj, 0.31 );
+	ObjSprite2D_SetDestRect( Obj, -Size, -Size, Size, Size );
+	ObjRender_SetAngleZ( Obj, prand( 0, 360 ) );
+	ObjRender_SetColor( Obj, Color[0], Color[1], Color[2] );
+	ObjRender_SetPosition( Obj, X, Y, 0 );
+	ObjRender_SetBlendType( Obj, BLEND_ADD_ARGB );
+
+	ascent(i in 0..16 ){
+		
+		ObjSprite2D_SetSourceRect( Obj, 0 + Add, 0, 128 + Add, 128 );
+		Add += 128;
+		wait( 2 );
+	}
+	
+	Obj_Delete( Obj );
+	//Obj_Delete( shot );
+
+}
+//-----------------------------------------------------------------------------
+/*
+function Create_Item_A1( X, Y, Type ){
+	
+	let Item_Obj = Render_Item_A1( X, Y, Type );
+	T_Item_Handler_A1( Item_Obj, Type, 1000 );
+	
+	
+}	
+
+function Collect_Item_Check( Obj, Type ){
+	
+	
+	int Point_Value = 0;
+	
+	alternative(Type)
+	case( ITEM_S_SCORE ){
+
+		T_PlaySE( SE_ITEM, 30 );
+		if( GetPlayerY() <= 140 ){
+			
+			Point_Value = 1000 + GetPoint() + GetGraze();
+			
+			AddScore(Point_Value );
+			RenderScore( Obj, Point_Value );
+			
+		}
+		else{
+			RenderScore( Obj, 100 );
+			AddScore( 100 );
+		}	
+		
+	}
+	
+}
+
+function Render_Item_A1( X, Y, Type ){
+	
+	let Item_Obj;
+	
+	
+	alternative(Type)
+	case( ITEM_S_SCORE ){
+
+		Item_Obj = Render2D_Texture_A1( Item_Tex, [ 16, 0, 32, 16 ], X, Y, 1, 25 );
+		Obj_SetRenderPriorityI( Item_Obj, GetItemRenderPriorityI() );
+		
+	}	
+	
+
+
+	return( Item_Obj );
+}
+
+function T_CheckRange(Obj){
+	
+	// Checks if the item is in collecting range of the player ( default is 20 ).
+	return ( GetPlayerState() == STATE_NORMAL && ( GetDistance( ObjRender_GetX( Obj ), ObjRender_GetY( Obj ), GetPlayerX(), GetPlayerY() ) < 20 ));
+	
+}
+
+task T_Item_Handler_A1( Obj, Type, Value ){
+	
+	bool MoveToPL = false;
+	float ObjX = ObjRender_GetX( Obj );
+	float ObjY = ObjRender_GetY( Obj );	
+	int VSpeed = -6;
+	
+	T_Spawn_Anim( Obj );
+	loop( 25 ){
+		
+		ObjY += VSpeed;
+		ObjRender_SetY( Obj, ObjY);
+		VSpeed = min( 1.25, VSpeed + 0.08 );			
+		yield;
+	}	
+	
+	
+	while( !Obj_IsDeleted( Obj ) && ObjY < GetStgFrameHeight + 32 && ObjX < GetStgFrameWidth + 32 && ObjX > -32){	
+		
+		// Moving Down.
+		ObjRender_SetY( Obj, ObjY );
+		ObjY += VSpeed;
+		VSpeed = 1;
+		
+		// Cancel Collection Movement if player Dies.
+		if (GetPlayerState() != STATE_NORMAL) {
+			MoveToPL = false;
+		}		
+		// Point of Collection Line.
+		if (GetPlayerState() == STATE_NORMAL && GetPlayerY() <= 140 ) {
+			MoveToPL = true;
+		}
+		// Move to Player if within range.
+		if ( GetDistance( ObjX, ObjY, GetPlayerX(), GetPlayerY() ) < 64 ){
+			MoveToPL = true;
+		}	
+		// Moving to Player
+		if ( MoveToPL == true ) {
+			let Angle = atan2( GetPlayerY() - ObjY, GetPlayerX() - ObjX );
+			ObjX += 8*cos(Angle); 
+			ObjY += 8*sin(Angle);
+			ObjRender_SetPosition( Obj, ObjX, ObjY, 0);
+		} 	
+		// Collecting Task
+		if ( T_CheckRange( Obj )){
+			
+			Collect_Item_Check( Obj, Type );
+			Obj_Delete( Obj );
+			break;
+			
+		}		
+		yield;
+	}
+	Obj_Delete( Obj );
+	
+	task T_Spawn_Anim( Obj ){
+
+		loop(2){
+			let Spin = round( prand( 16, 18 ) );
+			ascent( a in 1..Spin+1 ){
+				if( !Obj_IsDeleted( Obj ) ){
+					ObjRender_SetAngleZ( Obj, a*360/Spin );
+				}
+				yield;
+			}
+		}		
+
+	}		
+	
+}
+
+//-----------------------------------------------------------------------------
+
+
+task RenderScore( Target, Value ){
+	
+	let Score = ObjText_Create;
+	
+	ObjRender_SetX( Score, GetPlayerX() -8 );
+	ObjRender_SetY( Score, GetPlayerY() );
+	Obj_SetRenderPriority( Score, 0.8 );
+	
+	
+	ObjText_SetFontBorderType( Score, BORDER_SHADOW );
+	ObjText_SetFontBorderWidth( Score, 1.2 );
+	ObjText_SetFontColorTop( Score, 255, 255 ,255 );
+	ObjText_SetFontSize( Score, 12 );
+	ObjText_SetMaxWidth( Score, 400 );
+	ObjText_SetFontBorderColor( Score, 0, 0, 0 );
+	ObjText_SetFontType( Score, "Chaney Thin Normal");
+	
+	if( GetPlayerY <= 140 ){
+		
+		ObjText_SetFontColorTop( Score, 255, 255, 50 );
+		ObjText_SetFontColorBottom( Score, 255, 255, 50 );
+		
+	}	
+	
+	ObjText_SetText( Score, IntToString( Value) );
+	
+	ascent( a in 0..64 ){
+			
+		ObjRender_SetY( Score,  ObjRender_GetY( Score ) -1 + a/64 );
+		ObjRender_SetAlpha( Score, ( a / 64 ) * 255 );
+		yield;
+			
+	}	
+	
+	descent( a in 0..10 ){
+			
+		ObjRender_SetAlpha( Score, ( a / 10) * 255 );
+		yield;
+			
+	}	
+	
+	Obj_Delete( Score );
+	
+}	
+
+//-----------------------------------------------------------------------------
+
+task T_BulletBreak_A1( shot ){
+	
+	
+	ObjShot_SetIntersectionEnable( shot, false );
+	
+	let Obj = ObjPrim_Create(OBJ_SPRITE_2D);
+	let Sprite = ObjShot_GetImageID( shot );
+	let Color = GetShotDataInfoA1( Sprite, TARGET_ENEMY, INFO_DELAY_COLOR );
+	let Size = 16 + GetShotDataInfoA1( Sprite, TARGET_ENEMY, INFO_COLLISION );
+	
+	float X = ObjMove_GetX( shot );
+	float Y = ObjMove_GetY( shot );
+	float Add = 0;
+	
+	ObjPrim_SetTexture( Obj, Break_Tex );
+	Obj_SetRenderPriority( Obj, 0.31 );
+	ObjSprite2D_SetDestRect( Obj, -Size, -Size, Size, Size );
+	ObjRender_SetAngleZ( Obj, prand( 0, 360 ) );
+	ObjRender_SetColor( Obj, Color[0], Color[1], Color[2] );
+	ObjRender_SetPosition( Obj, X, Y, 0 );
+	ObjRender_SetBlendType( Obj, BLEND_ADD_ARGB );
+
+	ascent(i in 0..8 ){
+		
+		ObjSprite2D_SetSourceRect( Obj, 0 + Add, 0, 64 + Add, 64 );
+		Add += 64;
+		wait( 3 );
+	}
+	
+	Obj_Delete( Obj );
+
+}
+
+*/
+//-----------------------------------------------------------------------------

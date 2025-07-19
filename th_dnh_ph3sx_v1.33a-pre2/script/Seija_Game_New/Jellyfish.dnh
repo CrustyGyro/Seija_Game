@@ -1,0 +1,271 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title["Jellyfish!!"]
+#Background["./Stage/BG/STG_00.dnh"];
+#Player[ "./Player/PL_Reimu.dnh" ]
+#System["./System/System_Main_Hud.dnh"]
+
+//--------------------------------------------------Variables------------------------------------------------------
+
+let bossObj;
+let objScene = GetEnemyBossSceneObjectID();
+let bossX = 0;
+let bossY = 0;
+
+//SetIntersectionVisualization( true );
+
+//let BossTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Test_Boss.png";
+
+//---------------------------------------------------Include-------------------------------------------------------
+
+	#include "./lib/Index_Boss.dnh"
+
+//----------------------------------------------------Start--------------------------------------------------------
+
+@Initialize {
+
+	bossObj = ObjEnemy_Create(OBJ_ENEMY_BOSS);	
+	
+	ObjEnemy_Regist( bossObj );	
+
+	T_Lifebar( bossObj );
+	T_HitEffect( bossObj );
+	ObjEnemy_SetDamageRate( bossObj, 0, 0 );	
+
+	Render_WheelGhost_A1( bossObj, ENEMY_BLUE );
+
+	ObjRender_SetTextureFilter( bossObj, FILTER_NONE, FILTER_NONE, FILTER_NONE );
+	
+	ObjMove_SetDestAtWeight( bossObj, GetStgFrameWidth/2, Get_CenterY/2 + 16, 15, 8 );
+	
+	
+	SetPlayerLife( 8 );
+	T_Main;
+	T_End;
+	
+}
+
+@Event { 
+
+	alternative(GetEventType()) 
+	case( EV_REQUEST_LIFE ) { 
+		SetScriptResult( 4500 ); // 3000-4500 For Nons ( At 100% Damage Rate. )
+	}
+	case( EV_REQUEST_TIMER ) { 
+		SetScriptResult( 45 ); //40-50 For standard Nons.
+	}	
+
+
+} 
+
+@MainLoop {
+
+	bossX = ObjMove_GetX( bossObj );
+	bossY = ObjMove_GetY( bossObj );
+	
+	SetCommonData( "Effect_X", bossX );
+	SetCommonData( "Effect_Y", bossY );	
+
+	ObjEnemy_SetIntersectionCircleToShot( bossObj, bossX, bossY, 16 );
+	ObjEnemy_SetIntersectionCircleToPlayer( bossObj, bossX, bossY, 8 );
+	
+	yield;
+}
+
+@Finalize {
+} 
+
+//----------------------------------------------------Patterns--------------------------------------------------------
+
+task T_Main {
+
+
+	NotifyEventAll( EV_BOSS_EFFECT, bossObj, CC_CYAN );
+	
+	//let Color = [ DOT_GRAY, DOT_RED, DOT_YELLOW, DOT_CYAN, DOT_PURPLE, DOT_GREEN ];
+
+	yield;
+
+	wait( 60 );	
+	
+	T_PlaySE( SE_CHARGE_00, 30 );
+	T_Charge_A1( bossObj, 20, "Petal", CC_PINK );
+
+	//wait( 100 );	
+	
+	ObjEnemy_SetDamageRate( bossObj, 1, 1 );
+	T_Boss_Shot_A;
+	T_Movement_A;
+
+	while( Boss_Is_Alive( bossObj ) ){
+		
+		//Do Stuff, fire some bullets or something.
+		yield;
+
+	}
+}	
+
+task T_Movement_A{
+
+	let X = 0;
+	let Y = 0;
+	
+	T_Darkness_Simple( bossObj, 155, 2 );
+	
+	while( Boss_Is_Alive( bossObj ) ){
+
+		ObjMove_SetDestAtWeight( bossObj, Get_CenterX+ cos( X/4 )*200, Get_CenterY + sin( Y/4 )*200, 64, 3 );
+		X += 1;
+		Y += 1;
+		
+		yield;
+	}
+
+}
+
+
+task T_Darkness_Simple( Target, Time, Size ){
+	
+	let X_Pos = 0;
+	let Y_Pos = 0;
+	
+	let Path = GetCurrentScriptDirectory() ~ "./Resource/Textures/Effect/Darkness.png";
+	let Obj_EffCircle =  Render2D_Texture_A1( Path, [ 0, 0, 1024, 1024 ], ObjMove_GetX( Target ), ObjMove_GetY( Target ), 3, 0.72 );
+	//let Obj_EffCircle = RenderImg2D_A1( Path, [ 0, 0, 1024, 1024 ], ObjMove_GetX( Target ), ObjMove_GetY( Target ), BLEND_ALPHA, 1.4, 0.72 );			
+	
+	//ImgFadeIn( Obj_EffCircle, Time, 255 );
+
+	//T_ScaleDownTime( Obj_EffCircle, Time, Size );
+
+	while( !Obj_IsDeleted( Obj_EffCircle ) ){
+		
+		X_Pos = ObjRender_GetX( Target );
+		Y_Pos = ObjRender_GetY( Target );
+		
+		ObjRender_SetPosition( Obj_EffCircle, X_Pos, Y_Pos, 0 );
+		
+		yield;
+	}	
+
+	task T_ScaleDownTime( Obj, Time, Size ){
+		descent( i in 0..Size ){
+			
+			//the ol reliable
+			ObjRender_SetScaleXYZ ( Obj, i, i, 0 );
+			yield;
+		}
+	}
+
+}	
+
+
+task T_Boss_Shot_A{
+	
+	float Shot_Angle = 90;
+	
+	while( Boss_Is_Alive( bossObj )){
+		
+		T_PlaySE( SE_CHIME_00, 35 );
+		
+		ascent( a in 0..18 ){
+			ascent( b in 0..6 ){
+				int ShotObj_A = ShotA1( rand( 8, 32 ) + a * Get_CenterX/2, rand( -18, 18 ), rand( 1, 1.4 ), 90 + rand( -8,8 ), SHOT_LARGE_BLUE, 10 );
+				ObjRender_SetBlendType( ShotObj_A, BLEND_SUBTRACT );
+				T_Shot_Change( ShotObj_A );
+				
+				yield;
+			}
+			//yield;
+		
+		}
+		
+		ascent( a in 0..18 ){
+			ascent( b in 0..6 ){
+				int ShotObj_A =  ShotA1( rand( -32, -8 ) + a * Get_CenterX/2, rand( -18, 18 ), rand( 1, 1.4 ), 90 + rand( -8,8 ), SHOT_LARGE_BLUE, 10 );
+				ObjRender_SetBlendType( ShotObj_A, BLEND_SUBTRACT );
+				T_Shot_Change( ShotObj_A );
+				
+				yield;
+			}
+			//yield;
+		
+		}		
+
+		wait( 10 );
+
+	}
+	
+	task T_Shot_Change( Obj ){
+		
+		//o_O
+		
+		while( !Obj_IsDeleted( Obj ) ){
+			if( GetObjectDistance( GetPlayerObjectID(), Obj ) <= 64 && ObjMove_GetY( Obj ) <= GetPlayerY() + 10){ 
+		
+				ShotA1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0.5, ObjMove_GetAngle( Obj ), SHOT_LARGE_BLUE, 8 );
+		
+				Obj_Delete( Obj );
+			}
+			yield;
+		}
+		
+	}	
+	
+}	
+
+//-----------------------------------------------------Death---------------------------------------------------------
+
+task T_End {
+	
+    while( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ) {
+	     yield;
+	}
+	
+	if( ObjEnemyBossScene_GetInfo( GetEnemyBossSceneObjectID, INFO_IS_LAST_STEP ) ){
+
+		NotifyEventAll( EV_CLEAR_ENEMY_SHOTS, GetPlayerObjectID(), 60, 12 );
+		
+		yield;
+		
+		SetAutoDeleteObject(true);
+		T_Boss_Shotdown( bossObj, "Petal", CC_RED );
+		wait( 200 );
+		
+		Obj_Delete( bossObj );	
+		
+		ENEMY_CLEAR = true;
+		
+		yield;
+		
+		ENEMY_CLEAR = false;
+		
+		wait( 500 );
+		
+		CloseScript( GetOwnScriptID() );
+		
+	}	
+	else{
+	
+	
+		NotifyEventAll( EV_CLEAR_ENEMY_SHOTS, GetPlayerObjectID(), 60, 12 );
+		//DeleteShotAll( TYPE_ALL, TYPE_ITEM );
+		
+		yield;
+		
+		SetAutoDeleteObject(true);
+		
+		Obj_Delete( bossObj );	
+		
+		wait( 500 );
+		
+		CloseScript( GetOwnScriptID() );
+	
+	}
+	
+	//SetAutoDeleteObject(true);
+	
+	//Obj_Delete( bossObj );	
+	//CloseScript( GetOwnScriptID() );
+	
+}
+

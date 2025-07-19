@@ -1,0 +1,597 @@
+//-----------------------------------------------------------------------------
+
+	#include "./Common.dnh"	
+	#include "./../Lib/Lib_Sound.dnh"	
+	#include "./Constants.dnh"	
+	
+//-----------------------------------------------------------------------------	
+	
+	let Hud_Stuff = GetCurrentScriptDirectory() ~ "./../Resource/Textures/System/HUD_Objects.png";
+	let Hud_Frame = GetCurrentScriptDirectory() ~ "./../Resource/Textures/System/HUD_Frame.png";
+	let Hud_Objects = GetCurrentScriptDirectory() ~ "./../Resource/Textures/System/HUD_01.png";	
+	let Hud_Text = GetCurrentScriptDirectory() ~ "./../Resource/Textures/System/Ascii.png";	
+	let Hud_LifeSpell = GetCurrentScriptDirectory() ~ "./../Resource/Textures/System/Life_Spell.png";	
+	
+	float Fade_Time = 0;
+
+//-----------------------------------------------------------------------------	
+
+const SCORE_CAP = 999999999;
+
+//This is EXTREMELY WORK IN PROGRESS!!!!!! 
+//Everything is subject to change, this is just the barest of bones needed for a proper ui. - Seija
+
+@Loading {
+	
+	InstallFont( GetCurrentScriptDirectory() ~ "./../Resource/Fonts/Chaney Thin Normal.ttf");
+	InstallFont( GetCurrentScriptDirectory() ~ "./../Resource/Fonts/Logopixies-owwBB.ttf");	
+
+}
+
+let Resolution = GetScreenHeight()/480;
+
+@Initialize{
+
+	SetDefaultBonusItemEnable( false );	
+	
+	SetStgFrame( 32*Resolution, 16*Resolution, (32+384)*Resolution, (16+448)*Resolution, 20, 80 );
+	SetPauseScriptPath( GetCurrentScriptDirectory() ~ "./System_Pause.dnh" );
+	SetEndSceneScriptPath( GetCurrentScriptDirectory() ~ "Default_EndScene.txt");
+	SetReplaySaveSceneScriptPath( GetCurrentScriptDirectory() ~ "Default_ReplaySaveScene.txt");	
+	
+	T_Initialize_Hud_Frame();
+	//T_Handle_Line();
+	T_Handle_Score();
+	Fade_Time += 10;
+	T_Handle_Life();
+	Fade_Time += 10;
+	T_Handle_Spell();
+	Fade_Time += 10;
+	
+	T_Handle_Value();
+	Fade_Time += 10;
+	T_Handle_Graze();
+	Fade_Time += 10;
+	T_Handle_Timer();
+	Fade_Time += 10;
+	
+	//let Event_Script = LoadScript(GetCurrentScriptDirectory() ~ "System_EventHandler.dnh");
+	StartItemScript("script/Seija_Game_New/System/System_EventHandler.dnh");
+	//StartScript( Event_Script );	
+	
+	//SetShotTextureFilter( FILTER_POINT, FILTER_POINT );
+	
+	///StartScript( Event_Script );	
+	
+	TCurrentFps();
+		
+}
+
+@MainLoop{
+	
+	yield;
+}
+
+@Event{
+	
+	alternative(GetEventType())
+	case( EV_START_BOSS_SPELL ){	
+	
+		let Spell_Handler = GetCurrentScriptDirectory() ~ "./System_Spell.dnh";
+		let id = LoadScript( Spell_Handler );
+		StartScript(id);		
+		
+	}
+	case(EV_GAIN_SPELL)
+	{
+		let objScene = GetEnemyBossSceneObjectID();
+		let score = ObjEnemyBossScene_GetInfo(objScene, INFO_SPELL_SCORE);
+		//TGainSpell(score);
+	}		
+		
+		
+}
+
+task T_Initialize_Hud_Frame(){
+	
+	let Hud_Frame_Obj = Render2D_Texture_A1( Hud_Frame, [ 0, 0, 640, 480 ], 0, 0, 1, 0 );
+	ObjSprite2D_SetDestRect( Hud_Frame_Obj, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT );
+	//ObjRender_SetTextureFilter( Hud_Frame_Obj, FILTER_POINT, FILTER_POINT, FILTER_POINT );
+	
+	//let Hud_Logo_Obj = Render2D_Texture_A1( Hud_Logo, [ 0, 0, 1333, 606 ], 512, 344, 0.19, 0 );
+	
+}	
+
+/*
+task T_Fade_Menu_Item( Alpha ){
+	
+	//let Scale_XYZ = 0;
+	Interpolate_Smooth( 0, Alpha, 20 + Fade_Time );
+
+	
+	
+}	
+*/
+
+task T_Handle_Line(){
+	
+	let Hud_Line = GetCurrentScriptDirectory() ~ "./../Resource/Textures/System/Line_Debug.png";
+	let Hud_Line_Obj = Render2D_Texture_A1( Hud_Line, [ 0, 0, 512, 16 ], 256, 140, 1, 0.70 );
+	
+	let Hud_Line_Arrow = GetCurrentScriptDirectory() ~ "./../Resource/Textures/System/Line_Indicator.png";
+	let Hud_Line_Obj_Sidebar = Render2D_Texture_A1( Hud_Line_Arrow, [ 0, 0, 32, 32 ], 16, 140, 1, 0 );	
+	
+	float Graze_Timer = 0;
+	float Graze_Timer_Modifier = 0;
+	float Piece_Timer = 100;
+	float Y = 140;
+	
+	//T_Handle_Piece_Bonuses();
+	
+	loop{
+		
+		//This is actually the worst thing ive ever coded.
+		
+		Y = ( 140 + GetGraze()*10 ) - Graze_Timer;
+		
+		//Y = 140 + LINE_MODIFIER*4.5;
+		
+		if( Y <= 140 ){ Y = 140; Graze_Timer_Modifier = 0; }
+		if( Y >= Get_MaxY ){ Y = Get_MaxY; Graze_Timer_Modifier = 8; }
+		
+		ObjRender_SetY( Hud_Line_Obj, Y ); 
+		ObjRender_SetY( Hud_Line_Obj_Sidebar, Y + 16 ); 
+		
+		SetCommonData("POC_LINE", Y );
+		
+		
+		if( Graze_Timer >= GetGraze()*10 ){ Graze_Timer = 0; }
+		Graze_Timer += 0.5 + Graze_Timer_Modifier;
+		yield;
+	}	
+	
+	task T_Handle_Piece_Bonuses(){
+		
+		loop{
+
+
+			//if( Y >= Get_MaxY ){ Y = 140;  }
+
+			
+
+
+			
+			yield;
+		
+		}
+		
+	}	
+	
+	
+}	
+
+task T_CreateTextWithShadow( X, Y, Color_T, Color_B, Text ){
+	
+
+	let Text_Obj_Shadow = Create_HUD_Text( 1, 15 * Resolution, [0,0,0], [0,0,0] );
+	ObjText_SetFontType( Text_Obj_Shadow, "LogoPixies");
+	ObjText_SetText( Text_Obj_Shadow, Text );
+	ObjRender_SetPosition( Text_Obj_Shadow, ( X + 8 ) * Resolution, ( Y + 5 ) * Resolution, 0 );	
+	ObjText_SetHorizontalAlignment( Text_Obj_Shadow, ALIGNMENT_LEFT );
+
+	let Text_Obj = Create_HUD_Text( 1, 15 * Resolution, Color_T, Color_B );
+	ObjText_SetFontType( Text_Obj, "LogoPixies");
+	ObjText_SetText( Text_Obj, Text);
+	ObjRender_SetPosition( Text_Obj, ( X ) * Resolution, ( Y ) * Resolution, 0 );	
+	ObjText_SetHorizontalAlignment( Text_Obj, ALIGNMENT_LEFT );	
+	
+	ObjRender_SetAlpha( Text_Obj_Shadow, 125 );
+	
+	float Fade = 20+Fade_Time;
+	float Alpha = 0;
+	
+	ascent( i in 0..Fade ){
+		
+		Alpha = Interpolate_Linear( 0, 255, i / Fade  );
+		ObjRender_SetAlpha( Text_Obj, Alpha );
+		yield;
+	
+	}
+	
+}	
+
+task T_Handle_Score(){
+	
+	//Welcome to the district of digits! 
+	//Will be updating this later... - Seija
+	
+	int Score = GetAreaCommonData( "HiScore", "HiScore", 100 );
+	int HiScore = 0;	
+
+	T_CreateTextWithShadow( 424, 70, [ 255, 255, 255 ] , [ 180, 180, 180 ], "Score" );	
+	T_Create_Hud_Divider( 526, 68, CC_HUD_BLUE, 10, 1 );	
+	T_CreateTextWithShadow( 424, 42, CC_HUD_BLUE, CC_HUD_BLUE, "Hi-Score" );	
+	T_Create_Hud_Divider( 526, 96, [ 255, 255, 255 ], 10, 1 );
+	
+	let Score_Obj = Create_HUD_Text( 1, 18 * Resolution, [255,255,255], [180,180,180] );
+	ObjText_SetFontType( Score_Obj, "Chaney Thin Normal");
+	ObjRender_SetPosition( Score_Obj, 374 * Resolution, ( 78 - 9 ) * Resolution, 0 );
+	
+	let HiScore_Obj = Create_HUD_Text( 1, 18 * Resolution, CC_HUD_BLUE, CC_HUD_BLUE );
+	ObjText_SetFontType( HiScore_Obj, "Chaney Thin Normal");
+	ObjRender_SetPosition( HiScore_Obj, 374 * Resolution, ( 52 - 9 ) * Resolution, 0 );	
+	ObjText_SetText( HiScore_Obj, "9,999,999,999");
+	
+
+	
+
+	while( true ){	
+	
+		if( GetScore() >= GetAreaCommonData( "HiScore", "HiScore", 99900000000 ) )
+		{
+			SetAreaCommonData( "HiScore", "HiScore", GetScore() );
+			HiScore = GetAreaCommonData( "HiScore", "HiScore", GetScore() );
+			ObjText_SetText( HiScore_Obj, DigitToArray_Comma(HiScore));
+		}
+
+		Score = GetScore() + GetGraze();
+		Score = min( Score, SCORE_CAP );
+		
+		ObjText_SetText( Score_Obj, DigitToArray_Comma(Score));
+		
+		yield;
+	}
+}	
+
+task T_Create_Hud_Divider( X, Y, Color, SpawnDelay, Scale ){
+	
+	//let Line_Object_Center = Render2D_Texture_A1( Hud_Objects, [ 0, 0, 224, 16 ], X * Resolution, Y * Resolution, Scale , 1 );
+	let Line_Object = Render2D_Texture_A1( Hud_Objects, [ 0, 0, 224, 16 ], X * Resolution, Y * Resolution, Scale, 0 );
+	ObjRender_SetColor( Line_Object, Color[0], Color[1], Color[2] );
+
+	ObjRender_SetTextureFilter( Line_Object, FILTER_NONE, FILTER_NONE, FILTER_NONE );
+	
+	float Fade = 20+Fade_Time;
+	float Alpha = 0;
+	float Scale_XYZ = 0;
+	
+	//wait( 8 );
+	
+	ascent( i in 0..Fade ){
+		
+		Scale_XYZ = Interpolate_Smoother( 0, Scale, i / Fade  );
+		Alpha = Interpolate_Smoother( 0, 255, i / Fade  );
+		
+		
+		ObjRender_SetScaleX( Line_Object, Scale_XYZ );
+		ObjRender_SetAlpha( Line_Object, Alpha );
+		yield;
+	
+	}	
+	
+}	
+
+//-----------------------------------------------------------------------------
+
+task T_Handle_Life(){
+	
+	//Will also Be updating this later! -Seija
+	
+	let Life_Counter = 0;
+	let Piece_Counter = 0;
+	let Piece_Track;	
+	
+	T_CreateTextWithShadow( 424, 98, [ 232, 74, 144 ], [ 232, 74, 144 ], "Lives" );
+	T_Create_Hud_Divider( 526, 136, [ 255, 110, 170 ], 10, 1 );
+	
+	T_PieceTracker;
+
+	
+	ascent( i in 0..8 ){
+		T_LifeEmpty( 508 + i * 15 );
+		T_LifeFull( 508 + i * 15, i );
+	}
+	
+	task T_LifeEmpty( X ){
+
+		let Life_Notch = Render2D_Texture_A1( Hud_LifeSpell, [ 0, 1, 16, 16 ], X * Resolution, 112 * Resolution, 1 * Resolution, 0 );
+		//ObjRender_SetTextureFilter( Life_Notch, FILTER_NONE, FILTER_NONE, FILTER_NONE );
+	
+	}
+	
+	task T_LifeFull( X, LifeID ){
+	
+		let Life_Obj = Render2D_Texture_A1( Hud_LifeSpell, [ 64, 0, 80, 16 ], X * Resolution, 112 * Resolution, 1 * Resolution, 0 );
+		//ObjRender_SetTextureFilter( Life_Obj, FILTER_NONE, FILTER_NONE, FILTER_NONE );
+		
+		while(true){
+			
+			//Piece_Counter = GetCommonData( "LPieceCount", 0 );
+			Life_Counter = GetPlayerLife();
+
+			if( Life_Counter > LifeID ){ ObjRender_SetAlpha( Life_Obj, 255 ); }
+			else{ ObjRender_SetAlpha( Life_Obj, 0 ); }
+			
+			yield;
+		}
+	}		
+	
+	task T_PieceTracker{
+		
+		let Num_Count = 0;
+		let Num = 0;
+		let X_Pos = 0;
+		
+		let Numb_Obj = ObjPrim_Create( OBJ_SPRITE_LIST_2D );
+		ObjPrim_SetTexture( Numb_Obj, Hud_Text );
+		
+		ObjRender_SetScaleXYZ( Numb_Obj, 1, 1, 1 );
+		Obj_SetRenderPriority( Numb_Obj, 1 );
+
+		//ObjRender_SetColor( Numb_Obj, 216, 206, 242 );
+			
+		while(true){
+
+			Piece_Counter = GetCommonData( "Life_Piece_Count", 0 );
+			Piece_Track = rtos( "0", Piece_Counter ) ~ "/4";
+			
+			ObjRender_SetScaleXYZ( Numb_Obj, 1* Resolution, 1* Resolution, 1* Resolution );			
+			ObjSpriteList2D_ClearVertexCount( Numb_Obj );
+			Num_Count = length( Piece_Track );
+			
+			X_Pos = 0;
+			
+			descent( i in 0 .. Num_Count ){
+				
+				Num = CharToNum( Piece_Track[ i ] );
+				ObjRender_SetPosition( Numb_Obj, ( 614 + 4 + ( Num_Count*4 ) - X_Pos - 8 ) * Resolution, 124 * Resolution, 0 );
+				ObjSpriteList2D_SetSourceRect(  Numb_Obj, Num * 8, 160, ( Num + 1 ) * 8, 169 );
+				ObjSpriteList2D_SetDestRect( Numb_Obj, 0, 0, 8, 9 );
+				ObjSpriteList2D_AddVertex( Numb_Obj );	
+
+				X_Pos+= 7;
+					
+			}	
+			
+			yield;
+		}	
+			
+	}	
+	
+}
+	
+task T_Handle_Spell(){
+	
+	//Will also Be updating this later!-Seija
+	
+	let Life_Counter = 0;
+	let Piece_Counter = 0;
+	let Piece_Track;	
+	
+	T_CreateTextWithShadow( 424, 136, [ 96, 216,144 ], [ 96, 216,144 ], "Spell" );
+	T_Create_Hud_Divider( 526, 176, [ 96, 216, 144 ], 10, 1 );
+	
+	T_PieceTracker;
+
+	ascent( i in 0..8 ){
+		T_LifeEmpty( 508 + i * 15 );
+		T_LifeFull( 508 + i * 15, i );
+	}
+	
+	task T_LifeEmpty( X ){
+
+		let Life_Notch = Render2D_Texture_A1( Hud_LifeSpell, [ 0, 17, 16, 33 ], X* Resolution, 150* Resolution, 1* Resolution, 0 );
+
+	}
+	
+	task T_LifeFull( X, LifeID ){
+	
+		let Life_Obj = Render2D_Texture_A1( Hud_LifeSpell, [ 64, 17, 80, 33 ], X* Resolution, 150* Resolution, 1* Resolution, 0 );
+		
+		while(true){
+			
+			//Piece_Counter = GetCommonData( "LPieceCount", 0 );
+			Life_Counter = GetPlayerSpell();
+
+			if( Life_Counter > LifeID ){ ObjRender_SetAlpha( Life_Obj, 255 ); }
+			else{ ObjRender_SetAlpha( Life_Obj, 0 ); }
+			
+			yield;
+		}
+	}		
+	
+	task T_PieceTracker{
+		
+
+		
+		let Num_Count = 0;
+		let Num = 0;
+		let X_Pos = 0;
+		
+		let Numb_Obj = ObjPrim_Create( OBJ_SPRITE_LIST_2D );
+		ObjPrim_SetTexture( Numb_Obj, Hud_Text );
+		
+		ObjRender_SetScaleXYZ( Numb_Obj, 1* Resolution, 1* Resolution, 1* Resolution );
+		Obj_SetRenderPriority( Numb_Obj, 1 );
+
+		//ObjRender_SetColor( Numb_Obj, 216, 206, 242 );
+			
+		while(true){
+
+			Piece_Counter = GetCommonData( "Spell_Piece_Count", 0 );
+			Piece_Track = rtos( "0", Piece_Counter ) ~ "/4";
+			
+			ObjSpriteList2D_ClearVertexCount( Numb_Obj );
+			Num_Count = length( Piece_Track );
+			
+			X_Pos = 0;
+			
+			descent( i in 0 .. Num_Count ){
+				
+				Num = CharToNum( Piece_Track[ i ] );
+				ObjRender_SetPosition( Numb_Obj, ( 614 + 4 + ( Num_Count*4 ) - X_Pos - 8 ) * Resolution, 164 * Resolution, 0 );
+				ObjSpriteList2D_SetSourceRect(  Numb_Obj, Num * 8, 160, ( Num + 1 ) * 8, 169 );
+				ObjSpriteList2D_SetDestRect( Numb_Obj, 0, 0, 8, 9 );
+				ObjSpriteList2D_AddVertex( Numb_Obj );	
+
+				X_Pos+= 7;
+					
+			}	
+			
+			yield;
+		}	
+			
+	}	
+	
+}	
+	
+//------------------------------------------------------------------------	
+	
+task T_Handle_Value(){
+	
+	//To be properly implemented yet - Seija.
+	
+	int Point_Value = 0;
+	
+	T_CreateTextWithShadow( 456, 220, CC_HUD_BLUE, CC_HUD_BLUE, "Value" );
+	
+	Render2D_Texture_A1( Hud_Objects, [ 0, 208, 16, 240 ], 444* Resolution, 228* Resolution, 1* Resolution, 0 );
+	T_Create_Hud_Divider( 530, 248, [ 108, 126, 192 ], 10, 0.8 );
+	
+	let Counter_Obj = Create_HUD_Text( 1, 18 * Resolution, CC_HUD_BLUE, CC_HUD_BLUE );
+	ObjText_SetFontType( Counter_Obj, "Chaney Thin Normal");
+	ObjRender_SetPosition( Counter_Obj, 355* Resolution,( 232 - 10 )* Resolution, 0 );	
+	
+	loop {
+		Point_Value = GetPoint() + GetGraze() + 1000;
+		Point_Value = max(min(Point_Value, 999999999), 0);
+		ObjText_SetText(Counter_Obj, Point_Value);
+		yield;
+	}	
+	
+	
+}	
+	
+task T_Handle_Graze(){
+	
+	int Graze = 0;
+	
+	T_CreateTextWithShadow( 456, 248, [ 155, 155, 155 ], [ 255, 255, 255 ], "Graze" );
+	
+	Render2D_Texture_A1( Hud_Objects, [ 0, 144, 16, 176 ], 444* Resolution, 254* Resolution, 1* Resolution, 0 );
+	T_Create_Hud_Divider( 530, 276, [ 155, 155, 155 ], 10, 0.8 );
+	
+	let Counter_Obj = Create_HUD_Text( 1, 18* Resolution, [255,255,255], [180,180,180] );
+	ObjText_SetFontType( Counter_Obj, "Chaney Thin Normal");
+	ObjRender_SetPosition( Counter_Obj, 355* Resolution,( 260 - 10 )* Resolution, 0 );	
+	
+	loop {
+		Graze = GetGraze();
+		Graze = max(min(Graze, 999999999), 0);
+		ObjText_SetText(Counter_Obj, Graze);
+		yield;
+	}	
+	
+	
+}
+
+task T_Handle_Timer(){
+	
+	//will be updating this later - Seija
+	
+	int Time_Seconds = 0;
+	int Time_Fps = 0;
+	float Timer_Anim = 0;
+	int MaxTime = 99;
+	float Y_Pos = 0;
+	
+	let objScene;
+	
+	let Counter_Obj = Create_HUD_Text( 1, 24* Resolution, [255,255,255], [180,180,180] );
+	ObjText_SetFontType( Counter_Obj, "Chaney Thin Normal");
+	ObjRender_SetPosition( Counter_Obj, Get_CenterX - 8 , 12* Resolution, 0 );	
+	Obj_SetRenderPriority( Counter_Obj, 0.80 );
+	ObjText_SetHorizontalAlignment( Counter_Obj, ALIGNMENT_CENTER );
+	ObjText_SetMaxWidth( Counter_Obj, 28* Resolution );
+	
+	loop{
+		
+		objScene = GetEnemyBossSceneObjectID();
+		if( objScene != ID_INVALID )
+		{
+			
+			if(ObjEnemyBossScene_GetInfo(objScene, INFO_IS_SPELL)){ Y_Pos +=1;}
+			else{ Y_Pos -= 1;}
+			if( Y_Pos > 48){ Y_Pos = 48;}
+			if( Y_Pos < 12){ Y_Pos = 12;}			
+			
+			T_Render_Timer();
+		}
+		yield;
+	}	
+	
+	task T_Render_Timer(){
+		loop{
+						
+			
+			Time_Seconds = ObjEnemyBossScene_GetInfo(objScene, INFO_TIMERF)/60;
+			Time_Seconds = max(min(Time_Seconds, 99), 0);
+			ObjText_SetText(Counter_Obj, Time_Seconds);
+			
+			if( MaxTime != Time_Seconds && Time_Seconds <11){
+					if( Time_Seconds <= 10 && !Time_Seconds == 0 ){
+						Timer_Anim = 8;
+						T_PlaySE( SE_TIMEOUT, 30 );
+					}		
+					MaxTime = Time_Seconds;
+				}
+				if( Time_Seconds <= 10 ){
+					ObjRender_SetColor( Counter_Obj, 255, 100 - Timer_Anim*8, 100 - Timer_Anim*8);
+				}
+				else{
+					//T_PlaySE( SE_TIMEOUT, 40 );
+					ObjRender_SetColor( Counter_Obj, 255, 255, 255);
+				}
+				Timer_Anim = max( Timer_Anim-1, 0 );			
+			
+			ObjRender_SetY( Counter_Obj, Y_Pos );
+			yield;
+		}	
+	}	
+	
+	
+}
+
+task TCurrentFps(){
+	
+	//Placeholder as well - Seija
+	
+	let objText = ObjText_Create();
+	let fps = GetCurrentFps();
+	let text;
+
+	ObjText_SetFontSize(objText, 11);
+	ObjText_SetFontBold(objText, true);
+	ObjText_SetFontType(objText, "Mochiy Pop One");
+	
+	ObjText_SetFontColorTop(objText, 255, 255, 255);
+	ObjText_SetFontColorBottom(objText, 255, 255, 255);
+	ObjText_SetHorizontalAlignment( objText, ALIGNMENT_LEFT );
+	
+	ObjText_SetFontBorderType(objText, BORDER_FULL);
+	ObjText_SetFontBorderColor(objText,0, 0, 0);
+	ObjText_SetFontBorderWidth(objText, 2);
+	
+	Obj_SetRenderPriority(objText, 55);
+	ObjText_SetMaxWidth(objText, GetScreenWidth() - 8);
+	ObjRender_SetX(objText, GetScreenWidth()-76);
+	ObjRender_SetY(objText,  GetScreenHeight() - 15);
+
+	loop{
+		
+		fps = GetCurrentFps();
+		text = vtos("1.2f", fps) ~ "fps";
+		ObjText_SetText(objText, text);
+		yield;
+	}
+}

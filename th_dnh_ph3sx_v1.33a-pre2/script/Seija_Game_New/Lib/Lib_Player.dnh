@@ -1,0 +1,296 @@
+
+	#include "./../System/Common.dnh"
+	#include "./../System/Constants.dnh"	
+	#include "./Lib_Sound.dnh"
+
+//---------------------------------------------------------
+
+//This lib just handles things that are the same for each player character.
+//Most of the stuff here is unfinished. - Seija
+
+bool Can_Fire = true;
+bool Is_Dead = false;
+bool Is_Bomb_Active = true;
+bool Is_Focusing = false;
+
+float PL_Power = GetPlayerPower();
+int PL_PowerLevel = 0;
+
+//---------------------------------------------------------
+
+let Generic_Tex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Player/PL_Gen.png";
+let Effect_Tex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Effect/Invert.png";
+
+//---------------------------------------------------------
+
+function Init_Main(){
+	
+	//ObjPlayer_AddIntersectionCircleA1( GetPlayerObjectID, 0, 0, 3, 25 );
+	
+	SetPlayerClip( 8 * RESOLUTION, 32 * RESOLUTION, ( Get_MaxX - 8 ), ( Get_MaxY - 18 ) );
+	SetPlayerDownStateFrame( 50 );
+	
+	SetPlayerRebirthLossFrame( 0 );
+	SetPlayerDownStateFrame( 50 );
+	
+	T_RenderHitox();
+	//T_InitPL();
+	
+}	
+
+function Main_Loop(){
+	
+	yield;
+}
+
+
+function Main_Fin(){
+	
+	yield;
+	
+}
+
+function PL_Event_Handler(){
+	
+	alternative( GetEventType() )
+	
+	case( EV_GRAZE ) {
+		
+		let Shot_Id = GetEventArgument( 1 );
+		
+		NotifyEventAll( EV_PL_GRAZE_CUSTOM, 10 );
+		//T_PlaySE( SE_GRAZE, 30 );
+		//LINE_MODIFIER+=20;
+		T_PlaySE( SE_GRAZE, 25 );
+		T_Graze( Shot_Id );
+		
+    }
+	case( EV_REQUEST_SPELL ){
+		
+		//TBA
+		SetScriptResult( false );
+		
+	}
+    case( EV_PLAYER_SHOOTDOWN ){
+		
+		T_Shotdown();
+        Is_Dead = true;
+		Can_Fire = false;
+
+    }
+    case( EV_PLAYER_REBIRTH ){
+		
+        Is_Dead = false;
+        SetPlayerInvincibilityFrame( 240 );
+		T_Respawn();
+		
+    }		
+	
+	
+}
+
+//---------------------------------------------------------
+
+	// Graze Stage
+
+task T_Graze( Shot ){
+	
+	//THIS CODE IS PLACEHOLDER!!
+	LINE_MODIFIER+=1;
+	let Particle = ObjPrim_Create( OBJ_SPRITE_2D );
+	Obj_SetRenderPriority( Particle, 0.49 );
+	ObjPrim_SetTexture( Particle, Generic_Tex );
+	ObjSprite2D_SetSourceRect( Particle, 64, 0, 80, 16 );
+	ObjRender_SetPosition( Particle, GetPlayerX(), GetPlayerY(), 0 );
+	
+	float X_Pos = GetPlayerX();
+	float Y_Pos = GetPlayerY();
+	float RNG_X = prand( 2, 6 ); 
+	float RNG_Y = prand( 2, 6 );	
+	float Angle = prand( 0, 360 );	
+	float Scale = 1.8;
+
+	while( !Obj_IsDeleted( Particle ) ){
+		
+		if( Scale <= 0.1 ) { break; }
+		
+		X_Pos = X_Pos + ( RNG_X ) * cos( Angle );
+		Y_Pos = Y_Pos + ( RNG_Y ) * sin( Angle );
+		
+		ObjSprite2D_SetDestCenter( Particle );
+		ObjRender_SetPosition( Particle, X_Pos, Y_Pos, 0 );
+		ObjRender_SetScaleXYZ( Particle, Scale, Scale, Scale );
+
+		Scale -= 0.1; 
+		
+		yield;
+	}	
+	
+	Obj_Delete( Particle );	
+	
+}	
+
+//---------------------------------------------------------
+
+	// Death State
+
+task T_Shotdown{
+	
+	InvCircle( GetPlayerX(), GetPlayerY(), 0.05, 80 );
+	wait( 40 );
+	InvCircle( GetPlayerX(), GetPlayerY(), 0.05, 40 );
+	
+	
+	task InvCircle( X, Y, Scale, DeleteTime ){
+		
+		let Effect_Obj = ObjPrim_Create(OBJ_SPRITE_2D);
+		float Time = 0;
+		float Scale_XYZ = 0;
+
+		ObjPrim_SetTexture( Effect_Obj, Effect_Tex );
+		ObjSprite2D_SetSourceRect( Effect_Obj, 0, 0, 512, 512);
+		Obj_SetRenderPriorityI( Effect_Obj, 79);
+		ObjSprite2D_SetDestCenter( Effect_Obj);
+		
+		ObjRender_SetBlendType( Effect_Obj, BLEND_INV_DESTRGB);
+
+
+		ObjRender_SetPosition( Effect_Obj, X, Y,0);
+		ObjRender_SetScaleXYZ( Effect_Obj, Scale_XYZ, Scale_XYZ, Scale_XYZ );
+		
+		while( !Obj_IsDeleted( Effect_Obj ) ){
+			
+			ObjRender_SetScaleXYZ( Effect_Obj, Scale_XYZ, Scale_XYZ, Scale_XYZ );
+			Time++;
+			Scale_XYZ += Scale;
+
+			if( Time >= DeleteTime ){
+				Obj_Delete( Effect_Obj );
+			}
+				yield;
+			}
+		}	
+}	
+
+//---------------------------------------------------------
+
+	// Respawn State.
+
+task T_Respawn(){
+	
+	float Y = 0;
+	
+	T_Blink;
+	
+	Can_Fire = false;
+	
+	ObjMove_SetPosition( GetPlayerObjectID(), Get_CenterX, Get_MaxY + 30 * RESOLUTION );
+	
+	loop( 40 ){
+		
+		ObjMove_SetPosition( GetPlayerObjectID(), GetStgFrameWidth/2, GetStgFrameHeight + 30 - Y * RESOLUTION );
+		Y += 2;
+		yield;
+	}	
+	
+	Can_Fire = true;
+	
+	task T_Blink{
+		
+		let Frame = GetPlayerInvincibilityFrame();
+
+		while( Frame >  0 ){
+			
+			Frame = GetPlayerInvincibilityFrame();
+			
+			ascent( i in 0..2 ){
+				
+				ObjRender_SetColor( GetPlayerObjectID(), 255*i, 255*i, 255 );
+				wait( 8 );
+				
+			}
+			wait( 2 );
+		}
+	}
+
+
+}	
+
+//---------------------------------------------------------
+
+task T_RenderHitox{
+
+	//THIS CODE IS PLACEHOLDER!!
+
+	let Obj_01 = ObjPrim_Create( OBJ_SPRITE_2D );
+	Obj_SetRenderPriority( Obj_01, 0.39 );
+	//ObjRender_SetAlpha( Obj_01, 255);
+	ObjPrim_SetTexture( Obj_01, Generic_Tex );
+	ObjSprite2D_SetSourceRect( Obj_01, 0, 0, 63, 63 );
+	ObjSprite2D_SetDestCenter( Obj_01 );
+	
+	let Obj_02 = ObjPrim_Create( OBJ_SPRITE_2D );
+	Obj_SetRenderPriority( Obj_02, 0.38 );
+	//ObjRender_SetAlpha( Obj_02, 240);
+	ObjPrim_SetTexture( Obj_02, Generic_Tex );
+	ObjSprite2D_SetSourceRect( Obj_02, 0, 64, 63, 127 );
+	ObjSprite2D_SetDestCenter( Obj_02 );	
+	
+	ObjRender_SetTextureFilter( Obj_01, FILTER_NONE, FILTER_NONE, FILTER_NONE );
+	ObjRender_SetTextureFilter( Obj_02, FILTER_NONE, FILTER_NONE, FILTER_NONE );
+
+	float Spin = 0;
+	
+	float Alpha = 0;
+	float Scale = 1;
+	
+	loop{
+		
+		if( GetPlayerState == STATE_DOWN || GetPlayerState == STATE_END ){
+			
+			Obj_SetVisible( Obj_01, false );
+			Obj_SetVisible( Obj_02, false );
+		}
+		else{
+			
+			Obj_SetVisible( Obj_01, true );
+			Obj_SetVisible( Obj_02, true );
+		}		
+		if( GetVirtualKeyState( VK_SLOWMOVE ) == KEY_HOLD ){
+;
+			Obj_SetVisible( Obj_01, true );
+			Obj_SetVisible( Obj_02, true );
+			
+			Scale += 0.1;
+			Spin += 1;
+			if( Scale >= 1.1 ) { Scale = 1.1; }
+			ObjRender_SetAngleZ( Obj_01, Spin );
+			ObjRender_SetScaleXYZ( Obj_01, 0 + Scale, 0 + Scale, 0 + Scale );
+			ObjRender_SetPosition( Obj_01, GetPlayerX(), GetPlayerY(), 0 );
+			
+			ObjRender_SetAngleZ( Obj_02, -Spin*1.3 );
+			ObjRender_SetScaleXYZ( Obj_02, 0 + Scale, 0 + Scale, 0 + Scale );
+			ObjRender_SetPosition( Obj_02, GetPlayerX(), GetPlayerY(), 0 );			
+
+		}
+		else{
+			
+			Spin -= 10;
+			Scale -= 0.1;
+			if( Scale <= 0 ) { Scale = 0; Obj_SetVisible( Obj_01, false ); Obj_SetVisible( Obj_02, false ); }
+			ObjRender_SetAngleZ( Obj_01, Spin );
+			ObjRender_SetScaleXYZ( Obj_01, 0 + Scale, 0 + Scale, 0 + Scale );
+			ObjRender_SetPosition( Obj_01, GetPlayerX(), GetPlayerY(), 0 );
+			
+			ObjRender_SetAngleZ( Obj_02, -Spin*1.3 );
+			ObjRender_SetScaleXYZ( Obj_02, 0 + Scale, 0 + Scale, 0 + Scale );
+			ObjRender_SetPosition( Obj_02, GetPlayerX(), GetPlayerY(), 0 );			
+		}				
+
+		yield;
+	}
+	
+	
+}	
+
+//---------------------------------------------------------

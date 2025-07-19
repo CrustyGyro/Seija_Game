@@ -1,0 +1,237 @@
+//-----------------------------------------------------------------------------
+
+function Boss_Is_Alive( Boss ){
+	
+	return !Obj_IsDeleted( Boss );
+}
+
+function T_BossMove_A( Obj, X, Y, Clip_Min, Clip_Max, Base_Time ){
+	
+	//Lerp_Types:
+	//LERP_SMOOTHER
+	//LERP_SMOOTHER
+	//LERP_SMOOTHER
+	//LERP_SMOOTHER
+	
+	
+	yield;
+	
+	
+}	
+
+//-----------------------------------------------------------------------------
+
+function GetDistance( X1, Y1, X2, Y2 ){
+	
+	return ((( X2 - X1 ) ^ 2 + (Y2 - Y1) ^ 2) ^ 0.5 );
+}
+
+function GetAngle( X1, Y1, X2, Y2 ){
+	
+	return atan2( Y2 - Y1, X2 - X1 );
+}
+
+function Get_CenterX(){ return GetStgFrameWidth/2; }
+
+function Get_CenterY(){ return GetStgFrameHeight/2; }	
+
+function Get_MaxX(){ return GetStgFrameWidth; }
+
+function Get_MaxY(){ return GetStgFrameHeight; }	
+
+//-----------------------------------------------------------------------------
+
+//Common Graphical Functions
+
+//-----------------------------------------------------------------------------
+
+task T_SimpleScreenShake( int Duration ){
+	
+	float Shake = 0;
+
+	loop( Duration ){
+		//Usually 30 duration... dont do it too long cus it gets really funky.
+		Reset2DCamera;
+		Set2DCameraFocusX( Get2DCameraX() + rand( -15 + Shake * 0.5, 15 - Shake * 0.5 ) );
+		Set2DCameraFocusY( Get2DCameraY() + rand( -15 + Shake * 0.5, 15 - Shake * 0.5 ) );
+		
+		Shake++;
+		
+		yield;
+		
+	}
+
+	Reset2DCamera;
+	
+}	
+
+
+function Render2D_Texture_A1( Path, Rect, X, Y, Scale, PriorityF ){
+	
+	let Texture = ObjPrim_Create(OBJ_SPRITE_2D);
+	ObjPrim_SetTexture( Texture, Path );
+	ObjSprite2D_SetSourceRect( Texture, Rect[0], Rect[1], Rect[2], Rect[3] );
+	ObjSprite2D_SetDestCenter( Texture );
+	ObjRender_SetScaleX( Texture, Scale );
+	ObjRender_SetScaleY( Texture, Scale );
+	Obj_SetRenderPriority( Texture, PriorityF );
+	ObjRender_SetPosition( Texture, X, Y, 0 );
+	
+	return Texture;
+	
+}
+
+task T_FadeIn_A1( Obj, Time, Alpha ){
+	
+	ascent( i in 0..Time ){
+		ObjRender_SetAlpha(Obj, (i / Time) * Alpha );
+		yield;
+	}
+	ObjRender_SetAlpha( Obj, Alpha );
+}
+
+task T_FadeOut_A1( Obj, Time, Alpha ){
+	
+	descent( i in 0..Time ){
+		ObjRender_SetAlpha(Obj,(i / Time) * Alpha);
+		yield;
+	}
+	ObjRender_SetAlpha( Obj, 0 );
+}
+
+task T_FadeOut_Delete( Obj, Time, Alpha ){
+	
+	descent( i in 0..Time ){
+		ObjRender_SetAlpha(Obj,(i / Time) * Alpha);
+		yield;
+	}
+	Obj_Delete( Obj );
+}
+
+task T_GrowToScale_A1( Obj, Time, Scale_XYZ ){
+	
+	ascent( i in 0..Time ){
+		ObjRender_SetScaleXYZ(Obj, (i / Time) * Scale_XYZ, (i / Time) * Scale_XYZ, 1 );
+		yield;
+	}
+	ObjRender_SetScaleXYZ(Obj, Scale_XYZ, Scale_XYZ, 1 );
+}
+
+task T_ShrinkToScale_A1( Obj, Time, Scale_XYZ ){
+	
+	descent( i in 0..Time ){
+		ObjRender_SetScaleXYZ(Obj, (i / Time) * Scale_XYZ, (i / Time) * Scale_XYZ, 1 );
+		yield;
+	}
+	ObjRender_SetScaleXYZ(Obj, Scale_XYZ, Scale_XYZ, 1 );
+}
+
+task T_GrowToScale_A1_Overshoot( Obj, Time, Scale_XYZ, Over ){
+	
+	float Scale_Interpolate = 0;
+	
+	ascent( i in 0..Time ){
+		
+		Scale_Interpolate = Interpolate_Overshoot( 0, Scale_XYZ, Over, i / ( Time - 1));
+		
+		ObjRender_SetScaleXYZ(Obj, Scale_Interpolate, Scale_Interpolate, 1 );
+		yield;
+	}
+	ObjRender_SetScaleXYZ(Obj, Scale_Interpolate, Scale_Interpolate, 1 );
+}
+
+task T_Render_AtInt( Obj, Resolution ){
+	
+	while( !Obj_IsDeleted( Obj ) ){
+		ObjRender_SetPosition( Obj, round((round(ObjRender_GetX( Obj )))*Resolution),round((round(ObjRender_GetY( Obj )))*Resolution), 0 );
+		yield;
+	}
+}	
+
+//-----------------------------------------------------------------------------
+
+//Common Text Functions
+
+function DigitToArray(let digit,let count)
+{
+	let res = [];
+	digit = truncate(digit);
+
+	loop
+	{
+		let tnum = truncate(digit % 10);
+		digit /= 10;
+		res = [tnum] ~ res;
+		if(truncate(digit) == 0){break;}
+	}
+
+	loop(max(0, count - length(res)))
+	{
+		res = [0] ~ res;
+	}
+
+	return res;
+}
+
+function CharToNum( Char ) {
+	
+	//Hell -Seija
+	
+	alternative ( Char )
+	case ( '0' ) { return 0; }
+	case ( '1' ) { return 1; }
+	case ( '2' ) { return 2; }
+	case ( '3' ) { return 3; }
+	case ( '4' ) { return 4; }
+	case ( '5' ) { return 5; }
+	case ( '6' ) { return 6; }
+	case ( '7' ) { return 7; }
+	case ( '8' ) { return 8; }
+	case ( '9' ) { return 9; }
+	case ( '/' ) { return 10; }
+	case ( ':' ) { return 11; }
+	case ( '-' ) { return 12; }
+	case ( 'x' ) { return 13; }
+	case ( '%' ) { return 14; }
+	case ( '.' ) { return 15; }
+	
+	others { return 0; }
+	
+}
+
+//-----------------------------------------------------------------------------
+
+function Create_HUD_Text( Priority, FontSize, Color_T, Color_B ){
+	
+	let Text_Obj = ObjText_Create();
+	
+	Obj_SetRenderPriority( Text_Obj, Priority );
+	ObjText_SetFontSize( Text_Obj, FontSize );
+	ObjText_SetFontColorTop( Text_Obj, Color_T[0], Color_T[1], Color_T[2] );
+	ObjText_SetFontColorBottom( Text_Obj, Color_B[0], Color_B[1], Color_B[2] );
+	
+	ObjText_SetFontBorderType( Text_Obj, BORDER_FULL );
+	ObjText_SetFontBorderColor( Text_Obj, 0, 0, 0 );
+	ObjText_SetFontBorderWidth( Text_Obj, 2 );
+
+	ObjText_SetMaxWidth( Text_Obj, 256 );
+	ObjText_SetHorizontalAlignment( Text_Obj, ALIGNMENT_RIGHT );
+	
+	return Text_Obj;
+
+}	
+
+function DigitToArray_Comma( Number ){
+	
+	//AAAAAAAAAAAAAAAAAAAAHHHHH - Seija
+	
+	string res = IntToString( Number );
+	for( int i = length( res ), n = 0; i > 0; i-- ){
+		if( n > 0 && n % 3 == 0 )
+			res = insert( res, i, ',');
+		n++;
+	}	
+	return res;
+}
+
+//-----------------------------------------------------------------------------

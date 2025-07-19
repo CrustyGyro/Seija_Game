@@ -1,0 +1,181 @@
+//---------------------------------------------------------------------------------------------------------------------
+
+	#include "./../System/Common.dnh"	
+	#include "./../System/Constants.dnh"	
+
+//---------------------------------------------------------------------------------------------------------------------
+
+task T_CallSpell_A1( Text, Spell_ID, Difficulty, BossSceneObj ){
+
+	let Boss = GetEnemyBossObjectID[ 0 ];
+	let BG_Tex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/System/SpellAttack.png";
+
+	let Obj = Render2D_Texture_A1( BG_Tex, [ 0, 0, 256, 48 ], 256, 416 - 32, 1, 0.70 );
+	
+	let ObjText = ObjText_Create;
+	
+	ObjText_SetText( ObjText, Text );
+	ObjText_SetFontType( ObjText, "GenEiGothicP-Bold" );
+	ObjText_SetFontSize( ObjText, 14 );
+	ObjText_SetFontColorTop( ObjText, 255, 255, 255 );
+	ObjText_SetFontColorBottom( ObjText, 255, 255, 255 );
+	ObjText_SetFontBorderType( ObjText,BORDER_FULL );
+	ObjText_SetFontBorderColor( ObjText, 32, 32, 32 );
+	ObjText_SetFontBorderWidth( ObjText, 1 );
+	ObjText_SetHorizontalAlignment( ObjText, ALIGNMENT_RIGHT );
+	ObjText_SetMaxWidth( ObjText, GetStgFrameWidth - 24 );
+	
+	Obj_SetRenderPriority( ObjText, 0.80 );
+	ObjRender_SetPosition( ObjText, 32, 420, 0);	
+	
+	Obj_SetRenderPriority( ObjText, 55 );	
+	
+	T_FadeIn_A1( Obj, 10, 255 );
+	T_FadeIn_A1( ObjText, 10, 255 );
+
+	ascent( a in 0..90 ){
+
+		ObjRender_SetY( ObjText, Interpolate_Smooth( 420, 48 - 16, a/90 ) );
+		ObjRender_SetY( Obj, Interpolate_Smooth( 420, 40 - 16, a/90 ) );
+		
+		yield;
+	}
+	
+	/*
+   while( ObjEnemy_GetInfo( Boss_Obj, INFO_LIFE ) > 0 ){
+	     yield;
+	}
+	*/
+	
+	
+	T_Render_Spell_Hisotry( Text, Spell_ID, Difficulty, BossSceneObj );
+	
+	while( !Obj_IsDeleted( Boss ) ){
+	     yield;
+	}	
+	
+	
+	T_FadeOut_Delete( ObjText, 10, 255 );
+	T_FadeOut_Delete( Obj, 15, 255 );
+	//Obj_Delete( ObjText );	
+	//Obj_Delete( Obj );	
+
+}
+
+function GetNumSize(value){
+	let numsize = 1;
+	value = truncate(value);
+	if(value>=10&&value<100){numsize = 2;}
+	if(value>=100&&value<1000){numsize = 3;}
+	if(value>=1000&&value<10000){numsize = 4;}
+	if(value>=10000&&value<100000){numsize = 5;}
+	if(value>=100000&&value<1000000){numsize = 6;}
+	if(value>=1000000&&value<10000000){numsize = 7;}
+	if(value>=10000000&&value<100000000){numsize = 8;}
+	if(value>=100000000&&value<1000000000){numsize = 9;}
+	if(value>=1000000000&&value<10000000000){numsize = 10;}
+	if(value>=10000000000&&value<100000000000){numsize = 11;}
+	if(value>=1000000000000){numsize = 12;}
+	return numsize;
+}
+
+task T_Render_Spell_Hisotry( Text, Spell_ID, Difficulty, BossSceneObj ){
+	
+		let Info_Tex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/System/SpellInfo.png";
+	
+		//SetAutoDeleteObject( false );
+		if( !IsCommonDataAreaExists( "SpellHistory" ) ){ CreateCommonDataArea( "SpellHistory" ); }
+		LoadCommonDataAreaA1( "SpellHistory" );
+			
+		let AttemptCount = Text ~ Difficulty ~ GetPlayerID ~ "Attempt";
+		let CaptureCount = Text ~ Difficulty ~ GetPlayerID ~ "Get";
+			
+		let SpellAttempt = GetAreaCommonData( "SpellHistory", AttemptCount, 0 );
+		let SpellCapture = GetAreaCommonData( "SpellHistory", CaptureCount, 0 );	
+
+		if( IsReplay == false ){
+			
+			SpellAttempt++;
+			SetAreaCommonData( "SpellHistory", AttemptCount, SpellAttempt );
+			SaveCommonDataAreaA1( "SpellHistory" );
+			
+		}	
+	
+		let BossObj = GetEnemyBossObjectID[0];
+		
+		let Obj_Info = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
+		let Bonus = 10;
+		let Count = 0;
+		
+		ObjPrim_SetTexture( Obj_Info, Info_Tex );
+		Obj_SetRenderPriority( Obj_Info, 0.8 );
+		
+		ObjRender_SetTextureFilter( Obj_Info, FILTER_POINT, FILTER_POINT, FILTER_POINT );
+		
+		while( !Obj_IsDeleted( BossObj ) ){			
+			
+			ObjSpriteList2D_ClearVertexCount( Obj_Info );
+			ObjRender_SetAlpha( Obj_Info, 255 );
+			
+			ObjRender_SetScaleXYZ( Obj_Info, 1, 1, 1);
+			ObjSpriteList2D_SetSourceRect( Obj_Info, 0, 0, 96, 16 );
+			ObjSpriteList2D_SetDestCenter( Obj_Info );
+			ObjRender_SetPosition( Obj_Info, 300, 48 - 8, 0 );
+			ObjSpriteList2D_AddVertex( Obj_Info);
+			
+			Bonus = min( 99999999, ObjEnemyBossScene_GetInfo( BossSceneObj, INFO_SPELL_SCORE ) );
+			Count = GetNumSize( Bonus );
+			let listNum = DigitToArray( Bonus, Count );
+			
+			
+			if(ObjEnemyBossScene_GetInfo( BossSceneObj, INFO_PLAYER_SHOOTDOWN_COUNT) + ObjEnemyBossScene_GetInfo( BossSceneObj, INFO_PLAYER_SPELL_COUNT ) == 0 ){
+				ascent( iObj in 0 .. Count ){
+					
+					let num = listNum[ iObj ];
+					ObjRender_SetX( Obj_Info, 364 -( 8 * Count ) + iObj * 7 );
+					ObjSpriteList2D_SetSourceRect( Obj_Info , num * 8, 12, (num + 1) * 8, 32);
+					ObjSpriteList2D_SetDestCenter( Obj_Info );
+					ObjSpriteList2D_AddVertex( Obj_Info );
+					
+				}
+			}
+			else{
+				
+					ObjRender_SetX( Obj_Info, 364 );
+					ObjSpriteList2D_SetSourceRect( Obj_Info, 144, 0, 176, 16 );
+					ObjSpriteList2D_SetDestCenter( Obj_Info );
+					ObjSpriteList2D_AddVertex( Obj_Info );
+					
+			}
+			
+			/*
+			let Attempt = min( SpellAttempt, 999 );
+			let Capture = min( SpellCapture, 999 );
+			if( Attempt < 100){ Count = 2; } else { Count = 3; }
+			listNum = DigitToArray( Capture, Count ) ~ [10] ~ DigitToArray( Attempt, Count );
+			*/
+
+			yield;
+		}	
+		
+		if( ObjEnemyBossScene_GetInfo( GetEnemyBossSceneObjectID, INFO_TIMERF ) >= 1 ){
+			if( IsReplay == false ){
+				
+				if( ObjEnemyBossScene_GetInfo( BossSceneObj, INFO_PLAYER_SHOOTDOWN_COUNT) + ObjEnemyBossScene_GetInfo( BossSceneObj, INFO_PLAYER_SPELL_COUNT ) == 0 ){
+					
+						SpellCapture++;
+						SetAreaCommonData( "SpellHistory", CaptureCount, SpellCapture );
+						SaveCommonDataAreaA1( "SpellHistory" );
+						
+				}
+				SaveCommonDataAreaA1( "SpellHistory" );
+			}		
+		}
+		//VertexFadeOut_Del( Obj_Info, 0, 60, 255 );
+		//ImgFadeOutDel( Obj_Info, 15 );
+		Obj_Delete( Obj_Info );	
+	
+}	
+
+//---------------------------------------------------------------------------------------------------------------------
+

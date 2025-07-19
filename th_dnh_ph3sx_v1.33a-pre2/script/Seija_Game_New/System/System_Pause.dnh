@@ -1,0 +1,258 @@
+//-----------------------------------------------------------------------------
+
+	#include "./Common.dnh"	
+	#include "./Constants.dnh"	
+	#include "./../Lib/Lib_Sound.dnh"	
+
+//-----------------------------------------------------------------------------	
+
+bool EndScene = false;
+
+@Loading {
+
+}
+
+@Initialize{
+	
+	SetAutoDeleteObject( true );
+
+	T_BG();
+	T_Menu();
+	
+}
+
+@MainLoop{
+	
+	yield;
+	
+}
+
+
+//-----------------------------------------------------------------------------
+
+task T_BG{
+	
+	// Gets the last frame before pause and uses it as the background texture ( Lol )
+	
+	let Sprite = ObjPrim_Create( OBJ_SPRITE_2D );
+	ObjPrim_SetTexture( Sprite, GetTransitionRenderTargetName() ); 
+	ObjSprite2D_SetSourceRect( Sprite, 0, 0, 640, 480 );
+	ObjSprite2D_SetDestCenter( Sprite );
+	ObjRender_SetPosition( Sprite, GetScreenWidth/2, GetScreenHeight/2, 0 );
+	
+	ascent( a in 0..10 ){
+		
+		ObjRender_SetColor( Sprite, 255 - 18*a, 255 - 18*a, 255 - 16*a/1.2 );	
+	
+		yield;
+	}
+	
+	while( EndScene == false ){ yield; }	
+	
+	descent( a in 0..10 ){
+		
+		ObjRender_SetColor( Sprite, 255 - 18*a, 255 - 18*a, 255 - 16*a/1.2 );	
+	
+		yield;
+	}	
+	
+}	
+
+//-----------------------------------------------------------------------------
+
+task T_Menu{
+	
+	T_PlaySE( SE_UI_PAUSE, 35 );
+	
+	let Z_Angle = -90;
+	
+	let Path_Line = GetCurrentScriptDirectory() ~ "./../Resource/Textures/System/Pause_Detail_00.png";
+	let Path_Suspension = GetCurrentScriptDirectory() ~ "./../Resource/Textures/System/Pause_Label.png";
+	
+	let Line_Sprite = Render2D_Texture_A1( Path_Line, [ 0, 0, 242, 486 ], 80, 342, 0.4, 74 );
+	let Suspension_Sprite = Render2D_Texture_A1( Path_Suspension, [ 0, 0, 160, 64 ], 96, 288, 0.5, 75 );
+	
+	T_Manage_Sprites( Line_Sprite );
+	T_Manage_Sprites( Suspension_Sprite );
+	
+	//ObjRender_SetScaleY( Line_Sprite, 0 );
+	
+	T_FadeIn_A1( Line_Sprite, 8, 255 );
+	T_FadeIn_A1( Suspension_Sprite, 6, 255 );
+	
+	//Play_SFX( SFX_UI_PAUSE, 60 );
+	
+	task T_Manage_Sprites( Obj ){
+				
+		while( EndScene == false ){
+					
+			yield;
+			
+		}
+				
+		T_FadeOut_Delete( Obj, 8, 255 );
+				
+	}		
+	
+	let Options_Index = 0;
+
+		task T_Create_Choices( Index ){
+			
+			let X_Pos = 208;
+			//let X_Pos_Move = 208;
+			let Color = 100;
+			
+			let Path = GetCurrentScriptDirectory() ~ "./../Resource/Textures/System/Pause_Choices.png";
+			let Choice_Sprite = Render2D_Texture_A1( Path, [ 0, Index * 64, 496, 64 + Index * 64 ], 198, 304, 0.5, 75 );
+			ObjRender_SetPosition( Choice_Sprite, 208, 336 + Index * 32, 0 );
+			
+			T_FadeIn_A1( Choice_Sprite, 8, 255 );
+			T_Manage_Choices( Choice_Sprite, Index );
+			
+			loop{
+				
+				ObjRender_SetColor( Choice_Sprite, Color, Color, Color );
+				
+				let X_Pos_Move = 208;
+				
+				if( Options_Index == Index ){ 
+				
+					X_Pos_Move = 208 + 32; 
+					
+					Color = 255;
+
+				}	
+				else{ X_Pos_Move = 208; Color = 100; }
+				
+				X_Pos += ( X_Pos_Move - X_Pos )/2;
+				
+				ObjRender_SetX( Choice_Sprite, X_Pos );
+				yield;
+			}	
+			
+			task T_Manage_Choices( Choice_Sprite, Index ){
+				
+				while( EndScene == false ){
+					
+					yield;
+				
+				}
+				
+				T_FadeOut_Delete( Choice_Sprite, 5*Index, 255 );
+				
+				ascent( i in 0..10 ){
+					
+					ObjRender_SetX( Choice_Sprite, ObjRender_GetX( Choice_Sprite ) - i*10 );
+					
+					yield;
+					
+				}	
+				
+			}	
+		}	
+		
+	ascent( a in 0..3 ){
+
+		T_Create_Choices( a );
+		//ObjRender_SetScaleY( Line_Sprite, 0.5 * a );
+		
+		wait( 2 );
+
+	}
+	
+	while( GetVirtualKeyState( VK_PAUSE ) != KEY_FREE ){ yield; }
+	
+	//Play_SFX( SFX_UI_PAUSE, 60 );
+
+	let frameKeyHold = 0;
+	let listResult = [ RESULT_CANCEL, RESULT_RETRY, RESULT_END ];
+
+	loop{
+
+		if( GetVirtualKeyState( VK_OK ) == KEY_PULL ){
+			
+			EndScene = true;
+			
+			if( Options_Index == 0 ){ T_PlaySE( SE_UI_OK, 30 ); wait( 14 ); }
+			if( Options_Index == 1 ){ T_PlaySE( SE_UI_OK, 30 ); wait( 20 ); }	
+			if( Options_Index == 2 ){ T_PlaySE( SE_UI_CANCEL, 30 ); wait( 20 ); }			
+			//else{ T_PlaySE( SE_UI_OK, 30 ); wait( 16 ); }
+			
+			SetScriptResult( listResult[ Options_Index ] );
+			
+			//wait( 10 );
+			
+			CloseScript( GetOwnScriptID() );
+			
+			return;
+			
+		}
+
+		if( GetVirtualKeyState( VK_CANCEL ) == KEY_PULL || GetVirtualKeyState( VK_PAUSE ) == KEY_PULL ){
+			
+			EndScene = true;
+			T_PlaySE( SE_UI_CANCEL, 30 );
+			
+			//wait( 20 );
+			
+			SetScriptResult( listResult[ 0 ] );
+			
+			wait( 20 );
+			
+			CloseScript( GetOwnScriptID() );
+			
+			return;
+		}
+
+		if( GetVirtualKeyState( VK_UP ) == KEY_PUSH ){
+			
+			T_PlaySE( SE_UI_SELECT, 30 );
+			Options_Index--;
+		}
+		else if( GetVirtualKeyState( VK_DOWN ) == KEY_PUSH ){
+			
+			T_PlaySE( SE_UI_SELECT, 30 );
+			Options_Index++;
+		}
+		else if( GetVirtualKeyState( VK_UP ) == KEY_HOLD ){
+			
+			frameKeyHold++;
+			if( frameKeyHold == 10 || ( frameKeyHold > 10 && ( frameKeyHold % 10 == 0 ))){
+				
+				T_PlaySE( SE_UI_SELECT, 30 );
+				Options_Index--;
+			}
+		}
+		else if( GetVirtualKeyState( VK_DOWN ) == KEY_HOLD ){
+			
+			frameKeyHold++;
+			if( frameKeyHold == 10 || ( frameKeyHold > 10 && ( frameKeyHold % 10 == 0 ))){
+				
+				T_PlaySE( SE_UI_SELECT, 30 );
+				Options_Index++;
+			}
+		}
+		else{
+			
+			frameKeyHold = 0;
+		}
+
+		if( Options_Index < 0 ) {
+			
+			Options_Index = 2;
+		}
+		else{
+			
+			Options_Index %= 3;
+		}
+
+		ObjRender_SetAngleZ( Line_Sprite, 10 * cos( Z_Angle ) );
+		Z_Angle++;
+
+		yield;
+	}		
+	
+}	
+
+
+//-----------------------------------------------------------------------------

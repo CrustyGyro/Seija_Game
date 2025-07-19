@@ -1,0 +1,82 @@
+
+#UserItemData
+
+//------------------------------------------------
+
+item_image = "./../Resource/Textures/System/Items.png"
+
+//------------------------------------------------
+
+//Power Item
+ItemData {
+	
+	id = "ITEM_POW"
+	rect = ( 0, 0, 16, 16 )
+	out = ( 0 , 16, 16, 32 )
+	render = ALPHA
+	
+}
+
+//Power Item Big
+ItemData {
+	
+	id = "ITEM_POW_L"
+	rect = ( 0, 32, 16, 48 )
+	out = ( 0, 48, 16, 64 )
+	render = ALPHA
+	
+}
+
+//Point Item
+ItemData {
+	
+	id = "ITEM_PNT"
+	rect = ( 16, 0, 32, 16 )
+	out = ( 16, 16, 32, 32 )
+	render = ALPHA
+	
+}
+
+//Life Piece
+ItemData {
+	
+	id = "ITEM_LIFE_PIECE"
+	rect = ( 48, 0, 80, 32 )
+	out = ( 48, 32, 80, 64 )
+	render = ALPHA
+	
+}
+
+//Bomb Piece
+ItemData {
+	
+	id = "ITEM_BOMB_PIECE"
+	rect = ( 80, 0, 112, 32 )
+	out = ( 80, 32, 112, 64 )
+	render = ALPHA
+	
+}
+
+//Full Power
+ItemData {
+	
+	id = "ITEM_POWER_FULL"
+	rect = ( 16, 32, 32, 48 )
+	out = ( 16, 48, 32, 64 )
+	render = ALPHA
+	
+}
+
+//------------------------------------------------
+
+//Shot Delete Point Item
+ItemData {
+	
+	id = "ITEM_DELETE"
+	rect = ( 16, 0, 32, 16 )
+	render = ADD_ARGB
+	alpha = 200
+	
+}
+
+//------------------------------------------------

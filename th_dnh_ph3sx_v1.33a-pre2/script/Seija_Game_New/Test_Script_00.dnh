@@ -1,0 +1,462 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title["Test_Script_00"]
+#Background["./Stage/BG/STG_00.dnh"];
+#Player[ "./Player/PL_Reimu.dnh" ]
+#System["./System/System_Main_Hud.dnh"]
+
+//--------------------------------------------------Variables------------------------------------------------------
+
+let bossObj;
+let objScene = GetEnemyBossSceneObjectID();
+let bossX = 0;
+let bossY = 0;
+
+let BossTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Test_Boss.png";
+let Prism_Tex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Prism.png";
+let CutinTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Cutin/STG_01_BossSmall.png";
+
+//---------------------------------------------------Include-------------------------------------------------------
+
+	#include "./System/Common.dnh"
+	#include "./System/Constants.dnh"
+	#include "./lib/Lib_Boss.dnh"
+	#include "./lib/Lib_Shot.dnh"
+	#include "./lib/Lib_Enemy.dnh"
+	#include "./lib/Lib_Enemy_Effect.dnh"
+	#include "./lib/ShotConst.dnh"
+
+//----------------------------------------------------Start--------------------------------------------------------
+
+@Initialize {
+
+	bossObj = ObjEnemy_Create(OBJ_ENEMY_BOSS);	
+	
+	ObjEnemy_Regist( bossObj );	
+
+	T_Lifebar( bossObj );
+	ObjEnemy_SetDamageRate( bossObj, 0, 0 );	
+	ObjPrim_SetTexture( bossObj, BossTex );
+	//Render_WheelGhost_A1( bossObj, ENEMY_RED );
+	ObjSprite2D_SetSourceRect( bossObj, 0, 0, 128, 128 );
+	ObjSprite2D_SetDestCenter( bossObj );
+	//ObjRender_SetScaleX( bossObj, 0.5 * Resolution );
+	//ObjRender_SetScaleY( bossObj,  0.5 * Resolution );	
+	//T_Render_AtInt( bossObj, Resolution );
+	
+	ObjRender_SetTextureFilter( bossObj, FILTER_NONE, FILTER_NONE, FILTER_NONE );
+	
+	ObjMove_SetDestAtWeight( bossObj, GetStgFrameWidth/2, GetStgFrameHeight/3 + 16, 15, 8 );
+	
+	
+	SetPlayerLife( 8 );
+	T_Main;
+	T_End;
+	
+}
+
+@Event { 
+
+	alternative(GetEventType()) 
+	case( EV_REQUEST_LIFE ) { 
+		SetScriptResult( 1500 ); // 2500
+	}
+	case( EV_REQUEST_TIMER ) { 
+		SetScriptResult( 45 );
+	}	
+
+
+} 
+
+@MainLoop {
+
+	bossX = ObjMove_GetX( bossObj );
+	bossY = ObjMove_GetY( bossObj );
+
+	ObjEnemy_SetIntersectionCircleToShot( bossObj, bossX, bossY, 16 );
+	ObjEnemy_SetIntersectionCircleToPlayer( bossObj, bossX, bossY, 8 );
+	
+	yield;
+}
+
+@Finalize {
+} 
+
+//----------------------------------------------------Patterns--------------------------------------------------------
+
+task T_Main {
+
+	
+	float ShotAngle = 0;
+	float Radius = 64;
+	float WaitTime = 10;
+	float Dir = 3;
+	float Wvel = 2;
+	
+	float X = 0;
+	float Y = 0;
+	
+	NotifyEventAll( EV_BOSS_EFFECT, bossObj, CC_RED );
+	
+	let Color = [ DOT_GRAY, DOT_RED, DOT_YELLOW, DOT_CYAN, DOT_PURPLE, DOT_GREEN ];
+
+	yield;
+
+	wait( 45 );	
+
+    ObjEnemy_SetDamageRate( bossObj, 1, 1 );
+	//T_Boss_Shot_A;
+	
+	wait( 160 );	
+	
+	while( Boss_Is_Alive( bossObj ) ){
+			
+			//float RNG_X = rand( 64, 32 );
+		
+			//let Time = distance( bossX, bossY, GetPlayerX + RNG_X, Get_CenterY/1.5 );
+			
+			T_BossMove_A( bossObj, GetPlayerX, Get_CenterY/2, 1, 64, 80 );
+		
+			//if( GetPlayerX >= Get_CenterX ){ ObjMove_SetDestAtFrame( bossObj, GetPlayerX - RNG_X, Get_CenterY/1.5 + rand( -32, 32 ), 80 + Time, LERP_SMOOTHER ); }
+			//else{ ObjMove_SetDestAtFrame( bossObj, GetPlayerX + RNG_X, Get_CenterY/1.5 + rand( -32, 32 ), 80 + Time, LERP_SMOOTHER ); }	
+		
+			wait( 200 );
+	}	
+	
+	//T_Prism_Shots( bossObj );
+	
+	while( Boss_Is_Alive( bossObj ) ){
+
+		T_LightShots();
+
+		//Lol Lmao
+		if( GetPlayerX >= Get_CenterX ){ ObjMove_SetDestAtFrame( bossObj, GetPlayerX + rand( -64, -32 ), Get_CenterY/1.5 + rand( -32, 32 ), 100, LERP_SMOOTHER ); }
+		else{ ObjMove_SetDestAtFrame( bossObj, GetPlayerX + rand( 64, 32 ), Get_CenterY/1.5 + rand( -32, 32 ), 100, LERP_SMOOTHER ); }
+	
+		//ObjMove_SetDestAtFrame( bossObj, Get_CenterX + rand( -16, 16 ), Get_CenterY/1.5 + rand( -16,16 ), 100, LERP_SMOOTHER );
+
+		wait( 100 );		
+		
+		let Center = Create_Famliar_A1( bossX, bossY, ENEMY_BLUE, ENEMY_BLUE, 1000, false, 1 ,  1, 256, );
+		ObjMove_AddPatternA2( Center, 60, 0, 90, 0.08, 1, Wvel );
+		ObjMove_AddPatternA2( Center, 200, NO_CHANGE, NO_CHANGE, NO_CHANGE, NO_CHANGE, 0 );
+		//ObjMove_AddPatternA2( Center, 260, NO_CHANGE, NO_CHANGE, 0.08, 4, 0 );
+		T_Create_Ferris_Wheel( Center, Dir, 60, GLOWSTICK_PINK );
+		
+		//T_Prism_Shots( Center );
+		//T_Prism_Shots( Center );
+
+		Dir = -Dir;
+		Wvel = -Wvel;
+			
+		wait( 380 );
+		
+		T_LightShots();
+
+		ObjMove_SetDestAtFrame( bossObj, Get_CenterX + rand( -16, 16 ), Get_CenterY/1.5 + rand( -16,16 ), 100, LERP_SMOOTHER );
+
+		wait( 10 );
+		
+		let Center_B = Create_Famliar_A1( bossX, bossY, ENEMY_BLUE, ENEMY_BLUE, 1000, false, 1 ,  1, 256, );
+		ObjMove_AddPatternA2( Center_B, 60, 0, 90, 0.08, 1, Wvel );
+		ObjMove_AddPatternA2( Center_B, 200, NO_CHANGE, NO_CHANGE, NO_CHANGE, NO_CHANGE, 0 );
+		//ObjMove_AddPatternA2( Center, 260, NO_CHANGE, NO_CHANGE, 0.08, 4, 0 );
+		T_Create_Ferris_Wheel( Center_B, Dir, 60, GLOWSTICK_PINK );
+		
+		//T_Prism_Shots( Center_B );
+
+		Dir = -Dir;
+		Wvel = -Wvel;
+
+		wait( 380 );
+		
+	
+	}
+
+}	
+
+task T_Create_Ferris_Wheel( Center_Obj, Speed, Delay, Color ){
+	
+	float Radius = 16;
+	int[] Color_Array = [ GLOWSTICK_YELLOW, GLOWSTICK_PINK, GLOWSTICK_YELLOW, GLOWSTICK_PINK, GLOWSTICK_YELLOW, GLOWSTICK_PINK ];
+	
+	ascent( i in 0..6 ){
+		
+		let Prism_Obj = Create_Famliar_A1( ObjMove_GetX( Center_Obj ) + Radius * cos( i * 360/6 ), ObjMove_GetY( Center_Obj ) + Radius * sin( i * 360/6 ), ENEMY_BLUE, ENEMY_BLUE, 300, true, 1 ,  1, 32 );
+	
+		//PrismBreak( Prism_Obj );
+		T_Manage_Prism( Prism_Obj, Radius, Speed, Color );		
+			 
+	}	 	
+	
+	task T_Manage_Prism( Obj, Radius, Speed, Color ){
+		
+		wait( Delay );	
+		
+			int[] Color_Array = [ RICE_S_CYAN, RICE_S_PINK, RICE_S_YELLOW, RICE_S_CYAN, RICE_S_CYAN, RICE_S_PINK ];
+		
+			float Angle = dottheta( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), ObjMove_GetX( Center_Obj ), ObjMove_GetY( Center_Obj ) );
+			float Frame = 0;
+					
+			let Tether = CreateStraightLaserA1(  ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), Angle, 64, 32, 99999, CURVE_LASER_PINK_ALT, 9999 );	
+			//let Laser_Obj = CreateStraightLaserA1(  ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), Angle, 64, 16, 99999, CURVE_LASER_CYAN_ALT, 9999 );	
+			
+			
+			T_Prism_Shots();		
+					
+			task T_Prism_Shots{
+
+				wait( Delay + 20 );
+
+				loop( 70 ){
+					
+					if( Obj_IsDeleted( Obj ) ){ return; }
+					
+					let way = 3;
+					let stack = 3;
+
+					
+					ascent( a in 0..4 ){
+						let Shot_B = ShotA1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0, ObjMove_GetAngle( Obj ), Color_Array[a], 8 );
+						ObjMove_AddPatternA2( Shot_B, 10, -0.5 - a/4, ObjMove_GetAngle( Obj ), 0.08, 7, 0  ); 
+						ObjRender_SetBlendType( Shot_B, BLEND_ADD_ARGB );
+					
+					}
+					
+					let Shot_A = Pattern_Shot_A1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0, 14, ObjMove_GetAngle( Obj ), 1, DOT_CYAN, PATTERN_POLYGON, way, stack, 8, DELAY_CYAN );
+					for( int i = 0; i < way * stack; i++ ) { 
+						//ObjMove_AddPatternA2( Shot_A[ i ], 1, 0, NO_CHANGE, -0.06, 0,  0 ); 
+						ObjMove_AddPatternA2( Shot_A[ i ], 10, 0, ObjMove_GetAngle( Obj ), 0.08, 7, 0  ); 
+						ObjRender_SetBlendType( Shot_A[ i ], BLEND_ADD_ARGB );
+					}	
+					
+					//ascent( a in 0..2 ){
+						//ShotA1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 3, ObjMove_GetAngle( Obj ) + a * 6/2, Color, 8 );
+
+		
+					wait( 8 );
+				}
+
+			}		
+					
+			while( !Obj_IsDeleted( Obj ) ){
+						
+				Radius += 1 - 0.5 * sin( Frame );
+						
+				float X_Pos = ObjMove_GetX( Center_Obj ) + Radius * cos( Angle );
+				float Y_Pos = ObjMove_GetY( Center_Obj ) + Radius * sin( Angle );					
+					
+				Angle += Speed;
+				Frame ++;
+					
+				//ObjMove_SetPosition( Laser_Obj, X_Pos, Y_Pos ); 	
+				ObjMove_SetPosition( Obj, X_Pos, Y_Pos ); 
+				ObjMove_SetAngle( Obj, Angle );
+				//ObjStLaser_SetAngle( Laser_Obj, dottheta( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), ObjMove_GetX( Center_Obj ), ObjMove_GetY( Center_Obj ) ) );
+				//ObjLaser_SetLength( Laser_Obj, distance( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), ObjMove_GetX( Center_Obj ), ObjMove_GetY( Center_Obj ) ) );
+				
+				ObjMove_SetPosition( Tether, X_Pos, Y_Pos ); 
+				ObjStLaser_SetAngle( Tether, dottheta( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), bossX, bossY ) );
+				ObjLaser_SetLength( Tether, distance( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), bossX, bossY ) );				
+
+				if( Radius >= 80 ){ break; }
+				if( Obj_IsDeleted( Obj ) ){ 
+				
+					//Obj_Delete( Laser_Obj );	
+					Obj_Delete( Tether );
+					//ObjMove_SetPosition( Obj, Obj_X, Obj_Y ); 
+					return;
+				}					
+					
+				yield;
+			}	
+			
+			while( !Obj_IsDeleted( Obj ) || !Obj_IsDeleted( Center_Obj ) ){
+						
+				Radius -= 0.1 - 0.1 * sin( Frame );
+						
+				float X_Pos = ObjMove_GetX( Center_Obj ) + Radius * cos( Angle );
+				float Y_Pos = ObjMove_GetY( Center_Obj ) + Radius * sin( Angle );
+				float Obj_X = ObjMove_GetX( Obj );
+				float Obj_Y = ObjMove_GetY( Obj );
+					
+				Angle += Speed;
+				Frame ++;
+					
+				//ObjMove_SetPosition( Laser_Obj, X_Pos, Y_Pos ); 	
+				ObjMove_SetPosition( Obj, X_Pos, Y_Pos ); 
+				ObjMove_SetAngle( Obj, Angle );
+				//ObjStLaser_SetAngle( Laser_Obj, dottheta( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), ObjMove_GetX( Center_Obj ), ObjMove_GetY( Center_Obj ) ) );
+				//ObjLaser_SetLength( Laser_Obj, distance( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), ObjMove_GetX( Center_Obj ), ObjMove_GetY( Center_Obj ) ) );
+				
+				ObjMove_SetPosition( Tether, X_Pos, Y_Pos ); 
+				ObjStLaser_SetAngle( Tether, dottheta( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), bossX, bossY ) );
+				ObjLaser_SetLength( Tether, distance( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), bossX, bossY ) );				
+
+				if( Radius <= 32 ){ Radius = 32; }
+				
+				if( Obj_IsDeleted( Obj ) ){ 
+				
+					//Obj_Delete( Laser_Obj );	
+					Obj_Delete( Tether );	
+					//PrismBreak( Obj_X, Obj_Y );
+					
+					return;
+					//ObjMove_SetPosition( Obj, Obj_X, Obj_Y ); 
+					//break;
+				}					
+									
+				
+				/*
+				if( Obj_IsDeleted( Center_Obj ) ){ 
+				
+					Obj_Delete( Obj );	
+					//ObjMove_SetPosition( Obj, Obj_X, Obj_Y ); 
+					//break;
+				}	
+				*/				
+					
+				yield;
+			}		
+			
+			//Obj_Delete( Laser_Obj );
+			
+			//T_ShrinkToScale_A1( Obj, 60, 0.1 );
+			
+			//wait( 60 );
+			
+			//Obj_Delete( Obj );		
+			
+			Obj_Delete( Center_Obj );		
+			//Obj_Delete( Laser_Obj );	
+			//Obj_Delete( Obj );			
+	
+	}	
+
+	task PrismBreak( Prism_Fam ){
+		
+		float Obj_X = ObjMove_GetX( Prism_Fam );
+		float Obj_Y = ObjMove_GetY( Prism_Fam );		
+
+		while( !Obj_IsDeleted( Prism_Fam ) ){
+			
+			Obj_X = ObjMove_GetX( Prism_Fam );
+			Obj_Y = ObjMove_GetY( Prism_Fam );
+			
+			yield;
+
+		}
+		
+			let way = 3;
+			let stack = 4;
+
+		ascent( a in 0..14 ){
+			let Shot_A = Pattern_Shot_A1( Obj_X, Obj_Y, 0, 18, 90 + a * 360/14, 1, BALL_BS_CYAN, PATTERN_POLYGON, way, stack, 8, DELAY_CYAN );
+			for( int i = 0; i < way * stack; i++ ) { 
+				//ObjMove_AddPatternA2( Shot_A[ i ], 1, 0, NO_CHANGE, -0.06, 0,  0 ); 
+				ObjMove_AddPatternA2( Shot_A[ i ], 10, 0, 90 + a * 360/14, 0.01, 1, 0  ); 
+				ObjRender_SetBlendType( Shot_A[ i ], BLEND_ADD_ARGB );
+			}
+		}			
+	}		
+	
+}	
+
+task T_Prism_Shots( Prism_Fam ){
+		
+	float Obj_X = ObjMove_GetX( Prism_Fam );
+	float Obj_Y = ObjMove_GetY( Prism_Fam );		
+
+	wait( 80 );
+
+	//blehh..
+
+	while( !Obj_IsDeleted( Prism_Fam ) ){
+			
+		Obj_X = ObjMove_GetX( Prism_Fam );
+		Obj_Y = ObjMove_GetY( Prism_Fam );
+		
+		//let way = 3;
+		//let stack = 4;
+				
+		ShotA1( Obj_X, Obj_Y, 1.5, GetAngleToPlayer( Prism_Fam ), BALL_L_CYAN, 8 );
+
+		wait( 100 );
+
+	}		
+}	
+
+task T_LightShots{
+	
+	ascent( i in 0..16 ){
+			
+		ShotA1( bossX, bossY, 2, 90 + i * 360/16, LIGHT_YELLOW, 8 );
+			
+			
+	}	
+	ascent( i in 0..16 ){
+			
+		ShotA1( bossX, bossY, 1.5, 90 + i * 360/16 + 45, LIGHT_PINK, 8 );
+			
+			
+	}			
+		
+	
+}	
+
+//-----------------------------------------------------Death---------------------------------------------------------
+
+task T_End {
+	
+    while( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ) {
+	     yield;
+	}
+	
+	if( ObjEnemyBossScene_GetInfo( GetEnemyBossSceneObjectID, INFO_IS_LAST_STEP ) ){
+
+		NotifyEventAll( EV_CLEAR_ENEMY_SHOTS, GetPlayerObjectID(), 60, 12 );
+		//NotifyEventAll( EV_CLEAR_ENEMIES ); // WIll add proper functionality to this later - Seija
+		//NotifyEventAll( EV_CLEAR_ENEMY_SHOTS, bossObj, 60, 14 );
+		
+		yield;
+		
+		SetAutoDeleteObject(true);
+		
+		//wait( 60 );
+		
+		Obj_Delete( bossObj );	
+		
+		ENEMY_CLEAR = true;
+		
+		yield;
+		
+		ENEMY_CLEAR = false;
+		
+		wait( 360 );
+		
+		CloseScript( GetOwnScriptID() );
+		
+	}	
+	else{
+	
+		//DeleteShotAll( TYPE_ALL, TYPE_ITEM );
+		
+		yield;
+		
+		SetAutoDeleteObject(true);
+		
+		Obj_Delete( bossObj );	
+		
+		wait( 200 );
+		
+		CloseScript( GetOwnScriptID() );
+	
+	}
+	
+	//SetAutoDeleteObject(true);
+	
+	//Obj_Delete( bossObj );	
+	//CloseScript( GetOwnScriptID() );
+	
+}
+

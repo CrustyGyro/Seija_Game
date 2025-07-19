@@ -1,0 +1,152 @@
+//---------------------------------------------------------
+	
+	//---------------------------
+
+	let RESOLUTION = GetScreenHeight()/480;
+	let LINE_MODIFIER = 1;
+
+
+	//---------------------------
+	
+	// -- Player Characters --
+	let PLAYER_REIMU = 0;
+	let PLAYER_MARISA = 1;
+	//let PLAYER_SANAE = 2;
+	//let PLAYER_SAKUYA = 3;
+	//let PLAYER_YOUMU= 4;
+	//let PLAYER_REISEN = 5;
+	//let PLAYER_AYA = 6;
+	let PLAYER_ICHIRIN = 3;
+	// -- Player Shotypes -- 
+	let SHOTYPE_A = 0;
+	//let SHOTYPE_B = 1;
+	//let SHOTYPE_C = 2;	
+	
+	//---------------------------
+	
+	// -- Difficulty Settings --
+	
+	let MODE_EASY = 0;
+	let MODE_NORMAL = 0;
+	let MODE_HARD = 0;
+	let MODE_LUNATIC = 0;
+	let MODE_EXTRA = 0;
+	
+	// -- User Settings --
+
+	let SETTING_SE_VOLUME = EV_USER + 7;
+	let SETTING_MU_VOLUME = EV_USER + 8;
+
+	// -- Events --
+
+	let EV_SPAWN_ITEM_GENERIC = EV_USER + 9;
+	let EV_SPAWN_ITEM_NON = EV_USER + 10;
+	let EV_SPAWN_ITEM_SPELL = EV_USER + 11;
+	let EV_PL_GRAZE_CUSTOM = EV_USER + 12;
+	let EV_BOSS_EFFECT = EV_USER + 13;
+	let EV_CLEAR_ENEMY_SHOTS = EV_USER + 14;
+	let EV_CLEAR_ENEMIES = EV_USER + 15;
+	
+	// -- Item Types --
+	
+	let ITEM_S_SCORE = 0;
+	let ITEM_S_POWER = 1;
+	let ITEM_S_LIFE_PIECE = 2;
+	let ITEM_S_SPELL_PIECE = 3;
+	let ITEM_S_LIFE = 4;
+	let ITEM_S_SPELL= 5;
+	let ITEM_S_BONUS= 6;
+	
+	// -- Enemy Types --
+	
+	let FAIRY_S_NORMAL = 0;
+	let FAIRY_M_NORMAL = 1;
+	let FAIRY_M_MAID = 2;
+	let FAIRY_B_NORMAL = 3;
+	let GHOST_S_NORMAL = 6;
+	let YINYANG_S_NORMAL = 7;
+	let PRISM_S_NORMAL = 99;
+	
+	// -- Enemy Colors --
+	
+	let ENEMY_RED = 0;
+	let ENEMY_BLUE = 1;
+	let ENEMY_GREEN = 2;
+	let ENEMY_YELLOW = 3;
+	let ENEMY_PURPLE = 4;
+	let ENEMY_WHITE = 5;
+	let ENEMY_BLACK = 6;
+	
+	// -- Enemy Handlers -- 
+	
+	let ENEMY_CLEAR = false;
+
+//---------------------------------------------------------
+
+	// -- Sounds -- 
+	
+	let SE_TIMEOUT		= "SE_TimerHurry.wav";
+	let SE_SPELL_CALL	= "SE_SpellCall.wav";
+	let SE_SPELL_GET	= "SE_SpellCapture.wav";
+	let SE_SPELL_FAIL  = "SE_SpellFail.wav";
+	let SE_ITEM			= "SE_Item.wav";
+	let SE_BULLET_DELETE	= "SE_BulletDelete.wav";
+	
+	let SE_UI_OK = "SE_Ok.wav";
+	let SE_UI_SELECT = "SE_Select.wav";
+	let SE_UI_CANCEL = "SE_Cancel.wav";
+	let SE_UI_PAUSE = "SE_Pause.wav";
+	
+	let SE_DAMAGE		= "SE_Damage.wav";
+	let SE_ENEMY_DEATH	= "SE_Enemy_Death.wav";
+	
+	//---
+	
+	let SE_PL_SHOT_00		= "SE_PlayerShot_00.wav";
+	let SE_GRAZE		= "SE_Graze.wav";
+	
+	//---
+	
+	let SE_FIREWORKS_00		= "SE_Fireworks.wav";
+	let SE_FIREWORKS_01		= "SE_Launch_00.wav";
+	
+	let SE_SHOT_00		= "SE_Shot_00.wav";
+	let SE_SHOT_01		= "SE_Shot_01.wav";
+	let SE_SHOT_03		= "SE_Shot_03.wav";
+	
+	let SE_CHIME_00		= "SE_Chime_00.wav";
+	let SE_CHIME_01		= "SE_Chime_01.wav";	
+	let SE_CHIME_02		= "SE_Chime_02.wav";
+
+	let SE_LASER_00		= "SE_Laser_00.wav";
+	let SE_LASER_01		= "SE_Laser_01.wav";
+	let SE_LASER_02		= "SE_Laser_02.wav";
+	let SE_LASER_03		= "SE_Laser_03.wav";
+
+	let SE_CHARGE_00	= "SE_Charge_00.wav";
+	let SE_CHARGE_01	= "SE_Charge_01.wav";	
+
+	let SE_BURST_00		= "SE_Burst.wav";
+	let SE_BURST_01		= "SE_BossBurst.wav";
+
+//---------------------------------------------------------
+
+	// -- Color Constants --
+
+	let CC_WHITE =	[ 220, 220, 220 ];
+	let CC_GRAY =	[ 150, 150, 150 ];
+	let CC_RED =	[ 255, 30, 30 ];
+	let CC_ORANGE = [ 255, 128, 0 ];
+	let CC_YELLOW = [ 255, 180, 16 ];
+	let CC_LIME = 	[ 16, 255, 128 ];
+	let CC_GREEN = 	[ 16, 200, 72 ];
+	let CC_CYAN = 	[ 60, 80, 255 ];
+	let CC_BLUE = 	[ 16, 128, 255 ];
+	let CC_PURPLE = [ 184, 16, 255 ];
+	let CC_PINK =	[ 255, 16, 230 ];
+	let CC_BLACK =	[ 80, 80, 80 ];
+
+	let CC_HUD_BLUE = [ 164, 144, 216 ];
+	let CC_HUD_PINK = [ 204, 144, 208 ];
+
+//---------------------------------------------------------

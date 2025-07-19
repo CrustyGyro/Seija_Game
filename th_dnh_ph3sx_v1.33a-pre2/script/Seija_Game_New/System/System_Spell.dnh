@@ -1,0 +1,295 @@
+//--------------------------------------------------------------------------
+
+	#include "./Common.dnh"	
+	#include "./Constants.dnh"	
+	#include "./../Lib/Lib_Sound.dnh"
+	
+	//#include "./../Lib/Lib_Item.dnh"
+
+	let typeEnd = 0;
+	let END_FAILED = 1;
+	let END_SUCCESS = 2;
+	let Path01 = GetCurrentScriptDirectory() ~ "./../Resource/Textures/System/Card_Bonus.png";
+	let Path02 = GetCurrentScriptDirectory() ~ "./../Resource/Textures/System/SpellBorder_00.png";
+	let Path03 = GetCurrentScriptDirectory() ~ "./../Resource/Textures/System/SpellBorder_01.png";	
+	
+//--------------------------------------------------------------------------
+
+@Loading{
+	
+	LoadTexture( Path01 );
+	
+	
+	
+}
+
+@Initialize{
+	
+	T_Start_Spell();
+}
+
+@MainLoop{
+	
+	yield;
+}
+
+//--------------------------------------------------------------------------
+
+@Event{
+	
+	alternative( GetEventType() )
+	
+	case( EV_END_BOSS_STEP ){
+		
+		if(typeEnd == 0)
+		{
+			typeEnd = END_FAILED;
+		}
+	}
+	case( EV_GAIN_SPELL ){
+		
+		let objScene = GetEnemyBossSceneObjectID();
+		let Score = ObjEnemyBossScene_GetInfo( objScene, INFO_SPELL_SCORE );
+		T_Gain_Spell( Score );
+		
+		//NotifyEventAll( EV_SPAWN_ITEM_SPELL, 0 );
+		//CustomItemA1( "ITEM_BOMB_PIECE", GetStgFrameWidth/2, GetStgFrameHeight/3 );
+		
+		typeEnd = END_SUCCESS;
+	}
+}
+
+//--------------------------------------------------------------------------
+
+task T_Start_Spell(){
+
+	//T_PlaySE( SE_SHOT_00, 35 );
+	T_PlaySE( SE_SPELL_CALL, 35 );
+	
+	T_MagicCircle( Path02, 200, 0.1 );
+	T_MagicCircle( Path03, 180, -0.2 );
+
+	while( typeEnd == 0){
+		yield;
+	}
+
+	if( typeEnd == END_FAILED ){
+		
+		T_Lose_Spell;
+		wait( 100 );	
+		CloseScript(GetOwnScriptID());
+		return;
+	}
+	
+	wait( 100 );
+	CloseScript(GetOwnScriptID());
+	
+}
+
+//--------------------------------------------------------------------------
+
+task T_MagicCircle( Texture, Max_Radius, Speed ){
+	
+
+	let countVertex = 64;
+	let listRadius = [];
+	loop( countVertex ){
+		
+		listRadius = listRadius ~ [0];
+	}
+	
+	//let path = dirCurrent ~ "img/magiccircle_0" ~ IntToString(gr) ~ ".png";
+
+	let obj = ObjPrim_Create(OBJ_PRIMITIVE_2D);
+	ObjPrim_SetPrimitiveType( obj, PRIMITIVE_TRIANGLESTRIP);
+	ObjPrim_SetVertexCount( obj, countVertex);
+	ObjRender_SetBlendType( obj, BLEND_ADD_ARGB);
+	Obj_SetRenderPriority( obj, 0.3 );
+	ObjPrim_SetTexture( obj, Texture);
+
+	ascent( iVert in 0..countVertex / 2 ){
+		
+		let left = iVert * 32;
+		let indexVert = iVert * 2;
+		ObjPrim_SetVertexUVT( obj, indexVert + 0, left, 0);
+		ObjPrim_SetVertexUVT( obj, indexVert + 1, left, 16);				
+			
+	}	
+	
+	let objScene = GetEnemyBossSceneObjectID();
+	let objBoss = GetEnemyBossObjectID()[0];
+	let timerOrg = ObjEnemyBossScene_GetInfo( objScene, INFO_ORGTIMERF );
+	///let bLastSpell = ObjEnemyBossScene_GetInfo( objScene, INFO_IS_LAST_SPELL );
+	
+	let cx = 0;
+	let cy = 0;
+	let alpha = 0;
+	let frame = 0;
+	let Angle_Render = 0;
+
+	function UpdateVertex(){
+		
+		ObjRender_SetColor(obj, 120 * alpha, 120 * alpha, 120 * alpha);
+		ObjRender_SetPosition(obj, cx, cy, 0);
+		ObjRender_SetAngleXYZ(obj, Angle_Render * Speed, Angle_Render * Speed, Angle_Render );
+	}
+	
+	while( typeEnd == 0 ){
+		
+		if( !Obj_IsDeleted( objBoss )){
+			
+			cx = ObjRender_GetX( objBoss );
+			cy = ObjRender_GetY( objBoss );
+		}
+
+		alpha += 0.1 / 255;
+		alpha = max(alpha, 1);
+		Angle_Render += 360 / countVertex / 4;
+
+		let timer = ObjEnemyBossScene_GetInfo( objScene, INFO_TIMERF );
+		let rRate = 1;
+		let bMiss = ObjEnemyBossScene_GetInfo( objScene, INFO_PLAYER_SHOOTDOWN_COUNT ) > 0 || ObjEnemyBossScene_GetInfo( objScene, INFO_PLAYER_SPELL_COUNT ) > 0;
+
+		ascent(iVert in 0..countVertex / 2)
+		{
+
+			let indexVert = iVert * 2;
+			let angle = 360 / (countVertex / 2 - 1) * iVert;
+
+			let vx1 = listRadius[indexVert] * cos(angle);
+			let vy1 = listRadius[indexVert] * sin(angle);
+			ObjPrim_SetVertexPosition(obj, indexVert + 0, vx1, vy1, 0);
+
+			let vx2 = listRadius[indexVert+1] * cos(angle)/1.1;
+			let vy2 = listRadius[indexVert+1] * sin(angle)/1.1;
+			ObjPrim_SetVertexPosition(obj, indexVert + 1, vx2, vy2, 0);
+
+
+
+			if(frame >= 0){
+				
+				let dr = (Max_Radius * rRate - listRadius[indexVert]) / 24;
+				listRadius[indexVert] = listRadius[indexVert] + dr;
+			}
+
+			if(frame > 24)
+			{
+				let rRateIn = rRate - 0.08;
+				if(bMiss)
+				{
+					rRateIn = rRate - 0.04;
+				}
+				if(rRateIn < 0){ rRateIn = 0; }
+				let dr= ( Max_Radius * rRateIn - listRadius[ indexVert + 1]) / 24;
+				listRadius[indexVert + 1] = listRadius[ indexVert + 1] + dr;
+			}
+
+		}
+		
+		UpdateVertex();
+		frame++;		
+		
+		yield;
+	}
+	
+	if(typeEnd == END_FAILED)
+	{
+		Obj_Delete(obj);
+		//CloseScript(GetOwnScriptID());
+		return;
+	}	
+	
+	Obj_Delete(obj);
+	
+}
+
+
+//--------------------------------------------------------------------------
+
+task T_Gain_Spell(score){
+	
+	//--Bonus Sprite--
+	
+	T_PlaySE( SE_SPELL_GET, 30 );
+
+	let Obj = Render2D_Texture_A1( Path01, [ 0, 0, 240, 32 ], GetStgFrameWidth/2, 98, 1, 0.7 );
+	
+
+	//--Score Text--
+
+	let strScore = "+" ~ IntToString(score);
+	let objScore = ObjText_Create();
+	
+	ObjText_SetFontSize(objScore,27);
+	ObjText_SetFontType(objScore,"Chaney Thin Normal");	
+	
+	ObjText_SetText(objScore, strScore);
+	ObjText_SetFontBold(objScore, true);
+	
+	ObjText_SetFontColorTop(objScore, 255, 255, 255);
+	ObjText_SetFontColorBottom(objScore, 0, 240, 208);
+	ObjText_SetFontBorderType(objScore, BORDER_FULL);
+	ObjText_SetFontBorderColor(objScore,0, 0, 0);
+	ObjText_SetFontBorderWidth(objScore, 2);
+	Obj_SetRenderPriority(objScore, 0.6);
+	
+	ObjRender_SetX(objScore, GetStgFrameWidth/2);
+	ObjRender_SetY(objScore, 120);
+
+
+	ascent(a in 0..15){
+		
+		ObjRender_SetScaleY(Obj,cos(-100 + a * 100/15));
+		ObjRender_SetScaleY(objScore,cos(-100 + a * 100/15));
+		yield;
+		
+	}
+	
+	
+	AddScore( score );
+	
+	loop(60){
+		
+		yield;
+		
+	}
+	ascent(a in 0..40){
+		
+		ObjRender_SetX(Obj, ObjRender_GetX(Obj) - a);
+		ObjRender_SetX(objScore, ObjRender_GetX(objScore) + a);
+		yield;
+		
+	}	
+	
+	Obj_Delete(objScore);
+	Obj_Delete(Obj);
+}
+
+task T_Lose_Spell{
+	
+	//--Bonus Sprite--
+	
+	T_PlaySE( SE_SPELL_FAIL, 30 );
+	
+	let Obj = Render2D_Texture_A1( Path01, [ 0, 32, 160, 64 ], GetStgFrameWidth/2, 98, 1, 0.7 );	
+	
+	ascent(a in 0..15){
+		
+		ObjRender_SetScaleY( Obj, cos( -100 + a * 100/15 ) );
+		yield;
+		
+	}
+	
+	wait( 60 );
+	
+	ascent(a in 0..15){
+		
+		ObjRender_SetScaleY( Obj, cos(ObjRender_GetScaleY(Obj) - a * 100/15 ) );
+		yield;
+		
+	}	
+	Obj_Delete( Obj );
+}
+
+//--------------------------------------------------------------------------
+

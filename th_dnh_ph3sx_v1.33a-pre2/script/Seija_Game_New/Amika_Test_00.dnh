@@ -1,0 +1,250 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title["Amika_Test_00"]
+//#Background["./Stage/BG/STG_00.dnh"];
+#Player[ "./Player/PL_Reimu.dnh" ]
+#System["./System/System_Main_Hud.dnh"]
+
+//--------------------------------------------------Variables------------------------------------------------------
+
+let bossObj;
+let objScene = GetEnemyBossSceneObjectID();
+let bossX = 0;
+let bossY = 0;
+
+//SetIntersectionVisualization( true );
+
+//let BossTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Test_Boss.png";
+
+//---------------------------------------------------Include-------------------------------------------------------
+
+	#include "./lib/Index_Boss.dnh"
+
+//----------------------------------------------------Start--------------------------------------------------------
+
+@Initialize {
+
+	bossObj = ObjEnemy_Create(OBJ_ENEMY_BOSS);	
+	
+	ObjEnemy_Regist( bossObj );	
+
+	T_Lifebar( bossObj );
+	ObjEnemy_SetDamageRate( bossObj, 0, 0 );	
+
+	Render_WheelGhost_A1( bossObj, ENEMY_BLUE );
+
+	ObjRender_SetTextureFilter( bossObj, FILTER_NONE, FILTER_NONE, FILTER_NONE );
+	
+	ObjMove_SetDestAtWeight( bossObj, GetStgFrameWidth/2, Get_CenterY/2 + 16, 15, 8 );
+	
+	
+	//SetPlayerLife( 8 );
+	T_Main;
+	T_End;
+	
+}
+
+@Event { 
+
+	alternative(GetEventType()) 
+	case( EV_REQUEST_LIFE ) { 
+		SetScriptResult( 4500 ); // 3000-4500 For Nons ( At 100% Damage Rate. )
+	}
+	case( EV_REQUEST_TIMER ) { 
+		SetScriptResult( 45 ); //40-50 For standard Nons.
+	}	
+
+
+} 
+
+@MainLoop {
+
+	bossX = ObjMove_GetX( bossObj );
+	bossY = ObjMove_GetY( bossObj );
+
+	ObjEnemy_SetIntersectionCircleToShot( bossObj, bossX, bossY, 16 );
+	ObjEnemy_SetIntersectionCircleToPlayer( bossObj, bossX, bossY, 8 );
+	
+	yield;
+}
+
+@Finalize {
+} 
+
+//----------------------------------------------------Patterns--------------------------------------------------------
+
+task T_Main {
+
+
+	NotifyEventAll( EV_BOSS_EFFECT, bossObj, CC_CYAN );
+	
+	//let Color = [ DOT_GRAY, DOT_RED, DOT_YELLOW, DOT_CYAN, DOT_PURPLE, DOT_GREEN ];
+
+	yield;
+
+	wait( 45 );	
+	
+	//T_PlaySE( SE_CHARGE_00, 30 );
+	//T_Charge_A1( bossObj, 20, "Petal", CC_PINK );
+
+	//wait( 100 );	
+	
+	ObjEnemy_SetDamageRate( bossObj, 1, 1 );
+
+
+
+	while( Boss_Is_Alive( bossObj ) ){
+		
+		ascent( i in 0..5 ){ T_Boss_Shot_A( Get_MaxX - 16, Get_CenterY/1.5 + i * 256/5, -180, 3 - i/5, 0.3 - i/5, 100 + 5*i, SHOT_NOTE_MAGENTA, SHOT_DOT_DPINK ); wait( 4 ); }
+		
+		wait( 100 );
+		
+		ascent( i in 0..5 ){ T_Boss_Shot_A( 0 + 16, Get_CenterY/1.5 + i * 256/5, 0, 3 - i/5, -0.3 + i/5, 100 + 5*i, SHOT_NOTE_MAGENTA, SHOT_DOT_DPINK); wait( 4 ); }
+		
+		wait( 100 );
+		
+		//ascent( i in 0..4 ){ T_Boss_Shot_A( Get_MaxX - 16, Get_CenterY/1.5 + i * 128/5, -180, 4 - i/5, 0.3 - i/5, 100 + 5*i ); yield; }
+		//ascent( i in 0..4 ){ T_Boss_Shot_A( 0 + 16, Get_CenterY/1.5 + i * 128/5, 0, 4 - i/5, -0.3 + i/5, 100 ); yield; }
+		
+		wait( 300 );
+		yield;
+
+	}
+}	
+
+task T_Boss_Shot_A( X, Y, Angle, Speed, Angular, Time, Color, Trail_Color ){
+	
+	//Initial Note Setup
+	
+	int Way = 1;
+	int Stack = 1;
+	
+	T_PlaySE( SE_CHIME_02, 35 );
+	
+	let Shot_Obj_A = Pattern_Shot_A1( bossX, bossY, 0, 32, Angle, 0, Color, PATTERN_FAN, Way, Stack, 1, SHOT_CLOUD_MAGENTA );
+	for( int a = 0; a < Way * Stack; a++ ){ T_Manage_Notes( Shot_Obj_A[a] ); }
+	
+	task T_Manage_Notes( Obj ){
+		
+		float Frame = 0;
+		
+		ascent( i in 0..Time ){
+			
+			ObjMove_SetX( Obj, Interpolate_Smoother( bossX, X, i/Time ));
+			ObjMove_SetY( Obj, Interpolate_Smoother( bossY, Y - 16, i/Time ) + 8 * sin( Frame ));
+				
+				
+			Frame += 10;	
+			yield;
+		}
+		
+		ObjMove_AddPatternA2( Obj, 10, 0, NO_CHANGE, Speed/30, Speed, Angular );
+		
+		async{
+			
+			float Bob_Anim = 0;
+			
+			while( !Obj_IsDeleted( Obj )){
+				
+				
+				ObjMove_SetY( Obj, ObjMove_GetY( Obj ) + 2 * sin( Bob_Anim ) );
+				
+				Bob_Anim += 10;
+				yield;
+			}	
+			
+			
+		}	
+		
+		async{
+		
+			wait( 20 );
+			
+			T_PlaySE( SE_CHIME_02, 35 );
+		
+			while( !Obj_IsDeleted( Obj )){
+				
+					
+				let Shot_Trail_A = ShotA2( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0, ObjMove_GetAngle( Obj ), Trail_Color, 20, Trail_Color );	
+				ObjRender_SetBlendType( Shot_Trail_A, BLEND_ADD_ARGB );
+				
+				T_Manage_Trail( Shot_Trail_A );
+				
+				
+				
+				wait( 2 );
+			}		
+		
+		}	
+
+		task T_Manage_Trail( Obj ){
+			
+			//T_ShrinkToScale_A1( Obj, 60, 0.5 );
+			ObjShot_SetDeleteFrame( Obj, 60 );
+					
+			//wait( 10 );
+					
+			//T_ShrinkToScale_A1( Obj, 60, 0.5 );
+					
+		}			
+		
+	}	
+	
+}	
+
+//-----------------------------------------------------Death---------------------------------------------------------
+
+task T_End {
+	
+    while( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ) {
+	     yield;
+	}
+	
+	if( ObjEnemyBossScene_GetInfo( GetEnemyBossSceneObjectID, INFO_IS_LAST_STEP ) ){
+
+		NotifyEventAll( EV_CLEAR_ENEMY_SHOTS, GetPlayerObjectID(), 60, 12 );
+		
+		yield;
+		
+		SetAutoDeleteObject(true);
+		
+		//wait( 60 );
+		
+		Obj_Delete( bossObj );	
+		
+		ENEMY_CLEAR = true;
+		
+		yield;
+		
+		ENEMY_CLEAR = false;
+		
+		wait( 500 );
+		
+		CloseScript( GetOwnScriptID() );
+		
+	}	
+	else{
+	
+	
+		NotifyEventAll( EV_CLEAR_ENEMY_SHOTS, GetPlayerObjectID(), 60, 12 );
+		//DeleteShotAll( TYPE_ALL, TYPE_ITEM );
+		
+		yield;
+		
+		SetAutoDeleteObject(true);
+		
+		Obj_Delete( bossObj );	
+		
+		wait( 500 );
+		
+		CloseScript( GetOwnScriptID() );
+	
+	}
+	
+	//SetAutoDeleteObject(true);
+	
+	//Obj_Delete( bossObj );	
+	//CloseScript( GetOwnScriptID() );
+	
+}
+

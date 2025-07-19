@@ -1,0 +1,1029 @@
+//---------------------------------------------------Include-------------------------------------------------------
+
+	#include "./AnimLib.dnh"
+
+	#include "./../System/Common.dnh"
+	#include "./../System/Constants.dnh"
+
+
+//------------------------------------------------------------------------------------------------------------------
+
+task Init_Boss_Nareko( Obj ){
+	
+	let BossTex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/TH20_Nareko.png";
+	
+	Render_Boss_Basic( Obj, BossTex, 11, 4, 4, 64, 96 );
+	//let BossTex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/TH13_Miko.png";
+	//ObjPrim_SetTexture( Obj, BossTex );	
+	
+	//Render_Idle_A1( Obj, 0, 0, 11, 64, 96, 6 );
+	ObjRender_SetScaleXYZ( Obj, 1.3, 1.3, 1 );
+	
+}	
+
+task Render_Boss_Basic( Obj, Texture, IdleFrame_Count, MoveFrame_Count, CastFrame_Count, Sprite_Width, Sprite_Height ){
+	
+	//let Path = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/TH20_Nareko.png";
+	
+	ObjPrim_SetTexture( Obj, Texture );
+	//ObjSprite2D_SetDestCenter( Obj );
+
+	int Anim_Count = 0;
+	int Anim_Cast = 0;
+	int Anim_Rate = 5;
+	int Turn_Count = 0;
+	int Cast_Count = 0;
+	
+	//Params
+	
+	int Anim_Count_Idle = IdleFrame_Count;
+	int Anim_Count_Move = MoveFrame_Count;	
+	int Anim_Count_Cast = CastFrame_Count;	
+	
+	int Idle_Width = Sprite_Width;
+	int Idle_Height = Sprite_Height;
+
+	int Move_Width = Sprite_Width;
+	int Move_Height = Sprite_Height;
+	
+	int MoveY_Offset = Move_Height;
+	
+	//-------------
+	
+	float Current_X = ObjMove_GetX( Obj );
+	float Last_X = Current_X;
+	
+	while( !Obj_IsDeleted( Obj ) ) {
+		
+		ObjSprite2D_SetDestCenter( Obj );	
+		
+		Current_X = ObjMove_GetX( Obj );
+		
+		if( Current_X == Last_X) {
+			
+			if( Turn_Count == 0) {
+				
+				ObjSprite2D_SetSourceRect( Obj, Anim_Count * Idle_Width , 0, Idle_Width + Anim_Count * Idle_Width, Idle_Height );
+				if( Anim_Count == Anim_Count_Idle){
+					ObjSprite2D_SetSourceRect( Obj, 0, 0, Idle_Width, Idle_Height );
+				}
+				Anim_Count = ( Anim_Count + 1 ) % Anim_Count_Idle;
+				Turn_Count = 0;
+			}	
+			else {
+				if( Turn_Count > 0 ){
+					 Turn_Count--;
+				}
+				else if( Turn_Count < 0 ) {
+					 Turn_Count++;
+				}
+				Anim_Count = 0;
+			}			
+			
+		}
+		else{
+			
+			if( Current_X > Last_X ) {
+				Turn_Count = min( Turn_Count + 1, Anim_Count_Move );
+			}
+			else if( Current_X < Last_X) {
+				Turn_Count = max( Turn_Count - 1, -Anim_Count_Move );
+			}
+		}		
+		if( Obj_GetValueD( Obj,"Cast", 0 ) >= 1 ){	
+		
+			ObjSprite2D_SetSourceRect( Obj, Anim_Cast * Idle_Width, Idle_Height*3, Idle_Width + Anim_Cast * Idle_Width, Idle_Height*4 );
+			
+			if( Anim_Cast == Anim_Count_Cast){
+				ObjSprite2D_SetSourceRect( Obj, Anim_Cast * Idle_Width, Idle_Height*3, Idle_Width + Anim_Cast * Idle_Width, Idle_Height*4 );
+			}
+			else{
+				Anim_Cast ++;	
+			}
+		
+		}
+		else{	
+
+			Anim_Cast = 0;
+			
+			if( Turn_Count > 0) {
+
+				ObjSprite2D_SetSourceRect( Obj, Turn_Count * Move_Width , Move_Height, Move_Width + Turn_Count * Move_Width, MoveY_Offset + Move_Height );
+
+			}
+			else if( Turn_Count < 0) {
+
+				ObjSprite2D_SetSourceRect( Obj, -Turn_Count * Move_Width , Move_Height * 2, Move_Width - Turn_Count * Move_Width, ( MoveY_Offset * 2 ) + Move_Height );
+			}	
+	
+		}
+		
+		Last_X = Current_X;	
+		
+		wait( Anim_Rate );
+		
+		yield;
+	}	
+}
+
+
+task Render_Idle_A1( Obj, Frame_X, Frame_Y, Frame_Count, Sprite_Width, Sprite_Height, Anim_Rate  ){
+	
+	int Anim_Count = 0;
+	
+	//-------------
+	
+	float Current_X = ObjMove_GetX( Obj );
+	float Last_X = Current_X;	
+	
+	while( !Obj_IsDeleted( Obj ) ) {
+		
+		ObjSprite2D_SetDestCenter( Obj );	
+		
+		Current_X = ObjMove_GetX( Obj );
+		
+		if( Current_X == Last_X) {
+			
+			ObjSprite2D_SetSourceRect( Obj, Anim_Count * Sprite_Width + Frame_X, Frame_Y, Sprite_Width + Anim_Count * Sprite_Width + Frame_X, Sprite_Height + Frame_Y );
+			if( Anim_Count == Frame_Count ){
+				ObjSprite2D_SetSourceRect( Obj, 0, 0, Sprite_Width, Sprite_Height );
+			}
+			
+			Anim_Count = ( Anim_Count + 1 ) % Frame_Count;
+			
+			Anim_Count++;
+					
+			
+		}		
+		if( Current_X != Last_X) {
+			if( Anim_Count > 0 ){
+				Anim_Count--;
+			}
+			else if( Anim_Count < 0 ) {
+				Anim_Count++;
+			}
+			//Anim_Count = 0;
+		}				
+		
+		Last_X = Current_X;	
+		wait( Anim_Rate );
+		yield;
+	}	
+	
+}	
+
+task Render_Move_A1( Obj, Frame_X, Frame_Y, Frame_Count, Sprite_Width, Sprite_Height, Anim_Rate  ){
+	
+	int Anim_Count = 0;
+	
+	//-------------
+	
+	float Current_X = ObjMove_GetX( Obj );
+	float Last_X = Current_X;	
+	
+	while( !Obj_IsDeleted( Obj ) ) {
+		
+		ObjSprite2D_SetDestCenter( Obj );	
+		
+		Current_X = ObjMove_GetX( Obj );
+		
+		if( Current_X == Last_X) {
+			
+			ObjSprite2D_SetSourceRect( Obj, Anim_Count * Sprite_Width + Frame_X, Frame_Y, Sprite_Width + Anim_Count * Sprite_Width + Frame_X, Sprite_Height + Frame_Y );
+			if( Anim_Count == Frame_Count ){
+				ObjSprite2D_SetSourceRect( Obj, 0, 0, Sprite_Width, Sprite_Height );
+			}
+			
+			Anim_Count = ( Anim_Count + 1 ) % Frame_Count;
+			
+			Anim_Count++;
+					
+			
+		}		
+		if( Current_X != Last_X) {
+			if( Anim_Count > 0 ){
+				Anim_Count--;
+			}
+			else if( Anim_Count < 0 ) {
+				Anim_Count++;
+			}
+			//Anim_Count = 0;
+		}				
+		
+		Last_X = Current_X;	
+		wait( Anim_Rate );
+		yield;
+	}	
+	
+}	
+
+//------------------------------------------------------------------------------------------------------------------
+
+
+task Render_Boss_Nareko( Obj ){
+	
+	let Path = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/TH20_Nareko.png";
+	
+	ObjPrim_SetTexture( Obj, Path );
+	//ObjSprite2D_SetDestCenter( Obj );
+
+	int Anim_Count = 0;
+	int Anim_Cast = 0;
+	int Anim_Rate = 5;
+	int Turn_Count = 0;
+	int Cast_Count = 0;
+	
+	//Params
+	
+	int Anim_Count_Idle = 11;
+	int Anim_Count_Move = 4;	
+	int Anim_Count_Cast = 4;	
+	
+	int Idle_Width = 64;
+	int Idle_Height = 96;
+
+	int Move_Width = 64;
+	int Move_Height = 96;
+	
+	int MoveY_Offset = Move_Height;
+	
+	//-------------
+
+	//bool Cast_Toggle = false;
+	int Cast_Toggle_Current = 0;
+	int Cast_Time = 0;
+	
+	float Current_X = ObjMove_GetX( Obj );
+	float Last_X = Current_X;
+	
+	ObjRender_SetScaleXYZ( Obj, 1.3, 1.3, 1 );
+
+	float Rotate_Z = 0;
+	
+	//T_Rotate( Obj );
+	
+	while( !Obj_IsDeleted( Obj ) ) {
+		
+		//ObjSprite2D_SetDestRect( Obj, 0, 0, 64*1.5, 80*1.5);
+		ObjSprite2D_SetDestCenter( Obj );
+		//c+=4;		
+		
+		Current_X = ObjMove_GetX( Obj );
+		//Cast_Toggle_Current = 0;
+		
+		if( Current_X == Last_X) {
+			
+			if( Turn_Count == 0) {
+				
+				ObjSprite2D_SetSourceRect( Obj, Anim_Count * Idle_Width , 0, Idle_Width + Anim_Count * Idle_Width, Idle_Height );
+				if( Anim_Count == Anim_Count_Idle){
+					ObjSprite2D_SetSourceRect( Obj, 0, 0, Idle_Width, Idle_Height );
+				}
+				Anim_Count = ( Anim_Count + 1 ) % Anim_Count_Idle;
+				Turn_Count = 0;
+			}	
+			else {
+				if( Turn_Count > 0 ){
+					 Turn_Count--;
+				}
+				else if( Turn_Count < 0 ) {
+					 Turn_Count++;
+				}
+				Anim_Count = 0;
+			}			
+			
+		}
+		else{
+			
+			if( Current_X > Last_X ) {
+				Turn_Count = min( Turn_Count + 1, Anim_Count_Move );
+			}
+			else if( Current_X < Last_X) {
+				Turn_Count = max( Turn_Count - 1, -Anim_Count_Move );
+			}
+		}		
+		
+		if( Obj_GetValueD( Obj,"Cast", 0 ) >= 1 ){	
+		
+			
+			ObjSprite2D_SetSourceRect( Obj, Anim_Cast * Idle_Width, Idle_Height*3, Idle_Width + Anim_Cast * Idle_Width, Idle_Height*4 );
+			
+			if( Anim_Cast == Anim_Count_Cast){
+				ObjSprite2D_SetSourceRect( Obj, Anim_Cast * Idle_Width, Idle_Height*3, Idle_Width + Anim_Cast * Idle_Width, Idle_Height*4 );
+			}
+			else{
+				Anim_Cast ++;	
+			}
+		
+		}
+		else{	
+		
+			//Cast_Time = 0;
+			Anim_Cast = 0;
+			
+			if( Turn_Count == 0) {
+				ObjSprite2D_SetSourceRect( Obj, Anim_Count * Idle_Width , 0, Idle_Width + Anim_Count * Idle_Width, Idle_Height );
+				if( Anim_Count == Anim_Count_Idle){
+					ObjSprite2D_SetSourceRect( Obj, 0, 0, Idle_Width, Idle_Height );
+				}
+			}
+			else if( Turn_Count > 0) {
+
+				ObjSprite2D_SetSourceRect( Obj, Turn_Count * Move_Width , Move_Height, Move_Width + Turn_Count * Move_Width, MoveY_Offset + Move_Height );
+
+			}
+			else if( Turn_Count < 0) {
+
+				ObjSprite2D_SetSourceRect( Obj, -Turn_Count * Move_Width , Move_Height * 2, Move_Width - Turn_Count * Move_Width, ( MoveY_Offset * 2 ) + Move_Height );
+			}	
+			
+			//Cast_Toggle = false;
+		}
+		
+		Last_X = Current_X;	
+		
+		wait( Anim_Rate );
+		
+		yield;
+	}	
+	
+	task T_Rotate( Obj ){
+		
+		while( !Obj_IsDeleted( Obj ) && Obj_GetValueD( Obj,"Cast", 0 ) == 1 ) {
+		
+				ObjRender_SetAngleZ( Obj, Rotate_Z );
+				Rotate_Z +=15;
+				yield;
+		
+		}
+		
+		Rotate_Z  = 0;
+	}	
+
+}
+
+//------------------------------------------------------------------------------------------------------------------
+
+// FANWORKS
+
+//------------------------------------------------------------------------------------------------------------------
+task Render_Boss_Cordelia( Obj ){
+	
+	let Path = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/CSARL_Cordelia.png";
+	
+	ObjPrim_SetTexture( Obj, Path );
+	//ObjSprite2D_SetDestCenter( Obj );
+
+	int Anim_Count = 0;
+	int Anim_Rate = 8;
+	int Turn_Count = 0;
+	int Cast_Count = 0;
+	
+	float Current_X = ObjMove_GetX( Obj );
+	float Last_X = Current_X;
+
+	float Rotate_Z = 0;
+	
+	//T_Rotate( Obj );
+	
+	while( !Obj_IsDeleted( Obj ) ) {
+		
+		//ObjSprite2D_SetDestRect( Obj, 0, 0, 64, 96);
+		ObjSprite2D_SetDestCenter( Obj );
+		//c+=4;		
+		
+		Current_X = ObjMove_GetX( Obj );
+		if( Current_X == Last_X) {
+			
+			if( Turn_Count == 0) {
+				
+				ObjSprite2D_SetSourceRect( Obj, Anim_Count * 128 , 0, 128 + Anim_Count * 128, 128 );
+				if( Anim_Count == 8){
+					ObjSprite2D_SetSourceRect( Obj, 0, 0, 128, 128 );
+				}
+				Anim_Count = ( Anim_Count + 1 ) % 8;
+				Turn_Count = 0;
+			}	
+			else {
+				if( Turn_Count > 0 ){
+					 Turn_Count--;
+				}
+				else if( Turn_Count < 0 ) {
+					 Turn_Count++;
+				}
+				Anim_Count = 0;
+			}			
+			
+		}
+		else{
+			
+			if( Current_X > Last_X ) {
+				Turn_Count = min( Turn_Count + 1, 5 );
+			}
+			else if( Current_X < Last_X) {
+				Turn_Count = max( Turn_Count - 1, -5 );
+			}
+		}			
+		if( Turn_Count == 0) {
+			ObjSprite2D_SetSourceRect( Obj, Anim_Count * 128 , 0, 128 + Anim_Count * 128, 128 );
+			if( Anim_Count == 8){
+				ObjSprite2D_SetSourceRect( Obj, 0, 0, 128, 128 );
+			}
+		}
+			else if( Turn_Count > 0) {
+				
+			//REMEMBER TO CHANGE THE RECTS HERE WHENENVER YOU ADD MOVING FRAMES!!!
+			ObjSprite2D_SetSourceRect( Obj, Turn_Count * 128 , 0, 128 + Turn_Count * 128, 128 );
+			//ObjRender_SetScaleXYZ( Obj, 1, 1, 1 );
+				//ObjSprite2D_SetSourceRect(bossObj, 128, Turn_Count * 128, 256, 128 + Turn_Count * 128);
+		}
+		else if( Turn_Count < 0) {
+			
+			//REMEMBER TO CHANGE THE RECTS HERE WHENENVER YOU ADD MOVING FRAMES!!!
+			ObjSprite2D_SetSourceRect( Obj, -Turn_Count * 128 , 0, 128 - Turn_Count * 128, 128 );
+			//ObjRender_SetScaleXYZ( Obj, -1, 1, 1 );
+			//ObjSprite2D_SetSourceRect(bossObj, 256, -Turn_Count * 128, 384, 128 - Turn_Count * 128);
+		}	
+
+		Last_X = Current_X;	
+		
+		wait( Anim_Rate );
+		
+		yield;
+	}	
+	
+	task T_Rotate( Obj ){
+		
+		while( !Obj_IsDeleted( Obj ) && Obj_GetValueD( Obj,"Cast", 0 ) == 1 ) {
+		
+				ObjRender_SetAngleZ( Obj, Rotate_Z );
+				Rotate_Z +=15;
+				yield;
+		
+		}
+		
+		Rotate_Z  = 0;
+	}	
+
+}
+
+//------------------------------------------------------------------------------------------------------------------
+
+task Render_Boss_Hinoya( Obj ){
+	
+	let Path = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/Test_Boss_Sheet.png";
+	
+	ObjPrim_SetTexture( Obj, Path );
+	//ObjSprite2D_SetDestCenter( Obj );
+
+	let x = 128;
+	let y = 128;
+	let c = 0;
+	let i = 0;
+
+	int Anim_Count = 0;
+	int Turn_Count = 0;
+	
+	float Current_X = ObjMove_GetX( Obj );
+	float Last_X = Current_X;	
+	
+	while( !Obj_IsDeleted( Obj ) ) {
+		
+		//ObjSprite2D_SetDestRect( Obj, 0, 0, 64, 96);
+		ObjSprite2D_SetDestCenter( Obj );
+		//c+=4;		
+		
+		Current_X = ObjMove_GetX( Obj );
+		if( Current_X == Last_X ) {
+			
+			if( Turn_Count == 0) {
+				
+				ObjSprite2D_SetSourceRect( Obj, Anim_Count * 128 , 0, 128 + Anim_Count * 128, 128 );
+				if( Anim_Count == 5){
+					ObjSprite2D_SetSourceRect( Obj, 384, 0, 512, 128 );
+				}
+				Anim_Count = ( Anim_Count + 1 ) % 4;
+				Turn_Count = 0;
+			}	
+			else {
+				if( Turn_Count > 0 ){
+					 Turn_Count--;
+				}
+				else if( Turn_Count < 0 ) {
+					 Turn_Count++;
+				}
+				Anim_Count = 0;
+			}			
+			
+		}
+		else{
+			
+			if( Current_X > Last_X ) {
+				Turn_Count = min( Turn_Count + 1, 2 );
+			}
+			else if( Current_X < Last_X) {
+				Turn_Count = max( Turn_Count - 1, -2 );
+			}
+		}		
+		if( Obj_GetValueD( Obj,"Cast", 0 ) == 1 ){	
+		
+			ObjSprite2D_SetSourceRect( Obj, Anim_Count * 128 , 384, 128 + Anim_Count * 128, 512 );
+				if( Anim_Count == 4){
+					ObjSprite2D_SetSourceRect( Obj, 0, 384, 128, 512 );
+				}		
+		
+		}
+		else{
+			if( Turn_Count == 0) {
+				ObjSprite2D_SetSourceRect( Obj, Anim_Count * 128 , 0, 128 + Anim_Count * 128, 128 );
+				if( Anim_Count == 4){
+					ObjSprite2D_SetSourceRect( Obj, 0, 0, 128, 128 );
+				}
+			}
+			else if( Turn_Count > 0) {
+				ObjSprite2D_SetSourceRect( Obj, Turn_Count * 128 , 128, 128 + Turn_Count * 128, 256 );
+				//ObjRender_SetScaleXYZ( Obj, 1, 1, 1 );
+				//ObjSprite2D_SetSourceRect(bossObj, 128, Turn_Count * 128, 256, 128 + Turn_Count * 128);
+			}
+			else if( Turn_Count < 0) {
+				ObjSprite2D_SetSourceRect( Obj, -Turn_Count * 128 , 256, 128 - Turn_Count * 128, 384 );
+				//ObjRender_SetScaleXYZ( Obj, -1, 1, 1 );
+				//ObjSprite2D_SetSourceRect(bossObj, 256, -Turn_Count * 128, 384, 128 - Turn_Count * 128);
+			}	
+		}
+		//c+=4;
+		Last_X = Current_X;	
+		
+		wait( 8 );
+		
+		yield;
+	}	
+
+}
+
+//------------------------------------------------------------------------------------------------------------------
+
+// Mainline
+
+//------------------------------------------------------------------------------------------------------------------
+
+task Render_Boss_Chimata( Obj ){
+	
+	let Path = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/TH18_Chimata.png";
+	
+	ObjPrim_SetTexture( Obj, Path );
+	//ObjSprite2D_SetDestCenter( Obj );
+
+	int Anim_Count = 0;
+	int Anim_Rate = 8;
+	int Turn_Count = 0;
+	int Cast_Count = 0;
+	
+	float Current_X = ObjMove_GetX( Obj );
+	float Last_X = Current_X;
+
+	float Rotate_Z = 0;
+	
+	//T_Rotate( Obj );
+	
+	while( !Obj_IsDeleted( Obj ) ) {
+		
+		//ObjSprite2D_SetDestRect( Obj, 0, 0, 64, 96);
+		ObjSprite2D_SetDestCenter( Obj );
+		//c+=4;		
+		
+		Current_X = ObjMove_GetX( Obj );
+		if( Current_X == Last_X) {
+			
+			if( Turn_Count == 0) {
+				
+				ObjSprite2D_SetSourceRect( Obj, Anim_Count * 96 , 0, 96 + Anim_Count * 96, 112 );
+				if( Anim_Count == 8){
+					ObjSprite2D_SetSourceRect( Obj, 0, 0, 96, 112 );
+				}
+				Anim_Count = ( Anim_Count + 1 ) % 8;
+				Turn_Count = 0;
+			}	
+			else {
+				if( Turn_Count > 0 ){
+					 Turn_Count--;
+				}
+				else if( Turn_Count < 0 ) {
+					 Turn_Count++;
+				}
+				Anim_Count = 0;
+			}			
+			
+		}
+		else{
+			
+			if( Current_X > Last_X ) {
+				Turn_Count = min( Turn_Count + 1, 5 );
+			}
+			else if( Current_X < Last_X) {
+				Turn_Count = max( Turn_Count - 1, -5 );
+			}
+		}			
+		if( Turn_Count == 0) {
+			ObjSprite2D_SetSourceRect( Obj, Anim_Count * 96 , 0, 96 + Anim_Count * 96, 112 );
+			if( Anim_Count == 8){
+				ObjSprite2D_SetSourceRect( Obj, 0, 0, 96, 112 );
+			}
+		}
+			else if( Turn_Count > 0) {
+			ObjSprite2D_SetSourceRect( Obj, Turn_Count * 96 , 112, 96 + Turn_Count * 96, 224 );
+			//ObjRender_SetScaleXYZ( Obj, 1, 1, 1 );
+				//ObjSprite2D_SetSourceRect(bossObj, 128, Turn_Count * 128, 256, 128 + Turn_Count * 128);
+		}
+		else if( Turn_Count < 0) {
+			ObjSprite2D_SetSourceRect( Obj, -Turn_Count * 96 , 224, 96 - Turn_Count * 96, 336 );
+			//ObjRender_SetScaleXYZ( Obj, -1, 1, 1 );
+			//ObjSprite2D_SetSourceRect(bossObj, 256, -Turn_Count * 128, 384, 128 - Turn_Count * 128);
+		}	
+
+		Last_X = Current_X;	
+		
+		wait( Anim_Rate );
+		
+		yield;
+	}	
+	
+	task T_Rotate( Obj ){
+		
+		while( !Obj_IsDeleted( Obj ) && Obj_GetValueD( Obj,"Cast", 0 ) == 1 ) {
+		
+				ObjRender_SetAngleZ( Obj, Rotate_Z );
+				Rotate_Z +=15;
+				yield;
+		
+		}
+		
+		Rotate_Z  = 0;
+	}	
+
+}
+
+task Render_Boss_Chimi( Obj ){
+	
+	let Path = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/TH20_Chimi.png";
+	
+	ObjPrim_SetTexture( Obj, Path );
+	//ObjSprite2D_SetDestCenter( Obj );
+
+	let x = 128;
+	let y = 128;
+	let c = 0;
+	let i = 0;
+
+	int Anim_Count = 0;
+	int Anim_Rate = 6;
+	int Turn_Count = 0;
+	int Cast_Count = 0;
+	
+	float Current_X = ObjMove_GetX( Obj );
+	float Last_X = Current_X;
+
+	float Rotate_Z = 0;
+	
+	//T_Rotate( Obj );
+	
+	while( !Obj_IsDeleted( Obj ) ) {
+		
+		//ObjSprite2D_SetDestRect( Obj, 0, 0, 64, 96);
+		ObjSprite2D_SetDestCenter( Obj );
+		//c+=4;		
+		
+		Current_X = ObjMove_GetX( Obj );
+		if( Current_X == Last_X) {
+			
+			if( Turn_Count == 0) {
+				
+				ObjSprite2D_SetSourceRect( Obj, Anim_Count * 64 , 0, 64 + Anim_Count * 64, 96 );
+				if( Anim_Count == 8){
+					ObjSprite2D_SetSourceRect( Obj, 0, 0, 64, 96 );
+				}
+				Anim_Count = ( Anim_Count + 1 ) % 4;
+				Turn_Count = 0;
+			}	
+			else {
+				if( Turn_Count > 0 ){
+					 Turn_Count--;
+				}
+				else if( Turn_Count < 0 ) {
+					 Turn_Count++;
+				}
+				Anim_Count = 0;
+			}			
+			
+		}
+		else{
+			
+			if( Current_X > Last_X ) {
+				Turn_Count = min( Turn_Count + 1, 5 );
+			}
+			else if( Current_X < Last_X) {
+				Turn_Count = max( Turn_Count - 1, -5 );
+			}
+		}		
+		if( Obj_GetValueD( Obj,"Cast", 0 ) == 1 ){	
+		
+			if( Cast_Count >= 5){
+				Cast_Count +=1;
+				//Cast_Count = 5;
+				ObjSprite2D_SetSourceRect( Obj, 384, 96, 480, 192 );
+				Anim_Rate = 1;
+				if( Cast_Count >= 6 ){ Rotate_Z += 20; }
+				//Rotate2D( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), Rotate_Z, ObjMove_GetX( Obj ), ObjMove_GetY( Obj )  );
+				ObjRender_SetAngleZ( Obj, 0 + Rotate_Z );
+			}	
+			else{
+	
+				Anim_Rate = 3;
+				//Rotate_Z = 0;
+				ObjRender_SetAngleZ( Obj, 0 );
+				ObjSprite2D_SetSourceRect( Obj, Cast_Count * 96 , 192, 96 + Cast_Count * 96, 288 );	
+				Cast_Count +=1;
+			}	
+			//Rotate_Z += 15;
+		}		
+		else{
+			ObjRender_SetAngleZ( Obj, 0 );
+			Cast_Count = 0;
+			Anim_Rate = 6;
+			if( Turn_Count == 0) {
+				ObjSprite2D_SetSourceRect( Obj, Anim_Count * 64 , 0, 64 + Anim_Count * 64, 96 );
+				if( Anim_Count == 8){
+					ObjSprite2D_SetSourceRect( Obj, 0, 0, 64, 96 );
+				}
+			}
+			else if( Turn_Count > 0) {
+				ObjSprite2D_SetSourceRect( Obj, Turn_Count * 64 , 96, 64 + Turn_Count * 64, 192 );
+				ObjRender_SetScaleXYZ( Obj, 1, 1, 1 );
+				//ObjSprite2D_SetSourceRect(bossObj, 128, Turn_Count * 128, 256, 128 + Turn_Count * 128);
+			}
+			else if( Turn_Count < 0) {
+				ObjSprite2D_SetSourceRect( Obj, -Turn_Count * 64 , 96, 64 - Turn_Count * 64, 192 );
+				ObjRender_SetScaleXYZ( Obj, -1, 1, 1 );
+				//ObjSprite2D_SetSourceRect(bossObj, 256, -Turn_Count * 128, 384, 128 - Turn_Count * 128);
+			}	
+		}
+		//c+=4;
+		Last_X = Current_X;	
+		
+		wait( Anim_Rate );
+		
+		yield;
+	}	
+	
+	task T_Rotate( Obj ){
+		
+		while( !Obj_IsDeleted( Obj ) && Obj_GetValueD( Obj,"Cast", 0 ) == 1 ) {
+		
+				ObjRender_SetAngleZ( Obj, Rotate_Z );
+				Rotate_Z +=15;
+				yield;
+		
+		}
+		
+		Rotate_Z  = 0;
+	}	
+
+}
+
+/*
+task Render_Boss_Chimi( obj ){
+	
+	//uses AnimLib by gtbot
+	
+	let Path = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/TH20_Chimi.png";
+	
+	ObjPrim_SetTexture(obj, Path );
+
+	//Idle
+	ascent( i in 0..6 ){ ObjAnim_AddFrameA1( obj, ANIM_IDLE, 64*(i), 0, 64*(i+1), 96 ); }
+
+	//Move 
+	ascent( i in 0..6 ){ ObjAnim_AddFrameA1( obj, ANIM_MOVE_RIGHT, 64*(i), 96, 64*(i+1), 192 ); }
+	ascent( i in 0..6 ){ ObjAnim_AddFrameA1( obj, ANIM_MOVE_LEFT, 64*(i), 96, 64*(i+1), 192 ); }	
+	
+	
+	descent( i in 0..6 ){ ObjAnim_AddFrameA1( obj, ANIM_MOVEEND_RIGHT, 64*(i), 96, 64*(i+1), 192 ); }
+	descent( i in 0..6 ){ ObjAnim_AddFrameA1( obj, ANIM_MOVEEND_LEFT, 64*(i), 96, 64*(i+1), 192 ); }
+	//Attack
+	//ascent( x in 0..3 ) { ObjAnim_AddFrameA1( obj, ANIM_ATTACK, 128*(x), 256, 128*(x+1), 384 ); }
+	//ObjAnim_AddFrameA1( obj, ANIM_ATTACKEND, 0, 256, 128, 384 );
+
+	//Attack End
+	//ObjAnim_AddFrameA1( obj, ANIM_ATTACKEND, 0, 0, 128, 128);	
+	
+	ObjAnim_SetLoopPointA1(obj, ANIM_IDLE, 0 );
+	ObjAnim_SetSpeedA1( obj, ANIM_IDLE, 5 );
+	
+	ObjAnim_SetLoopPointA1( obj, ANIM_MOVE_RIGHT, 0 );
+	ObjAnim_SetSpeedA1( obj, ANIM_MOVE_RIGHT, 5 );	
+	
+	ObjAnim_SetLoopPointA1( obj, ANIM_MOVE_LEFT, 0 );
+	ObjAnim_SetSpeedA1( obj, ANIM_MOVE_LEFT, 5 );	
+	
+	ObjAnim_SetLoopPointA1( obj, ANIM_MOVEEND_RIGHT, 0 );
+	ObjAnim_SetSpeedA1( obj, ANIM_MOVEEND_RIGHT, 5 );		
+	
+	ObjAnim_SetLoopPointA1( obj, ANIM_MOVEEND_LEFT, 0 );
+	ObjAnim_SetSpeedA1( obj, ANIM_MOVEEND_LEFT, 5 );		
+
+	ObjAnim_StartAnimationA2( obj, 6, 3 );
+
+}
+*/
+//------------------------------------------------------------------------------------------------------------------
+
+task T_SpellBG_Sidhe(){
+
+	let Path_A = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/Spell_Bg/Sidhe_BG.png";
+	let Path_B = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/Spell_Bg/Sidhe_01.png";
+	let Path_C = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/Spell_Bg/Sidhe_02.png";
+	
+	let Spell_BG_00 = Render2D_Texture_A1( Path_A, [ 0, 0, 512, 512 ], Get_CenterX, Get_CenterY, 1.4, 0.24 );
+	let Spell_BG_01 = Render2D_Texture_A1( Path_B, [ 0, 0, 512, 512 ], Get_CenterX, Get_CenterY, 1, 0.25 );
+	let Spell_BG_02 = Render2D_Texture_A1( Path_C, [ 0, 0, 512, 512 ], Get_CenterX, Get_CenterY, 1, 0.25 );
+	
+	ObjRender_SetBlendType( Spell_BG_02, BLEND_SUBTRACT );
+	
+	float Scroll = 0;
+	
+	loop{
+		
+		ObjSprite2D_SetSourceRect( Spell_BG_01, 0 + Scroll, 0, 512 + Scroll, 512 );
+		ObjSprite2D_SetSourceRect( Spell_BG_02, 0 - Scroll, 0, 512 - Scroll, 512 );
+		ObjRender_SetAngleZ( Spell_BG_00, ObjRender_GetAngleZ( Spell_BG_00 ) + 0.1 );
+
+		Scroll += 0.4;
+
+		yield;
+	}
+
+}
+
+task T_SpellBG_Hinoya(){
+
+	let Boss = GetEnemyBossObjectID[0];
+
+	let Path_A = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/Spell_Bg/BW_BG.png";
+	let Path_B = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/Spell_Bg/BW_01.png";
+	let Path_C = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/Spell_Bg/BW_02.png";
+	let Path_D = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/Spell_Bg/BW_03.png";
+	
+	let Spell_BG_00 = Render2D_Texture_A1( Path_A, [ 0, 0, 512, 512 ], Get_CenterX, Get_CenterY, 1.4, 0.24 );
+	let Spell_BG_01 = Render2D_Texture_A1( Path_B, [ 0, 0, 512, 512 ], Get_CenterX, Get_CenterY, 1, 0.25 );
+	let Spell_BG_02 = Render2D_Texture_A1( Path_C, [ 0, 0, 512, 512 ], Get_CenterX, Get_CenterY, 1, 0.25 );
+	let Spell_BG_03 = Render2D_Texture_A1( Path_D, [ 0, 0, 512, 512 ], Get_CenterX, Get_CenterY, 1, 0.25 );
+	
+	ObjRender_SetBlendType( Spell_BG_03, BLEND_MULTIPLY );
+	ObjRender_SetBlendType( Spell_BG_02, BLEND_ADD_ARGB );
+	ObjRender_SetBlendType( Spell_BG_01, BLEND_ADD_ARGB );
+	
+	float Scroll = 0;
+	
+	T_FadeIn_A1( Spell_BG_00, 60, 255 );
+	T_FadeIn_A1( Spell_BG_01, 60, 255 );
+	T_FadeIn_A1( Spell_BG_02, 60, 255 );
+	T_FadeIn_A1( Spell_BG_03, 60, 255 );	
+	
+	while( !Obj_IsDeleted( Boss ) ){
+		
+		ObjSprite2D_SetSourceRect( Spell_BG_03, 0 + Scroll, 0, 512 + Scroll, 512 );
+		ObjSprite2D_SetSourceRect( Spell_BG_02, 0 - Scroll, 0, 512 - Scroll, 512 );
+		ObjRender_SetAngleZ( Spell_BG_00, ObjRender_GetAngleZ( Spell_BG_00 ) + 0.1 );
+
+		Scroll += 0.4;
+
+		yield;
+	}
+	
+	T_FadeOut_Delete( Spell_BG_00, 10, 255 );
+	T_FadeOut_Delete( Spell_BG_01, 10, 255 );
+	T_FadeOut_Delete( Spell_BG_02, 10, 255 );		
+	T_FadeOut_Delete( Spell_BG_03, 10, 255 );
+	
+	//Obj_Delete( Spell_BG_00 );
+	//Obj_Delete( Spell_BG_01 );
+	//Obj_Delete( Spell_BG_02 );
+	//Obj_Delete( Spell_BG_03 );
+
+}
+
+
+task T_SpellBG_Iwabami(){
+
+	let Boss = GetEnemyBossObjectID[0];
+
+	let Path_A = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/Spell_Bg/Iwabami_BG.png";
+	let Path_B = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/Spell_Bg/Iwabami_01.png";
+	let Path_C = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/Spell_Bg/Iwabami_02.png";
+	
+	let Spell_BG_00 = Render2D_Texture_A1( Path_A, [ 0, 0, 512, 512 ], Get_CenterX, Get_CenterY, 1.4, 0.24 );
+	let Spell_BG_01 = Render2D_Texture_A1( Path_B, [ 0, 0, 512, 512 ], Get_CenterX, Get_CenterY, 1, 0.25 );
+	let Spell_BG_02 = Render2D_Texture_A1( Path_C, [ 0, 0, 512, 512 ], Get_CenterX, Get_CenterY, 1, 0.25 );
+	
+	ObjRender_SetBlendType( Spell_BG_01, BLEND_ADD_ARGB );
+	ObjRender_SetBlendType( Spell_BG_02, BLEND_SUBTRACT );
+	
+	float Scroll = 0;
+	
+	T_FadeIn_A1( Spell_BG_00, 60, 255 );
+	T_FadeIn_A1( Spell_BG_01, 60, 255 );
+	T_FadeIn_A1( Spell_BG_02, 60, 255 );
+	
+	while( !Obj_IsDeleted( Boss ) ){	
+		
+		ObjSprite2D_SetSourceRect( Spell_BG_01, 0 + Scroll, 0, 512 + Scroll, 512 );
+		ObjSprite2D_SetSourceRect( Spell_BG_02, 0 - Scroll, 0, 512 - Scroll, 512 );
+		ObjSprite2D_SetSourceRect( Spell_BG_00, 0, 0 + Scroll, 512, 512 + Scroll );
+		//ObjRender_SetAngleZ( Spell_BG_00, ObjRender_GetAngleZ( Spell_BG_00 ) + 0.1 );
+
+		Scroll += 0.4;
+
+		yield;
+	}
+	
+	T_FadeOut_Delete( Spell_BG_00, 10, 255 );
+	T_FadeOut_Delete( Spell_BG_01, 10, 255 );
+	T_FadeOut_Delete( Spell_BG_02, 10, 255 );	
+	
+}
+
+/*
+task Render_Boss_Chimi( Obj ){
+	
+	//Abandon all hope ye who enter here - Seija
+	//This code is a PLACEHOLDER!!!!!!!!!! - Seija
+	
+	let Path = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/TH20_Chimi.png";
+	
+	//int Anim_Dir = 0;
+	int Frame_Count_Idle = 0;
+	int Frame_Count_Moving = 0;
+	int ColorRect = 0;
+	
+	int anim_type = 0;
+	int Anim_Rate = 6;
+	
+	int Anim_Dir = 0;
+	int Last_Direction = 0;
+	
+	float X = ObjMove_GetX( Obj );
+	
+	Render_Enemy_Dropshadow( Obj, 0.8 );
+	
+	ObjPrim_SetTexture( Obj, Path );
+	ObjSprite2D_SetDestCenter( Obj );
+	ObjRender_SetScaleXYZ( Obj, 1, 1, 1 );
+	
+	ObjSprite2D_SetSourceRect( Obj, 32, ColorRect, 32, ColorRect + 32 );
+	ObjRender_SetTextureFilter( Obj, FILTER_NONE, FILTER_NONE, FILTER_NONE );
+	
+	//:Skull:
+	
+	loop{
+		
+		
+		if(ObjMove_GetSpeed( Obj ) == 0){
+			if(anim_type == 1){
+				anim_type=2;
+				//anim_count = 0;
+			}
+		}
+		if(ObjMove_GetSpeed( Obj ) > 3){
+			if(anim_type != 1){
+			//anim_count = 0;
+				anim_type = 1;
+			}
+		}		
+		
+		ObjSprite2D_SetDestCenter( Obj );
+		if( Check_Fairy_Direction( Obj, "Right" ) == true ){ ObjRender_SetScaleXYZ( Obj, 1, 1, 1 ); }
+		if( Check_Fairy_Direction( Obj, "Left" ) == true ){ ObjRender_SetScaleXYZ( Obj, -1, 1, 1 ); } 		
+		//if( Check_Fairy_Direction( Obj, "None" ) == true ){ ObjRender_SetScaleXYZ( Obj, 1, 1, 1 ); Anim_Dir = 0; } 	
+	
+		if(anim_type == 0){ ObjSprite2D_SetSourceRect( Obj, 64 * ( Frame_Count_Idle ), 0, 64 * ( Frame_Count_Idle + 1 ), 96 );	}
+		
+				
+		if(anim_type == 1){ ObjSprite2D_SetSourceRect( Obj, 64 * ( Frame_Count_Moving ), 96, 64 * ( Frame_Count_Moving + 1 ), 192 ); }
+		
+		
+		if(anim_type == 2){ ObjSprite2D_SetSourceRect( Obj, 64 * ( Frame_Count_Moving ), 96, 64 * ( Frame_Count_Moving + 1 ), 192 ); if(  Frame_Count_Moving >= 5 ){ anim_type=0; } }
+		
+		Last_Direction = Anim_Dir;
+		
+		Frame_Count_Idle += 1;
+		Frame_Count_Moving += 1;
+		if( Frame_Count_Idle == 5){ Frame_Count_Idle = 0;}
+		if( Frame_Count_Moving == 5 ){ Frame_Count_Moving = 0;}
+		wait( Anim_Rate );
+		yield;
+	}
+	
+}	
+*/
+
+//------------------------------------------------------------------------------------------------------------------

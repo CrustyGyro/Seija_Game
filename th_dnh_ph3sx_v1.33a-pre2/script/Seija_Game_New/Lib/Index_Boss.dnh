@@ -1,0 +1,15 @@
+//---------------------------------------------------Include-------------------------------------------------------
+
+	//#include "./AnimLib.h"
+
+	#include "./../System/Common.dnh"
+	#include "./../System/Constants.dnh"
+	#include "./Lib_Boss.dnh"
+	#include "./Lib_Boss_Render.dnh"
+	#include "./Lib_Shot.dnh"
+	#include "./Lib_Effect.dnh"
+	#include "./Lib_Enemy.dnh"
+	#include "./Lib_Enemy_Effect.dnh"
+	#include "./Shot/shot_const.dnh"
+
+//------------------------------------------------------------------------------------------------------------------

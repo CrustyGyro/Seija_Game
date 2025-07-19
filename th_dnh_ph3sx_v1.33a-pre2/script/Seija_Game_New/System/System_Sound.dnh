@@ -1,0 +1,54 @@
+
+//---------------------------------------------------------------------------------------------------------------------
+
+	//#include "./Common.dnh"	
+	#include "./Constants.dnh"	
+
+//---------------------------------------------------------------------------------------------------------------------
+
+
+	let SE_Obj = ObjSound_Create;
+
+
+//---------------------------------------------------------------------------------------------------------------------
+
+@Initialize{
+
+	SetAutoDeleteObject( true );
+
+}
+
+@MainLoop{
+	
+	yield;
+}
+
+@Event{
+	
+	alternative(GetEventType())			
+	
+    case( EV_SFX_PLAY ){
+	
+        let Args = GetEventArgument( 0 ); 
+		
+		T_Play_SFX( Args[ 0 ], Args[ 1 ] );
+
+
+    }
+	
+}
+
+task T_Play_SFX( Name, Volume ){
+	
+   	let Path = GetCurrentScriptDirectory() ~ "./../Resource/Sound/";
+
+	ObjSound_SetSoundDivision( SE_Obj, SOUND_SE );
+   	ObjSound_Load( SE_Obj, Path ~ Name );
+  	ObjSound_SetVolumeRate( SE_Obj, ( Volume - 20 ) * ( GetAreaCommonData( "Settings", OPTION_SFX, 100 ) / 100 ) );
+  	ObjSound_Play( SE_Obj );
+
+}
+
+//-----------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------------------------------------------------

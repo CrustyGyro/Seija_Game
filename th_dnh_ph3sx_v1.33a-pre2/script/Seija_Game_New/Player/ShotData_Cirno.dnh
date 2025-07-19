@@ -1,0 +1,12 @@
+//----------------------------------
+
+shot_image  = "./../Resource/img/Player/PL_Cirno.png"
+
+//----------------------------------
+
+//--Icicles--
+
+ShotData { id = 1 rect = ( 0, 144, 16, 192 ) render = ALPHA alpha = 120 collision = 15 } 	
+ShotData { id = 2 rect = ( 16, 144, 32, 192 ) render = ALPHA alpha = 140 collision = 15 }	
+
+//----------------------------------

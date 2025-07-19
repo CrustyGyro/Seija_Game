@@ -1,0 +1,88 @@
+
+	//------------------------Common Functions------------------------
+	Commons are used through all the scripts.
+	They are general porpouse functions that are made to make your life easier.
+	
+	//Game Logic stuffs
+	
+	Boss_Is_Alive( Boss );
+		//Function
+		//checks if the boss is not deleted, its just "return !Obj_IsDeleted( Boss );" Lol
+		//FROM: System/Common.dnh
+		//-Seija
+	
+	Get_CenterX; | Get_CenterY;
+		//Function
+		//Returns middle of Stg frame, its just "return GetStgFrameWidth|Height/2 / ;"
+		//easier to remember
+		//FROM: System/Common.dnh
+		//-Seija
+	
+	Get_MaxX; | Get_MaxY;
+		//Function
+		//Returns "GetStgFrameWidth|Height".
+		//Again, easier to remember.
+		//FROM: System/Common.dnh
+		//-Seija
+		
+	//Graphical Functions
+	
+	Render2D_Texture_A1( Path, Rect, X, Y, Scale, PriorityF );
+		//Function
+		//Returns a simple manipulable 2D Sprite.
+		//Path - Path of the texture to use.
+		//Rect - An Array of the texture rect [ Left, Top, Right, Bottom ].
+		//X / Y - Position of the sprite.
+		//PriorityF - Float render priority.
+		//FROM: System/Common.dnh
+		//-Seija
+		
+	T_Render_AtInt( Obj );
+		//Task
+		//Rounds Obj's current location to render it at just integer values.
+		//Used to render boss sprites so that they dont look blurry.
+		//Same effect can be achieved with just setting their texture filter to FILTER_NONE though....
+		//You can use this if you still want to keep the filter.
+		//-Seija		
+	
+	//Text Functions
+	
+	Create_HUD_Text( Priority, FontSize, Color_T, Color_B );
+		//Function
+		//Retrurns a simple manipulable text object for HUDs and UIs.
+		//Priority - Int redner priority.
+		//FontSize - Self explanatory.
+		//Color_T - Top font color as an array of RGB values [ RED, GREEN, BLUE ];
+		//Color_B - Bottom font color as an array of RGB values [ RED, GREEN, BLUE ];
+		//By default it has: border type as BORDER_FULL, border color as 0,0,0, border width as 2
+		//Max width as 256 and is aligned to the right.
+		//FROM: System/Common.dnh
+		//-Seija
+		
+	CharToNum( Char );
+		//Function
+		//Returns a specified Char into a number.
+		//Used later for sprite list text objects.
+		//If we dont end up using just regular text objects that is.
+		//FROM: System/Common.dnh
+		//-Seija
+				
+		
+	DigitToArray_Comma( Number );	
+		//Function
+		//Passes a Number into an array and ads a comma every 3 digits.
+		//i just looked up how to do this on stackoverflow lol
+		//FROM: System/Common.dnh
+		//-Seija
+		
+	//------------------------Shot Functions------------------------
+	
+	ShotR1( X, Y, Radius, Speed, Angle, ShotID, Delay, Delay_Graphic );
+		//Function
+		//Creates a shot object at a specified Radius away from X,Y, with a manually set custom Delay Cloud graphic.
+		//X,Y,Speed,Angle,Delay - You already know these ones.
+		//Radius - Radius in pixels to spawn shot away from Boss.
+		//ShotID - Shot graphic as defined in ShotConst.
+		//Delay_Graphic - Delay Cloud graphic as defined in ShotConst.
+		//FROM: Lib/Lib_Shot.dnh
+		//-Seija		

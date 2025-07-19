@@ -1,0 +1,34 @@
+//--------------------------------------------------------------
+//Package Script Path
+//Upon starting the game, the specified package script will be run.
+//package.script.main = script/ExRumia/ExRumia_Package_Main.txt
+
+//--------------------------------------------------------------
+//Window Title
+//The text to display on the window title.
+window.title = Peenid
+
+
+//--------------------------------------------------------------
+//Screen Size
+//The default size is 640x480, use these parameters to change the screen size.
+//Minimum and maximum size is 150x150 and 3840x2160 respectively.
+screen.width  = 640
+screen.height = 480
+
+//--------------------------------------------------------------
+//Unfocused Processing
+//If true, the game will continue to run even if the user has clicked off the game window.
+//unfocused.processing = true
+
+//--------------------------------------------------------------
+//Skip Mode Speed
+//The speed multiplier of the skip mode. (Triggered while Left CTRL is held down by default.)
+//Limited between 1 and 50.
+skip.rate = 20
+
+//--------------------------------------------------------------
+//Window Size List
+//The sizes that will be listed in config.exe's Window Size drop-down panel.
+//Separated with whitespaces or incorrect size formats.
+window.size.list = 640x480 800x600 960x720 1120x840 1280x960 1440x1080 1600x1200 1760x1320 1920x1440

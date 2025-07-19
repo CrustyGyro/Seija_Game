@@ -1,0 +1,6 @@
+version 1.1:
+ - Reduced the size of the hitbox for the scale bullet to 2.4. (4.8 for 2x.)
+ - Reduced the size of the hitbox for the bill bullet to 2.8. (5.6 for 2x.)
+
+version 1.0:
+ - Inital Release.

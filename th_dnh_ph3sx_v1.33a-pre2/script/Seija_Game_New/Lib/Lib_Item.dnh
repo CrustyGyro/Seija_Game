@@ -1,0 +1,239 @@
+//-----------------------------------------------------------------------------
+
+function Create_Item_A1( X, Y, Type ){
+	
+	alternative(Type)
+	case( ITEM_S_SCORE ){
+		let Item_Obj = Render_Item_A1( X, Y, Type, [ 16, 0, 32, 16 ] );
+		T_Item_Handler_A1( Item_Obj, Type );
+	}	
+	case( ITEM_S_BONUS ){
+		let Item_Obj = Render_Item_A1( X, Y, Type, [ 31, 0, 47, 15 ] );
+		T_Item_Handler_A2( Item_Obj, Type );
+	}		
+	
+}	
+
+function Collect_Item_Check( Obj, Type ){
+	
+	
+	int Point_Value = 0;
+	
+	alternative(Type)
+	case( ITEM_S_SCORE ){
+
+		T_PlaySE( SE_ITEM, 30 );
+		if( GetPlayerY() <= GetCommonData( "POC_LINE", 140 ) ){
+			
+			Point_Value = 1000 + GetPoint() + GetGraze();
+			
+			AddScore( Point_Value );
+			T_RenderScore( Obj, Point_Value,[ 255, 255, 50 ] );
+			
+		}
+		else{
+			T_RenderScore( Obj, 100, [ 255, 255, 255 ]);
+			AddScore( 100 );
+		}	
+		
+	}
+	case( ITEM_S_BONUS ){
+
+		T_PlaySE( SE_ITEM, 30 );
+		
+		//T_RenderScore( Obj, 1000 + GetPoint() + GetGraze(), [ 255, 255, 50 ] );
+		AddScore( 1000 + GetPoint() + GetGraze() );
+		
+	}	
+	
+	
+}
+
+function Render_Item_A1( X, Y, Type, Rect ){
+	
+	let Item_Obj;
+	
+	Item_Obj = Render2D_Texture_A1( Item_Tex, Rect, X, Y, 1, 25 );
+	Obj_SetRenderPriorityI( Item_Obj, GetItemRenderPriorityI() );
+
+	return( Item_Obj );
+}
+
+function T_CheckRange(Obj){
+	
+	// Checks if the item is in collecting range of the player ( default is 20 ).
+	return ( GetPlayerState() == STATE_NORMAL && ( GetDistance( ObjRender_GetX( Obj ), ObjRender_GetY( Obj ), GetPlayerX(), GetPlayerY() ) < 20 ));
+	
+}
+
+task T_Item_Handler_A1( Obj, Type ){
+	
+	bool MoveToPL = false;
+	float ObjX = ObjRender_GetX( Obj );
+	float ObjY = ObjRender_GetY( Obj );	
+	int VSpeed = -6;
+	
+	T_Spawn_Anim( Obj );
+	loop( 25 ){
+		
+		ObjY += VSpeed;
+		ObjRender_SetY( Obj, ObjY);
+		VSpeed = min( 1.25, VSpeed + 0.08 );			
+		yield;
+	}	
+	
+	
+	while( !Obj_IsDeleted( Obj ) && ObjY < GetStgFrameHeight + 32 && ObjX < GetStgFrameWidth + 32 && ObjX > -32){	
+		
+		// Moving Down.
+		ObjRender_SetY( Obj, ObjY );
+		ObjY += VSpeed;
+		VSpeed = 1;
+		
+		// Cancel Collection Movement if player Dies.
+		if (GetPlayerState() != STATE_NORMAL) {
+			MoveToPL = false;
+		}		
+		// Point of Collection Line.
+		if (GetPlayerState() == STATE_NORMAL && GetPlayerY() <= GetCommonData( "POC_LINE", 140 ) ) {
+			MoveToPL = true;
+		}
+		// Move to Player if within range.
+		if ( GetDistance( ObjX, ObjY, GetPlayerX(), GetPlayerY() ) < 64 ){
+			MoveToPL = true;
+		}	
+		// Moving to Player
+		if ( MoveToPL == true ) {
+			let Angle = atan2( GetPlayerY() - ObjY, GetPlayerX() - ObjX );
+			ObjX += 8*cos(Angle); 
+			ObjY += 8*sin(Angle);
+			ObjRender_SetPosition( Obj, ObjX, ObjY, 0);
+		} 	
+		// Collecting Task
+		if ( T_CheckRange( Obj )){
+			
+			Collect_Item_Check( Obj, Type );
+			Obj_Delete( Obj );
+			break;
+			
+		}		
+		yield;
+	}
+	Obj_Delete( Obj );
+	
+	task T_Spawn_Anim( Obj ){
+
+		loop(2){
+			let Spin = round( prand( 16, 18 ) );
+			ascent( a in 1..Spin+1 ){
+				if( !Obj_IsDeleted( Obj ) ){
+					ObjRender_SetAngleZ( Obj, a*360/Spin );
+				}
+				yield;
+			}
+		}		
+
+	}		
+	
+}
+
+task T_Item_Handler_A2( Obj, Type ){
+	
+	//This one is for the bonus items that appear when bullets are deleted. - Seija
+	
+	bool MoveToPL = false;
+	float ObjX = ObjRender_GetX( Obj );
+	float ObjY = ObjRender_GetY( Obj );	
+	int VSpeed = -6;
+	
+	//T_Spawn_Anim( Obj );
+	loop( 25 ){
+		
+		ObjX += rand( -VSpeed, VSpeed );
+		ObjY += VSpeed;
+		ObjRender_SetX( Obj, ObjX );
+		ObjRender_SetY( Obj, ObjY );
+		VSpeed = min( 1.25, VSpeed + 0.08 );			
+		yield;
+	}	
+	
+	
+	while( !Obj_IsDeleted( Obj ) && ObjY < GetStgFrameHeight + 32 && ObjX < GetStgFrameWidth + 32 && ObjX > -32){	
+		
+		if( MoveToPL == false ){
+		
+			ObjRender_SetY( Obj, ObjY );
+			ObjY += VSpeed;
+			VSpeed = 1;
+			
+		}
+		if( GetPlayerState() == STATE_NORMAL){ MoveToPL = true; }
+		
+		// Moving to Player
+		if ( MoveToPL == true ) {
+			let Angle = atan2( GetPlayerY() - ObjY, GetPlayerX() - ObjX );
+			ObjX += 8*cos(Angle); 
+			ObjY += 8*sin(Angle);
+			ObjRender_SetPosition( Obj, ObjX, ObjY, 0);
+		} 	
+		// Collecting Task
+		if ( T_CheckRange( Obj )){
+			
+			Collect_Item_Check( Obj, Type );
+			Obj_Delete( Obj );
+			break;
+			
+		}		
+		yield;
+	}
+	
+	Obj_Delete( Obj );
+	
+	
+}
+
+//-----------------------------------------------------------------------------
+
+
+task T_RenderScore( Target, Value, Color ){
+	
+	let Score = ObjText_Create;
+	
+	ObjRender_SetX( Score, GetPlayerX() -8 );
+	ObjRender_SetY( Score, GetPlayerY() );
+	Obj_SetRenderPriority( Score, 0.8 );
+	
+	
+	ObjText_SetFontBorderType( Score, BORDER_SHADOW );
+	ObjText_SetFontBorderWidth( Score, 1.2 );
+	ObjText_SetFontColorTop( Score, 255, 255 ,255 );
+	ObjText_SetFontSize( Score, 12 );
+	ObjText_SetMaxWidth( Score, 400 );
+	ObjText_SetFontBorderColor( Score, 0, 0, 0 );
+	ObjText_SetFontType( Score, "Chaney Thin Normal");
+	
+	ObjText_SetFontColorTop( Score, Color[0], Color[1], Color[2] );
+	ObjText_SetFontColorBottom( Score, Color[0], Color[1], Color[2] );
+	
+	ObjText_SetText( Score, IntToString( Value) );
+	
+	ascent( a in 0..64 ){
+			
+		ObjRender_SetY( Score,  ObjRender_GetY( Score ) -1 + a/64 );
+		ObjRender_SetAlpha( Score, ( a / 64 ) * 255 );
+		yield;
+			
+	}	
+	
+	descent( a in 0..10 ){
+			
+		ObjRender_SetAlpha( Score, ( a / 10) * 255 );
+		yield;
+			
+	}	
+	
+	Obj_Delete( Score );
+	
+}	
+
+//-----------------------------------------------------------------------------

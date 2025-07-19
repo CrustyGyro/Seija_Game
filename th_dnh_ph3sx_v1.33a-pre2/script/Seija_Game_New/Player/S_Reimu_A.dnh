@@ -1,0 +1,408 @@
+#TouhouDanmakufu[ Player ]
+#ScriptVersion[ 3 ]
+#ID["S_Reimu_A"]
+#Title["Reimu A"]
+#ReplayName["Reimu_A"]
+
+//----------------------------------------------------------------------------------
+
+#include"./../Lib/Lib_Player.dnh"
+
+//----------------------------------------------------------------------------------
+
+let PL_Tex_Reimu = GetCurrentScriptDirectory() ~ "./../Resource/img/Player/PL_Reimu.png";
+
+//let PL_Speed = [ 3.8, 2 ];
+let PL_Speed = [ 4.5, 2 ];
+
+let Shot_Count_Main = -1;
+let Shot_Count_F = -1;
+let Shot_Count_B = -1;
+
+let ShotRate_A = 0;
+
+//----------------------------------------------------------------------------------
+
+@Initialize{
+	
+	ObjPlayer_AddIntersectionCircleA1( GetPlayerObjectID, 0, 0, 4, 20 );
+	
+	LoadPlayerShotData( GetCurrentScriptDirectory() ~ "ShotData_Reimu.dnh" );
+	T_InitMain();
+	T_Render_PL( PL_Tex_Reimu );
+	
+	//T_Familiar_A;
+	T_Reimu_Familiar_Spawn;
+	
+	SetPlayerAutoItemCollectLine( 140 );
+	SetPlayerSpeed( PL_Speed[ 0 ], PL_Speed[ 1 ] );
+	
+	//T_Shot_A1( GetPlayerX, GetPlayerY, 24, -90, -90, 9, 1.5 );
+	
+}
+
+@MainLoop{
+	
+	//LoopMain();
+	
+	
+	T_Shot_A1( GetPlayerX, GetPlayerY, 24, -90, -90, 9, ShotRate_A, 1.4 );
+	//T_Shot_A1( GetPlayerX, GetPlayerY, 24, -90, -90, 9, 1.5 );
+	//T_PL_Fire_A();
+	
+	ShotRate_A++;
+	yield;
+	
+}
+
+@Finalize{
+	
+	T_FinMain();
+	
+}
+
+@Event{
+	
+	T_EventMain();
+	
+}
+
+
+task PL_Reimu_Amulet_Shot_A( X, Y, Speed, Angle, Type, Dmg ){
+	
+	let Shot_X = 0;
+	let Shot_Y = 0;
+	let Anim_Frame = 0;	
+	let Move_Y = 12;
+	
+	let Shot_Obj = CreatePlayerShotA1( X, Y, Speed, Angle, Dmg, 2, Type );
+	Obj_SetRenderPriorityI( Shot_Obj, 47 );	
+	
+	T_Impact( Shot_Obj );
+	
+	task T_Impact( Shot_Obj ){
+	
+		let Scale = 1;
+	
+		while( !Obj_IsDeleted( Shot_Obj ) ){
+			
+			Shot_X = ObjMove_GetX( Shot_Obj );
+			Shot_Y = ObjMove_GetY( Shot_Obj );
+			
+			yield;
+		}	
+			
+		let E_Impact = RenderImg2D_A1( PL_Tex_Reimu, [ 32, 192, 48, 208 ], Shot_X , Shot_Y, BLEND_ADD_ARGB, 1.4, 0.47 );
+		
+		ObjSprite2D_SetDestCenter( E_Impact );
+		ImgFadeOutDel( E_Impact, 20 );
+		
+		while( !Obj_IsDeleted( E_Impact ) ){
+			
+			ObjRender_SetPosition( E_Impact, ObjRender_GetX( E_Impact ), ObjRender_GetY( E_Impact ) - 4 , 0 );
+			ObjRender_SetScaleXYZ( E_Impact, Scale, Scale, Scale );
+			
+			Scale += 0.1;
+			
+			wait( 2 );
+			
+		}	
+	
+	}	
+	
+}	
+
+task PL_Reimu_Needles_A1( X, Y, Speed, Angle, Dmg ){
+	
+	let Shot_X = 0;
+	let Shot_Y = 0;
+	let Anim_Frame = 0;	
+	let Move_Y = 1;
+	
+	let Shot_Obj = CreatePlayerShotA1( X, Y, Speed, Angle, Dmg, 3, 6 );
+	Obj_SetRenderPriorityI( Shot_Obj, 47 );	
+
+	T_Impact( Shot_Obj );	
+	
+	task T_Impact( Shot_Obj ){
+	
+		let Scale = 1;
+	
+		while( !Obj_IsDeleted( Shot_Obj ) ){
+			
+			Shot_X = ObjMove_GetX( Shot_Obj );
+			Shot_Y = ObjMove_GetY( Shot_Obj );
+			//Shot_Angle_Z = ObjRender_GetAngleZ( Shot_Obj );
+			//Shot_Angle_Z = ObjRender_GetAngleZ( Shot_Obj );
+			
+			yield;
+		}	
+			
+		let E_Impact = RenderImg2D_A1( PL_Tex_Reimu, [ 80, 144, 96, 208 ], Shot_X , Shot_Y + 32, BLEND_ADD_ARGB, 1.4, 0.47 );
+		//ObjRender_SetPosition( E_Impact, Shot_X, Shot_Y, 0 );
+		ObjRender_SetAngleZ( E_Impact, 360 + rand( -8, 8 ));
+		
+		ObjSprite2D_SetDestCenter( E_Impact );
+		ImgFadeOutDel( E_Impact, 10 );
+		
+		while( !Obj_IsDeleted( E_Impact ) ){
+			
+			ObjRender_SetPosition( E_Impact, ObjRender_GetX( E_Impact ), ObjRender_GetY( E_Impact ) - 12, 0 );
+			ObjRender_SetScaleXYZ( E_Impact, Scale, Scale*1.8, Scale );
+			
+			Scale += 0.2;
+			
+			wait( 2 );
+			
+		}	
+	
+	}	
+	
+}	
+
+task PL_Reimu_Homing_Amulet_A( X, Y, Speed, Angle, Dmg ){
+	
+	let Shot_X = 0;
+	let Shot_Y = 0;
+	let Shot_Angle_Z = 0;
+	
+	let Shot_Obj = CreatePlayerShotA1( X, Y, Speed, Angle, Dmg, 2, 7 );
+	ObjMove_AddPatternA2( Shot_Obj, 1, NO_CHANGE, NO_CHANGE, 0.05, 0, 20 );	
+	Obj_SetRenderPriorityI( Shot_Obj, 47 );	
+
+	T_Shot_Spawn_A1( Shot_Obj, 20 );
+	T_Homing( Shot_Obj );
+	//T_Impact( Shot_Obj );
+	
+	//ObjMove_SetAngularVelocity( Shot_Obj, 45 );
+	
+	task T_Impact( Shot_Obj ){
+	
+		let Scale = 1;
+	
+		while( !Obj_IsDeleted( Shot_Obj ) ){
+			
+			Shot_X = ObjMove_GetX( Shot_Obj );
+			Shot_Y = ObjMove_GetY( Shot_Obj );
+			Shot_Angle_Z = ObjMove_GetAngle( Shot_Obj );
+			
+			yield;
+		}	
+			
+		let E_Impact = RenderImg2D_A1( PL_Tex_Reimu, [ 208, 144, 240, 176 ], Shot_X , Shot_Y, BLEND_ADD_ARGB, 1.4, 0.47 );
+
+		ObjRender_SetAlpha( E_Impact, 100 );
+		ObjRender_SetAngleZ( E_Impact, Shot_Angle_Z + 90 );
+		
+		ObjSprite2D_SetDestCenter( E_Impact );
+		T_Impact_Animate( E_Impact );
+		
+		task T_Impact_Animate( Obj ){
+			
+			let Anim_Add = 0;
+			
+			loop( 4 ){
+			
+				ObjSprite2D_SetSourceRect( Obj, 176, 144 + Anim_Add, 208, 176 + Anim_Add );
+				
+				Anim_Add += 32; 
+				
+				wait( 5 );
+				
+			}
+			
+			Obj_Delete( Obj );	
+			
+		}	
+		
+	
+	}
+	
+}	
+
+task T_Reimu_Familiar_Spawn{
+	
+	let Shot_Angle_Array = [ -105, -100, -80, -75 ];
+	let Shot_Focus_Angle_Array = [ -82, -90, -90, -98 ];	
+	
+	
+	T_Reimu_Familiar_A( -36, 20, -24, -22, Shot_Angle_Array[ 0 ], -90 );
+	T_Reimu_Familiar_A( -14, 32, -8, -30, Shot_Angle_Array[ 1 ], -90 );
+	T_Reimu_Familiar_A( 14, 32, 8, -30, Shot_Angle_Array[ 2 ], -90 );
+	T_Reimu_Familiar_A( 36, 20, 24, -22, Shot_Angle_Array[ 3 ], -90 );
+	
+	
+}	
+
+task T_Reimu_Familiar_A( X_Pos, Y_Pos, Focus_X, Focus_Y, Shot_Angle, Focus_Shot_Angle ){
+
+	let Familiar_Obj = RenderImg2D_A1( PL_Tex_Reimu, [ 16, 256, 32, 272 ], GetPlayerX, GetPlayerY, BLEND_ALPHA, 1, 0.47 );
+	let Familiar_Effect = RenderImg2D_A1( PL_Tex_Reimu, [ 64, 256, 80, 272 ], GetPlayerX, GetPlayerY, BLEND_ADD_ARGB, 1.2, 0.46 );
+	ObjRender_SetAlpha( Familiar_Effect, 150 );
+	
+	let Familiar_X = 0;
+	let Familiar_Y = 0;
+
+	let Dest_X;
+	let Dest_Y;
+	let Distance;
+	let Angle;
+	let ShotRate = 0;
+	
+	let Familiar_Angle_Z = 0;
+
+	while( !Obj_IsDeleted( Familiar_Obj ) ){
+		
+		if( GetVirtualKeyState( VK_SLOWMOVE ) == KEY_FREE ){
+			
+			Dest_X = GetPlayerX + X_Pos;
+			Dest_Y = GetPlayerY + Y_Pos
+			
+		}
+		else{
+			
+			Dest_X = GetPlayerX + Focus_X;
+			Dest_Y = GetPlayerY + Focus_Y;
+			
+		}		
+		
+		Familiar_X = ObjRender_GetX( Familiar_Obj );
+		Familiar_Y = ObjRender_GetY( Familiar_Obj );
+		
+		Distance = GetDistance( Familiar_X, Familiar_Y, Dest_X, Dest_Y );
+		Angle = GetAngle( Familiar_X, Familiar_Y, Dest_X, Dest_Y );
+		
+		Familiar_X += 0.25 * Distance * cos( Angle );
+		Familiar_Y += 0.25 * Distance * sin( Angle );
+		
+		ObjRender_SetPosition( Familiar_Obj, Familiar_X, Familiar_Y, 0);		
+		ObjRender_SetAngleZ( Familiar_Obj, Familiar_Angle_Z );
+		
+		ObjRender_SetPosition( Familiar_Effect, Familiar_X, Familiar_Y, 0);		
+		ObjRender_SetAngleZ( Familiar_Effect, -Familiar_Angle_Z );
+
+
+		if( GetVirtualKeyState( VK_SHOT ) != KEY_FREE && ShotRate % 6 == 0 && CanFire == true ){
+			
+			if(GetVirtualKeyState(VK_SLOWMOVE) == KEY_FREE){
+				
+				 PL_Reimu_Homing_Amulet_A( Familiar_X, Familiar_Y, 1, Shot_Angle, 1.4 );
+				//PL_Reimu_Homing_A1( Familiar_X, Familiar_Y, 1, Shot_Angle, 1.4 );
+			}
+			else{
+				
+				PL_Reimu_Needles_A1( Familiar_X, Familiar_Y, 24, -90, 1.2 )
+				//PL_Reimu_Homing_Amulet_A( Familiar_X, Familiar_Y, 1, Focus_Shot_Angle, 1.4 );
+				//PL_Reimu_Homing_A1( Familiar_X, Familiar_Y, 1, Focus_Shot_Angle, 1.4 );
+				
+				
+			}
+			
+		}	
+		
+		ShotRate++;
+		Familiar_Angle_Z += 8;
+		
+		yield;
+		
+	}
+
+}	
+
+task T_Shot_A1( X, Y, Speed, Shot_Angle, Focus_Shot_Angle, Type, ShotRate, Dmg ){
+	
+	//let ShotRate = 0;
+
+	if( GetPlayerState == STATE_NORMAL && CanFire == true ){
+
+		if( GetVirtualKeyState( VK_SHOT ) != KEY_FREE && ShotRate % 6 == 0 ){
+			
+			Play_SFX( SFX_PL_SHOT01, 55 );
+			
+			if(GetVirtualKeyState( VK_SLOWMOVE ) == KEY_FREE ){
+				
+				PL_Reimu_Amulet_Shot_A( GetPlayerX + 8, GetPlayerY, Speed, Shot_Angle, Type, Dmg );
+				PL_Reimu_Amulet_Shot_A( GetPlayerX - 8, GetPlayerY, Speed, Shot_Angle, Type, Dmg );
+				
+			}
+			else{		
+				
+				PL_Reimu_Amulet_Shot_A( GetPlayerX + 8, GetPlayerY, Speed, Focus_Shot_Angle, Type, Dmg );
+				PL_Reimu_Amulet_Shot_A( GetPlayerX - 8, GetPlayerY, Speed, Focus_Shot_Angle, Type, Dmg );
+
+			}
+			
+		}	
+		
+		//ShotRate++;
+		
+		yield;
+		
+	}	
+
+}
+
+task T_Shot_Famliar_A1( X, Y, Speed, Shot_Angle, Focus_Shot_Angle, Type, Dmg ){
+	
+	let ShotRate = 0;
+
+	while( GetPlayerState == STATE_NORMAL && CanFire == true ){
+
+		if( GetVirtualKeyState( VK_SHOT ) != KEY_FREE && ShotRate % 5 == 0 ){
+			
+			if(GetVirtualKeyState( VK_SLOWMOVE ) == KEY_FREE ){
+				
+				PL_Reimu_Amulet_Shot_A( X, Y, Speed, Shot_Angle, Type, Dmg );
+				
+			}
+			else{		
+				
+				PL_Reimu_Amulet_Shot_A( X, Y, Speed, Focus_Shot_Angle, Type, Dmg );
+				
+			}
+			
+		}	
+		
+		ShotRate++;
+		
+		yield;
+		
+	}	
+
+}
+
+/*
+task T_Shot_Homing_A1( X, Y, Speed, Shot_Angle, Focus_Shot_Angle, Type, Dmg ){
+	
+	let ShotRate = 0;
+
+	while( GetPlayerState == STATE_NORMAL && CanFire == true ){
+
+		if( GetVirtualKeyState( VK_SHOT ) != KEY_FREE && ShotRate % 5 == 0 ){
+			
+			if(GetVirtualKeyState( VK_SLOWMOVE ) == KEY_FREE ){
+			
+				PL_Reimu_Homing_A1( Familiar_X, Familiar_Y, 1, Shot_Angle, 1.4 );
+				PL_Reimu_Amulet_Shot_A( X, Y, Speed, Shot_Angle, Type, Dmg );
+				
+			}
+			else{		
+				
+				PL_Reimu_Amulet_Shot_A( X, Y, Speed, Focus_Shot_Angle, Type, Dmg );
+				
+			}
+			
+		}	
+		
+		ShotRate++;
+		
+		yield;
+		
+	}	
+
+}
+*/
+
+
+
+//----------------------------------------------------------------------------------
