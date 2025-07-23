@@ -83,7 +83,7 @@ let bossY = 0;
 task T_Main {
 
 
-	NotifyEventAll( EV_BOSS_EFFECT, bossObj, CC_RED );
+	//NotifyEventAll( EV_BOSS_EFFECT, bossObj, CC_RED );
 	
 	//let Color = [ DOT_GRAY, DOT_RED, DOT_YELLOW, DOT_CYAN, DOT_PURPLE, DOT_GREEN ];
 
@@ -120,21 +120,38 @@ task T_Main {
 		
 		wait( 40 );
 		
-		ascent( a in 0..10 ){
-			ascent( b in 0..32 ){
+		ascent( a in 0..6 ){
+			ascent( b in 0..12 ){			
 					
-				Laser_A1( bossX, bossY - 60, 90 + b * 360/32 + a * 8/8, 512, 14, 30, SHOT_CURVY_LASER_YELLOW, 60 );
+				let Laser_A = Laser_A1( bossX, bossY - 60, 90 + b * 360/12 + a * 8/6, 512, 14, 30, SHOT_CURVY_LASER_YELLOW, 30 );
+				let Laser_B = Laser_A1( bossX, bossY - 60, 90 + b * 360/12 - a * 8/6, 512, 14, 30, SHOT_CURVY_LASER_YELLOW, 30 );
+				
+				//T_Manage_Laser( Laser_A, 10 );
+				//T_Manage_Laser( Laser_B, 10 );
+
 				//yield;
 			}	
-			wait( 10 );
+			wait( 6 );
 		}
-		ascent( a in 0..10 ){
-			ascent( b in 0..32 ){
+		wait( 30 );
+		
+		ascent( a in 0..6 ){
+			ascent( b in 0..12 ){
 					
-				Laser_A1( bossX, bossY - 60, 90 - b * 360/32 - a * 8/8, 512, 14, 30, SHOT_CURVY_LASER_YELLOW, 60 );
+				//let Laser_A_Dummy = Laser_A1( bossX, bossY - 60, 45 + b * 360/12 + a * 8/6, 512, 10, 30, SHOT_CURVY_LASER_BLUE, 30 );
+				//let Laser_B_Dummy = Laser_A1( bossX, bossY - 60, 45 + b * 360/12 - a * 8/6, 512, 10, 30, SHOT_CURVY_LASER_BLUE, 30 );							
+					
+				let Laser_A = Laser_A1( bossX, bossY - 60, 45 + b * 360/12 + a * 8/6, 512, 14, 30, SHOT_CURVY_LASER_YELLOW, 30 );
+				let Laser_B = Laser_A1( bossX, bossY - 60, 45 + b * 360/12 - a * 8/6, 512, 14, 30, SHOT_CURVY_LASER_YELLOW, 30 );
+				
+				//T_Manage_Laser( Laser_A, 10 );
+				//T_Manage_Laser( Laser_B, 10 );	
+
+				//ObjRender_SetBlendType( Laser_A_Dummy, BLEND_SUBTRACT );
+				//ObjRender_SetBlendType( Laser_B_Dummy, BLEND_SUBTRACT );				
 				//yield;
 			}	
-			wait( 10 );
+			wait( 6 );
 		}		
 		wait( 160 );	
 
@@ -146,6 +163,28 @@ task T_Main {
 		yield;
 
 	}
+	
+	task T_Manage_Laser( Obj, Count ){
+		
+		wait( 30 );
+			
+		float Laser_Angle = ObjStLaser_GetAngle( Obj );			
+		
+		ascent( a in 0..Count ){
+			
+			float Shot_X = ObjMove_GetX( Obj ) + a * ObjLaser_GetLength( Obj )/Count * cos( Laser_Angle );
+			float Shot_Y = ObjMove_GetY( Obj ) + a * ObjLaser_GetLength( Obj )/Count * sin( Laser_Angle );
+			
+			int ShotObj_B = ShotA2( Shot_X, Shot_Y, 1, ObjStLaser_GetAngle( Obj ), SHOT_LASER_TIP_ORANGE, 10, SHOT_LASER_TIP_ORANGE );
+			//ObjShot_SetDeleteFrame( ShotObj_B, 200 );
+			ObjMove_AddPatternA2( ShotObj_B, 200, NO_CHANGE, NO_CHANGE, 0.08, rand( 0.8, 10 ), 0 );
+			
+			wait( 4 );
+				
+		}		
+		
+		
+	}	
 	
 }	
 

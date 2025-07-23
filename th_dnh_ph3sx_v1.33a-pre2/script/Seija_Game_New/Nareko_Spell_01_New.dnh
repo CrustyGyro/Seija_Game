@@ -1,0 +1,415 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title["Nareko_Spell_01_New"]
+//#Background["./Stage/STG_03/STG_BG.dnh"];
+#Player[ "./Player/PL_Reimu.dnh" ]
+#System["./System/System_Main_Hud.dnh"]
+
+//--------------------------------------------------Variables------------------------------------------------------
+
+let bossObj;
+let objScene = GetEnemyBossSceneObjectID();
+let bossX = 0;
+let bossY = 0;
+
+//SetIntersectionVisualization( true );
+let CutinTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Cutin/CurseOfRa.png";
+
+//---------------------------------------------------Include-------------------------------------------------------
+
+	#include "./lib/Index_Boss.dnh"
+	#include "./lib/Lib_Spell.dnh"
+	#include "./lib/Lib_SpellCutin.dnh"
+
+//----------------------------------------------------Start--------------------------------------------------------
+
+@Loading {
+	
+    LoadTexture( CutinTex );
+
+}
+
+
+@Initialize {
+
+	bossObj = ObjEnemy_Create(OBJ_ENEMY_BOSS);	
+	
+	ObjEnemy_Regist( bossObj );	
+
+	T_Lifebar( bossObj );
+	T_HitEffect( bossObj );
+	ObjEnemy_SetDamageRate( bossObj, 0, 0 );	
+
+	Init_Boss_Nareko( bossObj );
+	
+	ObjMove_SetDestAtWeight( bossObj, GetStgFrameWidth/2, Get_CenterY/2 + 16, 15, 8 );
+	
+	
+	//SetPlayerLife( 8 );
+	T_Main;
+	T_End;
+	
+}
+
+@Event { 
+
+	alternative(GetEventType()) 
+	case( EV_REQUEST_LIFE ) { 
+		SetScriptResult( 1900 ); // 3000-4500 For Nons ( At 100% Damage Rate. )
+	}
+	case( EV_REQUEST_TIMER ) { 
+		//SetScriptResult( 50 );
+		SetScriptResult( 50 );
+	}	
+	case( EV_REQUEST_SPELL_SCORE ){
+       SetScriptResult( 5000000 );
+    }	
+
+
+
+} 
+
+@MainLoop {
+
+	bossX = ObjMove_GetX( bossObj );
+	bossY = ObjMove_GetY( bossObj );
+	
+	SetCommonData( "Effect_X", bossX );
+	SetCommonData( "Effect_Y", bossY );	
+
+	ObjEnemy_SetIntersectionCircleToShot( bossObj, bossX, bossY, 16 );
+	ObjEnemy_SetIntersectionCircleToPlayer( bossObj, bossX, bossY, 8 );
+	
+	yield;
+}
+
+@Finalize {
+} 
+
+
+task T_InitSpell(){
+	
+	//let CutinTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Cutin/CurseOfRa.png";
+	
+	T_CallSpell_A1( "Logic Wall: \"Mental Labyrinth\"", 0, "Normal", objScene );
+	T_Call_Spell_Cutin( CutinTex, [ 0, 0, 200, 384 ], 1, CC_ORANGE );	
+	
+	ObjEnemyBossScene_StartSpell( objScene );
+	
+	yield;
+	T_SpellBG_Nareko();	
+	
+}	
+
+
+//----------------------------------------------------Patterns--------------------------------------------------------
+
+task T_Main {
+
+
+	//NotifyEventAll( EV_BOSS_EFFECT, bossObj, CC_RED );
+
+	wait( 125 );
+
+	T_InitSpell();
+	
+	wait( 80 );
+
+	ObjEnemy_SetDamageRate( bossObj, 0.5, 0.8 );
+
+	while( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){
+		
+		if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){
+			T_PlaySE( SE_CHARGE_00, 30 );
+			T_Charge_A1( bossObj, 20, "Petal", CC_YELLOW );
+				
+		}			
+		
+		wait( 100 );
+		
+		T_Boss_Shot_A( 2 );
+		
+		wait( 600 );
+		
+		if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){
+			T_PlaySE( SE_CHARGE_00, 30 );
+			T_Charge_A1( bossObj, 20, "Petal", CC_YELLOW );
+				
+		}			
+		
+		wait( 100 );		
+	
+		T_Boss_Shot_A( 3 );
+		
+		wait( 600 );	
+		
+		if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){
+			T_PlaySE( SE_CHARGE_00, 30 );
+			T_Charge_A1( bossObj, 20, "Petal", CC_YELLOW );
+				
+		}			
+		
+		wait( 100 );		
+	
+		T_Boss_Shot_A( 4 );
+		
+		wait( 600 );		
+	
+	}
+	
+	
+}	
+
+task T_Boss_Shot_A( Count ){
+	
+	if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){
+			
+		
+		async{
+				
+			if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){	
+				T_PlaySE( SE_LASER_03, 35 );	
+				
+				wait( 60 );
+			}
+			
+			if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){	
+				T_PlaySE( SE_LASER_01, 28 );	
+			}
+		}	
+		
+		ascent( b in 0..Count ){
+				
+			if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){
+				
+				T_LaserOrb( -32, 64 + b * Get_MaxY/Count, 90 );
+				T_LaserOrb( Get_MaxX + 32, 64 + b * Get_MaxY/Count, 180 ); 
+
+			}
+			//wait( 20 );
+		}	
+		
+		async{
+			
+			wait( 380 );
+			if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){
+				T_PlaySE( SE_CHARGE_00, 30 );
+				T_Charge_A1( bossObj, 20, "Petal", CC_BLUE );
+				
+			}
+			wait( 80 );
+
+			if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){
+				T_PlaySE( SE_BURST_00, 30 );
+				T_Charge_Burst_A( bossObj, "Maple", CC_BLUE );
+				
+				//T_Burst_Circle_A1( bossObj, CC_ORANGE );		
+			}
+
+		}		
+		
+		wait( 100 );
+		
+		ascent( a in 0..10 ){
+			if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){	
+				async{
+					
+					T_PlaySE( SE_LASER_03, 35 );	
+					wait( 30 );
+					T_PlaySE( SE_LASER_02, 28 );	
+					
+				}				
+				
+				if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){
+					T_LaserFan( bossX, bossY, GetAngleToPlayer( bossObj ), 2 );
+				}
+				wait( 50 - a * 45/10 );
+			}
+
+		}
+			
+
+	}
+	
+	task T_LaserOrb( X, Y, Angle_Base ){
+		
+		int ShotObj_A = ShotA2( X, Y, 0, 0, SHOT_LASER_TIP_ORANGE, 20, SHOT_LASER_TIP_ORANGE );
+		let Laser_A = Laser_A1( ObjMove_GetX( ShotObj_A ), ObjMove_GetY( ShotObj_A ), -Angle_Base + 45, 600, 14, 200, SHOT_LASER_DYELLOW, 60 );
+		let Laser_B = Laser_A1( ObjMove_GetX( ShotObj_A ), ObjMove_GetY( ShotObj_A ), Angle_Base - 45, 600, 14, 200, SHOT_LASER_DYELLOW, 60 );		
+
+		T_Manage_Laser( Laser_A );
+		T_Manage_Laser( Laser_B );
+		
+		task T_Manage_Laser( Obj ){
+			
+			ObjLaser_SetItemDistance( Obj, 600 );
+			ObjShot_SetItemChange( Obj, false );
+			
+			wait( 60 );
+
+			float Laser_Angle = ObjStLaser_GetAngle( Obj );
+			
+			if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){
+				ascent( a in 0..18 ){
+					
+					float Shot_X = ObjMove_GetX( Obj ) + a * ObjLaser_GetLength( Obj )/18 * cos( Laser_Angle );
+					float Shot_Y = ObjMove_GetY( Obj ) + a * ObjLaser_GetLength( Obj )/18 * sin( Laser_Angle );
+					
+					if( a % 3 == 0 ){
+						int ShotObj_A = ShotA2( Shot_X, Shot_Y, 0, ObjStLaser_GetAngle( Obj ), SHOT_BALL_AURA_DYELLOW, 20, SHOT_CLOUD_YELLOW );
+						ObjRender_SetBlendType( ShotObj_A, BLEND_ADD_ARGB  );
+						T_ShotManage( ShotObj_A, rand( 400, 500 ) );
+						//T_Manage_Subshot( ShotObj_A );
+					}
+					else{
+						
+						int ShotObj_B = ShotA2( Shot_X, Shot_Y, 0, ObjStLaser_GetAngle( Obj ), SHOT_BALL_AURA_DYELLOW, 20, SHOT_CLOUD_YELLOW );
+						ObjRender_SetBlendType( ShotObj_B, BLEND_ADD_ARGB  );
+						
+						ObjShot_SetDeleteFrame( ShotObj_B, 600 );			
+
+					}	
+						
+				}
+			}	
+
+			task T_ShotManage( Obj, Delay ){
+				
+				wait( Delay );
+				
+				if( !Obj_IsDeleted( Obj )){
+					
+					T_PlaySE( SE_CHIME_01, 36 );
+					
+					int Diamond_A = ShotA2( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0, GetAngleToPlayer( Obj ), SHOT_LARGE_DIAMOND_YELLOW, 1, SHOT_LARGE_DIAMOND_YELLOW );
+					int Diamond_Dummy = ShotA2( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0, GetAngleToPlayer( Obj ), SHOT_LARGE_DIAMOND_INVERT_YELLOW, 1, SHOT_LARGE_DIAMOND_INVERT_YELLOW );
+					ObjRender_SetBlendType( Diamond_Dummy, BLEND_SUBTRACT  );				
+							
+					yield;
+					Obj_SetRenderPriorityI( Diamond_A, Obj_GetRenderPriorityI( Diamond_A )-1 );
+					ObjRender_SetScaleXYZ( Diamond_A, 1.2, 1.2, 1.2 );
+					ObjRender_SetBlendType( Diamond_A, BLEND_ADD_ARGB  );
+						
+					
+					int Diamond_Spawn_Effect = ShotA2( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0, GetAngleToPlayer( Obj ), SHOT_LARGE_DIAMOND_YELLOW, 10, SHOT_LARGE_DIAMOND_YELLOW );
+					Obj_SetRenderPriorityI( Diamond_Spawn_Effect, Obj_GetRenderPriorityI( Diamond_Spawn_Effect )+1 );
+					ObjRender_SetBlendType( Diamond_Spawn_Effect, BLEND_ADD_ARGB  );
+					
+					ObjShot_SetDeleteFrame( Diamond_Spawn_Effect, 10 );
+					ObjShot_SetDeleteFrame( Obj, 1 );
+					
+					ObjMove_AddPatternA2( Diamond_A, 10, NO_CHANGE, NO_CHANGE, 0.01, 1, 0 );
+					ObjMove_AddPatternA2( Diamond_Dummy, 10, NO_CHANGE, NO_CHANGE, 0.01, 1, 0 );
+					/*
+					async{
+						
+						wait( 80 );
+						
+						while( !Obj_IsDeleted( Diamond_A )){
+						
+							int Diamond_Spawn_Effect = ShotA2( ObjMove_GetX( Diamond_A ), ObjMove_GetY( Diamond_A ), 0, ObjMove_GetAngle( Diamond_A ), SHOT_CLOUD_YELLOW, 10, SHOT_CLOUD_YELLOW );
+							Obj_SetRenderPriorityI( Diamond_Spawn_Effect, Obj_GetRenderPriorityI( Diamond_A )-1 );
+							ObjRender_SetBlendType( Diamond_Spawn_Effect, BLEND_ADD_ARGB  );
+							
+							ObjShot_SetDeleteFrame( Diamond_Spawn_Effect, 10 );
+	
+							
+							wait( 8 );
+						}
+					}	
+					*/
+				}
+			}	
+			
+		}	
+		
+	}
+	
+	task T_LaserFan( X, Y, Angle, Count ){
+		
+		ascent( a in 0..Count ){ 
+			ascent( b in 0..12 ){ 
+			
+				T_InvertLaser( X, Y, Angle + b* 360/12 + a * 2/Count );
+				T_InvertLaser( X, Y, Angle + b* 360/12 - a * 2/Count );
+			
+			}
+			wait( 4 );
+		}
+		task T_InvertLaser( X, Y, Angle ){
+			
+			let Laser_Invert = Laser_A1( X, Y, Angle, 460, 18, 10, SHOT_CURVY_LASER_YELLOW, 30 );
+			let Laser_Aura = Laser_A1( X, Y, Angle, 460, 14, 20, SHOT_CURVY_LASER_BLUE, 30 );
+			
+			ObjLaser_SetItemDistance( Laser_Aura, 460 );
+			ObjShot_SetItemChange( Laser_Aura, false );				
+			
+			ObjLaser_SetItemDistance( Laser_Invert, 460 );
+			ObjShot_SetItemChange( Laser_Invert, false );			
+			
+			ObjRender_SetBlendType( Laser_Invert, BLEND_SUBTRACT );
+			
+		}	
+		
+	}	
+	
+}	
+
+//-----------------------------------------------------Death---------------------------------------------------------
+
+task T_End {
+	
+    while( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ) {
+	     yield;
+	}
+	
+	if( ObjEnemyBossScene_GetInfo( GetEnemyBossSceneObjectID, INFO_IS_LAST_STEP ) ){
+
+		NotifyEventAll( EV_CLEAR_ENEMY_SHOTS, GetPlayerObjectID(), 60, 12 );
+		
+		yield;
+		
+		SetAutoDeleteObject(true);
+		T_Boss_Shotdown( bossObj, "Petal", CC_RED );
+		wait( 200 );
+		
+		Obj_Delete( bossObj );	
+		
+		ENEMY_CLEAR = true;
+		
+		yield;
+		
+		ENEMY_CLEAR = false;
+		
+		wait( 800 );
+		
+		CloseScript( GetOwnScriptID() );
+		
+	}	
+	else{
+	
+		NotifyEventAll( EV_SPAWN_ITEM_NON, bossX, bossY, 30, 64 );	
+		NotifyEventAll( EV_CLEAR_ENEMY_SHOTS, GetPlayerObjectID(), 60, 12 );
+		//DeleteShotAll( TYPE_ALL, TYPE_ITEM );
+		
+		yield;
+		
+		SetAutoDeleteObject( true );
+		
+		Obj_Delete( bossObj );	
+		
+		wait( 60 );
+		
+		//DeleteShotAll(TYPE_ALL, TYPE_ITEM);
+		
+		CloseScript( GetOwnScriptID() );
+	
+	}
+	
+	//SetAutoDeleteObject(true);
+	
+	//Obj_Delete( bossObj );	
+	//CloseScript( GetOwnScriptID() );
+	
+}
+

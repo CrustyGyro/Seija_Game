@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
 #Title["Nareko_Spell_01"]
-#Background["./Stage/STG_03/STG_BG.dnh"];
+//#Background["./Stage/STG_03/STG_BG.dnh"];
 #Player[ "./Player/PL_Reimu.dnh" ]
 #System["./System/System_Main_Hud.dnh"]
 
@@ -35,7 +35,7 @@ let bossY = 0;
 
 	Init_Boss_Nareko( bossObj );
 	
-	ObjMove_SetDestAtWeight( bossObj, GetStgFrameWidth/2, Get_CenterY/2 + 32, 15, 8 );
+	ObjMove_SetDestAtWeight( bossObj, GetStgFrameWidth/2, Get_CenterY/2 + 8, 15, 8 );
 	
 	
 	//SetPlayerLife( 8 );
@@ -48,10 +48,10 @@ let bossY = 0;
 
 	alternative(GetEventType()) 
 	case( EV_REQUEST_LIFE ) { 
-		SetScriptResult( 2000 ); // 3000-4500 For Nons ( At 100% Damage Rate. )
+		SetScriptResult( 2200 ); // 3000-4500 For Nons ( At 100% Damage Rate. )
 	}
 	case( EV_REQUEST_TIMER ) { 
-		SetScriptResult( 45 );
+		SetScriptResult( 50 );
 	}	
 	case( EV_REQUEST_SPELL_SCORE ){
        SetScriptResult( 5000000 );
@@ -83,13 +83,13 @@ task T_InitSpell(){
 	
 	let CutinTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Cutin/CurseOfRa.png";
 	
-	T_CallSpell_A1( "Logic Wall: \"Mental Blockade\"", 0, "Normal", objScene );
+	T_CallSpell_A1( "Logic Wall: \"Mental Labyrinth\"", 0, "Normal", objScene );
 	T_Call_Spell_Cutin( CutinTex, [ 0, 0, 200, 384 ], 1, CC_ORANGE );	
 	
 	ObjEnemyBossScene_StartSpell( objScene );
 	
 	yield;
-	//T_SpellBG_Iwabami();	
+	//T_SpellBG_Nareko();	
 	
 }	
 
@@ -99,11 +99,11 @@ task T_InitSpell(){
 task T_Main {
 
 
-	NotifyEventAll( EV_BOSS_EFFECT, bossObj, CC_RED );
+	//NotifyEventAll( EV_BOSS_EFFECT, bossObj, CC_RED );
 	
 	//let Color = [ DOT_GRAY, DOT_RED, DOT_YELLOW, DOT_CYAN, DOT_PURPLE, DOT_GREEN ];
 
-	yield;
+	//yield;
 
 	wait( 45 );	
 	
@@ -112,7 +112,7 @@ task T_Main {
 
 	//wait( 100 );	
 	
-	ObjEnemy_SetDamageRate( bossObj, 0.5, 0.8 );
+	//ObjEnemy_SetDamageRate( bossObj, 0.5, 0.8 );
 
 	wait( 80 );
 
@@ -121,7 +121,7 @@ task T_Main {
 	
 	wait( 80 );
 	//T_Boss_Shot_C;
-	
+	ObjEnemy_SetDamageRate( bossObj, 0.5, 0.8 );
 	T_Boss_Shot_E;
 	//T_Movement_A;
 	
@@ -131,9 +131,13 @@ task T_Main {
 
 task T_Boss_Shot_E(){
 	
-	float Angle = 90;
+	float Angle = 0;
+	//float RNG = 0;
+	//T_Boss_SubShot_A();
 	
-	while( !Obj_IsDeleted( bossObj ) ){
+	
+	
+	while( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){
 	
 		if( Boss_Is_Alive( bossObj ) ){
 			T_Charge_A1( bossObj, 40, "Maple", CC_ORANGE );
@@ -144,42 +148,189 @@ task T_Boss_Shot_E(){
 		Obj_SetValue( bossObj,"Cast", 1 );
 		
 		wait( 30 );
-	
-		ascent( b in 0..3 ){
-	
-			int Fam_A = Create_Famliar_A1( bossX, bossY - 64, "None", CC_RED, 1000, false, 1, 1, 128 );
-			ObjMove_AddPatternA2( Fam_A, 1, 1, Angle + b * 360/3, 0.01, 3, 0 );
-			ObjMove_AddPatternA2( Fam_A, 60, NO_CHANGE, NO_CHANGE, -0.1, 0, 0 );
-			
-			T_Manage_Fam( Fam_A );
+		
+		//RNG = rand( 16, 32 );
+		if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){
+			async{
+				
+				T_PlaySE( SE_LASER_03, 35 );	
+				wait( 60 );
+				T_PlaySE( SE_LASER_01, 28 );	
+				
+			}	
+		
+			ascent( b in 0..8 ){
+				
+				if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){
+					let Laser_B = Laser_A1( -32, 64 + b * 1024/8, -90 + 45, 700, 14, 160, SHOT_LASER_DYELLOW, 60 );
+					ObjShot_SetAutoDelete( Laser_B, false );
+					
+					let Laser_A = Laser_A1( Get_MaxX + 32, 64 + b * 1024/8, -90 - 45, 700, 14, 160, SHOT_LASER_DYELLOW, 60 );
+					ObjShot_SetAutoDelete( Laser_A, false );			
+
+					T_Manage_Laser( Laser_B, 0, 0, 0 );
+					T_Manage_Laser( Laser_A, 0, 0, 0 );	
+				}
+				yield;
+			}	
+		
+			wait( 60 );	
+		}
+		if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){
+			ascent( c in 0..10 ){
+
+				if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){
+					async{
+						
+						T_PlaySE( SE_LASER_03, 35 );	
+						wait( 30 );
+						T_PlaySE( SE_LASER_02, 28 );	
+						
+					}				
+					
+					Angle = GetAngleToPlayer( bossObj );
+				
+					ascent( a in 0..2 ){
+						if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){
+							ascent( b in 0..12 ){
+								
+								let Laser_DUMMY_A = Laser_A1( bossX, bossY, Angle + b * 360/12 + a * 2/2, 512, 18, 20, SHOT_CURVY_LASER_YELLOW, 30 );
+								let Laser_DUMMY_B = Laser_A1( bossX, bossY, Angle - b * 360/12 - a * 2/2, 512, 18, 20, SHOT_CURVY_LASER_YELLOW, 30 );
+								ObjLaser_SetItemDistance( Laser_DUMMY_A, 600 );
+								ObjLaser_SetItemDistance( Laser_DUMMY_B, 600 );					
+									
+								let Laser_A = Laser_A1( bossX, bossY, Angle + b * 360/12 + a * 2/2, 512, 14, 10, SHOT_CURVY_LASER_BLUE, 30 );
+								let Laser_B = Laser_A1( bossX, bossY, Angle - b * 360/12 - a * 2/2, 512, 14, 10, SHOT_CURVY_LASER_BLUE, 30 );
+								ObjLaser_SetItemDistance( Laser_A, 600 );
+								ObjLaser_SetItemDistance( Laser_B, 600 );
+								
+								T_Telegraph( bossX, bossY, Angle + b * 360/12 );
+
+								ObjRender_SetBlendType( Laser_DUMMY_A, BLEND_SUBTRACT  );
+								ObjRender_SetBlendType( Laser_DUMMY_B, BLEND_SUBTRACT  );				
+								
+							}	
+						}
+						wait( 3 );
+					}		
+					
+					wait( 50  - c * 45/10 );
+				}	
+			}
+			Obj_SetValue( bossObj,"Cast", 0 );
 		
 		}
-		
-		wait( 60 );
-		
-		Obj_SetValue( bossObj,"Cast", 0 );
-	
-		Angle = -Angle;
-	
-		wait( 300 );
+		wait( 360 );
+			
+
+		yield;
 
 
 	}
 	
-	task T_Manage_Fam( Obj ){
-				
-		wait( 120 );
-				
-		let Angle_Base = GetAngleToPlayer( Obj );
-				
-		ascent( b in 0..8 ){
-					
-			let Laser_Obj = Laser_A1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), Angle_Base + b * 360/8, 512, 14, 200, SHOT_CURVY_LASER_ORANGE, 60 );
-					
-		}	
-				
-	}		
+	task T_Manage_Laser( Obj, X, Y, Angle ){
+		
+		wait( 60 );
 	
+		ObjLaser_SetItemDistance( Obj, 600 );
+		ObjShot_SetItemChange( Obj, false );
+		ObjShot_SetAutoDelete( Obj, false );
+
+		float Laser_Angle = ObjStLaser_GetAngle( Obj );
+		
+		ascent( a in 0..20 ){
+			
+			float Shot_X = ObjMove_GetX( Obj ) + a * ObjLaser_GetLength( Obj )/20 * cos( Laser_Angle );
+			float Shot_Y = ObjMove_GetY( Obj ) + a * ObjLaser_GetLength( Obj )/20 * sin( Laser_Angle );
+			
+			if( a % 3 == 0 ){
+				int ShotObj_A = ShotA2( Shot_X, Shot_Y, 0, ObjStLaser_GetAngle( Obj ), SHOT_LASER_TIP_ORANGE, 20, SHOT_LASER_TIP_ORANGE );
+				T_Manage_Subshot( ShotObj_A );
+			}
+			else{
+				
+				int ShotObj_B = ShotA2( Shot_X, Shot_Y, 0, ObjStLaser_GetAngle( Obj ), SHOT_LASER_TIP_ORANGE, 20, SHOT_LASER_TIP_ORANGE );
+				ObjShot_SetDeleteFrame( ShotObj_B, 800 );			
+					
+			}	
+				
+		}
+		
+		task T_Manage_Subshot( Obj ){
+			
+			wait( rand( 20, 80 ) );
+			
+			if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){
+				
+				ObjMove_AddPatternA4( Obj, 460, NO_CHANGE, 0, 0.01, 1, 0, SHOT_LARGE_DIAMOND_YELLOW, GetPlayerObjectID() );
+			
+				wait( 460 );	
+				
+				if( !Obj_IsDeleted( Obj ) ){
+					
+				
+					T_PlaySE( SE_CHIME_00, 35 );	
+					ObjRender_SetBlendType( Obj, BLEND_SUBTRACT  );		
+					
+					async{
+						
+						let Dummy_Shot_B = ShotA1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0, ObjMove_GetAngle( Obj ), SHOT_LARGE_DIAMOND_YELLOW, 1 );
+						//ObjMove_AddPatternA2( Dummy_Shot_B, 1, NO_CHANGE, -ObjMove_GetAngle( Obj ), 0.01, 1, 0 );
+						//ObjRender_SetScaleXYZ( Dummy_Shot_B, 2, 2, 2 );
+						Obj_SetRenderPriorityI( Dummy_Shot_B, Obj_GetRenderPriorityI( Dummy_Shot_B )-1);
+						ObjRender_SetBlendType( Dummy_Shot_B, BLEND_ADD_ARGB  );
+
+						yield;
+						ObjRender_SetScaleXYZ( Dummy_Shot_B, 1.3, 1.3, 1.3 );
+
+						while( !Obj_IsDeleted( Obj ) ){
+
+							ObjMove_SetPosition( Dummy_Shot_B, ObjMove_GetX( Obj ), ObjMove_GetY( Obj ) );
+							ObjMove_SetAngle( Dummy_Shot_B, ObjMove_GetAngle( Obj ) );
+							yield;
+						}	
+
+						Obj_Delete( Dummy_Shot_B );	
+						
+					}		
+					
+					let Delay_Cloud = ShotA1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0, 90, SHOT_CLOUD_BLUE, 10 );
+					ObjShot_SetDeleteFrame( Delay_Cloud, 10 );
+				}
+			}
+			
+		}			
+		
+	}	
+	
+	task T_Telegraph( X, Y, Angle ){
+		
+		ascent( i in 0..2 ){
+			
+			let Warning_Laser_A = CreateStraightLaserA1( X, Y, Angle + i *2/2, 480, 16, 5, SHOT_LASER_GREY, 5 );
+			ObjStLaser_SetPermitExpand( Warning_Laser_A, false  );
+			ObjStLaser_SetSource( Warning_Laser_A, false );	
+			
+			Obj_SetRenderPriorityI( Warning_Laser_A, Obj_GetRenderPriorityI( Warning_Laser_A ) +1 );
+			
+			T_FadeIn_A1( Warning_Laser_A, 8, 255 );
+			
+			let Warning_Laser_B = CreateStraightLaserA1( X, Y, Angle - i *2/2, 480, 16, 5, SHOT_LASER_GREY, 5 );
+			ObjStLaser_SetPermitExpand( Warning_Laser_B, false  );
+			ObjStLaser_SetSource( Warning_Laser_B, false );	
+
+			Obj_SetRenderPriorityI( Warning_Laser_B, Obj_GetRenderPriorityI( Warning_Laser_B ) +1 );
+
+			T_FadeIn_A1( Warning_Laser_B, 8, 255 );
+			
+			ObjLaser_SetItemDistance( Warning_Laser_A, 512 );
+			ObjLaser_SetItemDistance( Warning_Laser_B, 512 );
+			
+			wait( 3 );
+		}
+		
+	}
+
 }	
 
 task T_Boss_Shot_D{
@@ -523,7 +674,7 @@ task T_End {
 		
 		ENEMY_CLEAR = false;
 		
-		wait( 500 );
+		wait( 800 );
 		
 		CloseScript( GetOwnScriptID() );
 		
@@ -540,7 +691,7 @@ task T_End {
 		
 		Obj_Delete( bossObj );	
 		
-		wait( 500 );
+		wait( 60 );
 		
 		CloseScript( GetOwnScriptID() );
 	

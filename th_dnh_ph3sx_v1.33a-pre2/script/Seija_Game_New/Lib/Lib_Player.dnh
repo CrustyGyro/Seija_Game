@@ -244,7 +244,7 @@ task T_RenderHitox{
 	float Alpha = 0;
 	float Scale = 1;
 	
-	loop{
+	while( true ){
 		
 		if( GetPlayerState == STATE_DOWN || GetPlayerState == STATE_END ){
 			

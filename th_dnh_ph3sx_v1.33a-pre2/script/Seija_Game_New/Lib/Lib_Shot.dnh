@@ -1,6 +1,23 @@
 
 //-------------------------------------------------------------------------------
 
+function ShotA2_New( X, Y, Speed, Angle, ShotID, Delay, Delay_ID ){
+
+	let Obj = CreateShotA1( X, Y, Speed, Angle, ShotID, Delay );
+	//ObjShot_SetPositionRounding( Obj, true );
+	//T_ShotDelay_Sprite( Obj, ShotID, Delay, Speed );
+	ObjShot_SetDelayGraphic( Obj, Delay_ID );
+	ObjShot_SetDelayMode( Obj, LERP_SMOOTHER, LERP_SMOOTHER, LERP_SMOOTHER );
+	ObjShot_SetDelayColoringEnable( Obj, true );
+	
+	//ObjShot_SetAngleRounding( Obj, true );
+	//ObjShot_SetPositionRounding( Obj, true );
+	
+	return Obj;
+	
+}
+
+
 function ShotA1( X, Y, Speed, Angle, ShotID, Delay ){
 
 	let Obj = CreateShotA1( X, Y, 0, Angle, ShotID, 0 );
@@ -252,6 +269,9 @@ function Laser_A1( X, Y, Angle, Length, Width, Time, Color, Delay ){
 	let Laser_Obj = CreateStraightLaserA1( X, Y, Angle, Length, Width, Time, Color, Delay );
 	//let Laser = CreateStraightLaserA1( X, Y, Angle, length, Width, Time, Color, Delay );
 	let Laser_Dummy = CreateStraightLaserA1( X, Y, Angle, Length, Width * 2, 5, Color, Delay );
+	ObjLaser_SetItemDistance( Laser_Dummy, Length*2 );
+	ObjShot_SetItemChange( Laser_Dummy, false );
+//	ObjShot_SetAutoDelete( Laser_Dummy, false );	
 	
 	T_LaserReady( Laser_Obj, Length, Delay/3 );
 	T_LaserReady( Laser_Dummy, Length, Delay/3 );

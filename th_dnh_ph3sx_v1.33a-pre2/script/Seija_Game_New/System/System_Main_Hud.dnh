@@ -462,7 +462,7 @@ task T_Handle_Value(){
 	ObjText_SetFontType( Counter_Obj, "Chaney Thin Normal");
 	ObjRender_SetPosition( Counter_Obj, 355* Resolution,( 232 - 10 )* Resolution, 0 );	
 	
-	loop {
+	while(true){
 		Point_Value = GetPoint() + GetGraze() + 1000;
 		Point_Value = max(min(Point_Value, 999999999), 0);
 		ObjText_SetText(Counter_Obj, Point_Value);
@@ -485,7 +485,7 @@ task T_Handle_Graze(){
 	ObjText_SetFontType( Counter_Obj, "Chaney Thin Normal");
 	ObjRender_SetPosition( Counter_Obj, 355* Resolution,( 260 - 10 )* Resolution, 0 );	
 	
-	loop {
+	while(true){
 		Graze = GetGraze();
 		Graze = max(min(Graze, 999999999), 0);
 		ObjText_SetText(Counter_Obj, Graze);
@@ -496,14 +496,12 @@ task T_Handle_Graze(){
 }
 
 task T_Handle_Timer(){
-	
-	//will be updating this later - Seija
-	
+
 	int Time_Seconds = 0;
 	int Time_Fps = 0;
 	float Timer_Anim = 0;
 	int MaxTime = 99;
-	float Y_Pos = 0;
+	float Y_Pos = 12;
 	
 	let objScene;
 	
@@ -514,7 +512,7 @@ task T_Handle_Timer(){
 	ObjText_SetHorizontalAlignment( Counter_Obj, ALIGNMENT_CENTER );
 	ObjText_SetMaxWidth( Counter_Obj, 28* Resolution );
 	
-	loop{
+	while(true){
 		
 		objScene = GetEnemyBossSceneObjectID();
 		if( objScene != ID_INVALID )
@@ -522,8 +520,9 @@ task T_Handle_Timer(){
 			
 			if(ObjEnemyBossScene_GetInfo(objScene, INFO_IS_SPELL)){ Y_Pos +=1;}
 			else{ Y_Pos -= 1;}
-			if( Y_Pos > 48){ Y_Pos = 48;}
-			if( Y_Pos < 12){ Y_Pos = 12;}			
+			if( Y_Pos > 40){ Y_Pos = 40;}
+			if( Y_Pos < 12){ Y_Pos = 12;}	
+			
 			
 			T_Render_Timer();
 		}
@@ -531,34 +530,31 @@ task T_Handle_Timer(){
 	}	
 	
 	task T_Render_Timer(){
-		loop{
 						
+		Time_Seconds = ObjEnemyBossScene_GetInfo(objScene, INFO_TIMERF)/60;
+		Time_Seconds = max(min(Time_Seconds, 99), 0);
+		ObjText_SetText(Counter_Obj, Time_Seconds);
 			
-			Time_Seconds = ObjEnemyBossScene_GetInfo(objScene, INFO_TIMERF)/60;
-			Time_Seconds = max(min(Time_Seconds, 99), 0);
-			ObjText_SetText(Counter_Obj, Time_Seconds);
+		if( MaxTime != Time_Seconds && Time_Seconds <11){
+			if( Time_Seconds <= 10 && !Time_Seconds == 0 ){
+				Timer_Anim = 8;
+				T_PlaySE( SE_TIMEOUT, 30 );
+			}		
+			MaxTime = Time_Seconds;
+		}
+		if( Time_Seconds <= 10 ){
+			ObjRender_SetColor( Counter_Obj, 255, 100 - Timer_Anim*8, 100 - Timer_Anim*8);
+		}
+		else{
+			//T_PlaySE( SE_TIMEOUT, 40 );
+			ObjRender_SetColor( Counter_Obj, 255, 255, 255);
+		}
+		Timer_Anim = max( Timer_Anim-1, 0 );			
 			
-			if( MaxTime != Time_Seconds && Time_Seconds <11){
-					if( Time_Seconds <= 10 && !Time_Seconds == 0 ){
-						Timer_Anim = 8;
-						T_PlaySE( SE_TIMEOUT, 30 );
-					}		
-					MaxTime = Time_Seconds;
-				}
-				if( Time_Seconds <= 10 ){
-					ObjRender_SetColor( Counter_Obj, 255, 100 - Timer_Anim*8, 100 - Timer_Anim*8);
-				}
-				else{
-					//T_PlaySE( SE_TIMEOUT, 40 );
-					ObjRender_SetColor( Counter_Obj, 255, 255, 255);
-				}
-				Timer_Anim = max( Timer_Anim-1, 0 );			
-			
-			ObjRender_SetY( Counter_Obj, Y_Pos );
-			yield;
-		}	
+		ObjRender_SetY( Counter_Obj, Y_Pos );
+		yield;
+
 	}	
-	
 	
 }
 
@@ -587,7 +583,7 @@ task TCurrentFps(){
 	ObjRender_SetX(objText, GetScreenWidth()-76);
 	ObjRender_SetY(objText,  GetScreenHeight() - 15);
 
-	loop{
+	while(true){
 		
 		fps = GetCurrentFps();
 		text = vtos("1.2f", fps) ~ "fps";

@@ -82,6 +82,8 @@ function Load_Boss(){
 	
     ObjEnemyBossScene_Add( Boss_Obj, 0, CSD ~ "Hinoya_Non_00.dnh" );
     ObjEnemyBossScene_Add( Boss_Obj, 0, CSD ~ "Hinoya_Spell_01.dnh" );	
+    ObjEnemyBossScene_Add( Boss_Obj, 1, CSD ~ "Hinoya_Non_00.dnh" );
+    ObjEnemyBossScene_Add( Boss_Obj, 1, CSD ~ "Hinoya_Spell_01.dnh" );		
 	 
     ObjEnemyBossScene_LoadInThread( Boss_Obj );
 	

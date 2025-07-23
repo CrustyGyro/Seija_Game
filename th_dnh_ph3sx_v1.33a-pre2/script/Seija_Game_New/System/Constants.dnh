@@ -56,6 +56,7 @@
 	let ITEM_S_LIFE = 4;
 	let ITEM_S_SPELL= 5;
 	let ITEM_S_BONUS= 6;
+	let ITEM_S_SCORE_FULL = 7;
 	
 	// -- Enemy Types --
 	

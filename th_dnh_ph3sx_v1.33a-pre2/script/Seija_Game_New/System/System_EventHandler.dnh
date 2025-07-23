@@ -1,7 +1,8 @@
 //-----------------------------------------------------------------------------
 
 	#include "./Common.dnh"	
-	#include "./Constants.dnh"	
+	#include "./Constants.dnh"
+	#include "./../Lib/Lib_Shot.dnh"	
 	#include "./../Lib/Lib_Sound.dnh"
 	#include "./../Lib/Lib_Item.dnh"
 	#include "./../Lib/Lib_Boss_Effect.dnh"
@@ -46,10 +47,32 @@ let Circle_Tex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Effect/Ma
 		let Type = GetEventArgument( 2 );
 		Create_Item_A1( X, Y, Type );
 	}
+    case( EV_SPAWN_ITEM_NON ) {
+	
+		let X = GetEventArgument( 0 );
+		let Y = GetEventArgument( 1 );
+		let Count = GetEventArgument( 2 );	
+        let Range = GetEventArgument( 3 );
+		
+        ascent( i in 0..Count ){
+
+			Create_Item_A1( X + rand( -Range, Range ), Y + rand( -Range, Range ), ITEM_S_SCORE );
+			yield;
+        }
+        ascent( i in 0..Count/2 ){
+
+			Create_Item_A1( X + rand( -Range, Range ), Y + rand( -Range, Range ), ITEM_S_SCORE_FULL );
+			yield;
+        }		
+			
+    }	
     case( EV_DELETE_SHOT_TO_ITEM ) {
         let Shot = GetEventArgument( 0 );
-		Create_Item_A1( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), ITEM_S_BONUS );
-        T_BulletBreak_A1( Shot );
+		//Create_Item_A1( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), ITEM_S_BONUS );
+		if( Obj_GetType( Shot ) == OBJ_STRAIGHT_LASER || Obj_GetType( Shot ) == OBJ_LOOSE_LASER ){ return; }
+		else{
+			T_BulletBreak_A1( Shot );
+		}	
     }
     case( EV_DELETE_SHOT_IMMEDIATE ) {
         let Shot = GetEventArgument( 0 );
@@ -84,11 +107,18 @@ let Circle_Tex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Effect/Ma
 		//TBA - Seija
 		yield;
     }	
-	case( EV_PL_GRAZE_CUSTOM ){
-		//For Enemies and stuff.
-		LINE_MODIFIER += 20;
 
-	}	
+	/*
+    case( EV_SPAWN_ITEM_SPELL ) {
+
+		let arg = GetEventArgument( 0 );
+
+		CustomItemA1( "ITEM_BOMB_PIECE", GetStgFrameWidth/2, GetStgFrameHeight/3 );
+		//PieceSpanw_Anim_A1( Piece_A, [ 55, 255, 200,] );
+		//wait( 10 );
+		//CustomItemA1( "ITEM_LIFE_PIECE", GetStgFrameWidth/2 - 64, GetStgFrameHeight/3 );
+    }		
+	*/
 	
 }
 
@@ -130,6 +160,8 @@ task T_Clear_Shot_Non( Center_Obj, Time, Speed ){
 		Radius += Speed;
 		yield;
 	}
+	
+	DeleteShotAll( TYPE_ALL, TYPE_ITEM );
 }	
 /*
 task T_Clear_Shot_Non( Center_Obj, Time, Speed ){
@@ -195,6 +227,59 @@ task T_BulletBreak_A1( shot ){
 	
 	Obj_Delete( Obj );
 	//Obj_Delete( shot );
+
+}
+
+task T_BulletBreak_A2( shot ){
+	
+	T_PlaySE( SE_BULLET_DELETE, 30 );
+	ObjShot_SetIntersectionEnable( shot, false );
+	
+	let Obj = ObjPrim_Create(OBJ_SPRITE_2D);
+	let Sprite = ObjShot_GetImageID( shot );
+	let Length = ObjLaser_GetLength( shot )/3;
+	let Length_Max = ObjLaser_GetLength( shot );
+	let Color = GetShotDataInfoA1( Sprite, TARGET_ENEMY, INFO_DELAY_COLOR );
+	let Size = 16 + GetShotDataInfoA1( Sprite, TARGET_ENEMY, INFO_COLLISION );
+	float Laser_Angle = ObjStLaser_GetAngle( Obj );
+	
+	let X = ObjMove_GetX( shot );
+	let Y = ObjMove_GetY( shot );
+	let Add = 0;
+	
+	//Create_Item_A1( ObjMove_GetX( shot ), ObjMove_GetY( shot ), ITEM_S_BONUS );
+	
+	ascent( a in 0..Length ){
+		
+		float Shot_X = X + a * Length_Max/Length * cos( Laser_Angle );
+		float Shot_Y = Y + a * Length_Max/Length * sin( Laser_Angle );			
+		
+		T_Effect( Shot_X, Shot_Y );
+		
+		//yield;
+	}	
+	Obj_Delete( Obj );
+	
+	task T_Effect( X, Y ){	
+		
+		ObjPrim_SetTexture( Obj, Break_Tex );
+		Obj_SetRenderPriority( Obj, 0.31 );
+		ObjSprite2D_SetDestRect( Obj, -Size, -Size, Size, Size );
+		ObjRender_SetAngleZ( Obj, prand( 0, 360 ) );
+		ObjRender_SetColor( Obj, Color[0], Color[1], Color[2] );
+		ObjRender_SetPosition( Obj, X, Y, 0 );
+		ObjRender_SetBlendType( Obj, BLEND_ADD_ARGB );
+
+		ascent(i in 0..16 ){
+			
+			ObjSprite2D_SetSourceRect( Obj, 0 + Add, 0, 128 + Add, 128 );
+			Add += 128;
+			wait( 8 );
+		}	
+		
+	}	
+	Obj_Delete( shot );
+
 
 }
 //-----------------------------------------------------------------------------

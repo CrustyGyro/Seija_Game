@@ -269,11 +269,14 @@ task T_FlameTail_A( Obj, Color ){
 	
 	loop( 30 ){
 		
-		if( !Obj_IsDeleted( Obj ) ){ ObjRender_SetPosition( Effect_Obj, GetCommonData( "Effect_X", 0 ), GetCommonData( "Effect_Y", 0 ), 0 ); }
-		ObjRender_SetScaleXYZ( Effect_Obj, Scale/2, Scale, 1 );
-		ObjRender_SetAlpha( Effect_Obj, Alpha );
-		Alpha -= 255/30;
-		Scale += 3/30;
+		if( !Obj_IsDeleted( Obj ) ){ 
+			ObjRender_SetPosition( Effect_Obj, GetCommonData( "Effect_X", 0 ), GetCommonData( "Effect_Y", 0 ), 0 ); 
+			ObjRender_SetScaleXYZ( Effect_Obj, Scale/2, Scale, 1 );
+			ObjRender_SetAlpha( Effect_Obj, Alpha );
+			Alpha -= 255/30;
+			Scale += 3/30;
+		}
+		else{ break; }
 		
 		yield;
 		
@@ -299,11 +302,14 @@ task T_FlameTail_B( Obj, Color, Angle ){
 	
 	loop( 50 ){
 		
-		if( !Obj_IsDeleted( Obj ) ){ ObjRender_SetPosition( Effect_Obj, GetCommonData( "Effect_X", 0 ), GetCommonData( "Effect_Y", 0 ), 0 ); }
-		ObjRender_SetScaleXYZ( Effect_Obj, Scale, Scale, 1 );
-		ObjRender_SetAlpha( Effect_Obj, Alpha );
-		Alpha += 255/50;
-		Scale -= 1.4/50;
+		if( !Obj_IsDeleted( Obj ) ){ 
+			ObjRender_SetPosition( Effect_Obj, GetCommonData( "Effect_X", 0 ), GetCommonData( "Effect_Y", 0 ), 0 ); 
+			ObjRender_SetScaleXYZ( Effect_Obj, Scale, Scale, 1 );
+			ObjRender_SetAlpha( Effect_Obj, Alpha );
+			Alpha += 255/50;
+			Scale -= 1.4/50;
+		}
+		else{ break; }
 		
 		yield;
 		
@@ -330,12 +336,14 @@ task T_FlameTail_C( Obj, Angle ){
 	
 	loop( 20 ){
 		
-		if( !Obj_IsDeleted( Obj ) ){ ObjRender_SetPosition( Effect_Obj, GetCommonData( "Effect_X", 0 ), GetCommonData( "Effect_Y", 0 ), 0 ); }
-		ObjRender_SetScaleXYZ( Effect_Obj, Scale, Scale, 1 );
-		ObjRender_SetAlpha( Effect_Obj, Alpha );
-		Alpha -= 255/20;
-		Scale += 1.5/20;
-		
+		if( !Obj_IsDeleted( Obj ) ){ 
+			ObjRender_SetPosition( Effect_Obj, GetCommonData( "Effect_X", 0 ), GetCommonData( "Effect_Y", 0 ), 0 ); 
+			ObjRender_SetScaleXYZ( Effect_Obj, Scale, Scale, 1 );
+			ObjRender_SetAlpha( Effect_Obj, Alpha );
+			Alpha -= 255/20;
+			Scale += 1.5/20;
+		}
+		else{ break; }
 		yield;
 		
 	}	

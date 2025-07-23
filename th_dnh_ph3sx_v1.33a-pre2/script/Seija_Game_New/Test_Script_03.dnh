@@ -30,7 +30,7 @@ let bossY = 0;
 	ObjEnemy_Regist( bossObj );	
 
 	T_Lifebar( bossObj );
-	T_HitEffect( bossObj );
+	//T_HitEffect( bossObj );
 	ObjEnemy_SetDamageRate( bossObj, 0, 0 );	
 
 	Init_Boss_Nareko( bossObj );
@@ -122,11 +122,11 @@ task T_Main {
 		
 		ascent( b in 0..32 ){
 				
-			Laser_A1( bossX, bossY - 60, 90 + b * 360/32, 512, 14, 30, SHOT_CURVY_LASER_YELLOW, 60 );
+			Laser_A1( bossX, bossY - 60, 90 + b * 360/32, 512, 14, 999999, SHOT_CURVY_LASER_YELLOW, 60 );
 			//yield;
 		}	
 		
-		wait( 160 );	
+		wait( 9000 );	
 
 		Obj_SetValue( bossObj,"Cast", 0 );
 		

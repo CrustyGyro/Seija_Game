@@ -7,6 +7,10 @@ function Create_Item_A1( X, Y, Type ){
 		let Item_Obj = Render_Item_A1( X, Y, Type, [ 16, 0, 32, 16 ] );
 		T_Item_Handler_A1( Item_Obj, Type );
 	}	
+	case( ITEM_S_SCORE_FULL ){
+		let Item_Obj = Render_Item_A1( X, Y, Type, [ 16, 32, 32, 48 ] );
+		T_Item_Handler_A1( Item_Obj, Type );
+	}		
 	case( ITEM_S_BONUS ){
 		let Item_Obj = Render_Item_A1( X, Y, Type, [ 31, 0, 47, 15 ] );
 		T_Item_Handler_A2( Item_Obj, Type );
@@ -37,6 +41,15 @@ function Collect_Item_Check( Obj, Type ){
 		}	
 		
 	}
+	case( ITEM_S_SCORE_FULL ){
+
+		T_PlaySE( SE_ITEM, 30 );
+		Point_Value = 1000 + GetPoint() + GetGraze();
+			
+		AddScore( Point_Value );
+		T_RenderScore( Obj, Point_Value,[ 255, 255, 50 ] );
+		
+	}	
 	case( ITEM_S_BONUS ){
 
 		T_PlaySE( SE_ITEM, 30 );
@@ -68,15 +81,16 @@ function T_CheckRange(Obj){
 
 task T_Item_Handler_A1( Obj, Type ){
 	
+	ObjRender_SetTextureFilter( Obj, FILTER_NONE, FILTER_NONE, FILTER_NONE );
 	bool MoveToPL = false;
 	float ObjX = ObjRender_GetX( Obj );
 	float ObjY = ObjRender_GetY( Obj );	
-	int VSpeed = -6;
+	float VSpeed = -4;
 	
 	T_Spawn_Anim( Obj );
 	loop( 25 ){
 		
-		ObjY += VSpeed;
+		ObjY += VSpeed -0.1;
 		ObjRender_SetY( Obj, ObjY);
 		VSpeed = min( 1.25, VSpeed + 0.08 );			
 		yield;

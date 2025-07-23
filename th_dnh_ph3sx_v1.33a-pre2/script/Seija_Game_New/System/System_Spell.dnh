@@ -18,9 +18,8 @@
 @Loading{
 	
 	LoadTexture( Path01 );
-	
-	
-	
+	LoadTexture( Path02 );
+	LoadTexture( Path03 );
 }
 
 @Initialize{
@@ -118,7 +117,7 @@ task T_MagicCircle( Texture, Max_Radius, Speed ){
 	
 	let objScene = GetEnemyBossSceneObjectID();
 	let objBoss = GetEnemyBossObjectID()[0];
-	let timerOrg = ObjEnemyBossScene_GetInfo( objScene, INFO_ORGTIMERF );
+	//let timerOrg = ObjEnemyBossScene_GetInfo( objScene, INFO_ORGTIMERF );
 	///let bLastSpell = ObjEnemyBossScene_GetInfo( objScene, INFO_IS_LAST_SPELL );
 	
 	let cx = 0;
@@ -191,15 +190,12 @@ task T_MagicCircle( Texture, Max_Radius, Speed ){
 		
 		yield;
 	}
-	
-	if(typeEnd == END_FAILED)
-	{
-		Obj_Delete(obj);
-		//CloseScript(GetOwnScriptID());
-		return;
-	}	
+
 	
 	Obj_Delete(obj);
+	
+	wait( 200 );
+	CloseScript(GetOwnScriptID());
 	
 }
 
@@ -248,11 +244,8 @@ task T_Gain_Spell(score){
 	
 	AddScore( score );
 	
-	loop(60){
-		
-		yield;
-		
-	}
+	wait( 60 );
+	
 	ascent(a in 0..40){
 		
 		ObjRender_SetX(Obj, ObjRender_GetX(Obj) - a);

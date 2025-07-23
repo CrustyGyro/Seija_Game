@@ -47,7 +47,7 @@ task T_Particles{
 	
 	ObjRender_SetX( Particle_Obj, prand( -64, 64 ) );	
 	ObjRender_SetY( Particle_Obj, prand( -32, 32 ) );
-	ObjRender_SetZ( Particle_Obj, prand( 32, 200 ) );
+	ObjRender_SetZ( Particle_Obj, prand( -32, 200 ) );
 	
 	let Angle_X = rand( 0,360 );
 	let Angle_Y = rand( 0,360 );
@@ -173,22 +173,15 @@ task T_RenderStage{
 
 		loop{
 			
-			T_Particles;
-			T_Particles;
-			
-			T_Particles;
-			T_Particles;
-
-			T_Particles;
-			T_Particles;
-
-			T_Particles;
-			T_Particles;
+			ascent( i in 0..10 ){
+				T_Particles;
+			}
 			
 			T_Mist( 256, rand( 0, 64 ), rand( 48, 128 ), 24 );
 			T_Mist( rand( 200, 512 ), rand( -32, 64 ), 300, 23 );
 			
-			wait(100 );
+			wait( 100 );
+			yield;
 	
 		}
 

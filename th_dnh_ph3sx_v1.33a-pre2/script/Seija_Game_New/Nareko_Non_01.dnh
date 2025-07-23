@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
 #Title["Nareko_Non_01"]
-#Background["./Stage/STG_03/STG_BG.dnh"];
+//#Background["./Stage/STG_03/STG_BG.dnh"];
 #Player[ "./Player/PL_Reimu.dnh" ]
 #System["./System/System_Main_Hud.dnh"]
 
@@ -69,15 +69,13 @@ let bossY = 0;
 	yield;
 }
 
-@Finalize {
-} 
 
 //----------------------------------------------------Patterns--------------------------------------------------------
 
 task T_Main {
 
 
-	NotifyEventAll( EV_BOSS_EFFECT, bossObj, CC_RED );
+	//NotifyEventAll( EV_BOSS_EFFECT, bossObj, CC_RED );
 	
 	//let Color = [ DOT_GRAY, DOT_RED, DOT_YELLOW, DOT_CYAN, DOT_PURPLE, DOT_GREEN ];
 
@@ -164,9 +162,26 @@ task T_Boss_Shot_A{
 					
 				T_PlaySE( SE_LASER_02, 26 );
 					
-				let Laser_Obj = CreateLooseLaserA1( bossX, bossY - 64, 4, ( 96 + a * 360/10 ) + ShotAngle, 128, 8, SHOT_CURVY_LASER_YELLOW, 1 );
-				ShotA1( bossX, bossY - 64, 4, ( 96 + a * 360/10 ) + ShotAngle, SHOT_LASER_TIP_YELLOW, 1 );
-				ObjLaser_SetItemDistance( Laser_Obj, 24 );
+				if( a % 2 == 0 ){	
+					let Laser_Obj = CreateLooseLaserA1( bossX, bossY - 64, 4, ( 96 + a * 360/10 ) + ShotAngle, 128, 16, SHOT_CURVY_LASER_ORANGE, 1 );
+					let Laser_Obj_Dark = CreateLooseLaserA1( bossX, bossY - 64, 4, ( 96 + a * 360/10 ) + ShotAngle, 128, 8, SHOT_CURVY_LASER_AQUA, 1 );
+					ShotA1( bossX, bossY - 64, 4, ( 96 + a * 360/10 ) + ShotAngle, SHOT_LASER_TIP_ORANGE, 1 );
+					
+					ObjRender_SetBlendType( Laser_Obj_Dark, BLEND_SUBTRACT  );
+					ObjLaser_SetItemDistance( Laser_Obj_Dark, 128 );
+					ObjLaser_SetItemDistance( Laser_Obj, 128 );		
+				}
+				else{
+		
+					let Laser_Obj = CreateLooseLaserA1( bossX, bossY - 64, 4, ( 96 + a * 360/10 ) + ShotAngle, 128, 16, SHOT_CURVY_LASER_YELLOW, 1 );
+					let Laser_Obj_Dark = CreateLooseLaserA1( bossX, bossY - 64, 4, ( 96 + a * 360/10 ) + ShotAngle, 128, 8, SHOT_CURVY_LASER_AZURE, 1 );
+					ShotA1( bossX, bossY - 64, 4, ( 96 + a * 360/10 ) + ShotAngle, SHOT_LASER_TIP_YELLOW, 1 );
+					
+					ObjRender_SetBlendType( Laser_Obj_Dark, BLEND_SUBTRACT  );
+					ObjLaser_SetItemDistance( Laser_Obj_Dark, 128 );
+					ObjLaser_SetItemDistance( Laser_Obj, 128 );		
+					
+				}	
 				
 				ascent( b in 0..2 ){	
 				
@@ -229,7 +244,7 @@ task T_End {
 		
 		Obj_Delete( bossObj );	
 		
-		wait( 500 );
+		wait( 60 );
 		
 		CloseScript( GetOwnScriptID() );
 	
