@@ -278,15 +278,15 @@ task T_Boss_Shot_C{
 				while( Shot_go == Go_Status ){ yield; }
 				
 				float Laser_Angle = ObjStLaser_GetAngle( Connector );
-				float[] Shot_Speed = [ 0.2, 0.3, 0.3, 0.3, 0.2, 0.1, 0.1 ];
+				float[] Shot_Speed = [ 0.1, 0.2, 0.2, 0.1, 0.1, 0.1, 0.1 ];
 				
 				T_PlaySE( SE_CHIME_00, 36 );
 				
 				if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){
-					ascent( a in 0..5 ){
+					ascent( a in 0..4 ){
 						
-						float Shot_X = ObjMove_GetX( Connector ) + a * ObjLaser_GetLength( Connector )/5 * cos( Laser_Angle );
-						float Shot_Y = ObjMove_GetY( Connector ) + a * ObjLaser_GetLength( Connector )/5 * sin( Laser_Angle );
+						float Shot_X = ObjMove_GetX( Connector ) + a * ObjLaser_GetLength( Connector )/4 * cos( Laser_Angle );
+						float Shot_Y = ObjMove_GetY( Connector ) + a * ObjLaser_GetLength( Connector )/4 * sin( Laser_Angle );
 						
 						int ShotObj_A = ShotA2( Shot_X, Shot_Y, 0, ObjStLaser_GetAngle( Connector ) - 90, Shot_Color, 20, Shot_Color );
 						int ShotObj_B = ShotA2( Shot_X, Shot_Y, 0, ObjStLaser_GetAngle( Connector ) - 90, SHOT_BALL_AURA_DYELLOW, 1, SHOT_CLOUD_YELLOW );
@@ -318,7 +318,7 @@ task T_Boss_Shot_C{
 						//int Aimed_ShotObj_A = ShotA2( ObjMove_GetX( ShotObj_Core ), ObjMove_GetY( ShotObj_Core ), 0.5, GetAngleToPlayer( ShotObj_Core ), SHOT_ORB_YELLOW, 20, SHOT_ORB_YELLOW );
 						ascent( c in 0..4 ){
 							
-							let Aimed_Laser = Laser_A1( ObjMove_GetX( ShotObj_Core ), ObjMove_GetY( ShotObj_Core ), 45 - c * 360/4, 512, 8, 200, Laser_Color, 100 );
+							let Aimed_Laser = Laser_A1( ObjMove_GetX( ShotObj_Core ), ObjMove_GetY( ShotObj_Core ), 45 - c * 360/4, 512, 8, 60, Laser_Color, 60 );
 							ObjStLaser_SetSource( Aimed_Laser, false );
 							
 						}	
@@ -326,14 +326,14 @@ task T_Boss_Shot_C{
 						
 						async{
 							
-							wait( 100 );
+							wait( 60 );
 							
 							ObjShot_SetIntersectionEnable( ShotObj_Core, false );
 							
 							T_PlaySE( SE_LASER_00, 36 );
 							
-							ascent( a in 0..200 ){
-								ObjRender_SetScaleXYZ( ShotObj_Core, 1 - a * 1/200, 1 - a * 1/200, 1 - a * 1/200 );
+							ascent( a in 0..60 ){
+								ObjRender_SetScaleXYZ( ShotObj_Core, 1 - a * 1/60, 1 - a * 1/60, 1 - a * 1/60 );
 								yield;
 							}
 							
