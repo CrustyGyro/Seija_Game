@@ -215,13 +215,13 @@ task T_Boss_Shot_A( Count ){
 				async{
 					
 					T_PlaySE( SE_LASER_03, 35 );	
-					wait( 30 );
+					wait( 50 - a * 20/10 );
 					T_PlaySE( SE_LASER_02, 28 );	
 					
 				}				
 				
 				if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){
-					T_LaserFan( bossX, bossY, GetAngleToPlayer( bossObj ), 2 );
+					T_LaserFan( bossX, bossY, GetAngleToPlayer( bossObj ), 2, 50 - a * 20/10 );
 				}
 				wait( 50 - a * 45/10 );
 			}
@@ -255,7 +255,7 @@ task T_Boss_Shot_A( Count ){
 					float Shot_X = ObjMove_GetX( Obj ) + a * ObjLaser_GetLength( Obj )/18 * cos( Laser_Angle );
 					float Shot_Y = ObjMove_GetY( Obj ) + a * ObjLaser_GetLength( Obj )/18 * sin( Laser_Angle );
 					
-					if( a % 3 == 0 ){
+					if( a % 4 == 0 ){
 						int ShotObj_A = ShotA2( Shot_X, Shot_Y, 0, ObjStLaser_GetAngle( Obj ), SHOT_BALL_AURA_DYELLOW, 20, SHOT_CLOUD_YELLOW );
 						ObjRender_SetBlendType( ShotObj_A, BLEND_ADD_ARGB  );
 						T_ShotManage( ShotObj_A, rand( 400, 500 ) );
@@ -325,7 +325,7 @@ task T_Boss_Shot_A( Count ){
 		
 	}
 	
-	task T_LaserFan( X, Y, Angle, Count ){
+	task T_LaserFan( X, Y, Angle, Count, Delay ){
 		
 		ascent( a in 0..Count ){ 
 			ascent( b in 0..12 ){ 
@@ -338,8 +338,8 @@ task T_Boss_Shot_A( Count ){
 		}
 		task T_InvertLaser( X, Y, Angle ){
 			
-			let Laser_Invert = Laser_A1( X, Y, Angle, 460, 18, 10, SHOT_CURVY_LASER_YELLOW, 30 );
-			let Laser_Aura = Laser_A1( X, Y, Angle, 460, 14, 20, SHOT_CURVY_LASER_BLUE, 30 );
+			let Laser_Invert = Laser_A1( X, Y, Angle, 460, 18, 10, SHOT_CURVY_LASER_YELLOW, Delay );
+			let Laser_Aura = Laser_A1( X, Y, Angle, 460, 14, 20, SHOT_CURVY_LASER_BLUE, Delay );
 			
 			ObjLaser_SetItemDistance( Laser_Aura, 460 );
 			ObjShot_SetItemChange( Laser_Aura, false );				

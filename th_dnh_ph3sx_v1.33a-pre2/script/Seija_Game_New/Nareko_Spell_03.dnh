@@ -246,15 +246,15 @@ task T_Boss_Shot_C{
 				while( Shot_go == Go_Status ){ yield; }
 				
 				float Laser_Angle = ObjStLaser_GetAngle( Connector );
-				float[] Shot_Speed = [ 0.1, 0.2, 0.3, 0.4, 0.3, 0.2, 0.1 ];
+				float[] Shot_Speed = [ 0.2, 0.3, 0.3, 0.2, 0.1, 0.2, 0.1 ];
 				
 				T_PlaySE( SE_CHIME_00, 36 );
 				
 				if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){
-					ascent( a in 0..7 ){
+					ascent( a in 0..4 ){
 						
-						float Shot_X = ObjMove_GetX( Connector ) + a * ObjLaser_GetLength( Connector )/7 * cos( Laser_Angle );
-						float Shot_Y = ObjMove_GetY( Connector ) + a * ObjLaser_GetLength( Connector )/7 * sin( Laser_Angle );
+						float Shot_X = ObjMove_GetX( Connector ) + a * ObjLaser_GetLength( Connector )/4 * cos( Laser_Angle );
+						float Shot_Y = ObjMove_GetY( Connector ) + a * ObjLaser_GetLength( Connector )/4 * sin( Laser_Angle );
 						
 						int ShotObj_A = ShotA2( Shot_X, Shot_Y, 0, ObjStLaser_GetAngle( Connector ) - 90, SHOT_DIAMOND_INVERT_DYELLOW, 20, SHOT_RICE_YELLOW );
 						int ShotObj_B = ShotA2( Shot_X, Shot_Y, 0, ObjStLaser_GetAngle( Connector ) - 90, SHOT_BALL_AURA_DYELLOW, 1, SHOT_CLOUD_YELLOW );

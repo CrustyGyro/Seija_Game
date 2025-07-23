@@ -187,13 +187,13 @@ task T_Boss_Shot_A{
 					
 				}	
 				
-				ascent( b in 0..2 ){	
+				ascent( b in 0..1 ){	
 				
 					T_PlaySE( SE_CHIME_02, 35 );
 					int ShotObj_A = ShotA1( bossX + rand( -Sub_ShotRange, Sub_ShotRange ) , bossY + rand( -Sub_ShotRange, Sub_ShotRange )- 64, 3, ( 90 + a * 360/10 ) + ShotAngle, SHOT_DOT_DORANGE, 10 );
 						//int ShotObj_A = ShotA1( bossX, bossY - 64, 2.4, ( 90 + a * 360/10 ) + ShotAngle, SHOT_DOT_DORANGE, 10 );
 					ObjMove_AddPatternA2( ShotObj_A, 60, NO_CHANGE, NO_CHANGE, -0.08, 0, 0 );
-					ObjMove_AddPatternA2( ShotObj_A, 90, NO_CHANGE, ObjMove_GetAngle( ShotObj_A ) + SubShot_Angle, 0.01, rand( 0.5, 2 ), 0 );
+					ObjMove_AddPatternA2( ShotObj_A, 90, NO_CHANGE, ObjMove_GetAngle( ShotObj_A ) + SubShot_Angle, 0.01, 1, 0 );
 						
 					ObjRender_SetBlendType( ShotObj_A, BLEND_ADD_ARGB  );
 					SubShot_Angle = -SubShot_Angle;
