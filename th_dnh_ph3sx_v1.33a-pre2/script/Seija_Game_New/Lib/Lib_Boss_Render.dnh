@@ -847,10 +847,10 @@ task T_SpellBG_Nareko(){
 	let Path_D = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/Spell_Bg/Nareko_03.png";
 	//let Path_E = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/Spell_Bg/Nareko_04.png";
 	
-	let Spell_BG_00 = Render2D_Texture_A1( Path_A, [ 0, 0, 512, 512 ], Get_CenterX, Get_CenterY, 1, 0.24 );
+	let Spell_BG_00 = Render2D_Texture_A1( Path_A, [ 0, 0, 512, 512 ], Get_CenterX, Get_CenterY, 1, 0.26 );
 	//let Spell_BG_01 = Render2D_Texture_A1( Path_B, [ 0, 0, 512, 512 ], Get_CenterX, Get_CenterY, 1, 0.25 );
-	let Spell_BG_02 = Render2D_Texture_A1( Path_C, [ 0, 0, 512, 512 ], Get_CenterX, Get_CenterY, 1.4, 0.25 );
-	let Spell_BG_03 = Render2D_Texture_A1( Path_D, [ 0, 0, 512, 512 ], Get_CenterX, Get_CenterY, 1, 0.25 );
+	let Spell_BG_02 = Render2D_Texture_A1( Path_C, [ 0, 0, 512, 512 ], Get_CenterX, Get_CenterY, 1.4, 0.28 );
+	let Spell_BG_03 = Render2D_Texture_A1( Path_D, [ 0, 0, 512, 512 ], Get_CenterX, Get_CenterY, 1, 0.28 );
 	//let Spell_BG_04 = Render2D_Texture_A1( Path_E, [ 0, 0, 512, 512 ], Get_CenterX, Get_CenterY, 1, 0.25 );
 	
 	ObjRender_SetBlendType( Spell_BG_02, BLEND_SUBTRACT );

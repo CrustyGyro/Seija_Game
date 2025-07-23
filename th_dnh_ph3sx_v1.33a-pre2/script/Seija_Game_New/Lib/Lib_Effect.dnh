@@ -21,7 +21,7 @@ task T_HitEffect( Target ){
 			
 			if( Frame == 0 ){
 				
-				T_PlaySE( SE_DAMAGE, 25 );
+				T_PlaySE( SE_DAMAGE, 28 );
 				
 				ObjRender_SetColor( Target, 100, 100, 255 );
 				
@@ -59,9 +59,10 @@ task T_Charge_A1( Obj, Duration, Type, Color ){
 		yield;
 	}
 	loop( 4 ) {
-		
-		T_Concentrate_Glow_A( ObjRender_GetX(Obj), ObjRender_GetY(Obj), 150, CC_WHITE );
-		T_Concentrate_Glow_A( ObjRender_GetX(Obj), ObjRender_GetY(Obj), 200, Color );
+		if(!Obj_IsDeleted( Obj )) {
+			T_Concentrate_Glow_A( ObjRender_GetX(Obj), ObjRender_GetY(Obj), 150, CC_WHITE );
+			T_Concentrate_Glow_A( ObjRender_GetX(Obj), ObjRender_GetY(Obj), 200, Color );
+		}
 		wait( 4 );
 	}
 }
@@ -82,10 +83,12 @@ task T_Charge_Burst_A( Obj, Type, Color ){
 	T_Burst_Circle_A1( Obj, Color );
 	
 	loop( 3 ) {
-		ascent( i in 0..8 ) {
-			T_Effect_Obj_Explode( ObjRender_GetX( Obj ), ObjRender_GetY( Obj ), rand( 3, 8 ), Type, Color );
-			T_Effect_Obj_Explode( ObjRender_GetX( Obj ), ObjRender_GetY( Obj ), rand( 3, 8 ), Type, [ 255, 255, 255 ] );
-			//yield;
+		if(!Obj_IsDeleted( Obj )) {
+			ascent( i in 0..8 ) {
+				T_Effect_Obj_Explode( ObjRender_GetX( Obj ), ObjRender_GetY( Obj ), rand( 3, 8 ), Type, Color );
+				T_Effect_Obj_Explode( ObjRender_GetX( Obj ), ObjRender_GetY( Obj ), rand( 3, 8 ), Type, [ 255, 255, 255 ] );
+				//yield;
+			}
 		}
 		yield;
 	}	

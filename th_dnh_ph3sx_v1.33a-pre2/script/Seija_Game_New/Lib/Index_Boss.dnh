@@ -10,6 +10,7 @@
 	#include "./Lib_Effect.dnh"
 	#include "./Lib_Enemy.dnh"
 	#include "./Lib_Enemy_Effect.dnh"
+	#include "./Lib_Boss_Effect.dnh"
 	#include "./Shot/shot_const.dnh"
 
 //------------------------------------------------------------------------------------------------------------------

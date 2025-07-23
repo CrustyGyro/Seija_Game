@@ -31,6 +31,7 @@ let bossY = 0;
 	T_HitEffect( bossObj );
 	ObjEnemy_SetDamageRate( bossObj, 0, 0 );	
 
+	//T_FlameAura( bossObj, CC_RED, 1 );
 	Init_Boss_Nareko( bossObj );
 	
 	ObjMove_SetDestAtWeight( bossObj, GetStgFrameWidth/2, Get_CenterY/2 + 8, 15, 8 );
@@ -46,7 +47,7 @@ let bossY = 0;
 
 	alternative(GetEventType()) 
 	case( EV_REQUEST_LIFE ) { 
-		SetScriptResult( 3000 ); // 3000-4500 For Nons ( At 100% Damage Rate. )
+		SetScriptResult( 3800 ); // 3000-4500 For Nons ( At 100% Damage Rate. ) //3800
 	}
 	case( EV_REQUEST_TIMER ) { 
 		SetScriptResult( 45 ); //40-50 For standard Nons.

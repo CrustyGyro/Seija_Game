@@ -116,7 +116,7 @@ task T_Main {
 	
 	wait( 80 );
 
-	ObjEnemy_SetDamageRate( bossObj, 0.5, 0.8 );
+	ObjEnemy_SetDamageRate( bossObj, 0.52, 0.8 );
 	
 	//T_Boss_Shot_B;
 	//T_Boss_Shot_C;

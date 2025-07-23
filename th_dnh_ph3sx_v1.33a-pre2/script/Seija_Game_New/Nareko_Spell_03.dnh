@@ -61,7 +61,7 @@ let CutinTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Cutin/Cur
 	}
 	case( EV_REQUEST_TIMER ) { 
 		//SetScriptResult( 50 );
-		SetScriptResult( 55 );
+		SetScriptResult( 65 );
 	}	
 	case( EV_REQUEST_SPELL_SCORE ){
        SetScriptResult( 5000000 );
@@ -117,7 +117,7 @@ task T_Main {
 	
 	wait( 160 );
 
-	ObjEnemy_SetDamageRate( bossObj, 0.2, 0.8 );
+	ObjEnemy_SetDamageRate( bossObj, 0.3, 0.8 );
 	
 	//T_Boss_Shot_A;
 	//T_Boss_Shot_B;
@@ -132,69 +132,101 @@ task T_Boss_Shot_C{
 	int Count_X = 4;
 	int Count_Y = 5;
 	int Shot_go = -1;
+	int Delay_Pyramid = 500;
+	
+	//A mess....
+	
+	int[] Laser_Color = [ SHOT_LASER_YELLOW, SHOT_LASER_BLUE, SHOT_LASER_YELLOW, SHOT_LASER_BLUE, SHOT_LASER_YELLOW, SHOT_LASER_BLUE ];
+	int[] Connector_Color = [ SHOT_CLOUD_YELLOW, SHOT_CLOUD_BLUE, SHOT_CLOUD_YELLOW, SHOT_CLOUD_BLUE, SHOT_CLOUD_YELLOW, SHOT_CLOUD_BLUE ];
+	int[] Core_Color = [ SHOT_ORB_YELLOW, SHOT_ORB_BLUE, SHOT_ORB_YELLOW, SHOT_ORB_BLUE, SHOT_ORB_YELLOW, SHOT_ORB_BLUE ];
+	int[] Shot_Color = [ SHOT_DIAMOND_INVERT_DYELLOW, SHOT_DIAMOND_INVERT_BLUE, SHOT_DIAMOND_INVERT_DYELLOW, SHOT_DIAMOND_INVERT_BLUE, SHOT_DIAMOND_INVERT_DYELLOW, SHOT_DIAMOND_INVERT_BLUE ];
+	
+	if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){
+		T_Charge_A1( bossObj, 32, "Maple", CC_ORANGE );
+		T_PlaySE( SE_CHARGE_00, 35 );		
+	}			
+	
+	wait( 100 );
 	
 	while( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){
 		ascent( X in 0..Count_X ){
-			
-			//T_PlaySE( SE_CHIME_01, 36 );
-			
+
 			ascent( Y in 0..Count_Y ){
 				
-				T_PlaySE( SE_CHIME_01, 36 );
+				if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){
+					T_PlaySE( SE_CHIME_01, 36 );
+					
+					T_Create_Pyramid_A( 40 + X * Get_MaxX/Count_X, 40 + Y * Get_MaxY/Count_Y, Angle_I, 40, ( Y + X ) * 8*2, Shot_go, Laser_Color[ Y ], Connector_Color[ Y ], Core_Color[ Y ], Shot_Color[ Y ] );
+					
+					Angle_I = -Angle_I;	
 				
-				T_Create_Pyramid_A( 40 + X * Get_MaxX/Count_X, 40 + Y * Get_MaxY/Count_Y, Angle_I, 40, ( Y + X ) * 8*2, Shot_go );
-				
-				Angle_I = -Angle_I;
-				
-				wait( 8 );
+					wait( 8 );
+				}
 			}
 		}	
 
 		wait( 100 );
 
 		Shot_go = -Shot_go;	
+		ObjMove_SetDestAtWeight( bossObj, GetStgFrameWidth/2 + rand( -64, 64 ), Get_CenterY/2 + 16 + rand( -8, 8 ), 16, 1 );	
 		
-		wait( 800 );
+		wait( Delay_Pyramid );
 		
-		Angle_I = -Angle_I;
+		if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){
+			T_Charge_A1( bossObj, 32, "Maple", CC_ORANGE );
+			T_PlaySE( SE_CHARGE_00, 35 );		
+		}			
+			
+		wait( 100 );
+		
+		//Angle_I = -Angle_I;
 		
 		ascent( X in 0..Count_X ){
-			
-			//T_PlaySE( SE_CHIME_01, 36 );
-			
+
 			ascent( Y in 0..Count_Y ){
 				
-				T_PlaySE( SE_CHIME_01, 36 );
+				if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){
 				
-				T_Create_Pyramid_A( Get_MaxX - 40 - X * Get_MaxX/Count_X, 40 + Y * Get_MaxY/Count_Y, Angle_I, 40, ( Y + X ) * 8*2, Shot_go );
-				
-				Angle_I = -Angle_I;
-				
-				wait( 8 );
+					T_PlaySE( SE_CHIME_01, 36 );
+					
+					T_Create_Pyramid_A( Get_MaxX - 40 - X * Get_MaxX/Count_X, 40 + Y * Get_MaxY/Count_Y, Angle_I, 40, ( Y + X ) * 8*2, Shot_go, Laser_Color[ Y ], Connector_Color[ Y ], Core_Color[ Y ], Shot_Color[ Y ] );
+					
+					Angle_I = -Angle_I;
+					
+					wait( 8 );
+				}
 			}
 		}	
 
 		wait( 100 );
 
-		Shot_go = -Shot_go;		
+		Shot_go = -Shot_go;	
+		ObjMove_SetDestAtWeight( bossObj, GetStgFrameWidth/2 + rand( -64, 64 ), Get_CenterY/2 + 16 + rand( -8, 8 ), 16, 1 );			
 		
-		wait( 800 );
+		wait( Delay_Pyramid );
 		
-		Angle_I = -Angle_I;
+		if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){
+			T_Charge_A1( bossObj, 32, "Maple", CC_ORANGE );
+			T_PlaySE( SE_CHARGE_00, 35 );		
+		}			
+			
+		wait( 100 );
+		
+		//Angle_I = -Angle_I;
 		
 		yield;
 
 
 	}
 	
-	task T_Create_Pyramid_A( X, Y, Init_Angle, Radius, ID, Go_Status ){
+	task T_Create_Pyramid_A( X, Y, Init_Angle, Radius, ID, Go_Status, Laser_Color, Connector_Color, Core_Color, Shot_Color ){
 
 		float Delay = 0;
 		int Way = 3;
 		int Stack = 1;	
 		
-		int ShotObj_Core = ShotA1( X, Y, 0, 90, SHOT_ORB_YELLOW, 60 );
-		int[] Laser_Connector = Pattern_Shot_A1( X, Y, 0, 32, Init_Angle, 0, SHOT_LASER_TIP_YELLOW, PATTERN_RING, Way, Stack, 60, SHOT_LASER_TIP_YELLOW );
+		int ShotObj_Core = ShotA1( X, Y, 0, 90, Core_Color, 60 );
+		int[] Laser_Connector = Pattern_Shot_A1( X, Y, 0, 32, Init_Angle, 0, Connector_Color, PATTERN_RING, Way, Stack, 60, Connector_Color );
 		
 		for( int i = 0; i < Way * Stack; i++ ) {
 			
@@ -213,7 +245,7 @@ task T_Boss_Shot_C{
 		
 		task T_Manage_Laser( Shot, Next_Shot ){
 			
-			let Connector = CreateStraightLaserA1(  ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), 0, 0, 16, 99999, SHOT_LASER_YELLOW, 80 );
+			let Connector = CreateStraightLaserA1(  ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), 0, 0, 16, 99999, Laser_Color, 80 );
 			ObjRender_SetAlpha( Connector, 0 );
 			ObjStLaser_SetSource( Connector, false );
 			
@@ -246,17 +278,17 @@ task T_Boss_Shot_C{
 				while( Shot_go == Go_Status ){ yield; }
 				
 				float Laser_Angle = ObjStLaser_GetAngle( Connector );
-				float[] Shot_Speed = [ 0.2, 0.3, 0.3, 0.2, 0.1, 0.2, 0.1 ];
+				float[] Shot_Speed = [ 0.2, 0.3, 0.3, 0.3, 0.2, 0.1, 0.1 ];
 				
 				T_PlaySE( SE_CHIME_00, 36 );
 				
 				if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){
-					ascent( a in 0..4 ){
+					ascent( a in 0..5 ){
 						
-						float Shot_X = ObjMove_GetX( Connector ) + a * ObjLaser_GetLength( Connector )/4 * cos( Laser_Angle );
-						float Shot_Y = ObjMove_GetY( Connector ) + a * ObjLaser_GetLength( Connector )/4 * sin( Laser_Angle );
+						float Shot_X = ObjMove_GetX( Connector ) + a * ObjLaser_GetLength( Connector )/5 * cos( Laser_Angle );
+						float Shot_Y = ObjMove_GetY( Connector ) + a * ObjLaser_GetLength( Connector )/5 * sin( Laser_Angle );
 						
-						int ShotObj_A = ShotA2( Shot_X, Shot_Y, 0, ObjStLaser_GetAngle( Connector ) - 90, SHOT_DIAMOND_INVERT_DYELLOW, 20, SHOT_RICE_YELLOW );
+						int ShotObj_A = ShotA2( Shot_X, Shot_Y, 0, ObjStLaser_GetAngle( Connector ) - 90, Shot_Color, 20, Shot_Color );
 						int ShotObj_B = ShotA2( Shot_X, Shot_Y, 0, ObjStLaser_GetAngle( Connector ) - 90, SHOT_BALL_AURA_DYELLOW, 1, SHOT_CLOUD_YELLOW );
 						
 						ObjShot_SetDeleteFrame( ShotObj_B, 24 );
@@ -275,26 +307,33 @@ task T_Boss_Shot_C{
 				Obj_Delete( Connector );		
 
 				async{
-					wait( 300 + ID*1.5 );
+					//wait( 200 + ID*5.5 );
+					
+					wait( 160 + ID );
 					
 					if( !Obj_IsDeleted( ShotObj_Core ) ){
 						
 						T_PlaySE( SE_LASER_03, 36 );
 						
-						let Aimed_Laser = Laser_A1( ObjMove_GetX( ShotObj_Core ), ObjMove_GetY( ShotObj_Core ), GetAngleToPlayer( ShotObj_Core ), 512, 12, 20, SHOT_CURVY_LASER_YELLOW, 160 );
-						ObjStLaser_SetSource( Aimed_Laser, false );
+						//int Aimed_ShotObj_A = ShotA2( ObjMove_GetX( ShotObj_Core ), ObjMove_GetY( ShotObj_Core ), 0.5, GetAngleToPlayer( ShotObj_Core ), SHOT_ORB_YELLOW, 20, SHOT_ORB_YELLOW );
+						ascent( c in 0..4 ){
+							
+							let Aimed_Laser = Laser_A1( ObjMove_GetX( ShotObj_Core ), ObjMove_GetY( ShotObj_Core ), 45 - c * 360/4, 512, 8, 200, Laser_Color, 100 );
+							ObjStLaser_SetSource( Aimed_Laser, false );
+							
+						}	
 						//let Aimed_Laser = CreateStraightLaserA1( ObjMove_GetX( ShotObj_Core ), ObjMove_GetY( ShotObj_Core ), GetAngleToPlayer( ShotObj_Core ), 512, 24, 20, SHOT_LASER_YELLOW, 30 );
 						
 						async{
 							
-							wait( 160 );
+							wait( 100 );
 							
 							ObjShot_SetIntersectionEnable( ShotObj_Core, false );
 							
 							T_PlaySE( SE_LASER_00, 36 );
 							
-							ascent( a in 0..45 ){
-								ObjRender_SetScaleXYZ( ShotObj_Core, 1 - a * 1/45, 1 - a * 1/45, 1 - a * 1/45 );
+							ascent( a in 0..200 ){
+								ObjRender_SetScaleXYZ( ShotObj_Core, 1 - a * 1/200, 1 - a * 1/200, 1 - a * 1/200 );
 								yield;
 							}
 							
@@ -319,12 +358,14 @@ task T_Boss_Shot_C{
 				float Angle = dottheta( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), ObjMove_GetX( Parent ), ObjMove_GetY( Parent ) );
 				float Frame = 0;
 				float Inital_Radius = 0;
-		
+			//	float Angle_Init = Init_Angle;
+				
 				ascent( i in 0..60 ){
 					
 					float X_Pos = ObjMove_GetX( Parent ) + Inital_Radius * cos( Angle );
 					float Y_Pos = ObjMove_GetY( Parent ) + Inital_Radius * sin( Angle );					
-									
+								
+					//Angle = Interpolate_Overshoot( Angle_Init, Init_Angle, 2, i/60 );			
 					Inital_Radius = Interpolate_Overshoot( 0, Radius, 2, i/60 );				
 									
 					ObjMove_SetPosition( Shot, X_Pos, Y_Pos ); 
@@ -338,281 +379,9 @@ task T_Boss_Shot_C{
 			
 		}	
 
-
-
 	}		
-	
-	
-	
 	
 	yield;
-	
-	
-	
-}	
-
-task T_Boss_Shot_A{
-	
-	float Angle_Switch = 90;
-	float Dir = 0;
-	
-	descent( b in 0..5 ){
-		descent( a in 0..4 ){
-			T_Shot_Sub( 48 + a * Get_MaxX/4, 40 + b * Get_MaxY/5, Angle_Switch, -Dir, 1, 38 );
-				
-			Angle_Switch = -Angle_Switch;
-			Dir = -Dir;
-			//wait( 10  );
-		}
-		Angle_Switch = -Angle_Switch;
-			
-		//wait( 10  );
-	}		
-	
-	while( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){	
-		
-		yield;	
-		
-	}
-	
-	task T_Shot_Sub( X, Y, Angle_Switch, Dir, Switcher, Starting_Rad ){
-			
-		float Move_Delay = 0;
-		int Way = 3;
-		int Stack = 1;		
-			
-		
-		int ShotObj_Core = ShotA1( X, Y, 0, 90, SHOT_ORB_YELLOW, 30 );
-		//ObjMove_AddPatternA2( ShotObj_Core, 0, 1,  90, -0.1, 1, 0 );
-		let Pattern_Obj = Pattern_Shot_A1( X, Y, 0, 32, Angle_Switch, 0, SHOT_CLOUD_YELLOW, PATTERN_RING, Way, Stack, 30, SHOT_CLOUD_YELLOW );
-		
-		
-		async{
-			
-			while( !Obj_IsDeleted( ShotObj_Core ) ){
-			
-				Move_Delay++;
-				
-				if( Move_Delay >= 380 ){ break; }
-			
-				yield;
-			}
-			
-			ObjMove_AddPatternA4( ShotObj_Core, 400, NO_CHANGE, 0, 0.01, rand( 1, 4 ), 0, NO_CHANGE, GetPlayerObjectID() );
-			
-		}		
-		
-		
-		for( int i = 0; i < Way * Stack; i++ ) {
-						
-			T_Rotate( ShotObj_Core, Pattern_Obj[i], 40, Starting_Rad );			
-						
-			if( i < Way-1 ){
-				
-				T_ManageShot( Pattern_Obj[i], Pattern_Obj[i+1], Angle_Switch );
-			}
-			else{
-				
-				T_ManageShot( Pattern_Obj[Way-1], Pattern_Obj[0], Angle_Switch  );
-
-			}	
-						
-		}
-			
-		task T_Rotate( Parent, Obj, Base_Rad, Starting_Rad ){
-						
-					//float Detach_Timer = rand( 60, 200 );	
-			float Angle = dottheta( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), ObjMove_GetX( Parent ), ObjMove_GetY( Parent ) );
-				//float Angle = dottheta( ObjMove_GetX( Obj_End ), ObjMove_GetY( Obj_End ), ObjMove_GetX( Parent ), ObjMove_GetY( Parent ) );
-			float Frame = 0;
-			float Radius = 0;
-			//int Switcher = Switcher;
-			
-			
-			async{
-				
-					ascent( i in 0..600 ){
-						
-						Radius = Interpolate_Overshoot( Radius, Starting_Rad, 10, i/600 );
-						yield;
-					}					
-				
-				/*
-				
-				while( !Obj_IsDeleted( Parent ) ) {
-					
-					//Switcher = 1;
-	
-					ascent( i in 0..600 ){
-						
-						Radius = Interpolate_Overshoot( Radius, Starting_Rad, 10, i/600 );
-						yield;
-					}	
-					
-					yield;
-			
-					while( Dir_Switch == Switcher ){ yield; }
-					
-					ascent( i in 0..60 ){
-						
-						Radius = Interpolate_Smoother( Radius, 16, i/60 );
-						yield;
-					}	
-
-					yield;
-				}
-				*/
-			}	
-			//float Acel = Dir*;
-					
-				//T_FadeIn_A1( Obj, RNG, 255 );
-						
-			while( !Obj_IsDeleted( Parent ) ) {
-				
-				float X_Pos = ObjMove_GetX( Parent ) + Radius * cos( Angle );
-				float Y_Pos = ObjMove_GetY( Parent ) + Radius * sin( Angle );					
-								
-				Angle += Dir;
-				Frame ++;
-				
-				//Radius += 0.5 * sin( Frame/2 );
-				//if( Radius >= Base_Rad*2){ Radius = Base_Rad*2; }
-				//if( Angle >= Dir ){ Angle = Dir; }
-				//Radius += 16 * sin( Base_Rad/100 );
-				//Radius = max( Base_Rad, Radius );
-							
-				ObjMove_SetPosition( Obj, X_Pos, Y_Pos ); 
-				//ObjMove_SetPosition( Obj_End, X_Pos, Y_Pos ); 
-				ObjMove_SetAngle( Obj, Angle );
-				
-				if( Move_Delay >= 380 ){ break; }
-						
-						
-				//if( Frame >= RNG ){ Petal_Counter+= 1; break; }
-								
-				yield;
-			}	
-			
-			if( !Obj_IsDeleted( Parent ) ){ ObjMove_AddPatternA2( Obj, 500, NO_CHANGE, 90, 0.01, rand( 0.8, 4 ), 0 ); }
-			else{ Obj_Delete( Obj ); }
-			
-
-		}			
-			
-		/*
-		async{
-			while( !Obj_IsDeleted( ShotObj_A ) ){
-		
-				ObjMove_AddPatternA2( ShotObj_A, 1, 2,  90 + Angle_Switch, -0.01, 0, 0 );
-				
-				wait( 90 );
-				
-				Angle_Switch = -Angle_Switch;
-				
-				yield;
-		
-			}
-		}
-		*/
-		task T_ManageShot( Shot, Next_Shot, Angle_Switch ){
-			
-			//ObjMove_AddPatternA2( Shot, 200, NO_CHANGE, NO_CHANGE, 0.01, 1, 0 );
-			//ObjMove_AddPatternA2( Next_Shot, 200, NO_CHANGE, NO_CHANGE, 0.01, 1, 0 );
-			
-			let Connector = CreateStraightLaserA1(  ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), 0, 64, 14, 99999, SHOT_LASER_YELLOW, 10 );
-			//let Connector_Dark = CreateStraightLaserA1(  ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), 0, 64, 18, 99999, SHOT_CURVY_LASER_BLUE, 80 );
-			//ObjRender_SetBlendType( Connector_Dark, BLEND_SUBTRACT );
-			
-			T_Manage_Laser( Connector );
-			//T_Manage_Laser( Connector_Dark );
-			//ObjStLaser_SetPermitExpand( Connector, false );					
-				
-			task T_Manage_Laser( Obj ){	
-				while( !Obj_IsDeleted( Shot ) || !Obj_IsDeleted( Next_Shot ) ){
-					
-					if( Obj_IsDeleted( Next_Shot ) ){ break; }
-					if( Obj_IsDeleted( Shot ) ){ break; }
-					
-					//Move_Delay++;
-					
-					if( Move_Delay >= 300 ){ break; }
-					
-					ObjMove_SetPosition( Obj, ObjMove_GetX( Shot ), ObjMove_GetY( Shot ) ); 
-					ObjStLaser_SetAngle( Obj, dottheta( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), ObjMove_GetX( Next_Shot ), ObjMove_GetY( Next_Shot ) ) );
-					ObjLaser_SetLength( Obj, distance( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), ObjMove_GetX( Next_Shot ), ObjMove_GetY( Next_Shot ) ) + 1 );			
-					
-					
-					
-					yield;
-				}
-				
-				float Laser_Angle = ObjStLaser_GetAngle( Connector );
-				float[] Shot_Angle = [ -20, -10, -5, 0, 5, 10, 20 ];
-				
-				if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){
-					ascent( a in 0..4 ){
-						
-						float Shot_X = ObjMove_GetX( Connector ) + a * ObjLaser_GetLength( Connector )/4 * cos( Laser_Angle );
-						float Shot_Y = ObjMove_GetY( Connector ) + a * ObjLaser_GetLength( Connector )/4 * sin( Laser_Angle );
-						
-						int ShotObj_A = ShotA2( Shot_X, Shot_Y, 0, ObjStLaser_GetAngle( Connector ) - 90, SHOT_RICE_YELLOW, 20, SHOT_RICE_YELLOW );
-						int ShotObj_B = ShotA2( Shot_X, Shot_Y, 0, ObjStLaser_GetAngle( Connector ) - 90, SHOT_BALL_AURA_DYELLOW, 1, SHOT_CLOUD_YELLOW );
-						ObjShot_SetDeleteFrame( ShotObj_B, 24 );
-						Obj_SetRenderPriorityI( ShotObj_B, Obj_GetRenderPriorityI( ShotObj_B )+1 );
-						ObjRender_SetBlendType( ShotObj_B, BLEND_ADD_ARGB  );
-						ObjMove_AddPatternA2( ShotObj_A, 30, NO_CHANGE, NO_CHANGE, 0.01, 0.3 - a/4 * sin( a*2 ), 0 );
-						
-						ObjMove_AddPatternA2( ShotObj_A, 160, NO_CHANGE, NO_CHANGE, 0.01, 1 - a/4 * sin( a*2 ), 0 );
-
-					}
-				}				
-				
-				Obj_Delete( Obj );
-				//ObjMove_AddPatternA2( ShotObj_Core, 500, NO_CHANGE, 90, 0.01, rand( 1, 4 ), 0 );
-				
-				//ObjMove_AddPatternA4( ShotObj_Core, 500, NO_CHANGE, 0, 0.01, rand( 1, 4 ), 0, NO_CHANGE, GetPlayerObjectID()  );
-				//ObjMove_AddPatternA2( Next_Shot, 1, NO_CHANGE, 90, 0.01, 8, 0 );
-				
-			}
-			
-			
-			//ObjMove_AddPatternA2( Shot, 0, 1,  90, -0.1, 1, 0 );
-			//ObjMove_AddPatternA2( Next_Shot, 0, 1,  90, -0.1, 1, 0 );
-	
-			
-			/*
-			async{
-				while( !Obj_IsDeleted( Shot ) ){
-			
-					ObjMove_AddPatternA2( Shot, 0, 4,  90 + Angle_Switch, -0.1, 0, 0 );
-					
-					wait( Move_Delay );
-					
-					Angle_Switch = -Angle_Switch;
-					
-					yield;
-			
-				}
-			}
-
-			async{
-				while( !Obj_IsDeleted( Next_Shot ) ){
-			
-					ObjMove_AddPatternA2( Next_Shot, 1, 4,  90 + Angle_Switch, -0.1, 0, 0 );
-					
-					wait( Move_Delay );
-					
-					//Angle_Switch = -Angle_Switch;
-					
-					yield;
-			
-				}
-			}	
-			*/
-			
-		}			
-		
-	}	
 	
 }	
 
