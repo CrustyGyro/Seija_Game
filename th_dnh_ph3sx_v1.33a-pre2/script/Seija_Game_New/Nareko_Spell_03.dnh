@@ -119,8 +119,6 @@ task T_Main {
 
 	ObjEnemy_SetDamageRate( bossObj, 0.3, 0.8 );
 	
-	//T_Boss_Shot_A;
-	//T_Boss_Shot_B;
 	T_Boss_Shot_C;
 	
 }	
@@ -168,7 +166,7 @@ task T_Boss_Shot_C{
 		wait( 100 );
 
 		Shot_go = -Shot_go;	
-		ObjMove_SetDestAtWeight( bossObj, GetStgFrameWidth/2 + rand( -64, 64 ), Get_CenterY/2 + 16 + rand( -8, 8 ), 16, 1 );	
+		ObjMove_SetDestAtWeight( bossObj, GetStgFrameWidth/2 + rand( -32, 32 ), Get_CenterY/2 + 16 + rand( -8, 8 ), 16, 1 );	
 		
 		wait( Delay_Pyramid );
 		
@@ -201,7 +199,7 @@ task T_Boss_Shot_C{
 		wait( 100 );
 
 		Shot_go = -Shot_go;	
-		ObjMove_SetDestAtWeight( bossObj, GetStgFrameWidth/2 + rand( -64, 64 ), Get_CenterY/2 + 16 + rand( -8, 8 ), 16, 1 );			
+		ObjMove_SetDestAtWeight( bossObj, GetStgFrameWidth/2 + rand( -32, 32 ), Get_CenterY/2 + 16 + rand( -8, 8 ), 16, 1 );			
 		
 		wait( Delay_Pyramid );
 		
@@ -278,7 +276,7 @@ task T_Boss_Shot_C{
 				while( Shot_go == Go_Status ){ yield; }
 				
 				float Laser_Angle = ObjStLaser_GetAngle( Connector );
-				float[] Shot_Speed = [ 0.1, 0.2, 0.2, 0.1, 0.1, 0.1, 0.1 ];
+				float[] Shot_Speed = [ 0.2, 0.25, 0.25, 0.2, 0.1, 0.1, 0.1 ];
 				
 				T_PlaySE( SE_CHIME_00, 36 );
 				

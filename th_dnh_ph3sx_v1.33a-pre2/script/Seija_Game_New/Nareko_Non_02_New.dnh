@@ -139,71 +139,72 @@ task T_Boss_Shot_A{
 			
 			//T_Burst_Circle_A1( bossObj, CC_ORANGE );		
 		}
-		loop( 24 ){
+		
+		T_SubShot_A( 16, 3.4, 90, SHOT_ORB_YELLOW );
+		//T_SubShot_A( 16, 5, 90, SHOT_ORB_YELLOW );
+		/*
+		loop( 40 ){
 			
 			if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) <= 0 ){ break; }
 			
-			T_SubShot_A();
+			//T_SubShot_A();
 			ShotAngle += 10;
 			
 			wait( 6 );
 		}
+		*/
+		wait( 100 );
 		
 		Obj_SetValue( bossObj,"Cast", 0 );
 		
 		ObjMove_SetDestAtWeight( bossObj, GetStgFrameWidth/2 + rand( -32, 32 ), Get_CenterY/2 + 6 + rand( -8, 8 ), 10, 3 );	
 		
-		wait( 100 );
+		wait( 160 );
 		yield;
 	}		
 	
-	task T_SubShot_A(){
-		
-		int SubShot_Angle = 24;
-		
-		if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){
-			ascent( a in 0..8 ){
-					
-				T_PlaySE( SE_LASER_02, 26 );
-					
-				if( a % 2 == 0 ){	
-					let Laser_Obj = CreateLooseLaserA1( bossX, bossY - 64, 4.5, ( 96 + a * 360/8 ) + ShotAngle, 128, 15, SHOT_CURVY_LASER_ORANGE, 1 );
-					let Laser_Obj_Dark = CreateLooseLaserA1( bossX, bossY - 64, 4.5, ( 96 + a * 360/8 ) + ShotAngle, 128, 8, SHOT_CURVY_LASER_AQUA, 1 );
-					ShotA1( bossX, bossY - 64, 4.5, ( 96 + a * 360/8 ) + ShotAngle, SHOT_LASER_TIP_ORANGE, 1 );
-					
-					ObjRender_SetBlendType( Laser_Obj_Dark, BLEND_SUBTRACT  );
-					ObjLaser_SetItemDistance( Laser_Obj_Dark, 128 );
-					ObjLaser_SetItemDistance( Laser_Obj, 128 );		
-				}
-				else{
-		
-					let Laser_Obj = CreateLooseLaserA1( bossX, bossY - 64, 4.5, ( 96 + a * 360/8 ) + ShotAngle, 128, 15, SHOT_CURVY_LASER_YELLOW, 1 );
-					let Laser_Obj_Dark = CreateLooseLaserA1( bossX, bossY - 64, 4.5, ( 96 + a * 360/8 ) + ShotAngle, 128, 8, SHOT_CURVY_LASER_AZURE, 1 );
-					ShotA1( bossX, bossY - 64, 4.5, ( 96 + a * 360/8 ) + ShotAngle, SHOT_LASER_TIP_YELLOW, 1 );
-					
-					ObjRender_SetBlendType( Laser_Obj_Dark, BLEND_SUBTRACT  );
-					ObjLaser_SetItemDistance( Laser_Obj_Dark, 128 );
-					ObjLaser_SetItemDistance( Laser_Obj, 128 );		
-					
-				}	
-				
-				ascent( b in 0..1 ){	
-				
-					T_PlaySE( SE_CHIME_02, 35 );
-					int ShotObj_A = ShotA1( bossX + rand( -Sub_ShotRange, Sub_ShotRange ) , bossY + rand( -Sub_ShotRange, Sub_ShotRange )- 64, 3, ( 90 + a * 360/10 ) + ShotAngle, SHOT_DOT_DORANGE, 10 );
-						//int ShotObj_A = ShotA1( bossX, bossY - 64, 2.4, ( 90 + a * 360/10 ) + ShotAngle, SHOT_DOT_DORANGE, 10 );
-					ObjMove_AddPatternA2( ShotObj_A, 60, NO_CHANGE, NO_CHANGE, -0.08, 0, 0 );
-					ObjMove_AddPatternA2( ShotObj_A, 90, NO_CHANGE, ObjMove_GetAngle( ShotObj_A ) + SubShot_Angle, 0.01, 1.5, 0 );
-						
-					ObjRender_SetBlendType( ShotObj_A, BLEND_ADD_ARGB  );
-					SubShot_Angle = -SubShot_Angle;
-				}	//yield;
-			}	
-		}
-		
-	}		
 	
-}	
+	
+	task T_SubShot_A( Count, Init_Speed, Init_Angle, Color ){
+		
+		//int SubShot_Angle = 16;
+		//int Count = 0;
+		int Base_Radius = 48;
+		int Init_Radius = 10;
+		
+		ascent( i in 0..Count ){
+		
+			int ShotObj_Core = ShotA1( bossX, bossY, Init_Speed, Init_Angle + i * 360/Count, Color, 10 );
+			T_ManageShot_A( ShotObj_Core, Count, Init_Angle + i * 360/Count, i  );
+			
+			//wait( 10 );
+		
+		}
+		task T_ManageShot_A( Shot, Count, Init_Angle, ID ){
+
+			ObjMove_AddPatternA2( Shot, 1, NO_CHANGE, NO_CHANGE, -0.05, 0, 0 );
+			
+			wait( 80 );
+			
+			ascent( c in 0..24 ){
+				if( !Obj_IsDeleted( Shot )){
+					let Laser_Obj_A = Laser_A1( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), Init_Angle + (c*2)/2, 400, 8, 20, SHOT_CURVY_LASER_YELLOW, 30 );
+					let Laser_Obj_B = Laser_A1( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), Init_Angle - (c*2)/2, 400, 8, 20, SHOT_CURVY_LASER_YELLOW, 30 );
+					
+					wait( 8 );
+				}
+			}
+			
+			ObjShot_SetIntersectionEnable( Shot, false );
+			ascent( a in 0..32 ){
+				ObjRender_SetScaleXYZ( Shot, 1 - a * 1/32, 1 - a * 1/32, 1 - a * 1/32 );
+				yield;
+			}
+			Obj_Delete( Shot );
+			
+		}
+	}
+}			
 
 //-----------------------------------------------------Death---------------------------------------------------------
 

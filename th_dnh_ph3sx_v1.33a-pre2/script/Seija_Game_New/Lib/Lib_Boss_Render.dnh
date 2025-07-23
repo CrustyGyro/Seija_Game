@@ -850,11 +850,11 @@ task T_SpellBG_Nareko(){
 	let Spell_BG_00 = Render2D_Texture_A1( Path_A, [ 0, 0, 512, 512 ], Get_CenterX, Get_CenterY, 1, 0.26 );
 	//let Spell_BG_01 = Render2D_Texture_A1( Path_B, [ 0, 0, 512, 512 ], Get_CenterX, Get_CenterY, 1, 0.25 );
 	let Spell_BG_02 = Render2D_Texture_A1( Path_C, [ 0, 0, 512, 512 ], Get_CenterX, Get_CenterY, 1.4, 0.28 );
-	let Spell_BG_03 = Render2D_Texture_A1( Path_D, [ 0, 0, 512, 512 ], Get_CenterX, Get_CenterY, 1, 0.28 );
+	let Spell_BG_03 = Render2D_Texture_A1( Path_D, [ 0, 0, 512, 512 ], Get_CenterX, Get_CenterY, 1.4, 0.28 );
 	//let Spell_BG_04 = Render2D_Texture_A1( Path_E, [ 0, 0, 512, 512 ], Get_CenterX, Get_CenterY, 1, 0.25 );
 	
-	ObjRender_SetBlendType( Spell_BG_02, BLEND_SUBTRACT );
-	ObjRender_SetBlendType( Spell_BG_03, BLEND_MULTIPLY );
+	ObjRender_SetBlendType( Spell_BG_02, BLEND_ADD_ARGB );
+	ObjRender_SetBlendType( Spell_BG_03, BLEND_SUBTRACT );
 	
 	T_FadeIn_A1( Spell_BG_00, 60, 255 );
 	T_FadeIn_A1( Spell_BG_02, 60, 255 );
@@ -868,7 +868,9 @@ task T_SpellBG_Nareko(){
 		//ObjSprite2D_SetSourceRect( Spell_BG_01, 0 + Scroll, 0, 512 + Scroll, 512 );
 		//ObjSprite2D_SetSourceRect( Spell_BG_02, 0 - Scroll, 0, 512 - Scroll, 512 );
 		ObjSprite2D_SetSourceRect( Spell_BG_03, 0 + Scroll, 0, 512 + Scroll, 512 );
+		ObjSprite2D_SetSourceRect( Spell_BG_02, 0 - Scroll, 0, 512 - Scroll, 512 );
 		ObjRender_SetAngleZ( Spell_BG_02, ObjRender_GetAngleZ( Spell_BG_02 ) + 0.1 );
+		ObjRender_SetAngleZ( Spell_BG_03, ObjRender_GetAngleZ( Spell_BG_02 ) - 0.2 );
 
 		Scroll += 0.4;
 

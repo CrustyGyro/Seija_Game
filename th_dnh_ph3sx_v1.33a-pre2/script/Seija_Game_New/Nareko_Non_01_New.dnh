@@ -27,7 +27,7 @@ let bossY = 0;
 	
 	ObjEnemy_Regist( bossObj );	
 
-	T_Lifebar( bossObj );
+	//T_Lifebar( bossObj );
 	T_HitEffect( bossObj );
 	ObjEnemy_SetDamageRate( bossObj, 0, 0 );	
 
@@ -91,10 +91,19 @@ task T_Main {
 	//T_Charge_A1( bossObj, 20, "Petal", CC_PINK );
 
 	//wait( 100 );	
+	T_PlaySE( SE_CHARGE_00, 35 );	
+	T_Charge_B1( bossObj, 90, 3, 48, 40, 5, CC_ORANGE );
+	T_Charge_B1( bossObj, -90, 3, 48, 40, 5, CC_BLUE );
+	//T_Charge_B1( bossX, bossY, 180, 3, 48, 40, 5, [ 255, 0, 0 ] );
+	//T_Charge_B1( bossX, bossY, 0, 3, 48, 40, 5, [ 0, 0, 255 ]);		
+	
+	//ConcentrationA1( bossObj, 35, "Maple", CC_PURPLE );
+	wait( 35 );		
 	
 	ObjEnemy_SetDamageRate( bossObj, 1, 1 );
+	T_Lifebar( bossObj );
 
-	wait( 80 );
+	wait( 60 );
 
 	//T_Boss_Shot_B;
 	
