@@ -18,6 +18,14 @@ function Create_Item_A1( X, Y, Type ){
 	
 }	
 
+function Create_ShotDelete_Item( X, Y ){
+	
+	let Item_Obj = CreateItemU1( 8, X, Y, 1000 );
+	T_Item_Handler_A1( Item_Obj, ITEM_S_BONUS );
+
+}	
+
+
 function Collect_Item_Check( Obj, Type ){
 	
 	
@@ -158,7 +166,8 @@ task T_Item_Handler_A2( Obj, Type ){
 	bool MoveToPL = false;
 	float ObjX = ObjRender_GetX( Obj );
 	float ObjY = ObjRender_GetY( Obj );	
-	int VSpeed = -6;
+	float VSpeed = -6;
+	float Angle = 0;
 	
 	//T_Spawn_Anim( Obj );
 	loop( 25 ){
@@ -171,23 +180,24 @@ task T_Item_Handler_A2( Obj, Type ){
 		yield;
 	}	
 	
+	VSpeed = 1;
 	
-	while( !Obj_IsDeleted( Obj ) && ObjY < GetStgFrameHeight + 32 && ObjX < GetStgFrameWidth + 32 && ObjX > -32){	
+	
+	while( !Obj_IsDeleted( Obj ) && ObjY < GetStgFrameHeight + 32 && ObjX < GetStgFrameWidth + 32 ){	
 		
 		if( MoveToPL == false ){
 		
 			ObjRender_SetY( Obj, ObjY );
 			ObjY += VSpeed;
-			VSpeed = 1;
 			
 		}
 		if( GetPlayerState() == STATE_NORMAL){ MoveToPL = true; }
 		
 		// Moving to Player
 		if ( MoveToPL == true ) {
-			let Angle = atan2( GetPlayerY() - ObjY, GetPlayerX() - ObjX );
-			ObjX += 8*cos(Angle); 
-			ObjY += 8*sin(Angle);
+			Angle = atan2( GetPlayerY() - ObjY, GetPlayerX() - ObjX );
+			ObjX += 16*cos( Angle ); 
+			ObjY += 16*sin( Angle );
 			ObjRender_SetPosition( Obj, ObjX, ObjY, 0);
 		} 	
 		// Collecting Task

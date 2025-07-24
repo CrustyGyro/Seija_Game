@@ -32,6 +32,7 @@ let bossY = 0;
 	ObjEnemy_SetDamageRate( bossObj, 0, 0 );	
 
 	Init_Boss_Nareko( bossObj );
+	//T_Boss_Name( bossObj, 2, "Nareko Michigami", 200, 255, 200 );
 	
 	ObjMove_SetDestAtWeight( bossObj, GetStgFrameWidth/2, Get_CenterY/2 + 8, 15, 8 );
 	
@@ -188,6 +189,14 @@ task T_Boss_Shot_A{
 					let Laser_Obj_A = Laser_A1( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), Init_Angle + (c*1.6)/2, 400, 8, 20, SHOT_CURVY_LASER_YELLOW, 30 );
 					let Laser_Obj_B = Laser_A1( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), Init_Angle - (c*1.6)/2, 400, 8, 20, SHOT_CURVY_LASER_YELLOW, 30 );
 					
+					ObjLaser_SetItemDistance( Laser_Obj_A, 512 );
+					ObjShot_SetItemChange( Laser_Obj_A, false );
+					ObjStLaser_SetSource( Laser_Obj_A, false );
+
+					ObjLaser_SetItemDistance( Laser_Obj_B, 512 );
+					ObjShot_SetItemChange( Laser_Obj_B, false );
+					ObjStLaser_SetSource( Laser_Obj_B, false );
+					
 					wait( 8 );
 				}
 			}
@@ -270,6 +279,7 @@ task T_End {
 		
 		wait( 600 );
 		
+		//DeleteShotAll( TYPE_ALL, TYPE_ITEM );
 		CloseScript( GetOwnScriptID() );
 	
 	}

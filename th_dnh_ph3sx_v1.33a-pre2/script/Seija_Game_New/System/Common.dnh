@@ -8,10 +8,7 @@ function Boss_Is_Alive( Boss ){
 function T_BossMove_A( Obj, X, Y, Clip_Min, Clip_Max, Base_Time ){
 	
 	//Lerp_Types:
-	//LERP_SMOOTHER
-	//LERP_SMOOTHER
-	//LERP_SMOOTHER
-	//LERP_SMOOTHER
+	//TBA.
 	
 	
 	yield;
@@ -232,6 +229,33 @@ function DigitToArray_Comma( Number ){
 		n++;
 	}	
 	return res;
+}
+
+
+task T_Boss_Name( Boss, Y, Name, RGB ){
+	
+  	let Text_Obj = ObjText_Create();
+	
+  	ObjText_SetFontSize( Text_Obj, 12);
+  //	ObjText_SetFontType( Text_Obj, "Russell Square");
+  	ObjText_SetFontColorTop( Text_Obj, RGB[0], RGB[1], RGB[2] );
+  	ObjText_SetFontColorBottom( Text_Obj, RGB[0]/2, RGB[1]/2, RGB[2]/2 );
+  	ObjText_SetFontBorderType( Text_Obj, BORDER_FULL);
+ 	ObjText_SetFontBorderColor( Text_Obj, 0, 0, 0);
+ 	ObjText_SetFontBorderWidth( Text_Obj, 1);
+	
+  	Obj_SetRenderPriority( Text_Obj, 0.8);
+ 	ObjRender_SetX( Text_Obj, 0 );
+  	ObjRender_SetY( Text_Obj, Y );
+  	ObjText_SetText( Text_Obj, Name );
+
+  	while( !Obj_IsDeleted( Boss ) ){
+  	 	yield;
+  	}
+	
+    wait( 10 );
+	
+  	Obj_Delete( Text_Obj );
 }
 
 //-----------------------------------------------------------------------------

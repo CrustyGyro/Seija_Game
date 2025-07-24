@@ -13,6 +13,7 @@ task Init_Boss_Nareko( Obj ){
 	let BossTex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/TH20_Nareko.png";
 	
 	Render_Boss_Basic( Obj, BossTex, 11, 4, 4, 64, 96 );
+	T_Boss_Name( Obj, 0, "Nareko Michigami", [ 155, 255, 155 ] );
 	//let BossTex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/TH13_Miko.png";
 	//ObjPrim_SetTexture( Obj, BossTex );	
 	

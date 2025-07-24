@@ -38,6 +38,8 @@ let Resolution = GetScreenHeight()/480;
 	SetPauseScriptPath( GetCurrentScriptDirectory() ~ "./System_Pause.dnh" );
 	SetEndSceneScriptPath( GetCurrentScriptDirectory() ~ "Default_EndScene.txt");
 	SetReplaySaveSceneScriptPath( GetCurrentScriptDirectory() ~ "Default_ReplaySaveScene.txt");	
+	//LoadItemData( GetCurrentScriptDirectory() ~ "./Item_Data.dnh" );
+	
 	
 	T_Initialize_Hud_Frame();
 	//T_Handle_Line();

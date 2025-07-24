@@ -341,6 +341,7 @@ task T_Handle_Camera{
 		i = sin(f)*10;
 		f+=0.5;
 		
+		SetCameraPosEye( 0, 0 - i*2, 190 + i*1.2 );
 		SetCameraElevationAngle( 24 -i/4 );
 		SetCameraRoll( 0 +i/2 );
 			

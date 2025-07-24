@@ -130,7 +130,7 @@ task T_Lifebar( Target ){
 		
         let countRemStep = ObjEnemyBossScene_GetInfo(objScene, INFO_REMAIN_STEP_COUNT);
         ascent(iStep in 0 .. countRemStep) {
-			ObjRender_SetPosition( objRemLB, 16 * iStep, 0, 0 );
+			ObjRender_SetPosition( objRemLB, 16 * iStep, 12, 0 );
             //let remStepRate = 58 / countRemStep;
 			ObjSpriteList2D_SetDestRect(objRemLB, 0, 0, 16, 16);
             ObjSpriteList2D_AddVertex( objRemLB );

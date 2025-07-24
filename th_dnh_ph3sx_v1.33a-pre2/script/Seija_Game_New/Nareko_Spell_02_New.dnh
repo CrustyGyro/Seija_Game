@@ -116,8 +116,14 @@ task T_Main {
 	
 	wait( 80 );
 
-	ObjEnemy_SetDamageRate( bossObj, 0.53, 0.8 );
+	ObjEnemy_SetDamageRate( bossObj, 0.3, 0.8 );
 	
+	async{
+		
+		wait( 160*3 );
+		ObjEnemy_SetDamageRate( bossObj, 0.62, 0.8 );	
+
+	}		
 	//T_Boss_Shot_B;
 	//T_Boss_Shot_C;
 	T_Boss_Shot_Sub;
@@ -205,7 +211,7 @@ task T_Boss_Shot_Sub{
 			
 			wait( 5 );
 		}
-		wait( 32 );
+		wait( 24 );
 		
 		T_PlaySE( SE_CHIME_02, 36 );
 		
@@ -217,7 +223,7 @@ task T_Boss_Shot_Sub{
 			
 			wait( 5 );
 		}	
-		wait( 32 );
+		wait( 24 );
 		
 	}
 	

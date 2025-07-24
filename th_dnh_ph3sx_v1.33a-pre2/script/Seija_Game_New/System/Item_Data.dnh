@@ -72,9 +72,9 @@ ItemData {
 //Shot Delete Point Item
 ItemData {
 	
-	id = "ITEM_DELETE"
+	id = 8
 	rect = ( 16, 0, 32, 16 )
-	render = ADD_ARGB
+	render = ALPHA
 	alpha = 200
 	
 }

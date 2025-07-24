@@ -27,6 +27,7 @@ let Circle_Tex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Effect/Ma
 
 @Initialize{
 
+	//LoadItemData( GetCurrentScriptDirectory() ~ "Item_Data.dnh" );
 	SetDefaultBonusItemEnable( false );	
 	
 }
@@ -68,9 +69,10 @@ let Circle_Tex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Effect/Ma
     }	
     case( EV_DELETE_SHOT_TO_ITEM ) {
         let Shot = GetEventArgument( 0 );
-		//Create_Item_A1( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), ITEM_S_BONUS );
 		if( Obj_GetType( Shot ) == OBJ_STRAIGHT_LASER || Obj_GetType( Shot ) == OBJ_LOOSE_LASER ){ return; }
 		else{
+			//Create_ShotDelete_Item( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ) );
+			Create_Item_A1( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), ITEM_S_BONUS );
 			T_BulletBreak_A1( Shot );
 		}	
     }
