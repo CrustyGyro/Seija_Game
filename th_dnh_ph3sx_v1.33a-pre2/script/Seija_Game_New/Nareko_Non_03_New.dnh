@@ -1,6 +1,6 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
-#Title["Nareko_Non_02_New"]
+#Title["Nareko_Non_03_New"]
 //#Background["./Stage/STG_03/STG_BG.dnh"];
 #Player[ "./Player/PL_Reimu.dnh" ]
 #System["./System/System_Main_Hud.dnh"]
@@ -128,7 +128,13 @@ task T_Boss_Shot_A{
 			T_PlaySE( SE_BURST_00, 30 );
 			T_Charge_Burst_A( bossObj, "Maple", CC_ORANGE );
 			
-			T_SubShot_A( 16, 3.4, 90 + ShotAngle_B, SHOT_ORB_YELLOW );
+			T_SubShot_A( 16, 5, 90 + ShotAngle_B, SHOT_ORB_YELLOW );
+			
+			wait( 10 );
+			
+			//ShotAngle_B+= 10;
+			
+			T_SubShot_A( 16, 3.4, 90 + ShotAngle_B*2, SHOT_ORB_YELLOW );
 			//T_Burst_Circle_A1( bossObj, CC_ORANGE );		
 		}
 

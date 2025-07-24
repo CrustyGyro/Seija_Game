@@ -1,0 +1,242 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title["Nareko_Spell_04"]
+//#Background["./Stage/STG_03/STG_BG.dnh"];
+#Player[ "./Player/PL_Reimu.dnh" ]
+#System["./System/System_Main_Hud.dnh"]
+
+//--------------------------------------------------Variables------------------------------------------------------
+
+let bossObj;
+let objScene = GetEnemyBossSceneObjectID();
+let bossX = 0;
+let bossY = 0;
+
+int Dir_Switch = 1;
+
+//SetIntersectionVisualization( true );
+let CutinTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Cutin/CurseOfRa.png";
+
+//---------------------------------------------------Include-------------------------------------------------------
+
+	#include "./lib/Index_Boss.dnh"
+	#include "./lib/Lib_Spell.dnh"
+	#include "./lib/Lib_SpellCutin.dnh"
+
+//----------------------------------------------------Start--------------------------------------------------------
+
+@Loading {
+	
+    LoadTexture( CutinTex );
+
+}
+
+
+@Initialize {
+
+	bossObj = ObjEnemy_Create(OBJ_ENEMY_BOSS);	
+	
+	ObjEnemy_Regist( bossObj );	
+
+	T_Lifebar( bossObj );
+	T_HitEffect( bossObj );
+	ObjEnemy_SetDamageRate( bossObj, 0, 0 );	
+
+	Init_Boss_Nareko( bossObj );
+	
+	ObjMove_SetDestAtWeight( bossObj, GetStgFrameWidth/2, Get_CenterY/2 + 16, 15, 8 );
+	
+	
+	//SetPlayerLife( 8 );
+	T_Main;
+	T_End;
+	
+}
+
+@Event { 
+
+	alternative(GetEventType()) 
+	case( EV_REQUEST_LIFE ) { 
+		SetScriptResult( 2000 ); // 3000-4500 For Nons ( At 100% Damage Rate. )
+	}
+	case( EV_REQUEST_TIMER ) { 
+		//SetScriptResult( 50 );
+		SetScriptResult( 65 );
+	}	
+	case( EV_REQUEST_SPELL_SCORE ){
+       SetScriptResult( 5000000 );
+    }	
+
+
+
+} 
+
+@MainLoop {
+
+	bossX = ObjMove_GetX( bossObj );
+	bossY = ObjMove_GetY( bossObj );
+	
+	SetCommonData( "Effect_X", bossX );
+	SetCommonData( "Effect_Y", bossY );	
+
+	ObjEnemy_SetIntersectionCircleToShot( bossObj, bossX, bossY, 16 );
+	ObjEnemy_SetIntersectionCircleToPlayer( bossObj, bossX, bossY, 8 );
+	
+	yield;
+}
+
+@Finalize {
+} 
+
+
+task T_InitSpell(){
+	
+	//let CutinTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Cutin/CurseOfRa.png";
+	
+	T_CallSpell_A1( "Roadblock: \"Pyramidal Barricade\"", 0, "Normal", objScene );
+	T_Call_Spell_Cutin( CutinTex, [ 0, 0, 200, 384 ], 1, CC_ORANGE );	
+	
+	ObjEnemyBossScene_StartSpell( objScene );
+	
+	yield;
+	T_SpellBG_Nareko();	
+	
+}	
+
+
+//----------------------------------------------------Patterns--------------------------------------------------------
+
+task T_Main {
+
+
+	//NotifyEventAll( EV_BOSS_EFFECT, bossObj, CC_RED );
+
+	wait( 125 );
+
+	T_InitSpell();
+	
+	wait( 160 );
+
+	ObjEnemy_SetDamageRate( bossObj, 0.3, 0.8 );
+	
+	T_Boss_Shot_C;
+	
+}	
+
+
+task T_Boss_Shot_C{
+	
+	int Count_Y = 4;
+	
+		T_LaserOrb( bossX, bossY - 60, 0 );
+	
+	/*
+	ascent( i in 0..Count_Y ){
+		T_LaserOrb( 0, Get_MaxY - 16 - i * 256/Count_Y, -90 + 45 );
+		T_LaserOrb( Get_MaxX, Get_MaxY - 16 - i * 256/Count_Y, -90 - 45 );
+		
+	}
+	*/
+	task T_LaserOrb( X, Y, Laser_Angle ){
+		
+		int Way = 4;
+		int Stack = 8;		
+		
+		int ShotObj_Core = ShotA2( X, Y, 0, 90, SHOT_ORB_YELLOW, 20, SHOT_ORB_YELLOW );
+		int[] Connector = Pattern_Shot_A1( X, Y, 0, 32, Laser_Angle, 1, SHOT_BALL_YELLOW, PATTERN_POLYGON, Way, Stack, 10, SHOT_BALL_YELLOW );
+		//let Laser_A = Laser_A1( ObjMove_GetX( ShotObj_A ), ObjMove_GetY( ShotObj_A ), Laser_Angle, 600, 16, 512, SHOT_LASER_DYELLOW, 60 );
+		
+		/*
+		for( int i = 0; i < Way * Stack; i++ ) {
+			
+			T_Manage_Shot_A( Connector[i], ShotObj_Core );
+			
+		}	
+		
+		*/
+		
+		task T_Manage_Shot_A( Obj, Parent ){
+			
+			float Angle = 0;
+			
+			while( true ){
+			
+				float X_Pos = ObjMove_GetX( Parent ) + ( ObjMove_GetX( Obj ) - ObjMove_GetX( Parent ) ) - ( ObjMove_GetY( Obj ) - ObjMove_GetY( Parent ) ) * sin( Angle );
+				float Y_Pos = ObjMove_GetY( Parent ) + ( ObjMove_GetX( Obj ) - ObjMove_GetX( Parent ) ) + ( ObjMove_GetY( Obj ) - ObjMove_GetY( Parent ) ) * cos( Angle );					
+								
+				ObjMove_SetPosition( Obj, X_Pos, Y_Pos ); 
+					
+				yield;			
+			
+			
+			}
+		}	
+		
+	}	
+
+	yield;
+
+}	
+
+task T_Boss_Shot_B{
+	
+	yield;
+}
+//-----------------------------------------------------Death---------------------------------------------------------
+
+task T_End {
+	
+    while( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ) {
+	     yield;
+	}
+	
+	if( ObjEnemyBossScene_GetInfo( GetEnemyBossSceneObjectID, INFO_IS_LAST_STEP ) ){
+
+		NotifyEventAll( EV_CLEAR_ENEMY_SHOTS, GetPlayerObjectID(), 60, 12 );
+		
+		yield;
+		
+		SetAutoDeleteObject(true);
+		T_Boss_Shotdown( bossObj, "Petal", CC_RED );
+		wait( 200 );
+		
+		Obj_Delete( bossObj );	
+		
+		ENEMY_CLEAR = true;
+		
+		yield;
+		
+		ENEMY_CLEAR = false;
+		
+		wait( 800 );
+		
+		CloseScript( GetOwnScriptID() );
+		
+	}	
+	else{
+	
+	
+		NotifyEventAll( EV_CLEAR_ENEMY_SHOTS, GetPlayerObjectID(), 60, 12 );
+		//DeleteShotAll( TYPE_ALL, TYPE_ITEM );
+		
+		yield;
+		
+		SetAutoDeleteObject( true );
+		
+		Obj_Delete( bossObj );	
+		
+		wait( 60 );
+		
+		//DeleteShotAll(TYPE_ALL, TYPE_ITEM);
+		
+		CloseScript( GetOwnScriptID() );
+	
+	}
+	
+	//SetAutoDeleteObject(true);
+	
+	//Obj_Delete( bossObj );	
+	//CloseScript( GetOwnScriptID() );
+	
+}
+
