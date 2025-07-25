@@ -1,14 +1,15 @@
 #TouhouDanmakufu[Stage]
 #ScriptVersion[3]
-#Title["Stage Enemies Test"]
+#Title["Nareko_Stage_Test"]
 #Player[ "./Player/PL_Reimu.dnh" ]
-#Background["./Stage/STG_01/STG_BG.dnh"];
+#Background["./Stage/STG_03/STG_BG.dnh"];
 #System["./System/System_Main_Hud.dnh"]
 
 //--------------------------------------------------Variables------------------------------------------------------
 
 //---------------------------------------------------Include-------------------------------------------------------
 
+	#include "./Enemy_Def_A.dnh"
 	#include "./System/Common.dnh"
 	#include "./System/Constants.dnh"
 	#include "./lib/Lib_Shot.dnh"
@@ -49,24 +50,33 @@ task T_Wave_A{
 	
 		loop{
 
-		ascent( i in 0..2 ){
+		ascent( i in 0..5 ){
 
-			T_SomeGuys_A( -24, Get_MaxY/2, 0, -0.2, -0.3, ENEMY_RED, SHOT_RICE_RED );
-			T_SomeGuys_A( -24, Get_MaxY/2 - 64, 0, -0.2, -0.3, ENEMY_BLUE, SHOT_RICE_BLUE );
+			T_Popcorn_A( -24, Get_MaxY/2 + rand( -128, 32 ), 0, -0.2, -0.3, ENEMY_RED, SHOT_RICE_RED );
 
-			wait( 20 );
+			wait( 30 );		
+
+			T_Popcorn_A( -24, Get_MaxY/2 + rand( -128, 32 ) - 32, 0, -0.2, -0.3, ENEMY_BLUE, SHOT_RICE_DORANGE );
 			
-			T_SomeGuys_A( -24, Get_MaxY/2 - 64, 0, -0.2, -0.3, ENEMY_RED, SHOT_RICE_RED );
-			T_SomeGuys_A( -24, Get_MaxY/2, 0, -0.2, -0.3, ENEMY_BLUE, SHOT_RICE_BLUE );
-
-			wait( 20 );			
+			wait( 30 );	
 		
 		}
 		
+		ascent( i in 0..5 ){
+
+			T_Popcorn_A( Get_MaxX + 24, Get_MaxY/2 + rand( -128, 32 ), 180, 0.2, 0.3, ENEMY_RED, SHOT_RICE_RED );
+
+			wait( 30 );		
+
+			T_Popcorn_A( Get_MaxX + 24, Get_MaxY/2 + rand( -128, 32 ) - 32, 180, 0.2, 0.3, ENEMY_BLUE, SHOT_RICE_DORANGE );
+			
+			wait( 30 );	
+		
+		}		
 		//T_SomeGuys_B( Get_CenterX - 64, -24, 90, 0.3, 0.5 );
 		
 		wait( 100 );
-		
+		/*
 		ascent( i in 0..2 ){
 
 			T_SomeGuys_A( Get_MaxX + 24, Get_MaxY/2, 180, 0.2, 0.3, ENEMY_RED, SHOT_RICE_RED );
@@ -83,7 +93,7 @@ task T_Wave_A{
 		
 		
 		//T_SomeGuys_B( Get_CenterX + 64, -24, 90, -0.3, -0.5 );
-		
+		*/
 		wait( 500 );	
 		
 		}
@@ -95,15 +105,16 @@ task T_Wave_A{
 			
 			//int Color_Rng = rand_int( 0,3 );
 			int Shotcounter = 0;
+			float Shot_Way = 0.05;
 			
-			let Enemy = Create_Enemy_A1( X, Y, 25, FAIRY_S_NORMAL, Color, 1 );
+			let Enemy = Create_Enemy_A1( X, Y, 25, FAIRY_S_NORMAL, Color, 2 );
 			T_Set_Enemy_Move_A1( Enemy, 1, 1, Angle, 0.01, 8, Wvel );
 			ObjMove_AddPatternA2( Enemy, 200, NO_CHANGE , NO_CHANGE , -0.04, 0.8, NewWvel );
 			
 			
 			wait( 60 );
 			
-			while( !Obj_IsDeleted( Enemy ) && Shotcounter < 6 ){
+			while( !Obj_IsDeleted( Enemy ) && Shotcounter < 3 ){
 					
 					if( !Obj_IsDeleted( Enemy ) ){
 								
@@ -111,7 +122,8 @@ task T_Wave_A{
 					T_PlaySE( SE_SHOT_00, 40 );
 					ascent( i in 0..4 ){
 						let Shot = ShotR1( ObjMove_GetX( Enemy ), ObjMove_GetY( Enemy ), 8, 0 + i/4, GetAngleToPlayer( Enemy ), ShotColor, 8, SHOT_CLOUD_MAGENTA );
-						ObjMove_AddPatternA2( Shot, 10, NO_CHANGE , NO_CHANGE, 0.08, 8 + i/5, 0 );
+						ObjMove_AddPatternA2( Shot, 10, NO_CHANGE , NO_CHANGE, 0.08, 8 + i/5, Shot_Way );
+						Shot_Way = -Shot_Way;
 		
 					}
 					}		

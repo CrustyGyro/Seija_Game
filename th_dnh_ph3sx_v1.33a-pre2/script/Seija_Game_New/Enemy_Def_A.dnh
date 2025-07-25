@@ -1,0 +1,80 @@
+
+
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+
+task T_Popcorn_A( X, Y, Angle, Wvel, NewWvel, Color, ShotColor ){
+			
+		//let Color_Array = [ ENEMY_RED, ENEMY_BLUE, ENEMY_YELLOW, ENEMY_GREEN ];
+		//let Shot_Color_Array = [ MAG_RED, MAG_BLUE, MAG_YELLOW, MAG_GREEN ];
+			
+		//int Color_Rng = rand_int( 0,3 );
+		int Shotcounter = 0;
+		float Shot_Way = 0.01;
+		float RNG = rand( 30, 100 );
+			
+		let Enemy = Create_Enemy_A1( X, Y, 25, GHOST_S_NORMAL, Color, 1 );
+		T_Set_Enemy_Move_A1( Enemy, 1, 1, Angle, 0.01, 8, Wvel );
+		ObjMove_AddPatternA2( Enemy, RNG, NO_CHANGE , NO_CHANGE , -0.04, 0, 0 );
+		ObjMove_AddPatternA2( Enemy, RNG*2.5, NO_CHANGE , NO_CHANGE , 0.04, 2, NewWvel );	
+		
+		float Enemy_X = ObjMove_GetX( Enemy );
+		float Enemy_Y = ObjMove_GetY( Enemy );		
+		float Frame = 0;
+		
+		async{
+			while( !Obj_IsDeleted( Enemy ) ){
+				
+				Enemy_X = ObjMove_GetX( Enemy );
+				Enemy_Y = ObjMove_GetY( Enemy );	
+				
+				ObjMove_SetY( Enemy, Enemy_X + 4 * cos( Frame ) );
+				ObjMove_SetY( Enemy, Enemy_Y + 0.5 * sin( Frame ) );
+				
+				
+				Frame++;
+				yield;			
+				
+			}			
+			
+			ascent( i in 0..1 ){	
+			
+				let Shot_A = ShotR1( Enemy_X, Enemy_Y, 8, 1 + i * 3/5, -90, SHOT_LARGE_MINT, 8, SHOT_LARGE_MINT );
+				ObjMove_AddPatternA2( Shot_A, 20, NO_CHANGE, NO_CHANGE, -0.05, 0, 0 );
+				ObjMove_AddPatternA2( Shot_A, 80, NO_CHANGE, 90, 0.01, 1, rand( -0.05, 0.05 ) );
+				
+				ObjShot_SetGrazeInvalidFrame( Shot_A, 30 );
+			
+			}
+		}			
+		
+		wait( RNG*2 );
+		
+		/*
+		while( !Obj_IsDeleted( Enemy ) && Shotcounter < 1 ){
+			
+			if( !Obj_IsDeleted( Enemy ) ){
+									
+				Shotcounter += 1;	
+				T_PlaySE( SE_SHOT_03, 40 );
+				
+				ascent( i in 0..5 ){	
+				
+					let Shot_A = ShotR1( Enemy_X, Enemy_Y, 8, 1 + i * 3/5, -90, SHOT_ICE_OLIVE, 10, SHOT_ICE_OLIVE );
+					ObjMove_AddPatternA2( Shot_A, 20, NO_CHANGE, NO_CHANGE, -0.1, 0, 0 );
+					ObjMove_AddPatternA2( Shot_A, 60, NO_CHANGE, 90, 0.01, 1, rand( -0.01, 0.01 ) );		
+					//ObjMove_AddPatternA2( Shot_B, 10, NO_CHANGE , NO_CHANGE, 0.08, 8 + i/5, Shot_Way );		
+					
+					Shot_Way = -Shot_Way;
+				
+				}	
+			}		
+
+			wait( 80 );
+			yield;
+		}
+		*/
+	
+
+}

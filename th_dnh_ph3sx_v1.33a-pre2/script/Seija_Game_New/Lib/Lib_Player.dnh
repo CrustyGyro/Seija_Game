@@ -58,7 +58,7 @@ function PL_Event_Handler(){
 		
 		let Shot_Id = GetEventArgument( 1 );
 		
-		NotifyEventAll( EV_PL_GRAZE_CUSTOM, 10 );
+		//NotifyEventAll( EV_PL_GRAZE_CUSTOM, 10 );
 		//T_PlaySE( SE_GRAZE, 30 );
 		//LINE_MODIFIER+=20;
 		T_PlaySE( SE_GRAZE, 36 );
@@ -105,8 +105,8 @@ task T_Graze( Shot ){
 	
 	float X_Pos = GetPlayerX();
 	float Y_Pos = GetPlayerY();
-	float RNG_X = prand( 2, 6 ); 
-	float RNG_Y = prand( 2, 6 );	
+	float RNG_X = prand( 1, 4 ); 
+	float RNG_Y = prand( 1, 4 );	
 	float Angle = prand( 0, 360 );	
 	float Scale = 1.8;
 

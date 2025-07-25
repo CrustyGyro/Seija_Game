@@ -42,7 +42,7 @@
 	let EV_SPAWN_ITEM_GENERIC = EV_USER + 9;
 	let EV_SPAWN_ITEM_NON = EV_USER + 10;
 	let EV_SPAWN_ITEM_SPELL = EV_USER + 11;
-	let EV_PL_GRAZE_CUSTOM = EV_USER + 12;
+	//let EV_PL_GRAZE_CUSTOM = EV_USER + 12;
 	let EV_BOSS_EFFECT = EV_USER + 13;
 	let EV_CLEAR_ENEMY_SHOTS = EV_USER + 14;
 	let EV_CLEAR_ENEMIES = EV_USER + 15;
@@ -101,7 +101,9 @@
 	let SE_DAMAGE		= "SE_Damage.wav";
 	let SE_ENEMY_DEATH	= "SE_Enemy_Death.wav";
 	
-	let SE_PIECE_00		= "SE_PieceSpawn.wav";
+	let SE_BOMB_EXTEND_00	= "SE_BombExtend.wav";
+	let SE_PIECE_00			= "SE_PieceSpawn.wav";
+	let SE_PIECE_01			= "SE_GetPiece.wav";
 	
 	//---
 	

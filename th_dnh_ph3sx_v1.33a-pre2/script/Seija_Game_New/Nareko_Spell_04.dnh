@@ -44,7 +44,7 @@ let CutinTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Cutin/Cur
 
 	Init_Boss_Nareko( bossObj );
 	
-	ObjMove_SetDestAtWeight( bossObj, GetStgFrameWidth/2, Get_CenterY/2 + 16, 15, 8 );
+	ObjMove_SetDestAtFrame( bossObj, GetStgFrameWidth/2, Get_CenterY/2 + 16, 60, LERP_DECELERATE );
 	
 	
 	//SetPlayerLife( 8 );
@@ -93,7 +93,7 @@ task T_InitSpell(){
 	
 	//let CutinTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Cutin/CurseOfRa.png";
 	
-	T_CallSpell_A1( "Roadblock: \"Entombing Barricade\"", 0, "Normal", objScene );
+	T_CallSpell_A1( "Roadblock: \"Sandstorm Barricade\"", 0, "Normal", objScene );
 	T_Call_Spell_Cutin( CutinTex, [ 0, 0, 200, 384 ], 1, CC_ORANGE );	
 	
 	ObjEnemyBossScene_StartSpell( objScene );
@@ -119,12 +119,15 @@ task T_Main {
 
 	ObjEnemy_SetDamageRate( bossObj, 0.3, 0.8 );
 	
-	T_Boss_Shot_A;
+	T_Boss_Shot_B;
+	//T_Boss_Shot_C;
 	
 }	
 
 
 task T_Boss_Shot_A{
+	
+	
 	
 	float RNG = rand( 128, 256 );
 	
@@ -210,30 +213,39 @@ task T_Boss_Shot_C{
 	*/
 	task T_LaserOrb( X, Y, Laser_Angle ){
 		
-		int Way = 4;
+		int Way = 3;
 		int Stack = 8;		
 		
 		int ShotObj_Core = ShotA2( X, Y, 0, 90, SHOT_ORB_YELLOW, 20, SHOT_ORB_YELLOW );
-		int[] Connector = Pattern_Shot_A1( X, Y, 0, 32, Laser_Angle, 1, SHOT_BALL_YELLOW, PATTERN_POLYGON, Way, Stack, 10, SHOT_BALL_YELLOW );
+		int[] Connector = Pattern_Shot_A1( X, Y, 1, 64, Laser_Angle, 1, SHOT_BALL_YELLOW, PATTERN_POLYGON, Way, Stack, 10, SHOT_BALL_YELLOW );
 		//let Laser_A = Laser_A1( ObjMove_GetX( ShotObj_A ), ObjMove_GetY( ShotObj_A ), Laser_Angle, 600, 16, 512, SHOT_LASER_DYELLOW, 60 );
 		
-		/*
+		async{
+			
+			while( true ){
+				
+				ObjMove_SetY( ShotObj_Core, ObjMove_GetY( ShotObj_Core ) + 1 );
+			
+				yield;
+			}
+			
+		}	
+		
 		for( int i = 0; i < Way * Stack; i++ ) {
 			
 			T_Manage_Shot_A( Connector[i], ShotObj_Core );
 			
 		}	
 		
-		*/
 		
 		task T_Manage_Shot_A( Obj, Parent ){
 			
-			float Angle = 0;
+			float Angle = 1;
 			
 			while( true ){
 			
-				float X_Pos = ObjMove_GetX( Parent ) + ( ObjMove_GetX( Obj ) - ObjMove_GetX( Parent ) ) - ( ObjMove_GetY( Obj ) - ObjMove_GetY( Parent ) ) * sin( Angle );
-				float Y_Pos = ObjMove_GetY( Parent ) + ( ObjMove_GetX( Obj ) - ObjMove_GetX( Parent ) ) + ( ObjMove_GetY( Obj ) - ObjMove_GetY( Parent ) ) * cos( Angle );					
+				float X_Pos = ObjMove_GetX( Parent ) + ( ObjMove_GetX( Obj ) - ObjMove_GetX( Parent ) ) * cos( Angle ) - ( ObjMove_GetY( Obj ) - ObjMove_GetY( Parent ) ) * sin( Angle );
+				float Y_Pos = ObjMove_GetY( Parent ) + ( ObjMove_GetX( Obj ) - ObjMove_GetX( Parent ) ) * sin( Angle ) + ( ObjMove_GetY( Obj ) - ObjMove_GetY( Parent ) ) * cos( Angle );					
 								
 				ObjMove_SetPosition( Obj, X_Pos, Y_Pos ); 
 					
@@ -251,6 +263,23 @@ task T_Boss_Shot_C{
 
 task T_Boss_Shot_B{
 	
+	float Angle_A = 90;
+	float Angle_B = 90;
+	float Wvel_A = 0.1;
+	
+	ascent( a in 0..10 ){
+		ascent( b in 0..20 ){
+		
+			int Shot_A = ShotR1( bossX, bossY, 0 + a * 96/10, 3, 90 + b * 360/20 , SHOT_DOT_DORANGE, 10, SHOT_DOT_DORANGE );
+			ObjMove_AddPatternA2( Shot_A, 0, NO_CHANGE, NO_CHANGE, -0.1, 0, 0 );
+			ObjMove_AddPatternA2( Shot_A, 60, 2, ObjMove_GetAngle( Shot_A ) + Angle_A, -0.05, 0.5, 0 );
+			ObjMove_AddPatternA2( Shot_A, 100, 1.5 + a* 2/10, ObjMove_GetAngle( Shot_A ) - Angle_B, -0.05, 1 + a* 2/10, Wvel_A );
+			Angle_A = -Angle_A;
+			
+		}
+		Wvel_A = -Wvel_A;
+		Angle_B = -Angle_B;
+	}	
 	yield;
 }
 //-----------------------------------------------------Death---------------------------------------------------------

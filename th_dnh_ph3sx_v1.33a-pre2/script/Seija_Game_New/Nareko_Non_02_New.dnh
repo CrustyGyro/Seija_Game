@@ -189,8 +189,8 @@ task T_Boss_Shot_A{
 					let Laser_Obj_A = Laser_A1( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), Init_Angle + (c*1.6)/2, 400, 8, 20, SHOT_CURVY_LASER_YELLOW, 30 );
 					let Laser_Obj_B = Laser_A1( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), Init_Angle - (c*1.6)/2, 400, 8, 20, SHOT_CURVY_LASER_YELLOW, 30 );
 					
-					ObjShot_SetGrazeInvalidFrame( Laser_Obj_A, 8 );
-					ObjShot_SetGrazeInvalidFrame( Laser_Obj_B, 8 );
+					ObjShot_SetGrazeInvalidFrame( Laser_Obj_A, 4 );
+					ObjShot_SetGrazeInvalidFrame( Laser_Obj_B, 4 );
 					
 					ObjLaser_SetItemDistance( Laser_Obj_A, 512 );
 					ObjShot_SetItemChange( Laser_Obj_A, false );

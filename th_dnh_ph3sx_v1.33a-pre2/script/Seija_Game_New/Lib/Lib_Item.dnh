@@ -71,11 +71,24 @@ function Collect_Item_Check( Obj, Type ){
 	}	
 	case( ITEM_S_SPELL_PIECE ){
 
-		T_PlaySE( SE_ITEM, 30 );
+		T_PlaySE( SE_PIECE_01, 36 );
 		SetCommonData("Spell_Piece_Count", GetCommonData( "Spell_Piece_Count", 0 ) + 1 );
 		AddScore( 1000 );
 		
+		let Piece_Tracker = rtos( "0", GetCommonData( "Spell_Piece_Count", 0 ) ) ~ "/4";
+		if( GetCommonData( "Spell_Piece_Count", 0 ) < 4 ){
+			T_RenderPieceTest( Piece_Tracker, 8, [ 155, 255, 155 ] );
+		}
+		else{
+			
+			T_RenderPieceTest( "Spell Extend!", 32, [ 155, 255, 155 ] );
+			
+		}			
+		
 		if(GetCommonData( "Spell_Piece_Count", 0 ) == 4 ){
+			
+			//T_RenderPieceTest( "+1 Spell!", [ 155, 255, 155 ] );
+			T_PlaySE( SE_BOMB_EXTEND_00, 35 );
 			//ExtendText;
 			SetPlayerSpell( GetPlayerSpell() + 1 );
 			SetCommonData( "Spell_Piece_Count", 0 );
@@ -289,6 +302,7 @@ task T_Piece_Handler_A( Obj, Type ){
 		
 		Color_Y_A = 0;
 		Color_Y_B = 80;
+		
 	}	
 	else{
 		
@@ -398,6 +412,47 @@ task T_Piece_Handler_A( Obj, Type ){
 
 //-----------------------------------------------------------------------------
 
+task T_RenderPieceTest( Text, Offset, Color ){
+	
+	let Score = ObjText_Create;
+	
+	ObjRender_SetX( Score, GetPlayerX() - Offset );
+	ObjRender_SetY( Score, GetPlayerY() );
+	Obj_SetRenderPriority( Score, 0.8 );
+	
+	
+	ObjText_SetFontBorderType( Score, BORDER_SHADOW );
+	ObjText_SetFontBorderWidth( Score, 1.2 );
+	ObjText_SetFontColorTop( Score, 255, 255 ,255 );
+	ObjText_SetFontSize( Score, 12 );
+	ObjText_SetMaxWidth( Score, 64 );
+	ObjText_SetFontBorderColor( Score, 0, 0, 0 );
+	ObjText_SetFontType( Score, "Chaney Thin Normal");
+	//ObjText_SetHorizontalAlignment( Score, ALIGNMENT_CENTER );
+	
+	ObjText_SetFontColorTop( Score, Color[0], Color[1], Color[2] );
+	ObjText_SetFontColorBottom( Score, Color[0], Color[1], Color[2] );
+	
+	ObjText_SetText( Score, Text );
+	
+	ascent( a in 0..64 ){
+			
+		ObjRender_SetY( Score,  ObjRender_GetY( Score ) -1 + a/64 );
+		ObjRender_SetAlpha( Score, ( a / 64 ) * 255 );
+		yield;
+			
+	}	
+	
+	descent( a in 0..10 ){
+			
+		ObjRender_SetAlpha( Score, ( a / 10) * 255 );
+		yield;
+			
+	}	
+	
+	Obj_Delete( Score );
+	
+}	
 
 task T_RenderScore( Target, Value, Color ){
 	

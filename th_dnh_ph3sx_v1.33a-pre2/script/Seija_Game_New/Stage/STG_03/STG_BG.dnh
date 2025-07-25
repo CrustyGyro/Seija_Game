@@ -19,6 +19,7 @@ let Tex_Particle_00 = GetCurrentScriptDirectory() ~ "./../../Resource/Textures/E
 
 
 float Camera_Speed = 1; // Camera does not actually move besides the little bobbing animation, this is for scaling the texture scrolling.
+float Cam_Y = 0;
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -98,12 +99,12 @@ task T_RenderStage{
 	let Fog_Color_Initial = [ 0, 8, 8 ];
 	let Fog_Color_Reveal = [ 255, 255, 184 ];
 	let Fog_Range_Inital = [ 64, 512 ];
-	let Fog_Range_Reveal = [ 300, 512 ];
+	let Fog_Range_Reveal = [ 0, 0 ];
 	
 	//T_Particle_Spawner;
 	//T_Particle_Spawner_B;
 	//T_Mist_Spawner();
-	//T_Reveal_Stage;
+	T_Reveal_Stage;
 	//SetFogParam( 300, 512, 255, 255, 184 );
 	SetFogParam( Fog_Range_Inital[0], Fog_Range_Inital[1], Fog_Color_Initial[0], Fog_Color_Initial[1], Fog_Color_Initial[2] );
 
@@ -111,17 +112,21 @@ task T_RenderStage{
 		
 	task T_Reveal_Stage(){
 		
-		let Reveal_Time = 360; //changed to sync with the music better.
+		let Reveal_Time = 500; //changed to sync with the music better.
 		
 		//T_Reveal_Rainbow();
 		
 		ascent( i in 0..Reveal_Time ){
 
-			let Color = Interpolate_Linear( Fog_Color_Initial, Fog_Color_Reveal, i/Reveal_Time );
-			let Range = Interpolate_Smoother( Fog_Range_Inital, Fog_Range_Reveal, i/Reveal_Time );
-			Camera_Speed = Interpolate_Smoother( Camera_Speed, 1.4, i/Reveal_Time);
+			//let Color = Interpolate_Linear( Fog_Color_Initial, Fog_Color_Reveal, i/Reveal_Time );
+			//let Range = Interpolate_Smoother( Fog_Range_Reveal, Fog_Range_Inital, i/Reveal_Time );
+			Cam_Y = Interpolate_Smoother( 128, 0, i/Reveal_Time );
+			
+			//Camera_Speed = Interpolate_Smoother( Camera_Speed, 1.4, i/Reveal_Time);
 		
-			SetFogParam( Range[0], Range[1], Color[0], Color[1], Color[2] );
+			//SetFogParam( Range[0], Range[1], Fog_Color_Initial[0], Fog_Color_Initial[1], Fog_Color_Initial[2] );
+			SetCameraFocusY( Cam_Y );
+		//	SetFogParam( Range[0], Range[1], Color[0], Color[1], Color[2] );
 
 			yield;
 		}
@@ -341,7 +346,7 @@ task T_Handle_Camera{
 		i = sin(f)*10;
 		f+=0.5;
 		
-		SetCameraPosEye( 0, 0 - i*2, 190 + i*1.2 );
+		SetCameraPosEye( 0, Cam_Y - i*2, 190 + i*1.4 );
 		SetCameraElevationAngle( 24 -i/4 );
 		SetCameraRoll( 0 +i/2 );
 			
