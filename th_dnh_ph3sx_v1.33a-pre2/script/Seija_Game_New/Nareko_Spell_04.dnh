@@ -119,11 +119,77 @@ task T_Main {
 
 	ObjEnemy_SetDamageRate( bossObj, 0.3, 0.8 );
 	
-	T_Boss_Shot_C;
+	T_Boss_Shot_A;
 	
 }	
 
 
+task T_Boss_Shot_A{
+	
+	float RNG = rand( 128, 256 );
+	
+	ascent( a in 0..8 ){
+		T_CreateLane( rand( 64, 256 ), 0 + a * Get_MaxY/8, 64 );
+		yield;
+	}
+	
+	wait( 60 );
+	
+    while( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ) {
+		
+		T_CreateLane( rand( 64, 256 ), 0, 64 );
+		
+		wait( 60 );
+		
+	    yield;
+	}	
+	
+	task T_CreateLane( X, Y, Spacing ){
+		
+		let Laser_Obj_A = Laser_A1( X, Y, 180, 256 + Spacing, 16, 999, SHOT_LASER_DGREEN, 30 );
+		let Laser_Obj_b = Laser_A1( X + Spacing, Y, 0, 400, 16, 999, SHOT_LASER_DGREEN, 30 );
+		
+		T_Manage_Laser_A( Laser_Obj_A );
+		T_Manage_Laser_A( Laser_Obj_b );
+		
+		//int ShotObj_A = ShotA1( 0, Y, 1, 0, SHOT_BUBBLE_OLIVE, 10 );
+		
+		task T_Manage_Laser_A( Laser ){
+			
+			wait( 60 );
+			
+			while( !Obj_IsDeleted( Laser ) ) {
+			
+				ObjMove_SetPosition( Laser, ObjMove_GetX( Laser ), ObjMove_GetY( Laser ) + 1 );	
+				
+				if( ObjMove_GetY( Laser ) >= Get_MaxY ){ break; }
+				//ObjMove_SetPosition( ShotObj_A, ObjMove_GetX( ShotObj_A ), ObjMove_GetY( ShotObj_A ) + 1 );	
+				yield;
+			}
+			
+			float Laser_Angle = ObjStLaser_GetAngle( Laser );
+			if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){
+				ascent( b in 0..3 ){
+					ascent( a in 0..6 ){
+					
+						float Shot_X = ObjMove_GetX( Laser ) + b * 24/3 + a * ObjLaser_GetLength( Laser )/6 * cos( Laser_Angle );
+						float Shot_Y = ObjMove_GetY( Laser ) + a * ObjLaser_GetLength( Laser )/6 * sin( Laser_Angle );		
+
+						int ShotObj_A = ShotA2( Shot_X, Shot_Y, 1 + b *0.1/3, -90, SHOT_BALL_AURA_DYELLOW, 20, SHOT_CLOUD_YELLOW );	
+					
+					
+					}
+				}	
+			}	
+			
+		}	
+		
+		
+		
+	}	
+	
+	yield;
+}
 task T_Boss_Shot_C{
 	
 	int Count_Y = 4;

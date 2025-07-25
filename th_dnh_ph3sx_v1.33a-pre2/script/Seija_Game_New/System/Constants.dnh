@@ -3,7 +3,7 @@
 	//---------------------------
 
 	let RESOLUTION = GetScreenHeight()/480;
-	let LINE_MODIFIER = 1;
+	float LINE_MODIFIER = 0;
 
 
 	//---------------------------

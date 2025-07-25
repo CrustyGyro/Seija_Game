@@ -1,6 +1,7 @@
 //---------------------------------------------------------------------------------
 
 	#include "./../System/Common.dnh"	
+	#include "./Lib_Item.dnh"
 
 //---------------------------------------------------------------------------------
 
@@ -9,6 +10,7 @@ task T_HitEffect( Target ){
 	let Base_HP = ObjEnemy_GetInfo( Target, INFO_LIFE );
 	let Current_HP = Base_HP;
 	let Frame = 0;
+	float Item_Frame = 0;
 	//ObjEnemy_SetIntersectionCircleToShot( bossObj, bossX, bossY, 8 );
 	while(!Obj_IsDeleted( Target )){
 		
@@ -18,6 +20,12 @@ task T_HitEffect( Target ){
 		Current_HP = ObjEnemy_GetInfo( Target, INFO_LIFE );
 		
 		if( Current_HP != Base_HP ){
+			
+			if( Item_Frame % 30 == 0 ){
+				
+				Create_Item_A1( X + rand( -64, 64 ), Y + rand( -64, 64 ), ITEM_S_BONUS );
+				
+			}	
 			
 			if( Frame == 0 ){
 				
@@ -38,6 +46,8 @@ task T_HitEffect( Target ){
 				Frame--;
 			}	
 		}	
+		
+		Item_Frame++;
 		
 		yield;
 		

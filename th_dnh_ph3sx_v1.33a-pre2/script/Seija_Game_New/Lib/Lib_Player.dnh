@@ -61,7 +61,7 @@ function PL_Event_Handler(){
 		NotifyEventAll( EV_PL_GRAZE_CUSTOM, 10 );
 		//T_PlaySE( SE_GRAZE, 30 );
 		//LINE_MODIFIER+=20;
-		T_PlaySE( SE_GRAZE, 25 );
+		T_PlaySE( SE_GRAZE, 30 );
 		T_Graze( Shot_Id );
 		
     }
@@ -194,27 +194,26 @@ task T_Respawn(){
 	}	
 	
 	Can_Fire = true;
-	
-	task T_Blink{
-		
-		let Frame = GetPlayerInvincibilityFrame();
-
-		while( Frame >  0 ){
-			
-			Frame = GetPlayerInvincibilityFrame();
-			
-			ascent( i in 0..2 ){
-				
-				ObjRender_SetColor( GetPlayerObjectID(), 255*i, 255*i, 255 );
-				wait( 8 );
-				
-			}
-			wait( 2 );
-		}
-	}
-
 
 }	
+
+task T_Blink{
+		
+	let Frame = GetPlayerInvincibilityFrame();
+
+	while( Frame >  0 ){
+			
+		Frame = GetPlayerInvincibilityFrame();
+			
+		ascent( i in 0..2 ){
+				
+			ObjRender_SetColor( GetPlayerObjectID(), 255*i, 255*i, 255 );
+			wait( 8 );
+				
+		}
+		wait( 2 );
+	}
+}
 
 //---------------------------------------------------------
 

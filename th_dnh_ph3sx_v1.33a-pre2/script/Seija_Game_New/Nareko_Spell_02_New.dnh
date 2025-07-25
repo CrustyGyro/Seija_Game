@@ -121,7 +121,7 @@ task T_Main {
 	async{
 		
 		wait( 160*3 );
-		ObjEnemy_SetDamageRate( bossObj, 0.62, 0.8 );	
+		ObjEnemy_SetDamageRate( bossObj, 0.7, 0.8 );	
 
 	}		
 	//T_Boss_Shot_B;

@@ -13,6 +13,7 @@
 	let Hud_LifeSpell = GetCurrentScriptDirectory() ~ "./../Resource/Textures/System/Life_Spell.png";	
 	
 	float Fade_Time = 0;
+	//float Graze_Line = 140;	
 
 //-----------------------------------------------------------------------------	
 
@@ -23,6 +24,7 @@ const SCORE_CAP = 999999999;
 
 @Loading {
 	
+	InstallFont( GetCurrentScriptDirectory() ~ "./../Resource/Fonts/RusselSquareOpti.otf");
 	InstallFont( GetCurrentScriptDirectory() ~ "./../Resource/Fonts/Chaney Thin Normal.ttf");
 	InstallFont( GetCurrentScriptDirectory() ~ "./../Resource/Fonts/Logopixies-owwBB.ttf");	
 
@@ -38,6 +40,8 @@ let Resolution = GetScreenHeight()/480;
 	SetPauseScriptPath( GetCurrentScriptDirectory() ~ "./System_Pause.dnh" );
 	SetEndSceneScriptPath( GetCurrentScriptDirectory() ~ "Default_EndScene.txt");
 	SetReplaySaveSceneScriptPath( GetCurrentScriptDirectory() ~ "Default_ReplaySaveScene.txt");	
+	
+	//LoadItemData("script/Seija_Game_New/System/Item_Data.dnh");
 	//LoadItemData( GetCurrentScriptDirectory() ~ "./Item_Data.dnh" );
 	
 	
@@ -134,17 +138,17 @@ task T_Handle_Line(){
 		
 		//This is actually the worst thing ive ever coded.
 		
-		Y = ( 140 + GetGraze()*10 ) - Graze_Timer;
+		//Y = 140 + LINE_MODIFIER;
 		
 		//Y = 140 + LINE_MODIFIER*4.5;
 		
 		if( Y <= 140 ){ Y = 140; Graze_Timer_Modifier = 0; }
 		if( Y >= Get_MaxY ){ Y = Get_MaxY; Graze_Timer_Modifier = 8; }
 		
-		ObjRender_SetY( Hud_Line_Obj, Y ); 
+		ObjRender_SetY( Hud_Line_Obj, Y+ LINE_MODIFIER ); 
 		ObjRender_SetY( Hud_Line_Obj_Sidebar, Y + 16 ); 
 		
-		SetCommonData("POC_LINE", Y );
+		SetCommonData("POC_LINE", Y + LINE_MODIFIER );
 		
 		
 		if( Graze_Timer >= GetGraze()*10 ){ Graze_Timer = 0; }

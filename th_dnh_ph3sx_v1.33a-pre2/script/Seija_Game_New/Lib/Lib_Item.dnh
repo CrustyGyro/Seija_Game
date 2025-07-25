@@ -13,15 +13,16 @@ function Create_Item_A1( X, Y, Type ){
 	}		
 	case( ITEM_S_BONUS ){
 		let Item_Obj = Render_Item_A1( X, Y, Type, [ 31, 0, 47, 15 ] );
-		T_Item_Handler_A2( Item_Obj, Type );
+		T_Item_Handler_A1( Item_Obj, Type );
 	}		
 	
 }	
 
 function Create_ShotDelete_Item( X, Y ){
 	
-	let Item_Obj = CreateItemU1( 8, X, Y, 1000 );
-	T_Item_Handler_A1( Item_Obj, ITEM_S_BONUS );
+	let Item_Obj = CreateItemU1( "ITEM_POW", X, Y, 1000 );
+	//T_Item_Handler_A1( Item_Obj, ITEM_S_BONUS );
+	return Item_Obj;
 
 }	
 
@@ -61,9 +62,19 @@ function Collect_Item_Check( Obj, Type ){
 	case( ITEM_S_BONUS ){
 
 		T_PlaySE( SE_ITEM, 30 );
+		if( GetPlayerY() <= GetCommonData( "POC_LINE", 140 ) ){
+			
+			Point_Value = 1000 + GetPoint() + GetGraze();
+			
+			AddScore( Point_Value );
+			T_RenderScore( Obj, Point_Value,[ 255, 255, 50 ] );
+			
+		}
+		else{
+			T_RenderScore( Obj, 100, [ 255, 255, 255 ]);
+			AddScore( 100 );
+		}	
 		
-		//T_RenderScore( Obj, 1000 + GetPoint() + GetGraze(), [ 255, 255, 50 ] );
-		AddScore( 1000 + GetPoint() + GetGraze() );
 		
 	}	
 	
@@ -74,6 +85,7 @@ function Render_Item_A1( X, Y, Type, Rect ){
 	
 	let Item_Obj;
 	
+	let Item_Tex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/System/Items.png";
 	Item_Obj = Render2D_Texture_A1( Item_Tex, Rect, X, Y, 1, 25 );
 	Obj_SetRenderPriorityI( Item_Obj, GetItemRenderPriorityI() );
 
@@ -259,5 +271,49 @@ task T_RenderScore( Target, Value, Color ){
 	Obj_Delete( Score );
 	
 }	
+
+task T_RenderScore_Shot( Target, Value, Color ){
+	
+	let Score = ObjText_Create;
+	
+	ObjRender_SetX( Score, ObjRender_GetX( Target ) -8 );
+	ObjRender_SetY( Score, ObjRender_GetY( Target ) );
+	Obj_SetRenderPriority( Score, 0.8 );
+	
+	
+	ObjText_SetFontBorderType( Score, BORDER_SHADOW );
+	ObjText_SetFontBorderWidth( Score, 1.2 );
+	ObjText_SetFontColorTop( Score, 255, 255 ,255 );
+	ObjText_SetFontSize( Score, 12 );
+	ObjText_SetMaxWidth( Score, 400 );
+	ObjText_SetFontBorderColor( Score, 0, 0, 0 );
+	ObjText_SetFontType( Score, "Chaney Thin Normal");
+	
+	ObjText_SetFontColorTop( Score, Color[0], Color[1], Color[2] );
+	ObjText_SetFontColorBottom( Score, Color[0], Color[1], Color[2] );
+	
+	ObjText_SetText( Score, IntToString( Value) );
+	AddScore( Value );
+	
+	ascent( a in 0..64 ){
+			
+		ObjRender_SetY( Score,  ObjRender_GetY( Score ) -1 + a/64 );
+		ObjRender_SetAlpha( Score, ( a / 64 ) * 255 );
+		yield;
+			
+	}	
+	
+	descent( a in 0..10 ){
+			
+		ObjRender_SetAlpha( Score, ( a / 10) * 255 );
+		yield;
+			
+	}	
+	
+	//AddScore( Value );
+	
+	Obj_Delete( Score );
+	
+}
 
 //-----------------------------------------------------------------------------

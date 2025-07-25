@@ -237,7 +237,7 @@ task T_Boss_Name( Boss, Y, Name, RGB ){
   	let Text_Obj = ObjText_Create();
 	
   	ObjText_SetFontSize( Text_Obj, 12);
-  //	ObjText_SetFontType( Text_Obj, "Russell Square");
+  	ObjText_SetFontType( Text_Obj, "RusselSquareOpti");
   	ObjText_SetFontColorTop( Text_Obj, RGB[0], RGB[1], RGB[2] );
   	ObjText_SetFontColorBottom( Text_Obj, RGB[0]/2, RGB[1]/2, RGB[2]/2 );
   	ObjText_SetFontBorderType( Text_Obj, BORDER_FULL);
@@ -245,7 +245,7 @@ task T_Boss_Name( Boss, Y, Name, RGB ){
  	ObjText_SetFontBorderWidth( Text_Obj, 1);
 	
   	Obj_SetRenderPriority( Text_Obj, 0.8);
- 	ObjRender_SetX( Text_Obj, 0 );
+ 	ObjRender_SetX( Text_Obj, 4 );
   	ObjRender_SetY( Text_Obj, Y );
   	ObjText_SetText( Text_Obj, Name );
 

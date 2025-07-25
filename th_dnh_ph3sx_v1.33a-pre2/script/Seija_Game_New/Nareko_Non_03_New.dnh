@@ -27,10 +27,11 @@ let bossY = 0;
 	
 	ObjEnemy_Regist( bossObj );	
 
-	T_Lifebar( bossObj );
+	//T_Lifebar( bossObj );
 	T_HitEffect( bossObj );
 	ObjEnemy_SetDamageRate( bossObj, 0, 0 );	
 
+	//T_FlameAura( bossObj, CC_RED, 1 );
 	Init_Boss_Nareko( bossObj );
 	
 	ObjMove_SetDestAtWeight( bossObj, GetStgFrameWidth/2, Get_CenterY/2 + 8, 15, 8 );
@@ -46,10 +47,10 @@ let bossY = 0;
 
 	alternative(GetEventType()) 
 	case( EV_REQUEST_LIFE ) { 
-		SetScriptResult( 3000 ); // 3000-4500 For Nons ( At 100% Damage Rate. )
+		SetScriptResult( 3800 ); // 3000-4500 For Nons ( At 100% Damage Rate. ) //3800
 	}
 	case( EV_REQUEST_TIMER ) { 
-		SetScriptResult( 30 ); //40-50 For standard Nons.
+		SetScriptResult( 45 ); //40-50 For standard Nons.
 	}	
 
 
@@ -83,10 +84,29 @@ task T_Main {
 	//let Color = [ DOT_GRAY, DOT_RED, DOT_YELLOW, DOT_CYAN, DOT_PURPLE, DOT_GREEN ];
 
 	yield;
-	wait( 100 );
+
+	wait( 45 );	
+	
+	//T_PlaySE( SE_CHARGE_00, 30 );
+	//T_Charge_A1( bossObj, 20, "Petal", CC_PINK );
+
+	//wait( 100 );	
+	T_PlaySE( SE_CHARGE_00, 35 );	
+	T_Charge_B1( bossObj, 90, 3, 48, 40, 5, CC_ORANGE );
+	T_Charge_B1( bossObj, -90, 3, 48, 40, 5, CC_BLUE );
+	//T_Charge_B1( bossX, bossY, 180, 3, 48, 40, 5, [ 255, 0, 0 ] );
+	//T_Charge_B1( bossX, bossY, 0, 3, 48, 40, 5, [ 0, 0, 255 ]);		
+	
+	//ConcentrationA1( bossObj, 35, "Maple", CC_PURPLE );
+	wait( 35 );		
+	
+	ObjEnemy_SetDamageRate( bossObj, 1, 1 );
+	T_Lifebar( bossObj );
+
+	wait( 60 );
 
 	//T_Boss_Shot_B;
-	ObjEnemy_SetDamageRate( bossObj, 1, 1 );
+	
 	T_Boss_Shot_A;
 	//T_Movement_A;
 	
@@ -98,7 +118,6 @@ task T_Main {
 task T_Boss_Shot_A{
 	
 	float ShotAngle = 0;
-	float ShotAngle_B = 45;
 	//float Shot_Range = 8;
 	
 	int Way = 3;
@@ -128,108 +147,77 @@ task T_Boss_Shot_A{
 			T_PlaySE( SE_BURST_00, 30 );
 			T_Charge_Burst_A( bossObj, "Maple", CC_ORANGE );
 			
-			T_SubShot_A( 16, 5, 90 + ShotAngle_B, SHOT_ORB_YELLOW );
-			
-			wait( 10 );
-			
-			//ShotAngle_B+= 10;
-			
-			T_SubShot_A( 16, 3.4, 90 + ShotAngle_B*2, SHOT_ORB_YELLOW );
 			//T_Burst_Circle_A1( bossObj, CC_ORANGE );		
 		}
-
-		wait( 260 );
-
-		ShotAngle_B+= 10;
+		loop( 24 ){
+			
+			if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) <= 0 ){ break; }
+			
+			T_SubShot_A();
+			ShotAngle += 6;
+			
+			wait( 10 );
+		}
 		
+		Obj_SetValue( bossObj,"Cast", 0 );
+		
+		ObjMove_SetDestAtWeight( bossObj, GetStgFrameWidth/2 + rand( -32, 32 ), Get_CenterY/2 + 6 + rand( -8, 8 ), 10, 3 );	
+		
+		wait( 100 );
 		yield;
 	}		
 	
-	
-	
-	task T_SubShot_A( Count, Init_Speed, Init_Angle, Color ){
+	task T_SubShot_A(){
 		
-		//int SubShot_Angle = 16;
-		//int Count = 0;
-		int Base_Radius = 48;
-		int Init_Radius = 10;
-		
-			
-		async{
-			
-			wait( 80 );
-			
-			ascent( c in 0..24 ){	
-				T_SubShot_B();	
-				
-				ShotAngle += 10;
-
-				wait( 8 );
-			}	
-			
-			ObjMove_SetDestAtWeight( bossObj, GetStgFrameWidth/2 + rand( -32, 32 ), Get_CenterY/2 + 6 + rand( -8, 8 ), 10, 3 );	
-			Obj_SetValue( bossObj,"Cast", 0 );
-		}		
-		
-		ascent( i in 0..Count ){
-		
-			int ShotObj_Core = ShotA1( bossX, bossY - 60, Init_Speed, Init_Angle + i * 360/Count, Color, 10 );
-			T_ManageShot_A( ShotObj_Core, Count, Init_Angle + i * 360/Count, i  );
-			
-			//wait( 10 );
-		
-		}
-		task T_ManageShot_A( Shot, Count, Init_Angle, ID ){
-
-			ObjMove_AddPatternA2( Shot, 1, NO_CHANGE, NO_CHANGE, -0.05, 0, 0 );
-			
-			wait( 80 );	
-			
-			ascent( c in 0..20 ){
-				//T_SubShot_B();
-				
-				if( !Obj_IsDeleted( Shot )){
-					
-					T_PlaySE( SE_LASER_02, 26 );
-					let Laser_Obj_A = Laser_A1( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), Init_Angle + (c*1.6)/2, 400, 8, 20, SHOT_CURVY_LASER_YELLOW, 30 );
-					let Laser_Obj_B = Laser_A1( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), Init_Angle - (c*1.6)/2, 400, 8, 20, SHOT_CURVY_LASER_YELLOW, 30 );
-					
-					wait( 8 );
-				}
-			}
-			
-			ObjShot_SetIntersectionEnable( Shot, false );
-			ascent( a in 0..32 ){
-				ObjRender_SetScaleXYZ( Shot, 1 - a * 1/32, 1 - a * 1/32, 1 - a * 1/32 );
-				yield;
-			}
-					
-			Obj_Delete( Shot );
-			
-		}
-	}
-
-	task T_SubShot_B(){
-		
-		int SubShot_Angle = 16;
+		int SubShot_Angle = 24;
 		
 		if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){
-			ascent( a in 0..10 ){
-
-				T_PlaySE( SE_CHIME_02, 35 );
-				int ShotObj_A = ShotA1( bossX + rand( -Sub_ShotRange, Sub_ShotRange ) , bossY + rand( -Sub_ShotRange, Sub_ShotRange )- 64, 3, ( 90 + a * 360/10 ) + ShotAngle, SHOT_DOT_DORANGE, 10 );
-					//int ShotObj_A = ShotA1( bossX, bossY - 64, 2.4, ( 90 + a * 360/10 ) + ShotAngle, SHOT_DOT_DORANGE, 10 );
-				ObjMove_AddPatternA2( ShotObj_A, 30, NO_CHANGE, NO_CHANGE, -0.08, 0, 0 );
-				ObjMove_AddPatternA2( ShotObj_A, 100, NO_CHANGE, ObjMove_GetAngle( ShotObj_A ) + SubShot_Angle, 0.01, 1, 0 );
+			ascent( a in 0..12 ){
+					
+				T_PlaySE( SE_LASER_02, 26 );
+					
+				if( a % 2 == 0 ){	
+					let Laser_Obj = CreateLooseLaserA1( bossX, bossY - 64, 5.5, ( 96 + a * 360/12 ) + ShotAngle, 128, 15, SHOT_CURVY_LASER_ORANGE, 1 );
+					let Laser_Obj_Dark = CreateLooseLaserA1( bossX, bossY - 64, 5.5, ( 96 + a * 360/12 ) + ShotAngle, 128, 8, SHOT_CURVY_LASER_AQUA, 1 );
+					ShotA1( bossX, bossY - 64, 5.5, ( 96 + a * 360/12 ) + ShotAngle, SHOT_LASER_TIP_ORANGE, 1 );
+					
+					ObjShot_SetGrazeInvalidFrame( Laser_Obj, 7 );
+					ObjShot_SetGrazeInvalidFrame( Laser_Obj_Dark, 7 );
+					ObjRender_SetBlendType( Laser_Obj_Dark, BLEND_SUBTRACT );
+					ObjLaser_SetItemDistance( Laser_Obj_Dark, 128 );
+					ObjLaser_SetItemDistance( Laser_Obj, 128 );		
+				}
+				else{
+		
+					let Laser_Obj = CreateLooseLaserA1( bossX, bossY - 64, 5.5, ( 96 + a * 360/12 ) + ShotAngle, 128, 15, SHOT_CURVY_LASER_YELLOW, 1 );
+					let Laser_Obj_Dark = CreateLooseLaserA1( bossX, bossY - 64, 5.5, ( 96 + a * 360/12 ) + ShotAngle, 128, 8, SHOT_CURVY_LASER_AZURE, 1 );
+					ShotA1( bossX, bossY - 64, 5.5, ( 96 + a * 360/12 ) + ShotAngle, SHOT_LASER_TIP_YELLOW, 1 );
+					
+					ObjShot_SetGrazeInvalidFrame( Laser_Obj, 7 );
+					ObjShot_SetGrazeInvalidFrame( Laser_Obj_Dark, 7 );					
+					ObjRender_SetBlendType( Laser_Obj_Dark, BLEND_SUBTRACT );
+					ObjLaser_SetItemDistance( Laser_Obj_Dark, 128 );
+					ObjLaser_SetItemDistance( Laser_Obj, 128 );		
+					
+				}	
+				
+				ascent( b in 0..1 ){	
+				
+					T_PlaySE( SE_CHIME_02, 35 );
+					int ShotObj_A = ShotA1( bossX + rand( -Sub_ShotRange, Sub_ShotRange ) , bossY + rand( -Sub_ShotRange, Sub_ShotRange )- 64, 3, ( 90 + a * 360/12 ) + ShotAngle, SHOT_DOT_DORANGE, 10 );
+						//int ShotObj_A = ShotA1( bossX, bossY - 64, 2.4, ( 90 + a * 360/10 ) + ShotAngle, SHOT_DOT_DORANGE, 10 );
+					ObjMove_AddPatternA2( ShotObj_A, 60, NO_CHANGE, NO_CHANGE, -0.08, 0, 0 );
+					ObjMove_AddPatternA2( ShotObj_A, 90, NO_CHANGE, ObjMove_GetAngle( ShotObj_A ) + SubShot_Angle, 0.01, 1, 0 );
 						
-				ObjRender_SetBlendType( ShotObj_A, BLEND_ADD_ARGB  );
-				SubShot_Angle = -SubShot_Angle;
+					ObjRender_SetBlendType( ShotObj_A, BLEND_ADD_ARGB  );
+					SubShot_Angle = -SubShot_Angle;
+				}	//yield;
 			}	
 		}
 		
-	}	
+	}		
 	
-}			
+}	
 
 //-----------------------------------------------------Death---------------------------------------------------------
 

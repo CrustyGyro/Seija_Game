@@ -242,6 +242,7 @@ task T_Boss_Shot_A( Count ){
 		
 		task T_Manage_Laser( Obj ){
 			
+			ObjShot_SetGrazeInvalidFrame( Obj, 10 );
 			ObjLaser_SetItemDistance( Obj, 600 );
 			ObjShot_SetItemChange( Obj, false );
 			
@@ -338,8 +339,11 @@ task T_Boss_Shot_A( Count ){
 		}
 		task T_InvertLaser( X, Y, Angle ){
 			
+			
 			let Laser_Invert = Laser_A1( X, Y, Angle, 460, 18, 10, SHOT_CURVY_LASER_YELLOW, Delay );
 			let Laser_Aura = Laser_A1( X, Y, Angle, 460, 14, 20, SHOT_CURVY_LASER_BLUE, Delay );
+			
+			ObjShot_SetGrazeInvalidFrame( Laser_Aura, 5 );
 			
 			ObjLaser_SetItemDistance( Laser_Aura, 460 );
 			ObjShot_SetItemChange( Laser_Aura, false );				

@@ -11,6 +11,7 @@
 //--------------------------------------------
 
 let PL_Tex_Reimu = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Player/PL_Reimu.png";
+let PL_Tex_Reimu_Bomb = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Player/PL_Bomb_Reimu.png";
 
 let PL_Speed = [ 4.5, 2 ];
 
@@ -54,10 +55,32 @@ int Shot_Count_Fam = 0;
 @Event{
 	
 	PL_Event_Handler();
+	
+    alternative( GetEventType() )
+
+	case( EV_REQUEST_SPELL ){
+		
+		int Spell_Count = GetPlayerSpell();
+		if( Spell_Count >= 1 && Is_Bomb_Active == true ){
+			
+			//Play_SFX( SFX_SPELL_CALL, 50 );
+			
+			Is_Bomb_Active = true;
+			SetScriptResult( true );
+			SetPlayerSpell( Spell_Count - 1 );
+			T_Bomb_Reimu();
+
+		}
+		else{
+			
+			SetScriptResult( false );
+		}
+		//SetScriptResult( false );
+	}	
+	
 	yield;
 	
 }
-
 
 task T_Render_Reimu( Texture ){
 	
@@ -236,7 +259,6 @@ function T_Manage_Familiars_A(){
 		}
 	}
 }	
-
 	
 function Familiar_Shoot_A( Obj, Angle, Angle_Focused ){
 		
@@ -263,7 +285,6 @@ function Familiar_Shoot_A( Obj, Angle, Angle_Focused ){
 	
 //-------------------- Shots ----------------------
 	
-
 task T_Reimu_Shot_Main( X, Y, Speed, Angle, Dmg ){
 	
 	float Shot_X = 0;
@@ -356,7 +377,6 @@ task T_Reimu_Shot_Needle( X, Y, Speed, Angle, Dmg ){
 
 }	
 
-
 task T_Reimu_Shot_Fam( X, Y, Speed, Angle, Dmg ){
 	
 	float Shot_X = 0;
@@ -408,6 +428,192 @@ task T_Reimu_Shot_Fam( X, Y, Speed, Angle, Dmg ){
 
 //---------------------------------------------------
 
+task T_Bomb_Reimu(){
+	
+	Can_Fire = false;
+	SetPlayerInvincibilityFrame( 400 );
+	
+	T_Blink();
+	
+	ascent( a in 0..6 ){
+		
+		T_Bomb_Effect( 90 + 60 * a, a );
+		
+	}		
+	
+	wait( 800 );
+	
+	Can_Fire = true;
+	Obj_Delete( GetSpellManageObject() );
+	//Is_Bomb_Active = false;
+	
+	task T_Bomb_Effect( Angle, Color ){
+		
+		let Spell_Obj = CreatePlayerShotA1( GetPlayerX(), GetPlayerY(), rand( 0, 1 ), rand( -150, -30 ) , 6, 9999, 50 );
+		//-----
+		ObjShot_SetEraseShot( Spell_Obj, true );
+		ObjShot_SetSpellFactor( Spell_Obj, true );
+		ObjShot_SetAutoDelete( Spell_Obj, false );
+		ObjShot_SetSpellResist( Spell_Obj, true );	
+		Obj_SetVisible( Spell_Obj, false );		
+		//-----
+		
+		float X = GetPlayerX();
+		float Y = GetPlayerY();	
+
+		float PL_X = GetPlayerX();
+		float PL_Y = GetPlayerY();		
+
+		float X_Radius = GetPlayerX();
+		float Y_Radius = GetPlayerY();			
+			
+		float Radius = 128;
+		
+		//let Effect_Obj = RenderImg2D_A1( PL_Bomb_Tex, [ 128 * ( Color * 1 ), 0, 128 * ( Color + 1 * 1 ), 128 ], PL_X, PL_Y, BLEND_ADD_ARGB, 1, 0.45 );
+		let Effect_Obj = Render2D_Texture_A1( PL_Tex_Reimu_Bomb, [ 128 * ( Color * 1 ), 0, 128 * ( Color + 1 * 1 ), 128 ], GetPlayerX(), GetPlayerY(), 1, 0.45  );
+		ObjRender_SetBlendType( Effect_Obj, BLEND_ADD_ARGB );
+		
+		//Trail
+		
+		async{
+			
+			async{
+				
+				while( !Obj_IsDeleted( Spell_Obj ) ){
+					
+					int Trail_Obj = Render2D_Texture_A1( PL_Tex_Reimu_Bomb, [ 128 * ( Color * 1 ), 128, 128 * ( Color + 1 * 1 ), 256 ], ObjRender_GetX( Spell_Obj ), ObjRender_GetY( Spell_Obj ), 1, 0.44  );
+					T_FadeOut_Delete( Trail_Obj, 60, 155 );
+					ObjRender_SetBlendType( Trail_Obj, BLEND_ADD_ARGB );
+				
+					wait( 6 );
+				
+					yield;
+				}
+				
+			}	
+			
+			while( !Obj_IsDeleted( Spell_Obj ) ){
+				
+				ObjRender_SetPosition( Effect_Obj, ObjRender_GetX( Spell_Obj ), ObjRender_GetY( Spell_Obj ), 0 );	
+				
+				yield;
+			}			
+			
+		}	
+		
+		async{
+			
+			ascent( i in 0..200 ){
+			
+				if( Obj_IsDeleted( Spell_Obj ) ){ return; }
+			
+				PL_X = GetPlayerX;
+				PL_Y = GetPlayerY;	
+				
+				X = X_Radius + Radius * i/200 * cos( Angle );
+				Y = Y_Radius + Radius * i/200 *sin( Angle );
+				
+				X_Radius += ( GetPlayerX - X_Radius )/15;
+				Y_Radius += ( GetPlayerY - Y_Radius )/15;
+				
+				Angle += 8 - i * 7/200;
+				
+				ObjSpell_SetIntersectionCircle( Spell_Obj, X, Y, 128 );
+				ObjMove_SetPosition( Spell_Obj, X, Y );	
+				ObjRender_SetPosition( Effect_Obj, ObjRender_GetX( Spell_Obj ), ObjRender_GetY( Spell_Obj ), 0 );			
+			
+				yield;
+			
+			}
+			
+			ObjMove_AddPatternA2( Spell_Obj, 60, NO_CHANGE, NO_CHANGE, -0.1, 0, 0.1 );
+			T_Spell_Homing( Spell_Obj );
+
+			wait( rand( 1, 30 ) );	
+		}	
+		
+		task T_Spell_Homing( Shot_Obj ){
+			
+			loop( 300 ){
+				
+				let ID = GetIntersectionRegistedEnemyID;
+				
+				ascent( i in 0..length( ID ) ){
+					
+					if( !Obj_IsDeleted( ID[ i ]) ){
+						
+						float Angle = Homing_Angle( GetEnemyNearest( Shot_Obj ), ObjMove_GetAngle( Shot_Obj ), ( ObjMove_GetSpeed( Shot_Obj )/4 )  );
+						
+						ObjMove_SetAngle( Shot_Obj, Angle );
+						
+					}
+				}		
+				
+				ObjMove_SetSpeed( Shot_Obj, ObjMove_GetSpeed( Shot_Obj ) + 10/300 );
+				yield;
+				
+			}
+			
+			ObjMove_AddPatternA2( Shot_Obj, 1, NO_CHANGE, NO_CHANGE, -0.1, 0, 0 );
+			
+			wait( 200 );
+			
+			/*
+			
+			let Enemy_X = 0;
+			let Enemy_Y = 0;	
+				
+			let pos = GetEnemyIntersectionPosition( Enemy_X, Enemy_Y, 1 );
+			let RNG = rand( 10, 30 );
+				
+			if( length( pos ) > 0 ){
+					
+				Enemy_X = pos[0][0];
+				Enemy_Y = pos[0][1];
+			}	
+			else{
+					
+				Enemy_X = ObjMove_GetX( Shot_Obj );
+				Enemy_Y = ObjMove_GetY( Shot_Obj );
+					
+				ObjMove_AddPatternA2( Shot_Obj, 1, NO_CHANGE, NO_CHANGE, -0.1, 0, 0 );
+				//RNG = 90;
+					
+			}
+				
+
+			wait( rand( 1, 16 ) );
+			float X_Shot = ObjMove_GetX( Shot_Obj );
+			float Y_Shot = ObjMove_GetX( Shot_Obj );
+			
+			ascent( i in 0..60 ){
+				
+				Interpolate_Accelerate( X_Shot, Enemy_X, i/60 );
+				Interpolate_Accelerate( Y_Shot, Enemy_Y, i/60 );
+				ObjRender_SetPosition( Shot_Obj, X_Shot, Y_Shot, 0 );
+				
+				yield;
+				
+			}
+
+	
+			//ObjRender_SetDestSmoothStep( Shot_Obj, Enemy_X, Enemy_Y, RNG );
+			//ObjMove_SetSpeed( Shot_Obj, 0 );
+			//wait( RNG - 5 );
+			*/
+				
+			Obj_Delete( Shot_Obj );		
+			Obj_Delete( Effect_Obj );	
+			
+		}		
+				
+		
+	}	
+	
+}	
+
+
+//---------------------------------------------------
 
 function GetEnemyNearest( Obj ){
 	
@@ -454,6 +660,5 @@ function Homing_Angle( To_Angle, Angle, D_Angle ){
 
 	return NormalizeAngle( Angle );
 }
-
 
 //---------------------------------------------------

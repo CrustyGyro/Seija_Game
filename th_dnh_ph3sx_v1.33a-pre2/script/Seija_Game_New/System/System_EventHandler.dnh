@@ -12,6 +12,7 @@
 let Break_Tex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/System/BulletDelete_Nixxiam.png";
 let Item_Tex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/System/Items.png";
 let Circle_Tex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Effect/MagicCircle.png";
+float Graze_Timer = 1;
 
 //-----------------------------------------------------------------------------
 
@@ -27,8 +28,10 @@ let Circle_Tex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Effect/Ma
 
 @Initialize{
 
+	LoadItemData("script/Seija_Game_New/System/Item_Data.dnh");
 	//LoadItemData( GetCurrentScriptDirectory() ~ "Item_Data.dnh" );
 	SetDefaultBonusItemEnable( false );	
+	T_Handle_Line_A();
 	
 }
 
@@ -71,8 +74,11 @@ let Circle_Tex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Effect/Ma
         let Shot = GetEventArgument( 0 );
 		if( Obj_GetType( Shot ) == OBJ_STRAIGHT_LASER || Obj_GetType( Shot ) == OBJ_LOOSE_LASER ){ return; }
 		else{
+			
+			T_RenderScore_Shot( Shot, 1000 + GetPoint() + GetGraze(),[ 255, 255, 255 ] );
+			//let Item_Obj = CreateItemU1( "ITEM_POW", ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), 1000 );
 			//Create_ShotDelete_Item( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ) );
-			Create_Item_A1( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), ITEM_S_BONUS );
+			//Create_Item_A1( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), ITEM_S_BONUS );
 			T_BulletBreak_A1( Shot );
 		}	
     }
@@ -109,6 +115,11 @@ let Circle_Tex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Effect/Ma
 		//TBA - Seija
 		yield;
     }	
+	case(EV_GRAZE)
+	{
+		T_Handle_Line();
+		//TGainSpell(score);
+	}		
 
 	/*
     case( EV_SPAWN_ITEM_SPELL ) {
@@ -123,6 +134,53 @@ let Circle_Tex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Effect/Ma
 	*/
 	
 }
+
+
+task T_Handle_Line(){
+	
+	LINE_MODIFIER+=0.01;
+	Graze_Timer = 0;
+	
+}	
+
+
+task T_Handle_Line_A(){
+	
+	let Hud_Line = GetCurrentScriptDirectory() ~ "./../Resource/Textures/System/Line_Debug.png";
+	let Hud_Line_Obj = Render2D_Texture_A1( Hud_Line, [ 0, 0, 512, 16 ], 256, 140, 1, 0.70 );
+	
+	let Hud_Line_Arrow = GetCurrentScriptDirectory() ~ "./../Resource/Textures/System/Line_Indicator.png";
+	let Hud_Line_Obj_Sidebar = Render2D_Texture_A1( Hud_Line_Arrow, [ 0, 0, 32, 32 ], 16, 140, 1, 0 );	
+	
+	//float Graze_Timer = 1;
+	float Graze_Timer_Modifier = 0;
+	float Piece_Timer = 100;
+	float Y = 140;
+	
+	//T_Handle_Piece_Bonuses();
+	
+	while(true){
+		
+		if( Y <= 140 ){ Y = 140; }
+		if( Y >= Get_MaxY ){ Y = 140; NotifyEventAll( EV_SPAWN_ITEM_NON, Get_CenterX, Get_CenterY/1.5, 10, 32 ); Graze_Timer = 8; LINE_MODIFIER = 0; }
+
+		Y = min( Y + LINE_MODIFIER/6 - Graze_Timer/5, Get_MaxY  );
+	
+		ObjRender_SetY( Hud_Line_Obj, max( Y, 140 ) ); 		
+		ObjRender_SetY( Hud_Line_Obj_Sidebar, max( Y, 140 ) + 16 );
+		
+		SetCommonData("POC_LINE", Y );
+		
+		Graze_Timer+=0.01;
+		//Graze_Timer--;
+		
+		//if( Graze_Timer >= LINE_MODIFIER*10 ){ Graze_Timer = 0; }
+	//	Graze_Timer += 0.5 + Graze_Timer_Modifier;
+		yield;
+	}	
+	
+	
+}	
 
 //-----------------------------------------------------------------------------
 

@@ -1,6 +1,6 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
-#Title["Nareko_Non_01_New"]
+#Title["Scoring_Test_00"]
 //#Background["./Stage/STG_03/STG_BG.dnh"];
 #Player[ "./Player/PL_Reimu.dnh" ]
 #System["./System/System_Main_Hud.dnh"]
@@ -32,12 +32,12 @@ let bossY = 0;
 	ObjEnemy_SetDamageRate( bossObj, 0, 0 );	
 
 	//T_FlameAura( bossObj, CC_RED, 1 );
-	Init_Boss_Nareko( bossObj );
+	//Init_Boss_Nareko( bossObj );
 	
 	ObjMove_SetDestAtWeight( bossObj, GetStgFrameWidth/2, Get_CenterY/2 + 8, 15, 8 );
 	
 	
-	//SetPlayerLife( 8 );
+	SetPlayerLife( 8 );
 	T_Main;
 	T_End;
 	
@@ -47,10 +47,10 @@ let bossY = 0;
 
 	alternative(GetEventType()) 
 	case( EV_REQUEST_LIFE ) { 
-		SetScriptResult( 3800 ); // 3000-4500 For Nons ( At 100% Damage Rate. ) //3800
+		SetScriptResult( 9800 ); // 3000-4500 For Nons ( At 100% Damage Rate. ) //3800
 	}
 	case( EV_REQUEST_TIMER ) { 
-		SetScriptResult( 45 ); //40-50 For standard Nons.
+		SetScriptResult( 99 ); //40-50 For standard Nons.
 	}	
 
 
@@ -79,7 +79,7 @@ let bossY = 0;
 task T_Main {
 
 
-	//NotifyEventAll( EV_BOSS_EFFECT, bossObj, CC_RED );
+	NotifyEventAll( EV_BOSS_EFFECT, bossObj, CC_RED );
 	
 	//let Color = [ DOT_GRAY, DOT_RED, DOT_YELLOW, DOT_CYAN, DOT_PURPLE, DOT_GREEN ];
 
@@ -91,14 +91,14 @@ task T_Main {
 	//T_Charge_A1( bossObj, 20, "Petal", CC_PINK );
 
 	//wait( 100 );	
-	T_PlaySE( SE_CHARGE_00, 35 );	
-	T_Charge_B1( bossObj, 90, 3, 48, 40, 5, CC_ORANGE );
-	T_Charge_B1( bossObj, -90, 3, 48, 40, 5, CC_BLUE );
+	//T_PlaySE( SE_CHARGE_00, 35 );	
+	//T_Charge_B1( bossObj, 90, 3, 48, 40, 5, CC_ORANGE );
+	//T_Charge_B1( bossObj, -90, 3, 48, 40, 5, CC_BLUE );
 	//T_Charge_B1( bossX, bossY, 180, 3, 48, 40, 5, [ 255, 0, 0 ] );
 	//T_Charge_B1( bossX, bossY, 0, 3, 48, 40, 5, [ 0, 0, 255 ]);		
 	
 	//ConcentrationA1( bossObj, 35, "Maple", CC_PURPLE );
-	wait( 35 );		
+	//wait( 35 );		
 	
 	ObjEnemy_SetDamageRate( bossObj, 1, 1 );
 	T_Lifebar( bossObj );
@@ -177,41 +177,30 @@ task T_Boss_Shot_A{
 				T_PlaySE( SE_LASER_02, 26 );
 					
 				if( a % 2 == 0 ){	
-					let Laser_Obj = CreateLooseLaserA1( bossX, bossY - 64, 4, ( 96 + a * 360/10 ) + ShotAngle, 128, 15, SHOT_CURVY_LASER_ORANGE, 1 );
-					let Laser_Obj_Dark = CreateLooseLaserA1( bossX, bossY - 64, 4, ( 96 + a * 360/10 ) + ShotAngle, 128, 8, SHOT_CURVY_LASER_AQUA, 1 );
+					let Laser_Obj = CreateLooseLaserA1( bossX, bossY - 64, 4, ( 96 + a * 360/10 ) + ShotAngle, 128, 12, SHOT_CURVY_LASER_ORANGE, 1 );
+					//let Laser_Obj_Dark = CreateLooseLaserA1( bossX, bossY - 64, 4, ( 96 + a * 360/10 ) + ShotAngle, 128, 8, SHOT_CURVY_LASER_AQUA, 1 );
 					ShotA1( bossX, bossY - 64, 4, ( 96 + a * 360/10 ) + ShotAngle, SHOT_LASER_TIP_ORANGE, 1 );
 					
-					ObjShot_SetGrazeInvalidFrame( Laser_Obj, 7 );
-					ObjShot_SetGrazeInvalidFrame( Laser_Obj_Dark, 7 );
-					ObjRender_SetBlendType( Laser_Obj_Dark, BLEND_SUBTRACT  );
-					ObjLaser_SetItemDistance( Laser_Obj_Dark, 128 );
+					ObjShot_SetGrazeInvalidFrame( Laser_Obj, 1 );
+					//ObjShot_SetGrazeInvalidFrame( Laser_Obj_Dark, 7 );
+					//ObjRender_SetBlendType( Laser_Obj_Dark, BLEND_SUBTRACT  );
+					//ObjLaser_SetItemDistance( Laser_Obj_Dark, 128 );
 					ObjLaser_SetItemDistance( Laser_Obj, 128 );		
 				}
 				else{
 		
-					let Laser_Obj = CreateLooseLaserA1( bossX, bossY - 64, 4, ( 96 + a * 360/10 ) + ShotAngle, 128, 15, SHOT_CURVY_LASER_YELLOW, 1 );
-					let Laser_Obj_Dark = CreateLooseLaserA1( bossX, bossY - 64, 4, ( 96 + a * 360/10 ) + ShotAngle, 128, 8, SHOT_CURVY_LASER_AZURE, 1 );
+					let Laser_Obj = CreateLooseLaserA1( bossX, bossY - 64, 4, ( 96 + a * 360/10 ) + ShotAngle, 128, 12, SHOT_CURVY_LASER_YELLOW, 1 );
+				//	let Laser_Obj_Dark = CreateLooseLaserA1( bossX, bossY - 64, 4, ( 96 + a * 360/10 ) + ShotAngle, 128, 8, SHOT_CURVY_LASER_AZURE, 1 );
 					ShotA1( bossX, bossY - 64, 4, ( 96 + a * 360/10 ) + ShotAngle, SHOT_LASER_TIP_YELLOW, 1 );
 					
-					ObjShot_SetGrazeInvalidFrame( Laser_Obj, 7 );
-					ObjShot_SetGrazeInvalidFrame( Laser_Obj_Dark, 7 );					
-					ObjRender_SetBlendType( Laser_Obj_Dark, BLEND_SUBTRACT  );
-					ObjLaser_SetItemDistance( Laser_Obj_Dark, 128 );
+					ObjShot_SetGrazeInvalidFrame( Laser_Obj, 1 );
+					//ObjShot_SetGrazeInvalidFrame( Laser_Obj_Dark, 7 );					
+					//ObjRender_SetBlendType( Laser_Obj_Dark, BLEND_SUBTRACT  );
+					//ObjLaser_SetItemDistance( Laser_Obj_Dark, 128 );
 					ObjLaser_SetItemDistance( Laser_Obj, 128 );		
 					
 				}	
 				
-				ascent( b in 0..1 ){	
-				
-					T_PlaySE( SE_CHIME_02, 35 );
-					int ShotObj_A = ShotA1( bossX + rand( -Sub_ShotRange, Sub_ShotRange ) , bossY + rand( -Sub_ShotRange, Sub_ShotRange )- 64, 3, ( 90 + a * 360/10 ) + ShotAngle, SHOT_DOT_DORANGE, 10 );
-						//int ShotObj_A = ShotA1( bossX, bossY - 64, 2.4, ( 90 + a * 360/10 ) + ShotAngle, SHOT_DOT_DORANGE, 10 );
-					ObjMove_AddPatternA2( ShotObj_A, 60, NO_CHANGE, NO_CHANGE, -0.08, 0, 0 );
-					ObjMove_AddPatternA2( ShotObj_A, 90, NO_CHANGE, ObjMove_GetAngle( ShotObj_A ) + SubShot_Angle, 0.01, 1, 0 );
-						
-					ObjRender_SetBlendType( ShotObj_A, BLEND_ADD_ARGB  );
-					SubShot_Angle = -SubShot_Angle;
-				}	//yield;
 			}	
 		}
 		
