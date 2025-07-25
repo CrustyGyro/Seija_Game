@@ -101,6 +101,8 @@
 	let SE_DAMAGE		= "SE_Damage.wav";
 	let SE_ENEMY_DEATH	= "SE_Enemy_Death.wav";
 	
+	let SE_PIECE_00		= "SE_PieceSpawn.wav";
+	
 	//---
 	
 	let SE_PL_SHOT_00		= "SE_PlayerShot_00.wav";

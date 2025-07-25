@@ -23,7 +23,7 @@ task T_HitEffect( Target ){
 			
 			if( Item_Frame % 30 == 0 ){
 				
-				Create_Item_A1( X + rand( -64, 64 ), Y + rand( -64, 64 ), ITEM_S_BONUS );
+				Create_Item_A1( X + rand( -8, 8 ), Y + rand( -8, 8 ), ITEM_S_BONUS );
 				
 			}	
 			

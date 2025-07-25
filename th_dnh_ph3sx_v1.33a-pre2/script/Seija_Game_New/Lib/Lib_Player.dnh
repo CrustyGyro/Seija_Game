@@ -61,7 +61,7 @@ function PL_Event_Handler(){
 		NotifyEventAll( EV_PL_GRAZE_CUSTOM, 10 );
 		//T_PlaySE( SE_GRAZE, 30 );
 		//LINE_MODIFIER+=20;
-		T_PlaySE( SE_GRAZE, 30 );
+		T_PlaySE( SE_GRAZE, 36 );
 		T_Graze( Shot_Id );
 		
     }

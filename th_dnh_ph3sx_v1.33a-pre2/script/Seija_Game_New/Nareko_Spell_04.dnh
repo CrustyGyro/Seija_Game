@@ -93,7 +93,7 @@ task T_InitSpell(){
 	
 	//let CutinTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Cutin/CurseOfRa.png";
 	
-	T_CallSpell_A1( "Roadblock: \"Pyramidal Barricade\"", 0, "Normal", objScene );
+	T_CallSpell_A1( "Roadblock: \"Entombing Barricade\"", 0, "Normal", objScene );
 	T_Call_Spell_Cutin( CutinTex, [ 0, 0, 200, 384 ], 1, CC_ORANGE );	
 	
 	ObjEnemyBossScene_StartSpell( objScene );
@@ -129,7 +129,7 @@ task T_Boss_Shot_A{
 	float RNG = rand( 128, 256 );
 	
 	ascent( a in 0..8 ){
-		T_CreateLane( rand( 64, 256 ), 0 + a * Get_MaxY/8, 64 );
+		T_CreateLane( rand( 64, 256 ), 0 + a * Get_MaxY/8, 100 );
 		yield;
 	}
 	
@@ -137,7 +137,7 @@ task T_Boss_Shot_A{
 	
     while( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ) {
 		
-		T_CreateLane( rand( 64, 256 ), 0, 64 );
+		T_CreateLane( rand( 64, 256 ), 0, 100 );
 		
 		wait( 60 );
 		
@@ -146,8 +146,11 @@ task T_Boss_Shot_A{
 	
 	task T_CreateLane( X, Y, Spacing ){
 		
+		//int Enemy_A = Create_Enemy_A1( X, Y, 1000, YINYANG_S_NORMAL, ENEMY_YELLOW, 1 );
 		let Laser_Obj_A = Laser_A1( X, Y, 180, 256 + Spacing, 16, 999, SHOT_LASER_DGREEN, 30 );
 		let Laser_Obj_b = Laser_A1( X + Spacing, Y, 0, 400, 16, 999, SHOT_LASER_DGREEN, 30 );
+		
+		//T_Set_Enemy_Move_A1( Enemy_A, 60, 1, 90, 0, 1, 0 );
 		
 		T_Manage_Laser_A( Laser_Obj_A );
 		T_Manage_Laser_A( Laser_Obj_b );
@@ -155,6 +158,8 @@ task T_Boss_Shot_A{
 		//int ShotObj_A = ShotA1( 0, Y, 1, 0, SHOT_BUBBLE_OLIVE, 10 );
 		
 		task T_Manage_Laser_A( Laser ){
+			
+			//ObjStLaser_SetSource( Laser, false );
 			
 			wait( 60 );
 			
@@ -172,7 +177,7 @@ task T_Boss_Shot_A{
 				ascent( b in 0..3 ){
 					ascent( a in 0..6 ){
 					
-						float Shot_X = ObjMove_GetX( Laser ) + b * 24/3 + a * ObjLaser_GetLength( Laser )/6 * cos( Laser_Angle );
+						float Shot_X = ObjMove_GetX( Laser ) + b * 18/3 + a * ObjLaser_GetLength( Laser )/6 * cos( Laser_Angle );
 						float Shot_Y = ObjMove_GetY( Laser ) + a * ObjLaser_GetLength( Laser )/6 * sin( Laser_Angle );		
 
 						int ShotObj_A = ShotA2( Shot_X, Shot_Y, 1 + b *0.1/3, -90, SHOT_BALL_AURA_DYELLOW, 20, SHOT_CLOUD_YELLOW );	

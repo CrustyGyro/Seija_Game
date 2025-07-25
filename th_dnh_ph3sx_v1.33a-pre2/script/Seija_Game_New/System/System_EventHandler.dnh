@@ -162,7 +162,15 @@ task T_Handle_Line_A(){
 	while(true){
 		
 		if( Y <= 140 ){ Y = 140; }
-		if( Y >= Get_MaxY ){ Y = 140; NotifyEventAll( EV_SPAWN_ITEM_NON, Get_CenterX, Get_CenterY/1.5, 10, 32 ); Graze_Timer = 8; LINE_MODIFIER = 0; }
+		if( Y >= Get_MaxY ){
+
+			Y = 140; 
+			//NotifyEventAll( EV_SPAWN_ITEM_NON, Get_CenterX, Get_CenterY/1.5, 10, 32 ); 
+			Graze_Timer = 8; LINE_MODIFIER = 0; 
+			
+			Create_Item_A1( GetPlayerX(), Get_CenterY/1.5, ITEM_S_SPELL_PIECE );
+			
+		}
 
 		Y = min( Y + LINE_MODIFIER/6 - Graze_Timer/5, Get_MaxY  );
 	

@@ -107,7 +107,7 @@ task T_Main {
 
 	//T_Boss_Shot_B;
 	
-	T_Boss_Shot_A;
+	//T_Boss_Shot_A;
 	//T_Movement_A;
 	
 	//wait( 200 );
@@ -133,8 +133,10 @@ task T_Boss_Shot_A{
 	
 	while( Boss_Is_Alive( bossObj )){
 		
+		Create_Item_A1( Get_CenterX, Get_CenterY/1.5, ITEM_S_SPELL_PIECE );
+		
 		if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){
-			T_Charge_A1( bossObj, 40, "Maple", CC_ORANGE );
+			//T_Charge_A1( bossObj, 40, "Maple", CC_ORANGE );
 			T_PlaySE( SE_CHARGE_00, 35 );		
 		}
 		wait( 50 );
@@ -145,7 +147,7 @@ task T_Boss_Shot_A{
 		
 		if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){
 			T_PlaySE( SE_BURST_00, 30 );
-			T_Charge_Burst_A( bossObj, "Maple", CC_ORANGE );
+			//T_Charge_Burst_A( bossObj, "Maple", CC_ORANGE );
 			
 			//T_Burst_Circle_A1( bossObj, CC_ORANGE );		
 		}

@@ -10,10 +10,21 @@ function Create_Item_A1( X, Y, Type ){
 	case( ITEM_S_SCORE_FULL ){
 		let Item_Obj = Render_Item_A1( X, Y, Type, [ 16, 32, 32, 48 ] );
 		T_Item_Handler_A1( Item_Obj, Type );
+	}
+	case( ITEM_S_LIFE_PIECE ){
+		let Item_Obj = Render_Item_A1( X, Y, Type, [ 48, 0, 80, 32 ] );
+		T_Item_Handler_A1( Item_Obj, Type );
+	}	
+	case( ITEM_S_SPELL_PIECE ){
+		
+		T_PlaySE( SE_PIECE_00, 30 );
+		let Item_Obj = Render_Item_A1( X, Y, Type, [ 80, 0, 112, 32 ] );
+		T_Item_Handler_A1( Item_Obj, Type );
+		T_Piece_Handler_A( Item_Obj, ITEM_S_SPELL_PIECE );
 	}		
 	case( ITEM_S_BONUS ){
 		let Item_Obj = Render_Item_A1( X, Y, Type, [ 31, 0, 47, 15 ] );
-		T_Item_Handler_A1( Item_Obj, Type );
+		T_Item_Handler_A2( Item_Obj, Type );
 	}		
 	
 }	
@@ -28,7 +39,6 @@ function Create_ShotDelete_Item( X, Y ){
 
 
 function Collect_Item_Check( Obj, Type ){
-	
 	
 	int Point_Value = 0;
 	
@@ -59,6 +69,20 @@ function Collect_Item_Check( Obj, Type ){
 		T_RenderScore( Obj, Point_Value,[ 255, 255, 50 ] );
 		
 	}	
+	case( ITEM_S_SPELL_PIECE ){
+
+		T_PlaySE( SE_ITEM, 30 );
+		SetCommonData("Spell_Piece_Count", GetCommonData( "Spell_Piece_Count", 0 ) + 1 );
+		AddScore( 1000 );
+		
+		if(GetCommonData( "Spell_Piece_Count", 0 ) == 4 ){
+			//ExtendText;
+			SetPlayerSpell( GetPlayerSpell() + 1 );
+			SetCommonData( "Spell_Piece_Count", 0 );
+			AddScore( 1000 );
+		}			
+		
+	}		
 	case( ITEM_S_BONUS ){
 
 		T_PlaySE( SE_ITEM, 30 );
@@ -178,38 +202,49 @@ task T_Item_Handler_A2( Obj, Type ){
 	bool MoveToPL = false;
 	float ObjX = ObjRender_GetX( Obj );
 	float ObjY = ObjRender_GetY( Obj );	
-	float VSpeed = -6;
+	float VSpeed = -5;
 	float Angle = 0;
 	
+	float RNG = rand( -VSpeed, VSpeed );
 	//T_Spawn_Anim( Obj );
-	loop( 25 ){
+	loop( 64 ){
 		
-		ObjX += rand( -VSpeed, VSpeed );
-		ObjY += VSpeed;
+		ObjX += RNG/5;
+		ObjY += VSpeed/5;
 		ObjRender_SetX( Obj, ObjX );
 		ObjRender_SetY( Obj, ObjY );
-		VSpeed = min( 1.25, VSpeed + 0.08 );			
+		VSpeed = min( 1.25, VSpeed + 0.2 );			
 		yield;
 	}	
 	
 	VSpeed = 1;
 	
-	
-	while( !Obj_IsDeleted( Obj ) && ObjY < GetStgFrameHeight + 32 && ObjX < GetStgFrameWidth + 32 ){	
+	while( !Obj_IsDeleted( Obj ) && ObjY < GetStgFrameHeight + 32 && ObjX < GetStgFrameWidth + 32 && ObjX > -32){	
 		
-		if( MoveToPL == false ){
+		// Moving Down.
+		ObjRender_SetY( Obj, ObjY );
+		ObjY += VSpeed;
+		VSpeed = 1;
 		
-			ObjRender_SetY( Obj, ObjY );
-			ObjY += VSpeed;
-			
+		ObjRender_SetAngleZ( Obj, ObjRender_GetAngleZ( Obj ) + 1 );
+		
+		// Cancel Collection Movement if player Dies.
+		if (GetPlayerState() != STATE_NORMAL) {
+			MoveToPL = false;
+		}		
+		// Point of Collection Line.
+		if (GetPlayerState() == STATE_NORMAL && GetPlayerY() <= GetCommonData( "POC_LINE", 140 ) ) {
+			MoveToPL = true;
 		}
-		if( GetPlayerState() == STATE_NORMAL){ MoveToPL = true; }
-		
+		// Move to Player if within range.
+		if ( GetDistance( ObjX, ObjY, GetPlayerX(), GetPlayerY() ) < 64 ){
+			MoveToPL = true;
+		}	
 		// Moving to Player
 		if ( MoveToPL == true ) {
-			Angle = atan2( GetPlayerY() - ObjY, GetPlayerX() - ObjX );
-			ObjX += 16*cos( Angle ); 
-			ObjY += 16*sin( Angle );
+			let Angle = atan2( GetPlayerY() - ObjY, GetPlayerX() - ObjX );
+			ObjX += 8*cos(Angle); 
+			ObjY += 8*sin(Angle);
 			ObjRender_SetPosition( Obj, ObjX, ObjY, 0);
 		} 	
 		// Collecting Task
@@ -222,11 +257,144 @@ task T_Item_Handler_A2( Obj, Type ){
 		}		
 		yield;
 	}
-	
 	Obj_Delete( Obj );
+	
+	task T_Spawn_Anim( Obj ){
+
+		loop( 2 ){
+			let Spin = round( prand( 16, 18 ) );
+			ascent( a in 1..Spin+1 ){
+				if( !Obj_IsDeleted( Obj ) ){
+					ObjRender_SetAngleZ( Obj, a*360/Spin );
+				}
+				yield;
+			}
+		}		
+
+	}	
 	
 	
 }
+
+task T_Piece_Handler_A( Obj, Type ){
+	
+	let Path = GetCurrentScriptDirectory() ~ "./../Resource/Textures/System/Item_Effect.png";
+	
+	let Angle_X = 1;
+	let Angle_Y = 1;
+	let Color_Y_A = 0;
+	let Color_Y_B = 0;	
+	
+	if( Type == ITEM_S_LIFE_PIECE ){
+		
+		Color_Y_A = 0;
+		Color_Y_B = 80;
+	}	
+	else{
+		
+		Color_Y_A = 80;
+		Color_Y_B = 160;
+		
+	}		
+	
+	int Bubble_Effect = Render2D_Texture_A1( Path, [ 0, Color_Y_A, 80, Color_Y_B ], ObjRender_GetX( Obj ), ObjRender_GetY( Obj ), 1, 0.42 );
+	ObjRender_SetAlpha( Bubble_Effect, 130 );
+	ObjRender_SetBlendType( Bubble_Effect, BLEND_ADD_ARGB );
+	
+	int Ring_Effect_A = Render2D_Texture_A1( Path, [ 80, Color_Y_A, 160, Color_Y_B ], ObjRender_GetX( Obj ), ObjRender_GetY( Obj ), 1, 0.42 );	
+	ObjRender_SetAlpha( Ring_Effect_A, 130 );
+	ObjRender_SetBlendType( Ring_Effect_A, BLEND_ADD_ARGB );	
+	
+	int Ring_Effect_B = Render2D_Texture_A1( Path, [ 80, Color_Y_A, 160, Color_Y_B ], ObjRender_GetX( Obj ), ObjRender_GetY( Obj ), 1, 0.42 );	
+	ObjRender_SetAlpha( Ring_Effect_B, 130 );
+	ObjRender_SetBlendType( Ring_Effect_B, BLEND_ADD_ARGB );
+
+	//This is a complete mess but it dosen't need to be fancy or super performant since theres like at max two of these on screen at a time lol - Seija
+
+	async{
+		
+		float Spawn_Time = 30;
+		//Spawn animation.
+		
+		ascent( a in 0..Spawn_Time ){
+
+			ObjRender_SetScaleXYZ( Bubble_Effect, Interpolate_Smoother( 0.1, 1, a/Spawn_Time ), Interpolate_Smoother( 0.1, 1, a/Spawn_Time ), 0 );
+			ObjRender_SetScaleXYZ( Ring_Effect_A, Interpolate_Smoother( 0.1, 1, a/Spawn_Time ), Interpolate_Smoother( 0.1, 1, a/Spawn_Time ), 0 );
+			ObjRender_SetScaleXYZ( Ring_Effect_B, Interpolate_Smoother( 0.1, 1, a/Spawn_Time ), Interpolate_Smoother( 0.1, 1, a/Spawn_Time ), 0 );
+			
+			yield;
+
+		}		
+		
+	}	
+
+	async{
+		
+		while( !Obj_IsDeleted( Obj ) ){
+			
+			ObjRender_SetPosition( Bubble_Effect, ObjRender_GetX( Obj ), ObjRender_GetY( Obj ), 0 );
+			ObjRender_SetPosition( Ring_Effect_A, ObjRender_GetX( Obj ), ObjRender_GetY( Obj ), 0 );
+			ObjRender_SetPosition( Ring_Effect_B, ObjRender_GetX( Obj ), ObjRender_GetY( Obj ), 0 );
+			
+			ObjRender_SetAngleXYZ( Ring_Effect_A, ObjRender_GetAngleX( Ring_Effect_A ) + 1, ObjRender_GetAngleY( Ring_Effect_A ) + 1, ObjRender_GetAngleZ( Ring_Effect_A ) + 1 );
+			ObjRender_SetAngleXYZ( Ring_Effect_B, ObjRender_GetAngleX( Ring_Effect_B ) - 2, ObjRender_GetAngleY( Ring_Effect_B ) - 2, ObjRender_GetAngleZ( Ring_Effect_B ) - 2 );
+			
+			yield;
+		}	
+
+		if( ObjRender_GetY( Obj ) < GetStgFrameHeight + 32 && ObjRender_GetX( Obj ) < GetStgFrameWidth + 32 && ObjRender_GetX( Obj ) > -32 ){ T_Piece_Collect(); }
+		else{
+		
+			Obj_Delete( Bubble_Effect );
+			Obj_Delete( Ring_Effect_A );
+			Obj_Delete( Ring_Effect_B );
+		}
+		
+	}	
+	
+	task T_Piece_Collect(){
+		
+		int Slurp_Effect = Render2D_Texture_A1( Path, [ 0, Color_Y_A, 80, Color_Y_B ], GetPlayerX(), GetPlayerY(), 1, 0.42 );
+		ObjRender_SetAlpha( Slurp_Effect, 100 );
+		ObjRender_SetBlendType( Slurp_Effect, BLEND_ADD_ARGB );		
+		
+		float Spawn_Time = 16;
+		
+		async{
+			ascent( a in 0..Spawn_Time ){
+				
+				ObjRender_SetAlpha( Slurp_Effect, 100 - a * 100/Spawn_Time );
+			
+				yield;
+			}
+			
+		}	
+		
+		descent( a in 0..Spawn_Time ){
+			
+			ObjRender_SetPosition( Slurp_Effect, GetPlayerX(), GetPlayerY(), 0 );
+			ObjRender_SetPosition( Bubble_Effect, GetPlayerX(), GetPlayerY(), 0 );
+			ObjRender_SetPosition( Ring_Effect_A, GetPlayerX(), GetPlayerY(), 0 );
+			ObjRender_SetPosition( Ring_Effect_B, GetPlayerX(), GetPlayerY(), 0 );
+
+			ObjRender_SetScaleXYZ( Slurp_Effect, Interpolate_Smoother( 2, 0, a/Spawn_Time ), Interpolate_Smoother( 2, 0, a/Spawn_Time ), 0 );
+			ObjRender_SetScaleXYZ( Bubble_Effect, Interpolate_Smoother( 0.1, 1, a/Spawn_Time ), Interpolate_Smoother( 0.1, 1, a/Spawn_Time ), 0 );
+			ObjRender_SetScaleXYZ( Ring_Effect_A, Interpolate_Smoother( 0.1, 1, a/Spawn_Time ), Interpolate_Smoother( 0.1, 1, a/Spawn_Time ), 0 );
+			ObjRender_SetScaleXYZ( Ring_Effect_B, Interpolate_Smoother( 0.1, 1, a/Spawn_Time ), Interpolate_Smoother( 0.1, 1, a/Spawn_Time ), 0 );
+			
+			yield;
+
+		}		
+		
+		Obj_Delete( Slurp_Effect );
+		Obj_Delete( Bubble_Effect );
+		Obj_Delete( Ring_Effect_A );
+		Obj_Delete( Ring_Effect_B );		
+		
+	}	
+	
+	
+}	
 
 //-----------------------------------------------------------------------------
 
