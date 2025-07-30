@@ -151,15 +151,15 @@ task T_Boss_Shot_D{
 	
 	while( !Obj_IsDeleted( bossObj ) ){
 	
-		ascent( i in 0..12 ){
+		ascent( i in 0..10 ){
 			
-			int Dummy_Shot_Core =  ShotA1( bossX, bossY, 1, 90 + i * 360/12 + 45 * sin( Frame ), SHOT_BILL_GREY, 10 );
+			int Dummy_Shot_Core =  ShotA1( bossX, bossY, 1, 90 + i * 360/10 + 24 * sin( Frame ), SHOT_BILL_GREY, 10 );
 
 	
 		}
 		
-		Frame+= 2;
-		wait( 10 );
+		Frame+= 4;
+		wait( 16 );
 	}
 	
 }	
@@ -183,12 +183,10 @@ task T_Boss_Shot_A{
 	
 	for( int a = 0; a < Way * Stack; a++ ) {
 		
-		//ObjShot_SetSpellResist( Dummy_Shots_Outer[a], true );
-		//ObjShot_SetAutoDelete( Dummy_Shots_Outer[a], false );		
-		//int Prism_Core = Create_Famliar_A1( bossX, bossY, PRISM_S_NORMAL, ENEMY_RED, 1000, false, 1, 1, 128 );	
 		T_Manage_Pyramid( Dummy_Shot_Core, Dummy_Shots[a], 156, 90, 200, -0.2 );
 		T_Manage_Pyramid( Dummy_Shot_Core, Dummy_Shots_Outer[a], 256, -90, 300, -0.1 );
 		T_Manage_Pyramid( Dummy_Shot_Core, Dummy_Shots_Middle[a], 280, -90, 300, 0.1 );
+		
 		T_Manage_Shot_Inner( Dummy_Shots[a] );
 		if( a < Way-1 ){
 				
@@ -206,33 +204,18 @@ task T_Boss_Shot_A{
 			T_Manage_Laser( Dummy_Shots_Middle[Way-1], Dummy_Shots_Middle[0], false, true, Shot_Color[a], Shot_Color_Sub[a]  );
 
 		}			
-		
-		//ObjMove_AddPatternA2( Dummy_Shots[a], 20, NO_CHANGE, NO_CHANGE, -0.05, 0, 0 );
-		//ObjMove_AddPatternA2( Objs[0], 20, 2, 90 + a * 360/Count, -0.01, 0, 0 );
+
 	}
 	
 	task T_Manage_Shot_Inner( Shot ){
 		
 		wait( 200 );
-		/*
-		async{
-			while( !Obj_IsDeleted( Shot ) ){
-			
-				int Shot_A = ShotA1( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), 1, ObjMove_GetAngle( Shot ) -45, SHOT_SCALE_DMINT, 10 );
-				//int Shot_B = ShotA1( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), 1, ObjMove_GetAngle( Shot ) -16, SHOT_SCALE_DMINT, 10 );
-				//ObjShot_SetDeleteFrame( Shot_A, 160 );
-			
-				wait( 30 );
-			}			
-			
-		}	
-		*/
 		while( !Obj_IsDeleted( Shot ) ){
 		
-			int Shot_A = ShotA1( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), 1, ObjMove_GetAngle( Shot ) -180 + 45, SHOT_BILL_AZURE, 10 );
+			int Shot_A = ShotA1( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), 1, ObjMove_GetAngle( Shot ) -180 + 45, SHOT_ICE_AZURE, 10 );
 			//ObjShot_SetDeleteFrame( Shot_A, 160 );
 		
-			wait( 28 );
+			wait( 24 );
 		}
 	}	
 	
@@ -252,37 +235,6 @@ task T_Boss_Shot_A{
 		ObjStLaser_SetSource( Connector, false );
 		ObjStLaser_SetSource( Prifma_Connector, false );
 
-		/*
-		if( Can_Shoot == true ){	
-			async{	
-			
-				int Shot_Count = 3;
-			
-				wait( 60 );
-				
-				float Laser_Angle = ObjStLaser_GetAngle( Connector );
-			
-				while( !Obj_IsDeleted( Shot ) ){
-					
-					ascent( a in 0..Shot_Count ){
-						
-						float Shot_X = ObjMove_GetX( Connector ) + a * ObjLaser_GetLength( Connector )/Shot_Count * cos( Laser_Angle );
-						float Shot_Y = ObjMove_GetY( Connector ) + a * ObjLaser_GetLength( Connector )/Shot_Count * sin( Laser_Angle );
-						
-						int Shot_A = ShotA1( Shot_X, Shot_Y, 0.5, ObjStLaser_GetAngle( Connector ) + 90, Sub_Shot_Color, 8 );
-						
-						//T_Manage_Shot( Shot_A );
-						
-						wait( 8 );
-						
-					}	
-					
-					wait( 60 );
-				}				
-					
-			}	
-		}
-		*/
 		if( Can_Shoot == true ){	
 			async{	
 			
@@ -306,6 +258,7 @@ task T_Boss_Shot_A{
 					
 			}	
 		}
+		
 		task T_Manage_Shot( Shot_A ){
 					
 			//ObjShot_SetSpellResist( Shot_A, true );
@@ -397,7 +350,9 @@ task T_Boss_Shot_A{
 					
 				yield;
 					
-			}				
+			}	
+			
+			Obj_Delete( Shot );
 		
 		}
 			

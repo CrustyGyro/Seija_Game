@@ -22,7 +22,7 @@ int Shot_Count_Fam = 0;
 
 @Initialize{
 	
-	ObjPlayer_AddIntersectionCircleA1( GetPlayerObjectID(), 0, 0, 4, 26 );
+	ObjPlayer_AddIntersectionCircleA1( GetPlayerObjectID(), 0, 0, 2, 26 );
 
 	T_Render_Reimu( PL_Tex_Reimu );
 
