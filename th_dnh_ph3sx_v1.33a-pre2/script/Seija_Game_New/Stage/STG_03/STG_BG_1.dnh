@@ -15,6 +15,8 @@ let Tex_Mist_00 = GetCurrentScriptDirectory() ~ "./../../Resource/Mesh/Cloud_00.
 let Tex_Ground_01 = GetCurrentScriptDirectory() ~ "./../../Resource/Mesh/Ground_00.png";
 
 
+int STAGE_PHASE = 0;
+
 float Camera_Speed = 1; // Camera does not actually move besides the little bobbing animation, this is for scaling the texture scrolling.
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
@@ -30,10 +32,10 @@ float Camera_Speed = 1; // Camera does not actually move besides the little bobb
 @MainLoop { yield; }
 
 @Finalize { }
- 
+
  task T_Particles{
 	
-	let Tex_Particles = GetCurrentScriptDirectory() ~ "./../../Resource/Textures/Effect/Particle_00.png";
+	let Tex_Particles = GetCurrentScriptDirectory() ~ "./../../Resource/Textures/Effect/Particle_01.png";
 	
 	let Particle_Obj = ObjPrim_Create( OBJ_SPRITE_3D );
 	ObjPrim_SetTexture( Particle_Obj, Tex_Particles );
@@ -44,30 +46,39 @@ float Camera_Speed = 1; // Camera does not actually move besides the little bobb
 	Obj_SetRenderPriorityI(Particle_Obj, 24);
 	ObjRender_SetAngleZ( Particle_Obj, 180 );
 	
-	ObjRender_SetX( Particle_Obj, rand( -32, 32 ) );	
-	ObjRender_SetY( Particle_Obj, 0 );
-	ObjRender_SetZ( Particle_Obj, rand( -32, 16 ) );
+	ObjRender_SetX( Particle_Obj, rand( -128, 128 ) );	
+	ObjRender_SetY( Particle_Obj, 128 );
+	ObjRender_SetZ( Particle_Obj, rand( -100, 155 ) );
 	
 	let Angle_X = rand( 0,360 );
 	let Angle_Y = rand( 0,360 );
 	let Angle_Z = rand( 0,360 );
-	let Scale_RNG = rand( 0.1, 0.2 );
+	let Scale_RNG = rand( 0.05, 0.6 );
 	//ObjRender_SetAlpha( Particle_Obj, 155 );
 	
 	//ImgFadeIn( Particle_Obj, 60, 255 );
 	
 	//ObjRender_SetScaleXYZ( Particle_Obj, 0.2, 0.2, 0.2 );
 	ObjRender_SetScaleXYZ( Particle_Obj, Scale_RNG, Scale_RNG, Scale_RNG );
-	T_FadeOut_Delete( Particle_Obj, 100, 255 );
+	//T_FadeOut_Delete( Particle_Obj, 100, 255 );
 	//ImgFadeInFadeOut_Delete( Particle_Obj, 100, 255, 1 );
-	//ObjRender_SetColor( Particle_Obj, 255, 0, 0 );
-	ObjRender_SetFogEnable( Particle_Obj, false );	
+	ObjRender_SetColor( Particle_Obj, 100, 155, 100 );
+	ObjRender_SetFogEnable( Particle_Obj, true );	
 	//ObjRender_SetScale( Particle_Obj, rand( 0.5, 1.5 ) );
+	
+	async{
+		
+		
+		T_FadeIn_A1( Particle_Obj, 100, 100 );
+		wait( 100 );
+		T_FadeOut_Delete( Particle_Obj, 80, 100 );
+		
+	}	
 	
 	descent( i in 0..200 ){
 		
 		ObjRender_SetX( Particle_Obj, ObjRender_GetX( Particle_Obj ) - 0.1 );
-		ObjRender_SetY( Particle_Obj, ObjRender_GetY( Particle_Obj ) + 0.8 );
+		ObjRender_SetY( Particle_Obj, ObjRender_GetY( Particle_Obj ) - 0.3 );
 		//ObjRender_SetZ( Particle_Obj, ObjRender_GetZ( Particle_Obj ) - 0.2 );
 		ObjRender_SetAngleXYZ( Particle_Obj, Angle_X, Angle_Y, Angle_Z );
 		//ObjRender_SetAlpha( Particle_Obj,( i / 100) * 255 );
@@ -88,15 +99,17 @@ task T_RenderStage{
 
 	SetFogEnable( true );
 	
-	let Fog_Color_Initial = [ 0, 8, 0 ];
-	let Fog_Color_Reveal = [ 255, 255, 184 ];
-	let Fog_Range_Inital = [ 600, 1000 ];
-	let Fog_Range_Reveal = [ 300, 512 ];
+	let Fog_Color_Initial = [ 0, 0, 0 ];
+	let Fog_Color_Reveal =[ 0, 12, 0 ];
+	let Fog_Range_Inital = [ 1, 200 ];
+	let Fog_Range_Reveal = [ 200, 800 ];
 	
+	let Fog_Range_Phase_1_A = [ 1, 200 ];
+	let Fog_Range_Phase_1_B = [ 64, 512 ];
 	//T_Particle_Spawner;
 	//T_Particle_Spawner_B;
 	//T_Mist_Spawner();
-	//T_Reveal_Stage;
+	T_Reveal_Stage;
 	//SetFogParam( 300, 512, 255, 255, 184 );
 	SetFogParam( Fog_Range_Inital[0], Fog_Range_Inital[1], Fog_Color_Initial[0], Fog_Color_Initial[1], Fog_Color_Initial[2] );
 
@@ -104,20 +117,67 @@ task T_RenderStage{
 		
 	task T_Reveal_Stage(){
 		
-		let Reveal_Time = 360; //changed to sync with the music better.
-		
+		let Reveal_Time = 250; //changed to sync with the music better.
+		let Reveal_Time_B = 500; 
 		//T_Reveal_Rainbow();
 		
 		ascent( i in 0..Reveal_Time ){
 
 			let Color = Interpolate_Linear( Fog_Color_Initial, Fog_Color_Reveal, i/Reveal_Time );
 			let Range = Interpolate_Smoother( Fog_Range_Inital, Fog_Range_Reveal, i/Reveal_Time );
-			Camera_Speed = Interpolate_Smoother( Camera_Speed, 1.4, i/Reveal_Time);
+			//Camera_Speed = Interpolate_Smoother( Camera_Speed, 1.4, i/Reveal_Time);
 		
 			SetFogParam( Range[0], Range[1], Color[0], Color[1], Color[2] );
 
 			yield;
 		}
+		
+		wait( 200 );
+		
+		ascent( i in 0..Reveal_Time_B ){
+
+			//let Color = Interpolate_Linear( Fog_Color_Reveal, Fog_Color_Reveal, i/Reveal_Time );
+			let Range = Interpolate_Smoother( Fog_Range_Reveal, Fog_Range_Phase_1_A, i/Reveal_Time_B );
+			//Camera_Speed = Interpolate_Smoother( Camera_Speed, 1.4, i/Reveal_Time);
+		
+			SetFogParam( Range[0], Range[1], Fog_Color_Reveal[0], Fog_Color_Reveal[1], Fog_Color_Reveal[2] );
+
+			yield;
+		}	
+		
+		//Obj_Delete();
+		
+		STAGE_PHASE += 1;
+		
+		Wheel_Mesh( 0, -64, 200, 255 );
+		//SetCameraFocusY( 64 );	
+		SetCameraPosEye( 0, -128, 190 );	
+		SetCameraAzimuthAngle( -90 );
+		SetCameraElevationAngle( 20 );
+		SetCameraRadius( 290 );
+		//SetCameraFocusY( 64 );
+		//SetCameraFocusZ( 0 );
+		//SetCameraRoll( 0 +i/2 );
+		
+		SetCameraPitch( 0 );
+		SetCameraYaw( 0 );		
+		
+		let Water_Layer_C = Render_3D_Sprite_A1( Tex_Ground_01, [ 0, 0, 2024*2, 2024*2 ], 0, -64, 200, 21, [ 1, 1, 1 ] );
+		ObjRender_SetAngleXYZ( Water_Layer_C, 90, 0, 0 );	
+		ObjRender_SetFogEnable(Water_Layer_A, false);		
+		
+		ascent( i in 0..Reveal_Time_B ){
+
+			let Color = Interpolate_Linear( Fog_Color_Reveal, [ 0, 0, 0 ], i/Reveal_Time );
+			let Range = Interpolate_Smoother( Fog_Range_Phase_1_A, Fog_Range_Phase_1_B, i/Reveal_Time_B );
+			float Cam_Y = Interpolate_Smoother( 256, 0, i/Reveal_Time_B );
+			//Camera_Speed = Interpolate_Smoother( Camera_Speed, 1.4, i/Reveal_Time);
+		
+			SetCameraPosEye( 0, Cam_Y, 190 );
+			SetFogParam( Range[0], Range[1], Color[0], Color[1], Color[2] );
+
+			yield;
+		}			
 	
 	}		
 	
@@ -137,11 +197,13 @@ task T_RenderStage{
 		
 		//ObjRender_SetTextureFilter( Water_Layer_A, FILTER_NONE, FILTER_NONE, FILTER_NONE );
 		
-		let Water_Layer_B = Render_3D_Sprite_A1( Tex_Gradient_01, [ 0, 0, 1024*2, 1024*2 ], -256, 0, 155, 21, [ 1, 1, 1 ] );
-		T_Scroll_A1( Water_Layer_B, [ 0, 0, 1024*2, 1024*2 ], -0.4 );
+		ascent( i in 0..2 ){
+			let Water_Layer_B = Render_3D_Sprite_A1( Tex_Gradient_01, [ 0, 0, 1024, 1024 ], 128, 0 - i * 1024/2, 100, 21, [ 1, 1, 1 ] );
+			T_Scroll_A1( Water_Layer_B, [ 0, 0, 1024, 1024 ], -0.4 );
+		}
+		//let Water_Layer_C = Render_3D_Sprite_A1( Tex_Gradient_01, [ 0, 0, 1024*2, 1024*3 ], -256, -1024*2, 155, 21, [ 1, 1, 1 ] );
+		//T_Scroll_A1( Water_Layer_C, [ 0, 0, 1024*2, 1024*2 ], -0.4 );		
 		
-		let Water_Layer_C = Render_3D_Sprite_A1( Tex_Gradient_01, [ 0, 0, 1024*2, 1024*2 ], -256, -1024*2, 155, 21, [ 1, 1, 1 ] );
-		T_Scroll_A1( Water_Layer_C, [ 0, 0, 1024*2, 1024*2 ], -0.4 );		
 		//ObjRender_SetAngleXYZ( Water_Layer_B, 180, 0, 0 );	
 		//ObjRender_SetFogEnable( Water_Layer_B, false);		
 		
@@ -153,8 +215,6 @@ task T_RenderStage{
 
 		loop{
 			
-		//	T_Particles;
-		//	T_Particles;
 			T_Mist( 680, rand( 512, -650 ), rand( 48, 128 ), -1, 24 );
 			T_Mist( -680, rand( 512, -650 ), rand( 48, 128 ), 1, 24 );
 			//T_Mist( rand( 256, 512 ), rand( -32, 64 ), 256, 23 );
@@ -170,16 +230,16 @@ task T_RenderStage{
 
 		loop{
 			
-			T_Particles;
-			T_Particles;
-
+			ascent( i in 0..10 ){
+				T_Particles;
+				yield;
+			}	
 			
 			wait( 30 );
 	
 		}
 
 	}		
-	
 	*/
 
 	task T_Scroll_A1( Obj, Rect, Speed ){
@@ -187,6 +247,8 @@ task T_RenderStage{
 		float scroll = 0;	
 		
 		loop{
+
+			if( STAGE_PHASE >= 1 ){ Obj_Delete( Obj ); break; }
 
 			ObjSprite3D_SetSourceRect( Obj, Rect[0], Rect[1] + scroll, Rect[2], Rect[3] + scroll );
 			
@@ -211,6 +273,9 @@ task T_RenderStage{
 		}		
 		
 	}
+	
+	wait( 800 );
+	
 
 
 }

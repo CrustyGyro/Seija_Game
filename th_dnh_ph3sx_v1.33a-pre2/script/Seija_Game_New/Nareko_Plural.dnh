@@ -2,7 +2,8 @@
 #ScriptVersion[3]
 #Title["Nareko_Plural"]
 //#Background["./Stage/STG_03/STG_BG.dnh"];
-#Background["./Stage/STG_03/STG_BG.dnh"];
+#Background["./Stage/STG_03/FW_Stage_3_BG.dnh"];
+//#Background["./Stage/STG_03/STG_BG.dnh"];
 #Player[ "./Player/PL_Reimu.dnh" ]
 #System["./System/System_Main_Hud.dnh"]
 
@@ -46,6 +47,7 @@ task T_BossBGM {
 task T_Plural{
 
 	T_BossBGM;
+	SetCommonData( "BG_Phase", 3 );
 
     let Boss = Load_Boss();
     ObjEnemyBossScene_Regist( Boss );

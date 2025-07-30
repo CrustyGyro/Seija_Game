@@ -4,6 +4,9 @@
 
 	let RESOLUTION = GetScreenHeight()/480;
 	float LINE_MODIFIER = 0;
+	float LINE_MOD_STAGE = 4.5;
+	
+	//int STAGE_PHASE = 0;
 
 
 	//---------------------------

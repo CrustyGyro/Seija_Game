@@ -78,7 +78,7 @@ let bossY = 0;
 
 task T_Main {
 
-
+	//LINE_MOD_STAGE = 0;
 	NotifyEventAll( EV_BOSS_EFFECT, bossObj, CC_RED );
 	
 	//let Color = [ DOT_GRAY, DOT_RED, DOT_YELLOW, DOT_CYAN, DOT_PURPLE, DOT_GREEN ];

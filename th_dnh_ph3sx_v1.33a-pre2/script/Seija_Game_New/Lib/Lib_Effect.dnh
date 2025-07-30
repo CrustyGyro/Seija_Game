@@ -11,6 +11,8 @@ task T_HitEffect( Target ){
 	let Current_HP = Base_HP;
 	let Frame = 0;
 	float Item_Frame = 0;
+	float Shot_Count = 20;
+	
 	//ObjEnemy_SetIntersectionCircleToShot( bossObj, bossX, bossY, 8 );
 	while(!Obj_IsDeleted( Target )){
 		
@@ -21,7 +23,7 @@ task T_HitEffect( Target ){
 		
 		if( Current_HP != Base_HP ){
 			
-			if( Item_Frame % 30 == 0 ){
+			if( Item_Frame % Shot_Count == 0 ){
 				
 				Create_Item_A1( X + rand( -8, 8 ), Y + rand( -8, 8 ), ITEM_S_BONUS );
 				
@@ -29,7 +31,7 @@ task T_HitEffect( Target ){
 			
 			if( Frame == 0 ){
 				
-				T_PlaySE( SE_DAMAGE, 28 );
+				T_PlaySE( SE_DAMAGE, 30 );
 				
 				ObjRender_SetColor( Target, 100, 100, 255 );
 				

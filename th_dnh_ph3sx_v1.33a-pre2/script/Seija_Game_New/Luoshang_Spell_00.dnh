@@ -1,0 +1,235 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title["Luoshang_Spell_00"]
+#Background["./Stage/BG/CSaRL_Dome.dnh"];
+#Player[ "./Player/PL_Reimu.dnh" ]
+#System["./System/System_Main_Hud.dnh"]
+
+//--------------------------------------------------Variables------------------------------------------------------
+
+let bossObj;
+let objScene = GetEnemyBossSceneObjectID();
+let bossX = 0;
+let bossY = 0;
+
+int Dir_Switch = 1;
+
+//SetIntersectionVisualization( true );
+let BossTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/CSARL_Luoshang.png";
+let CutinTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Cutin/CurseOfRa.png";
+
+//---------------------------------------------------Include-------------------------------------------------------
+
+	#include "./lib/Index_Boss.dnh"
+	#include "./lib/Lib_Spell.dnh"
+	#include "./lib/Lib_SpellCutin.dnh"
+
+//----------------------------------------------------Start--------------------------------------------------------
+
+@Loading {
+	
+    LoadTexture( CutinTex );
+
+}
+
+
+@Initialize {
+
+	bossObj = ObjEnemy_Create(OBJ_ENEMY_BOSS);	
+	
+	ObjEnemy_Regist( bossObj );	
+
+	T_Lifebar( bossObj );
+	T_HitEffect( bossObj );
+	ObjEnemy_SetDamageRate( bossObj, 0, 0 );	
+
+	ObjPrim_SetTexture( bossObj, BossTex );
+	//Init_Boss_Nareko( bossObj );
+	
+	ObjMove_SetDestAtFrame( bossObj, GetStgFrameWidth/2, Get_CenterY/2 + 16, 60, LERP_DECELERATE );
+	
+	
+	SetPlayerLife( 8 );
+	T_Main;
+	T_End;
+	
+}
+
+@Event { 
+
+	alternative(GetEventType()) 
+	case( EV_REQUEST_LIFE ) { 
+		SetScriptResult( 2500 ); // 3000-4500 For Nons ( At 100% Damage Rate. ) 2000
+	}
+	case( EV_REQUEST_TIMER ) { 
+		//SetScriptResult( 50 );
+		SetScriptResult( 65 );
+	}	
+	case( EV_REQUEST_SPELL_SCORE ){
+       SetScriptResult( 5000000 );
+    }	
+
+
+
+} 
+
+@MainLoop {
+
+	bossX = ObjMove_GetX( bossObj );
+	bossY = ObjMove_GetY( bossObj );
+	
+	SetCommonData( "Effect_X", bossX );
+	SetCommonData( "Effect_Y", bossY );	
+
+	ObjEnemy_SetIntersectionCircleToShot( bossObj, bossX, bossY, 16 );
+	ObjEnemy_SetIntersectionCircleToPlayer( bossObj, bossX, bossY, 8 );
+	
+	yield;
+}
+
+@Finalize {
+} 
+
+
+task T_InitSpell(){
+	
+	//let CutinTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Cutin/CurseOfRa.png";
+	
+	T_CallSpell_A1( "Peenid Sign: \"Peenid Spellcard\"", 0, "Normal", objScene );
+	//T_Call_Spell_Cutin( CutinTex, [ 0, 0, 200, 384 ], 1, CC_BLUE );	
+	
+	ObjEnemyBossScene_StartSpell( objScene );
+	
+	yield;
+	//T_SpellBG_Nareko();	
+	
+}	
+
+
+//----------------------------------------------------Patterns--------------------------------------------------------
+
+task T_Main {
+
+
+	NotifyEventAll( EV_BOSS_EFFECT, bossObj, CC_PINK );
+
+	wait( 125 );
+
+	T_InitSpell();
+	
+	wait( 160 );
+
+	ObjEnemy_SetDamageRate( bossObj, 0.3, 0.8 );
+	
+	T_Boss_Shot_A;
+	//T_Boss_Shot_C;
+	
+}	
+
+task T_Boss_Shot_A{
+	
+	float Frame = 0;
+	float Frame_B = 0;
+	float Base_Y = Get_CenterY;
+	
+	async{
+		
+		while( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ) {
+		
+			ascent( i in 0..1 ){
+
+				int Shot_A = ShotR1( 0, Base_Y - 64 + i * Get_MaxY/1, 1, 2, 0 + 2 * sin( Frame_B*35 ), SHOT_BALL_DAQUA, 10, SHOT_CLOUD_AQUA );
+				int Shot_B = ShotR1( Get_MaxX, Base_Y - 64 + i * Get_MaxY/1, 1, 2.2, 180 - 2 * sin( Frame_B*25 ), SHOT_BALL_AQUA, 10, SHOT_CLOUD_AQUA );
+				ObjRender_SetBlendType( Shot_A, BLEND_ADD_ARGB );
+				ObjRender_SetBlendType( Shot_B, BLEND_ADD_ARGB );
+
+
+			}	
+			
+			
+			//Base_Y--;
+			Frame_B++;
+			wait( 4 );
+		}
+	}	
+	
+	while( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ) {
+
+		descent( a in 0..1 ){
+			ascent( i in 0..6 ){
+
+				int Shot_A = ShotR1( -24, Base_Y - 24 + i * Get_MaxY/6, 1, 1.4, 0 + 8 * sin( Frame*12 ) + a * 4/2, SHOT_BALL_DAQUA, 10, SHOT_CLOUD_AQUA );
+				int Shot_B = ShotR1( Get_MaxX +24, Base_Y - 24 + i * Get_MaxY/6, 1, 1.2, 180 - 8 * sin( Frame*6 ) + a * 4/2, SHOT_BALL_AQUA, 10, SHOT_CLOUD_AQUA );
+				//int Shot_B = ShotR1( Get_MaxX, Base_Y - 64 + i * Get_MaxY/1, 1, 2.2, 180 - 2 * sin( Frame_B*25 ), SHOT_BALL_AQUA, 10, SHOT_CLOUD_AQUA );
+				ObjRender_SetBlendType( Shot_A, BLEND_ADD_ARGB );
+				ObjRender_SetBlendType( Shot_B, BLEND_ADD_ARGB );
+
+			}
+		}
+		Frame++;
+
+		wait( 32 );
+	}
+}
+
+task T_Boss_Shot_B{
+
+}
+//-----------------------------------------------------Death---------------------------------------------------------
+
+task T_End {
+	
+    while( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ) {
+	     yield;
+	}
+	
+	if( ObjEnemyBossScene_GetInfo( GetEnemyBossSceneObjectID, INFO_IS_LAST_STEP ) ){
+
+		NotifyEventAll( EV_CLEAR_ENEMY_SHOTS, GetPlayerObjectID(), 60, 12 );
+		
+		yield;
+		
+		SetAutoDeleteObject(true);
+		T_Boss_Shotdown( bossObj, "Petal", CC_RED );
+		wait( 200 );
+		
+		Obj_Delete( bossObj );	
+		
+		ENEMY_CLEAR = true;
+		
+		yield;
+		
+		ENEMY_CLEAR = false;
+		
+		wait( 800 );
+		
+		CloseScript( GetOwnScriptID() );
+		
+	}	
+	else{
+	
+	
+		NotifyEventAll( EV_CLEAR_ENEMY_SHOTS, GetPlayerObjectID(), 60, 12 );
+		//DeleteShotAll( TYPE_ALL, TYPE_ITEM );
+		
+		yield;
+		
+		SetAutoDeleteObject( true );
+		
+		Obj_Delete( bossObj );	
+		
+		wait( 60 );
+		
+		//DeleteShotAll(TYPE_ALL, TYPE_ITEM);
+		
+		CloseScript( GetOwnScriptID() );
+	
+	}
+	
+	//SetAutoDeleteObject(true);
+	
+	//Obj_Delete( bossObj );	
+	//CloseScript( GetOwnScriptID() );
+	
+}
+

@@ -1,0 +1,47 @@
+//--------------------------------------------------------------------------------------------------------------------------------------------
+
+//Simple Render stuffs
+
+function Render_3D_Sprite_A1( Path, Rect, X, Y, Z, Priority, Scale ){
+		
+	let obj = ObjPrim_Create(OBJ_SPRITE_3D);
+	
+	ObjPrim_SetTexture(obj,Path);
+	
+	Obj_SetRenderPriorityI(obj,Priority);
+	ObjSprite3D_SetSourceDestRect(obj, Rect[0], Rect[1], Rect[2], Rect[3]);
+
+	ObjRender_SetScaleXYZ(obj, Scale[0], Scale[1], Scale[2] );
+
+	ObjRender_SetPosition(obj,X,Y,Z);
+		
+	return obj;	
+	
+}
+
+
+//--------------------------------------------------------------------------------------------------------------------------------------------
+
+task T_Scroll_A1( Obj, Rect, Speed, Camera_Speed ){
+		
+	float Scroll = 0;	
+		
+	while( !Obj_IsDeleted( Obj ) ){
+
+		ObjSprite3D_SetSourceRect( Obj, Rect[0], Rect[1] + Scroll, Rect[2], Rect[3] + Scroll );
+			
+		Scroll += Speed * Camera_Speed;
+		yield;
+	}		
+		
+}
+
+
+
+
+
+
+
+
+
+//--------------------------------------------------------------------------------------------------------------------------------------------

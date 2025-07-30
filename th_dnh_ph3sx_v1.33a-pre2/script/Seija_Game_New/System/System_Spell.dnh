@@ -80,7 +80,7 @@ task T_Start_Spell(){
 		return;
 	}
 	
-	wait( 100 );
+	wait( 200 );
 	CloseScript(GetOwnScriptID());
 	
 }
@@ -194,7 +194,7 @@ task T_MagicCircle( Texture, Max_Radius, Speed ){
 	
 	Obj_Delete(obj);
 	
-	wait( 200 );
+	wait( 500 );
 	CloseScript(GetOwnScriptID());
 	
 }
@@ -216,27 +216,46 @@ task T_Gain_Spell(score){
 	let strScore = "+" ~ IntToString(score);
 	let objScore = ObjText_Create();
 	
-	ObjText_SetFontSize(objScore,27);
-	ObjText_SetFontType(objScore,"Chaney Thin Normal");	
+	ObjText_SetFontSize( objScore,27);
+	ObjText_SetFontType( objScore,"Chaney Thin Normal");	
 	
-	ObjText_SetText(objScore, strScore);
-	ObjText_SetFontBold(objScore, true);
+	ObjText_SetText( objScore, strScore );
+	ObjText_SetFontBold( objScore, true);
 	
-	ObjText_SetFontColorTop(objScore, 255, 255, 255);
-	ObjText_SetFontColorBottom(objScore, 0, 240, 208);
-	ObjText_SetFontBorderType(objScore, BORDER_FULL);
-	ObjText_SetFontBorderColor(objScore,0, 0, 0);
-	ObjText_SetFontBorderWidth(objScore, 2);
-	Obj_SetRenderPriority(objScore, 0.6);
+	ObjText_SetFontColorTop( objScore, 255, 255, 255 );
+	ObjText_SetFontColorBottom( objScore, 0, 240, 208 );
+	ObjText_SetFontBorderType( objScore, BORDER_FULL );
+	ObjText_SetFontBorderColor( objScore, 0, 0, 0 );
+	ObjText_SetFontBorderWidth( objScore, 2 );
+	Obj_SetRenderPriority( objScore, 0.6 );
 	
 	ObjRender_SetX(objScore, GetStgFrameWidth/2);
 	ObjRender_SetY(objScore, 120);
 
+	async{
+		
+		float Frame = 6;
+		
+		while( Frame >  0 ){
+				
+			Frame--;	
+				
+			ascent( i in 0..2 ){
+					
+				ObjText_SetFontBorderColor( objScore, 155*i, 155*i, 155*i );	
+				//ObjRender_SetColor( objScore, 255*i/10, 255*i/10, 255 );
+				wait( 10 );
+					
+			}
+			wait( 2 );
+		}			
+	}	
+
 
 	ascent(a in 0..15){
 		
-		ObjRender_SetScaleY(Obj,cos(-100 + a * 100/15));
-		ObjRender_SetScaleY(objScore,cos(-100 + a * 100/15));
+		ObjRender_SetScaleY( Obj, cos( -100 + a * 100/15 ) );
+		ObjRender_SetScaleY( objScore, cos( -100 + a * 100/15) );
 		yield;
 		
 	}
@@ -244,12 +263,12 @@ task T_Gain_Spell(score){
 	
 	AddScore( score );
 	
-	wait( 60 );
+	wait( 120 );
 	
-	ascent(a in 0..40){
+	ascent( a in 0..60 ){
 		
-		ObjRender_SetX(Obj, ObjRender_GetX(Obj) - a);
-		ObjRender_SetX(objScore, ObjRender_GetX(objScore) + a);
+		ObjRender_SetX(Obj, ObjRender_GetX(Obj) - a * 256/60 );
+		ObjRender_SetX(objScore, ObjRender_GetX(objScore) + a * 256/60 );
 		yield;
 		
 	}	
@@ -277,7 +296,7 @@ task T_Lose_Spell{
 	
 	ascent(a in 0..15){
 		
-		ObjRender_SetScaleY( Obj, cos(ObjRender_GetScaleY(Obj) - a * 100/15 ) );
+		ObjRender_SetScaleY( Obj, cos( ObjRender_GetScaleY(Obj) - a * 100/15 ) );
 		yield;
 		
 	}	

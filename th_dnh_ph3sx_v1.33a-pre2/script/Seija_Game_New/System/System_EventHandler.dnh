@@ -138,7 +138,7 @@ float Graze_Timer = 1;
 
 task T_Handle_Line(){
 	
-	LINE_MODIFIER+=0.01;
+	LINE_MODIFIER +=0.01;
 	Graze_Timer = 0;
 	
 }	
@@ -172,7 +172,7 @@ task T_Handle_Line_A(){
 			
 		}
 
-		Y = min( Y + LINE_MODIFIER/6 - Graze_Timer/5, Get_MaxY  );
+		Y = min( Y + LINE_MODIFIER/LINE_MOD_STAGE - Graze_Timer/5, Get_MaxY  );
 	
 		ObjRender_SetY( Hud_Line_Obj, max( Y, 140 ) ); 		
 		ObjRender_SetY( Hud_Line_Obj_Sidebar, max( Y, 140 ) + 16 );

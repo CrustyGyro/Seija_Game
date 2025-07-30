@@ -1,6 +1,6 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
-#Title["Nareko_Spell_Test"]
+#Title["Prifma_Spell WIP"]
 //#Background["./Stage/STG_03/STG_BG.dnh"];
 #Player[ "./Player/PL_Reimu.dnh" ]
 #System["./System/System_Main_Hud.dnh"]
@@ -15,7 +15,7 @@ let bossY = 0;
 int Dir_Switch = 1;
 
 //SetIntersectionVisualization( true );
-let CutinTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Cutin/CurseOfRa.png";
+let CutinTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Cutin/EGoA_Boss_6.png";
 
 //---------------------------------------------------Include-------------------------------------------------------
 
@@ -42,12 +42,12 @@ let CutinTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Cutin/Cur
 	T_HitEffect( bossObj );
 	ObjEnemy_SetDamageRate( bossObj, 0, 0 );	
 
-	Init_Boss_Nareko( bossObj );
+	Init_Boss_Prifma( bossObj );
 	
-	ObjMove_SetDestAtWeight( bossObj, GetStgFrameWidth/2, Get_CenterY/2 + 16, 15, 8 );
+	ObjMove_SetDestAtWeight( bossObj, GetStgFrameWidth/2, Get_CenterY/1.1, 15, 8 );
 	
 	
-	//SetPlayerLife( 8 );
+	SetPlayerLife( 8 );
 	T_Main;
 	T_End;
 	
@@ -57,14 +57,14 @@ let CutinTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Cutin/Cur
 
 	alternative(GetEventType()) 
 	case( EV_REQUEST_LIFE ) { 
-		SetScriptResult( 2000 ); // 3000-4500 For Nons ( At 100% Damage Rate. )
+		SetScriptResult( 3600 ); // 3000-4500 For Nons ( At 100% Damage Rate. )
 	}
 	case( EV_REQUEST_TIMER ) { 
 		//SetScriptResult( 50 );
-		SetScriptResult( 65 );
+		SetScriptResult( 70 );
 	}	
 	case( EV_REQUEST_SPELL_SCORE ){
-       SetScriptResult( 5000000 );
+       SetScriptResult( 15000000 );
     }	
 
 
@@ -93,13 +93,13 @@ task T_InitSpell(){
 	
 	//let CutinTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Cutin/CurseOfRa.png";
 	
-	T_CallSpell_A1( "Obstructing Sign: \"Winding Tomb's Passage\"", 0, "Normal", objScene );
-	T_Call_Spell_Cutin( CutinTex, [ 0, 0, 200, 384 ], 1, CC_ORANGE );	
+	T_CallSpell_A1( "\"Samsara Ferris Wheel ( WIP )\"", 0, "Normal", objScene );
+	T_Call_Spell_Cutin( CutinTex, [ 0, 0, 445, 854 ], 0.5, CC_CYAN );	
 	
 	ObjEnemyBossScene_StartSpell( objScene );
 	
 	yield;
-	T_SpellBG_Nareko();	
+	T_SpellBG_Prifma();
 	
 }	
 
@@ -109,7 +109,7 @@ task T_InitSpell(){
 task T_Main {
 
 
-	//NotifyEventAll( EV_BOSS_EFFECT, bossObj, CC_RED );
+	NotifyEventAll( EV_BOSS_EFFECT, bossObj, CC_GREEN );
 
 	wait( 125 );
 
@@ -117,22 +117,291 @@ task T_Main {
 	
 	wait( 160 );
 
-	ObjEnemy_SetDamageRate( bossObj, 0.3, 0.8 );
+	ObjEnemy_SetDamageRate( bossObj, 0.5, 0.8 );
 	
 	//T_Boss_Shot_C;
 	
+	T_Boss_Shot_A();
+	
+	wait( 100 );
+	//T_Boss_Shot_D();
+	//T_Movement_A( bossObj );
+	
 }	
 
+task T_Movement_A( Obj ){
+
+	let X = 0;
+	let Y = 0;
+	
+	while( !Obj_IsDeleted( Obj ) ){
+
+		ObjMove_SetDestAtWeight( Obj, bossX + 16 * cos( X ), bossY + 16 * sin( Y ), 64, 3 );
+		X += 1;
+		Y += 1;
+		
+		yield;
+	}
+
+}
+
+task T_Boss_Shot_D{
+	
+	float Frame = 0;
+	
+	while( !Obj_IsDeleted( bossObj ) ){
+	
+		ascent( i in 0..12 ){
+			
+			int Dummy_Shot_Core =  ShotA1( bossX, bossY, 1, 90 + i * 360/12 + 45 * sin( Frame ), SHOT_BILL_GREY, 10 );
+
+	
+		}
+		
+		Frame+= 2;
+		wait( 10 );
+	}
+	
+}	
 
 task T_Boss_Shot_A{
 	
+	int Way = 12;
+	int Stack = 1;
 	
+	//Horribleness--
+	int[] Shot_Color = [ SHOT_LASER_RED, SHOT_LASER_ORANGE, SHOT_LASER_YELLOW, SHOT_LASER_GREEN, SHOT_LASER_MINT, SHOT_LASER_AQUA, SHOT_LASER_BLUE, SHOT_LASER_PURPLE, SHOT_LASER_MAGENTA, SHOT_LASER_PINK, SHOT_LASER_DPINK, SHOT_LASER_GREY ];
+	int[] Shot_Color_Sub = [ SHOT_BALL_AURA_RED, SHOT_BALL_AURA_ORANGE, SHOT_BALL_AURA_YELLOW, SHOT_BALL_AURA_GREEN, SHOT_BALL_AURA_MINT, SHOT_BALL_AURA_AQUA, SHOT_BALL_AURA_BLUE, SHOT_BALL_AURA_PURPLE, SHOT_BALL_AURA_MAGENTA, SHOT_BALL_AURA_PINK, SHOT_BALL_AURA_PINK, SHOT_BALL_AURA_GREY ];
 	
+	int Dummy_Shot_Core =  ShotA1( bossX, bossY, 0, 90, SHOT_ORB_AQUA, 10 );
+	ObjShot_SetSpellResist( Dummy_Shot_Core, true );
+	T_Movement_A( Dummy_Shot_Core );
 	
+	int[] Dummy_Shots = Pattern_Shot_A1( bossX, bossY, 0, 32, 360, 0, SHOT_CLOUD_AZURE, PATTERN_RING, Way, Stack, 0, SHOT_CLOUD_AZURE );
+	int[] Dummy_Shots_Middle = Pattern_Shot_A1( bossX, bossY, 0, 32, 360, 0, SHOT_CLOUD_AZURE, PATTERN_RING, Way, Stack, 0, SHOT_CLOUD_AZURE );
+	int[] Dummy_Shots_Outer = Pattern_Shot_A1( bossX, bossY, 0, 32, 360, 0, SHOT_CLOUD_AZURE, PATTERN_RING, Way, Stack, 0, SHOT_CLOUD_AZURE );
 	
+	for( int a = 0; a < Way * Stack; a++ ) {
+		
+		//ObjShot_SetSpellResist( Dummy_Shots_Outer[a], true );
+		//ObjShot_SetAutoDelete( Dummy_Shots_Outer[a], false );		
+		//int Prism_Core = Create_Famliar_A1( bossX, bossY, PRISM_S_NORMAL, ENEMY_RED, 1000, false, 1, 1, 128 );	
+		T_Manage_Pyramid( Dummy_Shot_Core, Dummy_Shots[a], 156, 90, 200, -0.2 );
+		T_Manage_Pyramid( Dummy_Shot_Core, Dummy_Shots_Outer[a], 256, -90, 300, -0.1 );
+		T_Manage_Pyramid( Dummy_Shot_Core, Dummy_Shots_Middle[a], 280, -90, 300, 0.1 );
+		T_Manage_Shot_Inner( Dummy_Shots[a] );
+		if( a < Way-1 ){
+				
+			T_Manage_Laser( Dummy_Shots[a], Dummy_Shots[a+1], true, false, Shot_Color[a], Shot_Color_Sub[a] );
+			T_Manage_Laser( Dummy_Shots_Outer[a], Dummy_Shots_Outer[a+1], false, true, Shot_Color[a], Shot_Color_Sub[a]  );
+			
+			T_Manage_Laser( Dummy_Shots_Middle[a], Dummy_Shots_Middle[a+1], false, true, Shot_Color[a], Shot_Color_Sub[a]  );
+			
+		}
+		else{
+				
+			T_Manage_Laser( Dummy_Shots[Way-1], Dummy_Shots[0], true, false, Shot_Color[a], Shot_Color_Sub[a]  );
+			T_Manage_Laser( Dummy_Shots_Outer[Way-1], Dummy_Shots_Outer[0], false, true,Shot_Color[a], Shot_Color_Sub[a]  );
+			
+			T_Manage_Laser( Dummy_Shots_Middle[Way-1], Dummy_Shots_Middle[0], false, true, Shot_Color[a], Shot_Color_Sub[a]  );
+
+		}			
+		
+		//ObjMove_AddPatternA2( Dummy_Shots[a], 20, NO_CHANGE, NO_CHANGE, -0.05, 0, 0 );
+		//ObjMove_AddPatternA2( Objs[0], 20, 2, 90 + a * 360/Count, -0.01, 0, 0 );
+	}
 	
+	task T_Manage_Shot_Inner( Shot ){
+		
+		wait( 200 );
+		/*
+		async{
+			while( !Obj_IsDeleted( Shot ) ){
+			
+				int Shot_A = ShotA1( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), 1, ObjMove_GetAngle( Shot ) -45, SHOT_SCALE_DMINT, 10 );
+				//int Shot_B = ShotA1( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), 1, ObjMove_GetAngle( Shot ) -16, SHOT_SCALE_DMINT, 10 );
+				//ObjShot_SetDeleteFrame( Shot_A, 160 );
+			
+				wait( 30 );
+			}			
+			
+		}	
+		*/
+		while( !Obj_IsDeleted( Shot ) ){
+		
+			int Shot_A = ShotA1( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), 1, ObjMove_GetAngle( Shot ) -180 + 45, SHOT_BILL_AZURE, 10 );
+			//ObjShot_SetDeleteFrame( Shot_A, 160 );
+		
+			wait( 28 );
+		}
+	}	
 	
+	task T_Manage_Laser( Shot, Next_Shot, PermitExpand, Can_Shoot, Color, Sub_Shot_Color ){
+			
+		//int Prism = Create_Famliar_A1( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), GHOST_S_NORMAL, ENEMY_RED, 1000, false, 1, 1, 400 );		
+		let Connector = CreateStraightLaserA1(  ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), 0, 0, 16, 99999, Color, 400 );
+		let Prifma_Connector = CreateStraightLaserA1( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), 0, 0, 16, 99999, Color, 400 );
+		ObjStLaser_SetPermitExpand( Prifma_Connector, PermitExpand );
+		
+		//ObjRender_SetAlpha( Shot, 0 );
+		//ObjRender_SetAlpha( Next_Shot, 0 );
+		
+		ObjShot_SetSpellResist( Shot, true );
+		ObjShot_SetAutoDelete( Shot, false );		
+		ObjShot_SetAutoDelete( Connector, false );		
+		ObjStLaser_SetSource( Connector, false );
+		ObjStLaser_SetSource( Prifma_Connector, false );
+
+		/*
+		if( Can_Shoot == true ){	
+			async{	
+			
+				int Shot_Count = 3;
+			
+				wait( 60 );
+				
+				float Laser_Angle = ObjStLaser_GetAngle( Connector );
+			
+				while( !Obj_IsDeleted( Shot ) ){
+					
+					ascent( a in 0..Shot_Count ){
+						
+						float Shot_X = ObjMove_GetX( Connector ) + a * ObjLaser_GetLength( Connector )/Shot_Count * cos( Laser_Angle );
+						float Shot_Y = ObjMove_GetY( Connector ) + a * ObjLaser_GetLength( Connector )/Shot_Count * sin( Laser_Angle );
+						
+						int Shot_A = ShotA1( Shot_X, Shot_Y, 0.5, ObjStLaser_GetAngle( Connector ) + 90, Sub_Shot_Color, 8 );
+						
+						//T_Manage_Shot( Shot_A );
+						
+						wait( 8 );
+						
+					}	
+					
+					wait( 60 );
+				}				
+					
+			}	
+		}
+		*/
+		if( Can_Shoot == true ){	
+			async{	
+			
+				int Shot_Count = 1;
+			
+				wait( 60 );
+			
+				while( !Obj_IsDeleted( Shot ) ){
+					
+					ascent( i in 0..Shot_Count ){
+						int Shot_A = ShotA1( ObjMove_GetX( Prifma_Connector ), ObjMove_GetY( Prifma_Connector ), 0, ObjMove_GetAngle( Prifma_Connector ), Sub_Shot_Color, 8 );
+						
+						T_Manage_Shot( Shot_A );
+						
+						wait( 8 );
+						
+					}	
+					
+					wait( 60 );
+				}				
+					
+			}	
+		}
+		task T_Manage_Shot( Shot_A ){
+					
+			//ObjShot_SetSpellResist( Shot_A, true );
+			ObjShot_SetAutoDelete( Shot_A, false );	
+			ObjRender_SetBlendType( Shot_A, BLEND_ADD_ARGB );
+
+			float Shot_Time = 400; //The time it takes it to go along the whole laser.
+					
+			while( !Obj_IsDeleted( Shot_A ) ){
+						
+				ascent( i in 0..Shot_Time ){
+					let L_Length = ObjLaser_GetLength( Prifma_Connector ) * i/Shot_Time;
+					let L_Angle = ObjStLaser_GetAngle( Prifma_Connector );
+					
+					//ObjRender_SetColor( Shot_A, 255- i * 255/Shot_Time, 255 - i * 255/Shot_Time, 255 );
+					ObjMove_SetAngle( Shot_A, L_Angle );
+					ObjMove_SetPosition( Shot_A, ObjMove_GetX( Prifma_Connector ) + L_Length *cos( L_Angle ), ObjMove_GetY( Prifma_Connector ) + L_Length *sin( L_Angle ) );
+								
+					yield;
+					
+				}
+				
+				Obj_Delete( Shot_A );
+			}
+					
+		}	
+		
+		while( !Obj_IsDeleted( Shot ) || !Obj_IsDeleted( Next_Shot ) ){
+
+						
+			if( Obj_IsDeleted( Next_Shot ) ){ break; }
+			if( Obj_IsDeleted( Shot ) ){ break; }
+			
+			
+			//ObjMove_SetPosition( Prism, ObjMove_GetX( Shot ), ObjMove_GetY( Shot ) ); 
+			ObjMove_SetPosition( Prifma_Connector, ObjMove_GetX( Shot ), ObjMove_GetY( Shot ) ); 
+			ObjStLaser_SetAngle( Prifma_Connector, dottheta( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), ObjMove_GetX( Dummy_Shot_Core ), ObjMove_GetY( Dummy_Shot_Core ) ) );
+			ObjLaser_SetLength( Prifma_Connector, distance( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), ObjMove_GetX( Dummy_Shot_Core ), ObjMove_GetY( Dummy_Shot_Core ) ) + 1 );							
+									
+			ObjMove_SetPosition( Connector, ObjMove_GetX( Shot ), ObjMove_GetY( Shot ) ); 
+			ObjStLaser_SetAngle( Connector, dottheta( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), ObjMove_GetX( Next_Shot ), ObjMove_GetY( Next_Shot ) ) );
+			ObjLaser_SetLength( Connector, distance( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), ObjMove_GetX( Next_Shot ), ObjMove_GetY( Next_Shot ) ) + 1 );	
+						
+			yield;
+		}
+		Obj_Delete( Connector );
+		Obj_Delete( Prifma_Connector );
+		
+	}	
 	
+	task T_Manage_Pyramid( Parent, Shot, Radius, Initial_Angle, Time, Dir ){
+			
+		async{
+				
+			float Angle = dottheta( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), ObjMove_GetX( Parent ), ObjMove_GetY( Parent ) );
+			float Frame = 0;
+			float Inital_Radius = 0;
+			float Angle_Init = Initial_Angle;
+				
+			ascent( i in 0..Time ){
+					
+				float X_Pos = ObjMove_GetX( Parent ) + Inital_Radius * cos( Angle );
+				float Y_Pos = ObjMove_GetY( Parent ) + Inital_Radius * sin( Angle );					
+								
+					//Angle = Interpolate_Overshoot( Angle_Init, Init_Angle, 2, i/60 );			
+				Inital_Radius = Interpolate_Overshoot( 0, Radius, 1.5, i/Time );
+
+				Angle+= Dir;	
+									
+				ObjMove_SetPosition( Shot, X_Pos, Y_Pos ); 
+				ObjMove_SetAngle( Shot, Angle );
+					
+				yield;
+					
+			}	
+
+				
+			while( !Obj_IsDeleted( Parent ) ){
+					
+				float X_Pos = ObjMove_GetX( Parent ) + Inital_Radius * cos( Angle );
+				float Y_Pos = ObjMove_GetY( Parent ) + Inital_Radius * sin( Angle );					
+					
+				Angle+= Dir;		
+					//Angle = Interpolate_Overshoot( Angle_Init, Init_Angle, 2, i/60 );			
+				//Inital_Radius = Interpolate_Overshoot( 0, Radius, 2, i/Time );				
+									
+				ObjMove_SetPosition( Shot, X_Pos, Y_Pos ); 
+				ObjMove_SetAngle( Shot, Angle );
+					
+				yield;
+					
+			}				
+		
+		}
+			
+	}	
 	
 	
 }	

@@ -8,6 +8,61 @@
 
 //------------------------------------------------------------------------------------------------------------------
 
+task Init_Boss_Prifma( Obj ){
+	
+	let BossTex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/EGoA_B6.png";
+	
+	//ObjPrim_SetTexture( Obj, BossTex );
+	//Render_Boss_Basic( Obj, BossTex, 11, 4, 4, 64, 96 );
+	T_Boss_Name( Obj, 0, "Amanowara no Nijie", [ 155, 255, 155 ] );
+	//let BossTex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/TH13_Miko.png";
+	//ObjPrim_SetTexture( Obj, BossTex );	
+	
+	//Render_Idle_A1( Obj, 0, 0, 11, 64, 96, 6 );
+	ObjPrim_SetTexture( Obj, BossTex );
+	
+	ObjSprite2D_SetSourceRect( Obj, 0, 0, 64, 128 );
+	ObjSprite2D_SetDestCenter( Obj );
+	
+	
+	ObjRender_SetScaleXYZ( Obj, 1, 1, 1 );
+	
+}	
+
+//---------------------------------------------------------
+
+task Init_Boss_Okina_A( Obj ){
+	
+	let BossTex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/TH16_Okina_A.png";
+	
+	Render_Boss_Basic( Obj, BossTex, 6, 4, 4, 128, 128 );
+	T_Boss_Name( Obj, 0, "Okina Matara", [ 155, 255, 155 ] );
+	//let BossTex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/TH13_Miko.png";
+	//ObjPrim_SetTexture( Obj, BossTex );	
+	
+	//Render_Idle_A1( Obj, 0, 0, 11, 64, 96, 6 );
+	ObjRender_SetScaleXYZ( Obj, 1, 1, 1 );
+	
+}	
+
+//---------------------------------------------------------
+
+task Init_Boss_Chimi( Obj ){
+	
+	let BossTex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/TH20_Chimi.png";
+	
+	Render_Boss_Basic( Obj, BossTex, 8, 5, 5, 64, 96 );
+	T_Boss_Name( Obj, 0, "La Creatura", [ 155, 255, 155 ] );
+	//let BossTex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/TH13_Miko.png";
+	//ObjPrim_SetTexture( Obj, BossTex );	
+	
+	//Render_Idle_A1( Obj, 0, 0, 11, 64, 96, 6 );
+	ObjRender_SetScaleXYZ( Obj, 1, 1, 1 );
+	
+}	
+
+//---------------------------------------------------------
+
 task Init_Boss_Nareko( Obj ){
 	
 	let BossTex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/TH20_Nareko.png";
@@ -21,6 +76,7 @@ task Init_Boss_Nareko( Obj ){
 	ObjRender_SetScaleXYZ( Obj, 1.3, 1.3, 1 );
 	
 }	
+
 
 task Render_Boss_Basic( Obj, Texture, IdleFrame_Count, MoveFrame_Count, CastFrame_Count, Sprite_Width, Sprite_Height ){
 	
@@ -837,6 +893,67 @@ task Render_Boss_Chimi( obj ){
 }
 */
 //------------------------------------------------------------------------------------------------------------------
+
+
+task T_SpellBG_Prifma(){
+
+	let Boss = GetEnemyBossObjectID[0];
+
+	let Path_A = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/Spell_Bg/Prifma_BG.png";
+	let Path_B = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/Spell_Bg/Prifma_01.png";
+	let Path_C = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/Spell_Bg/Prifma_02.png";
+	let Path_D = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/Spell_Bg/Prifma_03.png";
+	let Path_E = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/Spell_Bg/Prifma_04.png";
+	let Path_F = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/Spell_Bg/Prifma_05.png";
+	
+	let Spell_BG_00 = Render2D_Texture_A1( Path_A, [ 0, 0, 512, 512 ], Get_CenterX, Get_CenterY, 1, 0.26 );
+	let Spell_BG_01 = Render2D_Texture_A1( Path_B, [ 0, 0, 512, 512 ], Get_CenterX, Get_CenterY, 1, 0.26 );
+	let Spell_BG_02 = Render2D_Texture_A1( Path_C, [ 0, 0, 512, 512 ], Get_CenterX, Get_CenterY, 1, 0.26 );
+	let Spell_BG_03 = Render2D_Texture_A1( Path_D, [ 0, 0, 512, 512 ], Get_CenterX, Get_CenterY, 1.3, 0.26 );
+	let Spell_BG_04 = Render2D_Texture_A1( Path_E, [ 0, 0, 512, 512 ], Get_CenterX, Get_CenterY, 1.3, 0.26 );
+	let Spell_BG_05 = Render2D_Texture_A1( Path_F, [ 0, 0, 512, 512 ], Get_CenterX, Get_CenterY, 1, 0.26 );
+	ObjRender_SetBlendType( Spell_BG_05, BLEND_ADD_ARGB );
+	//ObjRender_SetBlendType( Spell_BG_03, BLEND_SUBTRACT );
+	
+	T_FadeIn_A1( Spell_BG_00, 60, 255 );
+	T_FadeIn_A1( Spell_BG_01, 60, 255 );
+	T_FadeIn_A1( Spell_BG_02, 60, 255 );
+	T_FadeIn_A1( Spell_BG_03, 60, 255 );
+	T_FadeIn_A1( Spell_BG_04, 60, 255 );
+	T_FadeIn_A1( Spell_BG_05, 60, 255 );
+	
+	ObjRender_SetBlendType( Spell_BG_03, BLEND_MULTIPLY );
+	ObjRender_SetBlendType( Spell_BG_04, BLEND_SUBTRACT );
+	
+	float Scroll = 0;
+	
+	while( !Obj_IsDeleted( Boss ) ){
+		
+		ObjSprite2D_SetSourceRect( Spell_BG_00, 0, 0 + Scroll, 512, 512 + Scroll );
+		ObjSprite2D_SetSourceRect( Spell_BG_03, 0, 0 - Scroll, 512, 512 - Scroll );
+		ObjSprite2D_SetSourceRect( Spell_BG_04, 0, 0 - Scroll, 512, 512 - Scroll );
+		
+		ObjSprite2D_SetSourceRect( Spell_BG_05, 0  - Scroll, 0, 512  - Scroll, 512 );
+		
+		ObjRender_SetAngleZ( Spell_BG_03, ObjRender_GetAngleZ( Spell_BG_03 ) - 0.1 );
+		ObjRender_SetAngleZ( Spell_BG_04, ObjRender_GetAngleZ( Spell_BG_04 ) + 0.1 );
+		
+		ObjRender_SetAngleZ( Spell_BG_01, ObjRender_GetAngleZ( Spell_BG_01 ) - 0.2 );
+		ObjRender_SetAngleZ( Spell_BG_02, ObjRender_GetAngleZ( Spell_BG_02 ) + 0.1 );
+
+		Scroll += 0.4;
+
+		yield;
+	}
+	
+	T_FadeOut_Delete( Spell_BG_00, 10, 255 );
+	T_FadeOut_Delete( Spell_BG_01, 10, 255 );
+	T_FadeOut_Delete( Spell_BG_02, 10, 255 );
+	T_FadeOut_Delete( Spell_BG_03, 10, 255 );
+	T_FadeOut_Delete( Spell_BG_04, 10, 255 );
+	T_FadeOut_Delete( Spell_BG_05, 10, 255 );
+
+}
 
 task T_SpellBG_Nareko(){
 

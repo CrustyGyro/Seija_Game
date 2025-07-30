@@ -1,0 +1,370 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title["Nareko_Test_00"]
+//#Background["./Stage/STG_03/STG_BG.dnh"];
+#Player[ "./Player/PL_Reimu.dnh" ]
+#System["./System/System_Main_Hud.dnh"]
+
+//--------------------------------------------------Variables------------------------------------------------------
+
+let bossObj;
+let objScene = GetEnemyBossSceneObjectID();
+let bossX = 0;
+let bossY = 0;
+
+//SetIntersectionVisualization( true );
+bool _FlowerSpread = false;
+
+//---------------------------------------------------Include-------------------------------------------------------
+
+	#include "./lib/Index_Boss.dnh"
+
+//----------------------------------------------------Start--------------------------------------------------------
+
+@Initialize {
+
+	bossObj = ObjEnemy_Create(OBJ_ENEMY_BOSS);	
+	
+	ObjEnemy_Regist( bossObj );	
+
+	//T_Lifebar( bossObj );
+	T_HitEffect( bossObj );
+	ObjEnemy_SetDamageRate( bossObj, 0, 0 );	
+
+	//T_FlameAura( bossObj, CC_RED, 1 );
+	Init_Boss_Nareko( bossObj );
+	
+	ObjMove_SetDestAtWeight( bossObj, GetStgFrameWidth/2, Get_CenterY/2 + 8, 15, 8 );
+	
+	
+	//SetPlayerLife( 8 );
+	T_Main;
+	T_End;
+	
+}
+
+@Event { 
+
+	alternative(GetEventType()) 
+	case( EV_REQUEST_LIFE ) { 
+		SetScriptResult( 3800 ); // 3000-4500 For Nons ( At 100% Damage Rate. ) //3800
+	}
+	case( EV_REQUEST_TIMER ) { 
+		SetScriptResult( 45 ); //40-50 For standard Nons.
+	}	
+
+
+} 
+
+@MainLoop {
+
+	bossX = ObjMove_GetX( bossObj );
+	bossY = ObjMove_GetY( bossObj );
+	
+	SetCommonData( "Effect_X", bossX );
+	SetCommonData( "Effect_Y", bossY );	
+
+	ObjEnemy_SetIntersectionCircleToShot( bossObj, bossX, bossY, 16 );
+	ObjEnemy_SetIntersectionCircleToPlayer( bossObj, bossX, bossY, 8 );
+	
+	yield;
+}
+
+@Finalize {
+} 
+
+
+//----------------------------------------------------Patterns--------------------------------------------------------
+
+task T_Main {
+
+
+	NotifyEventAll( EV_BOSS_EFFECT, bossObj, CC_RED );
+	
+	//let Color = [ DOT_GRAY, DOT_RED, DOT_YELLOW, DOT_CYAN, DOT_PURPLE, DOT_GREEN ];
+
+	yield;
+
+	wait( 45 );	
+	
+	//T_PlaySE( SE_CHARGE_00, 30 );
+	//T_Charge_A1( bossObj, 20, "Petal", CC_PINK );
+
+	//wait( 100 );	
+	T_PlaySE( SE_CHARGE_00, 35 );	
+	T_Charge_B1( bossObj, 90, 3, 48, 40, 5, CC_ORANGE );
+	T_Charge_B1( bossObj, -90, 3, 48, 40, 5, CC_BLUE );
+	//T_Charge_B1( bossX, bossY, 180, 3, 48, 40, 5, [ 255, 0, 0 ] );
+	//T_Charge_B1( bossX, bossY, 0, 3, 48, 40, 5, [ 0, 0, 255 ]);		
+	
+	//ConcentrationA1( bossObj, 35, "Maple", CC_PURPLE );
+	wait( 35 );		
+	
+	ObjEnemy_SetDamageRate( bossObj, 1, 1 );
+	T_Lifebar( bossObj );
+
+	wait( 60 );
+
+	//T_Boss_Shot_B;
+	
+	T_Boss_Shot_A;
+	//T_Boss_Shot_A_Sub( bossX, bossY );
+	//T_Movement_A;
+	
+	//wait( 200 );
+
+}	
+
+task T_Movement_A( Obj ){
+
+	let X = 0;
+	let Y = 0;
+	
+	while( !Obj_IsDeleted( Obj ) ){
+
+		ObjMove_SetDestAtWeight( Obj, Get_CenterX + 128 * cos( X ), Get_CenterY/2 + 128 * sin( Y ), 64, 3 );
+		X += 1;
+		Y += 1;
+		
+		yield;
+	}
+
+}
+
+task T_Boss_Shot_A{
+	
+	let Base_Angle = atan2( Get_MaxY, Get_MaxX );
+	let Shot_Count = 24;
+	
+	let Shot_Angle = Base_Angle;
+	let Base_X = 0;	
+	
+	while( Boss_Is_Alive( bossObj ) ){
+		
+		
+		//Base_X += GetStgFrameWidth();
+		
+		ascent( a in 0..1 ){	
+			ascent( i in 0..Shot_Count ){		
+				//let sx = Base_X + (i-(Shot_Count-1)/2)/Shot_Count*2*Get_MaxX;
+				
+				int Shot_A = ShotA1( bossX, bossY, 4, 90 + i * 360/Shot_Count + a * 32/1, SHOT_HEART_RED, 10 );
+				int Dummy_Shot = ShotA1( bossX, bossY, 0, 90 + i * 360/Shot_Count , SHOT_HEART_RED, 0 );
+				T_Manage_Laser( Shot_A, Dummy_Shot, false );
+				
+				T_Rebound( Shot_A );
+				T_Movement_A( Dummy_Shot );
+				//yield;
+			}
+		}
+		
+		wait( 9000 );
+		
+	}
+	
+	task T_Rebound( Obj ){
+		
+		while( !Obj_IsDeleted( Obj ) ){
+			if( ObjMove_GetX( Obj ) >= Get_MaxX ){
+				ObjMove_SetSpeed( Obj, 0 );
+
+				break;				
+			}
+			if( ObjMove_GetX( Obj ) <= 0  ){
+				ObjMove_SetSpeed( Obj, 0 );
+
+				break;
+			}
+			if( ObjMove_GetY( Obj ) >= Get_MaxY ){
+				ObjMove_SetSpeed( Obj, 0 );
+
+				break;				
+			}
+			if( ObjMove_GetY( Obj ) <= 0  ){
+				ObjMove_SetSpeed( Obj, 0 );
+				break;
+			}
+
+			yield;
+		}		
+		
+	}	
+	
+	task T_Manage_Laser( Shot, Next_Shot, PermitExpand ){
+			
+		//int Prism = Create_Famliar_A1( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), PRISM_S_NORMAL, ENEMY_RED, 1000, false, 1, 1, 400 );		
+		let Connector = CreateStraightLaserA1(  ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), 0, 0, 16, 99999, SHOT_LASER_AQUA, 400 );
+		//let Prifma_Connector = CreateStraightLaserA1( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), 0, 0, 16, 99999, SHOT_LASER_AQUA, 400 );
+		ObjStLaser_SetPermitExpand( Connector, PermitExpand );
+		
+		ObjRender_SetAlpha( Next_Shot, 0 );
+		ObjShot_SetSpellResist( Next_Shot, true );
+		ObjShot_SetAutoDelete( Next_Shot, false );		
+		ObjShot_SetAutoDelete( Connector, false );		
+		//ObjStLaser_SetSource( Connector, false );
+				
+		while( !Obj_IsDeleted( Shot ) || !Obj_IsDeleted( Next_Shot ) ){
+
+						
+			if( Obj_IsDeleted( Next_Shot ) ){ break; }
+			if( Obj_IsDeleted( Shot ) ){ break; }
+			
+			//ObjMove_SetPosition( Prifma_Connector, ObjMove_GetX( Shot ), ObjMove_GetY( Shot ) ); 
+			//ObjStLaser_SetAngle( Prifma_Connector, dottheta( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), bossX, bossY ) );
+			//ObjLaser_SetLength( Prifma_Connector, distance( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), bossX, bossY ) + 1 );							
+						
+			//ObjMove_SetPosition( Prism, ObjMove_GetX( Shot ), ObjMove_GetY( Shot ) ); 			
+			ObjMove_SetPosition( Connector, ObjMove_GetX( Shot ), ObjMove_GetY( Shot ) ); 
+			ObjStLaser_SetAngle( Connector, dottheta( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), ObjMove_GetX( Next_Shot ), ObjMove_GetY( Next_Shot ) ) );
+			ObjLaser_SetLength( Connector, distance( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), ObjMove_GetX( Next_Shot ), ObjMove_GetY( Next_Shot ) ) + 1 );	
+						
+			yield;
+		}
+		Obj_Delete( Connector );
+		
+	}
+	
+
+}	
+
+
+task T_Boss_Shot_A_Sub( X, Y ){
+	
+	/*
+	float ShotAngle = 0;
+	float ShotSpeed = 0;
+	
+	ascent( b in 0..3 ){
+		ascent( a in 0..6 ) {
+			let Petal_Core = ShotR1( X, Y, 48, 1+ShotSpeed/60, 90 + a * 360/6 + ShotAngle, SHOT_BALL_PURPLE, 10, SHOT_BALL_PURPLE );
+			ObjMove_AddPatternA2( Petal_Core, 30 + ShotSpeed, NO_CHANGE, NO_CHANGE, -0.05, 0, 0 );
+			ascent( c in 0..1 ) {
+				ascent( a in 0..6 ) {
+					
+					let Petal = ShotR1( ObjMove_GetX( Petal_Core ), ObjMove_GetY( Petal_Core ), 20, 0, 90 + a * 360/6, SHOT_HEART_RED, 10, SHOT_HEART_RED );
+					T_Manage_Petals( Petal_Core, Petal, 1, c, ShotSpeed );
+				}	
+			}
+			//ShotAngle += 10;
+			wait( 1 );
+			
+		}
+		ShotSpeed += 30; 
+		ShotAngle += 45;
+		wait( 6 );
+	}
+	
+	wait( ShotSpeed*2 );
+	_FlowerSpread = true;
+
+	task T_Manage_Petals( Parent, Obj, float Radius, Speed, Delay ){
+				
+			//float Detach_Timer = rand( 60, 200 );	
+		float Wvel = 10;
+		float Acel = 0;
+		float Angle = dottheta( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), ObjMove_GetX( Parent ), ObjMove_GetY( Parent ) );
+		float Frame = 0;
+				
+		while( !Obj_IsDeleted( Parent ) ) {
+			
+			
+			if( _FlowerSpread != true ){ Radius += 0.2; }
+			if( Radius >= 20 &&  _FlowerSpread != true ){ Radius = 20;}
+			if( Wvel > 0){ Wvel -= 0.03;}
+			if( Wvel < 0){ Wvel = 0;  _FlowerSpread = true; }
+			//if( Wvel < 0){ Wvel = 0; _FlowerSpread = true; }
+		
+			float X_Pos = ObjMove_GetX( Parent ) + Radius * cos( Angle );
+			float Y_Pos = ObjMove_GetY( Parent ) + Radius * sin( Angle );					
+						
+			Angle += Wvel;
+			Frame ++;
+						
+			ObjMove_SetPosition( Obj, X_Pos, Y_Pos ); 
+			ObjMove_SetAngle( Obj, Angle );
+				
+			//if( _FlowerSpread == true && Radius <= 48 ){ Radius+=0.1; }
+			//if( Frame >= 30 + 60*3 ){ break; }		
+				
+			yield;
+		}
+		
+		ObjMove_AddPatternA2( Obj, Delay, NO_CHANGE, NO_CHANGE, 0.01 + Speed/100, 1 + Speed/50, 0.4 );
+	}	
+	/*
+	while( !Obj_IsDeleted( Obj ) ){	
+		
+		T_PlaySE( SE_CHIME_00, 35 );
+		
+		ascent( a in 0..1 ) {
+			let Shot_A = ShotA1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0, ObjMove_GetAngle( Obj ) - 180 + rand( -10, 10 ) + a * 8/5, SHOT_STAR_INVERT_PURPLE, 30 );
+			//ObjMove_AddPatternA2( Shot_A, rand( 1, 20 ), NO_CHANGE, NO_CHANGE, -0.05, 1, 0 );
+			//ObjMove_AddPatternA2( Shot_A, 60, NO_CHANGE, NO_CHANGE, 0.01, 2, 0 );
+			
+			ObjRender_SetBlendType( Shot_A, BLEND_ADD_ARGB );
+	
+	
+		}	
+		
+		wait( 24 );
+	}
+	*/
+}
+
+
+//-----------------------------------------------------Death---------------------------------------------------------
+
+task T_End {
+	
+    while( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ) {
+	     yield;
+	}
+	
+	if( ObjEnemyBossScene_GetInfo( GetEnemyBossSceneObjectID, INFO_IS_LAST_STEP ) ){
+
+		NotifyEventAll( EV_CLEAR_ENEMY_SHOTS, GetPlayerObjectID(), 60, 12 );
+		
+		yield;
+		
+		SetAutoDeleteObject(true);
+		T_Boss_Shotdown( bossObj, "Petal", CC_RED );
+		wait( 200 );
+		
+		Obj_Delete( bossObj );	
+		
+		ENEMY_CLEAR = true;
+		
+		yield;
+		
+		ENEMY_CLEAR = false;
+		
+		wait( 500 );
+		
+		CloseScript( GetOwnScriptID() );
+		
+	}	
+	else{
+	
+		NotifyEventAll( EV_SPAWN_ITEM_NON, bossX, bossY, 30, 64 );	
+		NotifyEventAll( EV_CLEAR_ENEMY_SHOTS, GetPlayerObjectID(), 60, 12 );
+		//DeleteShotAll( TYPE_ALL, TYPE_ITEM );
+		
+		yield;
+		
+		SetAutoDeleteObject(true);
+		
+		Obj_Delete( bossObj );	
+		
+		wait( 600 );
+		
+		CloseScript( GetOwnScriptID() );
+	
+	}
+	
+	//SetAutoDeleteObject(true);
+	
+	//Obj_Delete( bossObj );	
+	//CloseScript( GetOwnScriptID() );
+	
+}
+

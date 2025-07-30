@@ -95,6 +95,90 @@ task T_Render_Reimu( Texture ){
 	ObjRender_SetScaleX( GetPlayerObjectID(), 1 );
 	ObjRender_SetScaleY( GetPlayerObjectID(), 1 );	
 	
+	int Sprite_Width = 32;
+	int Sprite_Height = 48;
+	
+	int Frame_Width = Sprite_Width;
+	int Frame_Height = Sprite_Height;
+	
+	int Move_Dir = 0;
+	
+	float Anim_Rate = 0;
+	//ObjRender_SetTextureFilter( GetPlayerObjectID(), FILTER_NONE, FILTER_NONE, FILTER_NONE );
+	
+	loop{
+		
+		Sprite_Width = 32;
+		Sprite_Height = 48;
+		
+		Frame_Width = Sprite_Width;
+		Frame_Height = Sprite_Height;		
+		
+		Move_Dir = 0; //IDLE
+		
+		while( Move_Dir == 0 ){
+			//IDLE
+			
+			ObjSprite2D_SetSourceRect( GetPlayerObjectID(), Sprite_Width-Frame_Width, Sprite_Height-Frame_Height, Sprite_Width, Sprite_Height);
+			ObjSprite2D_SetDestCenter( GetPlayerObjectID() );
+			
+			if( GetVirtualKeyState( VK_LEFT ) == KEY_PUSH || GetVirtualKeyState( VK_LEFT ) == KEY_HOLD ){ Sprite_Height = Frame_Height *2; Move_Dir = 1; }
+			if( GetVirtualKeyState( VK_RIGHT ) == KEY_PUSH || GetVirtualKeyState( VK_RIGHT ) == KEY_HOLD ){ Sprite_Height = Frame_Height *3; Move_Dir = 2; }			
+			
+			Anim_Rate+=1;
+			if( Anim_Rate % 10 ==0 ){ Sprite_Width += Frame_Width;}
+			if( Sprite_Width > ( 256 ) ){ Sprite_Width = Frame_Width;}
+			yield;
+		
+		}
+		
+		Anim_Rate = 0;
+		Sprite_Width = 256/8;
+
+		while( Move_Dir != 0 ){
+			
+			ObjSprite2D_SetSourceRect( GetPlayerObjectID(), Sprite_Width-Frame_Width, Sprite_Height-Frame_Height, Sprite_Width, Sprite_Height );
+			ObjSprite2D_SetDestCenter( GetPlayerObjectID() );
+			if( Move_Dir == 1 ){
+				
+				if( GetVirtualKeyState( VK_LEFT ) != KEY_HOLD ){
+					Move_Dir = 0;
+				}
+			}
+			if( Move_Dir == 2 ){
+				if( GetVirtualKeyState( VK_RIGHT ) != KEY_HOLD ){
+					Move_Dir = 0;
+				}
+			}
+			
+			Anim_Rate +=1;
+			
+			if( Anim_Rate % 8 ==0 ){ Sprite_Width += Frame_Width; }
+			if( Sprite_Width > ( 256 ) ){ Sprite_Width = 96; }
+			
+			
+			yield;
+		}		
+		
+		
+		yield;
+	}
+}	
+
+/*
+task T_Render_Reimu( Texture ){
+	
+	//THIS CODE IS PLACEHOLDER!!
+	
+	//let Frame_Count = 0;
+	//T_Create_Familiar_A();
+	
+	ObjPrim_SetTexture( GetPlayerObjectID(), Texture );
+	ObjSprite2D_SetDestCenter( GetPlayerObjectID() );
+	
+	ObjRender_SetScaleX( GetPlayerObjectID(), 1 );
+	ObjRender_SetScaleY( GetPlayerObjectID(), 1 );	
+	
 	//ObjRender_SetTextureFilter( GetPlayerObjectID(), FILTER_NONE, FILTER_NONE, FILTER_NONE );
 	
 	loop{
@@ -138,7 +222,7 @@ task T_Render_Reimu( Texture ){
 		yield;
 	}
 }	
-
+*/
 //--------------------------------------------------------------------
 
 function Player_Shoot_A(){

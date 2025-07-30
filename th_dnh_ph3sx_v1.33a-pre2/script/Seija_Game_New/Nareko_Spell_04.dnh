@@ -57,7 +57,7 @@ let CutinTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Cutin/Cur
 
 	alternative(GetEventType()) 
 	case( EV_REQUEST_LIFE ) { 
-		SetScriptResult( 2000 ); // 3000-4500 For Nons ( At 100% Damage Rate. )
+		SetScriptResult( 100 ); // 3000-4500 For Nons ( At 100% Damage Rate. ) 2000
 	}
 	case( EV_REQUEST_TIMER ) { 
 		//SetScriptResult( 50 );
@@ -93,7 +93,7 @@ task T_InitSpell(){
 	
 	//let CutinTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Cutin/CurseOfRa.png";
 	
-	T_CallSpell_A1( "Roadblock: \"Sandstorm Barricade\"", 0, "Normal", objScene );
+	T_CallSpell_A1( "Roadblock: \"??????? Barricade\"", 0, "Normal", objScene );
 	T_Call_Spell_Cutin( CutinTex, [ 0, 0, 200, 384 ], 1, CC_ORANGE );	
 	
 	ObjEnemyBossScene_StartSpell( objScene );
@@ -119,11 +119,125 @@ task T_Main {
 
 	ObjEnemy_SetDamageRate( bossObj, 0.3, 0.8 );
 	
-	T_Boss_Shot_B;
+	T_Boss_Shot_D;
 	//T_Boss_Shot_C;
 	
 }	
 
+task T_Boss_Shot_D{
+
+    while( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ) {
+		
+		ascent( a in 0..5 ){
+			
+			T_CreateWall( bossX, bossY, 3, 90 + a * 360/5, a * 5/5 );
+			
+			//wait( 10 );
+			
+			
+		}
+		
+		wait( 400 );
+		
+		ascent( a in 0..4 ){
+			
+			T_CreateWall( bossX, bossY, 3, GetAngleToPlayer( bossObj ), a * 5/4 );
+			
+			wait( 30 );
+			
+			
+		}
+		
+		ObjMove_SetDestAtFrame( bossObj, Get_CenterX + rand( -32, 32 ), Get_CenterY/2 + 16, 30, LERP_DECELERATE );
+		
+		wait( 400 );			
+		
+	    yield;
+	}		
+	
+	
+	task T_CreateWall( X, Y, Speed, Angle, ID ){
+
+		//let Laser_Obj_A = Laser_A1( X, Y, Angle, Speed, 16, 999, SHOT_LASER_DGREEN, 30 );
+		int ShotObj_Core = ShotA2( X, Y, Speed, Angle, SHOT_ORB_YELLOW, 20, SHOT_ORB_YELLOW );
+		ObjMove_AddPatternA2( ShotObj_Core, 22, NO_CHANGE, NO_CHANGE, -0.1, 0, 0 );	
+		ObjMove_AddPatternA2( ShotObj_Core, 60, NO_CHANGE, NO_CHANGE, 0.05, 2, 0 );	
+
+		while( !Obj_IsDeleted( ShotObj_Core ) ){
+			
+			if( ObjMove_GetX( ShotObj_Core ) >= Get_MaxX ){
+				//ObjMove_SetSpeed( ShotObj_Core, 0 );
+				//ObjMove_SetAngle( ShotObj_Core,  ObjMove_GetAngle( ShotObj_Core ) + 180 ); 
+				T_CreateWall_Shots( ShotObj_Core, 180 );
+				break;				
+			}
+			if( ObjMove_GetX( ShotObj_Core ) <= 0  ){
+				//ObjMove_SetSpeed( ShotObj_Core, 0 );
+				//ObjMove_SetAngle( ShotObj_Core,  ObjMove_GetAngle( ShotObj_Core ) + 180 ); 
+				T_CreateWall_Shots( ShotObj_Core, 0 );
+				break;
+			}
+			if( ObjMove_GetY( ShotObj_Core ) >= Get_MaxY ){
+				//ObjMove_SetSpeed( ShotObj_Core, 0 );
+				//ObjMove_SetAngle( ShotObj_Core,  ObjMove_GetAngle( ShotObj_Core ) + 180 ); 
+				T_CreateWall_Shots( ShotObj_Core, -90 );
+				break;				
+			}
+			if( ObjMove_GetY( ShotObj_Core ) <= 0  ){
+				//ObjMove_SetSpeed( ShotObj_Core, 0 );
+				//ObjMove_SetAngle( ShotObj_Core,  ObjMove_GetAngle( ShotObj_Core ) + 180 ); 
+				T_CreateWall_Shots( ShotObj_Core, 90 );
+				break;
+			}			
+			
+			yield;
+		}	
+		
+		task T_CreateWall_Shots( Obj, Angle ){
+			
+			
+			int ShotObj_A = ShotA2( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 4, Angle, SHOT_ORB_YELLOW, 5, SHOT_ORB_YELLOW );
+			//let Laser_Obj_A = Laser_A1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), Angle, 512, 16, 200, SHOT_LASER_DGREEN, 30 );
+			//float Laser_Angle = ObjStLaser_GetAngle( Laser_Obj_A );
+			
+			ascent( a in 0..20 ){
+				
+				int ShotObj_C = ShotA2( ObjMove_GetX( ShotObj_A ), ObjMove_GetY( ShotObj_A ), 0.5, Angle + a * 360/20, SHOT_RICE_INVERT_YELLOW, 20, SHOT_CLOUD_YELLOW );
+				
+			}	
+		
+			async{
+				
+				wait( 1 );
+				
+				ascent( a in 0..64 ){
+						//float Shot_X = ObjMove_GetX( Laser_Obj_A ) + a * ObjLaser_GetLength( Laser_Obj_A )/18 * cos( Laser_Angle );
+						//float Shot_Y = ObjMove_GetY( Laser_Obj_A ) + a * ObjLaser_GetLength( Laser_Obj_A )/18 * sin( Laser_Angle );
+					if( !Obj_IsDeleted( ShotObj_A ) ){
+							
+						ascent( c in 0..4 ){	
+							int ShotObj_B = ShotR1( ObjMove_GetX( ShotObj_A ), ObjMove_GetY( ShotObj_A ), 1, 0.01, Angle + 90 + c * 360/4, SHOT_KUNAI_YELLOW, 20, SHOT_CLOUD_YELLOW );
+							ObjShot_SetDeleteFrame( ShotObj_B, 400 - ID );
+						}
+						
+					}
+					wait( 6 );
+				}
+				
+				//wait( 60 );
+				
+			}	
+			
+			Obj_Delete( Obj );
+			
+			yield;
+			
+		}	
+	
+	}
+
+
+}
 
 task T_Boss_Shot_A{
 	
@@ -265,21 +379,31 @@ task T_Boss_Shot_B{
 	
 	float Angle_A = 90;
 	float Angle_B = 90;
+	float Angle_C = -180;
 	float Wvel_A = 0.1;
 	
-	ascent( a in 0..10 ){
-		ascent( b in 0..20 ){
-		
-			int Shot_A = ShotR1( bossX, bossY, 0 + a * 96/10, 3, 90 + b * 360/20 , SHOT_DOT_DORANGE, 10, SHOT_DOT_DORANGE );
-			ObjMove_AddPatternA2( Shot_A, 0, NO_CHANGE, NO_CHANGE, -0.1, 0, 0 );
-			ObjMove_AddPatternA2( Shot_A, 60, 2, ObjMove_GetAngle( Shot_A ) + Angle_A, -0.05, 0.5, 0 );
-			ObjMove_AddPatternA2( Shot_A, 100, 1.5 + a* 2/10, ObjMove_GetAngle( Shot_A ) - Angle_B, -0.05, 1 + a* 2/10, Wvel_A );
-			Angle_A = -Angle_A;
+	int Shot_Count_A = 24;
+	int Shot_Count_B = 16;
+	
+	ascent( c in 0..10 ){
+		ascent( a in 0..Shot_Count_A ){
+			ascent( b in 0..Shot_Count_B ){
 			
+				int Shot_A = ShotR1( bossX, bossY, 0 + a * 64/Shot_Count_A, 3, 90 + b * 360/Shot_Count_B  + c* 360/10, SHOT_RICE_INVERT_DYELLOW, 10, SHOT_RICE_INVERT_DYELLOW );
+				ObjMove_AddPatternA2( Shot_A, 0, NO_CHANGE, NO_CHANGE, -0.1, 0, 0 );
+				ObjMove_AddPatternA2( Shot_A, 60, 2, ObjMove_GetAngle( Shot_A ) + Angle_A, -0.05, 0.5, 0 );
+				ObjMove_AddPatternA2( Shot_A, 100, 1.5 + a* 2/Shot_Count_A, ObjMove_GetAngle( Shot_A ) + a * Angle_C/Shot_Count_A, -0.05, 1 + a* 0.5/Shot_Count_A, Wvel_A );
+				ObjMove_AddPatternA2( Shot_A, 120, NO_CHANGE, NO_CHANGE, -0.01, 1, 0 );
+				Angle_A = -Angle_A;
+				
+			}
+			Wvel_A = -Wvel_A;
+			Angle_B = -Angle_B;
 		}
-		Wvel_A = -Wvel_A;
-		Angle_B = -Angle_B;
-	}	
+
+		Angle_C = -Angle_C;
+		wait( 120 );
+	}
 	yield;
 }
 //-----------------------------------------------------Death---------------------------------------------------------

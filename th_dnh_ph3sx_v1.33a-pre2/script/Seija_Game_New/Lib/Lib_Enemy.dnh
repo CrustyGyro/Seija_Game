@@ -9,6 +9,7 @@
 	
 	let Fairy_S = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Enemy/Fairy_S1.png";
 	let Fairy_M = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Enemy/Fairy_M1.png";
+	let Fairy_L = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Enemy/Fairy_L1.png";
 	
 	let Ghost_S = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Enemy/Onibi.png";
 	let Wheel_S = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Enemy/Wheels.png";
@@ -83,8 +84,13 @@ function Create_Famliar_A1( X, Y, Type, Color, HP, HasHitbox, ShotRate, BombRate
 	
 	//T_Enemy_Hit_Effect( Enemy_Obj );
 	
-	T_Render_Prism_A1( Enemy_Obj );
+	alternative( Type )
+	case( GHOST_S_NORMAL ){ Render_Onibi_A1( Enemy_Obj, Color ); }
+	case( YINYANG_S_NORMAL ){ Render_WheelGhost_A1( Enemy_Obj, Color ); }	
+	case( PRISM_S_NORMAL ){ T_Render_Prism_A1( Enemy_Obj ); }	
+
 	T_Handle_Familiar_A1( Enemy_Obj, 0, HasHitbox, ShotRate, BombRate, Margin );
+
 	
 	ObjRender_SetTextureFilter( Enemy_Obj, FILTER_POINT, FILTER_POINT, FILTER_POINT );	
 	
@@ -275,123 +281,12 @@ task T_Render_Enemy_Types( Enemy, Type, Color ){
 	case( FAIRY_S_NORMAL ){ T_Render_SmallFairy_A1( Enemy, Color ); }
 	case( FAIRY_M_NORMAL ){ T_Render_MediumFairy_A1( Enemy, Color ); }
 	case( FAIRY_M_MAID ){ T_Render_MaidFairy_A1( Enemy, Color ); }
+	case( FAIRY_B_NORMAL ){ T_Render_SunflowerFairy_A1( Enemy, Color ); }
 	case( GHOST_S_NORMAL ){ Render_Onibi_A1( Enemy, Color ); }
 	case( YINYANG_S_NORMAL ){ Render_WheelGhost_A1( Enemy, Color ); }
 	
 }	
 
-/*
-task T_Render_SmallFairy_A1( Obj, Color ){
-	
-	//Abandon all hope ye who enter here - Seija
-	//This code is a PLACEHOLDER!!!!!!!!!! - Seija
-	
-	//int Anim_Dir = 0;
-	int Frame_Count_Idle = 0;
-	int Frame_Count_Moving = 5;
-	int ColorRect = 0;
-	
-	int Anim_Rate = 6;
-	
-	int Anim_Dir = 0;
-	int Last_Direction = 0;
-	
-	float X = ObjMove_GetX( Obj );
-	
-	Render_Enemy_Dropshadow( Obj, 0.8 );
-	
-	ObjPrim_SetTexture( Obj, Fairy_S );
-	ObjSprite2D_SetDestCenter( Obj );
-	ObjRender_SetScaleXYZ( Obj, 1, 1, 1 );
-	
-	ObjSprite2D_SetSourceRect( Obj, 32, ColorRect, 32, ColorRect + 32 );
-	ObjRender_SetTextureFilter( Obj, FILTER_NONE, FILTER_NONE, FILTER_NONE );
-	
-	//:Skull:
-	
-	alternative( Color )
-	case( ENEMY_RED ){ ColorRect = 0; }
-	case( ENEMY_BLUE ){ ColorRect = 32; }
-	case( ENEMY_GREEN ){ ColorRect = 64; }
-	case( ENEMY_YELLOW ){ ColorRect = 96; }
-	case( ENEMY_PURPLE ){ ColorRect = 128; }	
-	case( ENEMY_WHITE ){ ColorRect = 160; }
-	case( ENEMY_BLACK ){ ColorRect = 192; }	
-	
-	int Anim_Count = 0;
-	int Turn_Count = 0;
-	
-	float Current_X = ObjMove_GetX( Obj );
-	float Last_X = Current_X;	
-	
-	while( !Obj_IsDeleted( Obj ) ) {
-		
-		//ObjSprite2D_SetDestRect( Obj, 0, 0, 64, 96);
-		ObjSprite2D_SetDestCenter( Obj );
-		//c+=4;		
-		
-		Current_X = ObjMove_GetX( Obj );
-		if( Current_X == Last_X) {
-			
-			if( Turn_Count == 0) {
-				
-				ObjSprite2D_SetSourceRect( Obj, Anim_Count * 32 , ColorRect, 32 + Anim_Count * 32, ColorRect + 32 );
-				if( Anim_Count == 4){
-					ObjSprite2D_SetSourceRect( Obj, 0, 0, 32, 32 );
-				}
-				Anim_Count = ( Anim_Count + 1 ) % 4;
-				Turn_Count = 0;
-			}	
-			else {
-				if( Turn_Count > 0 ){
-					 Turn_Count--;
-				}
-				else if( Turn_Count < 0 ) {
-					 Turn_Count++;
-				}
-				Anim_Count = 0;
-			}			
-			
-		}
-		else{
-			
-			if( Current_X > Last_X ) {
-				Turn_Count = min( Turn_Count + 1, 4 );
-			}
-			else if( Current_X < Last_X) {
-				Turn_Count = max( Turn_Count - 1, -4 );
-			}
-		}		
-		
-		if( Turn_Count == 0) {
-			ObjSprite2D_SetSourceRect( Obj, Anim_Count * 32 , ColorRect, 32 + Anim_Count * 32, ColorRect + 32 );
-			if( Anim_Count == 3){
-				ObjSprite2D_SetSourceRect( Obj, 0, ColorRect, 32, ColorRect + 32 );
-			}
-		}
-		else if( Turn_Count > 0) {
-			ObjSprite2D_SetSourceRect( Obj, Turn_Count * 32 , ColorRect, 32 + Turn_Count * 32, ColorRect+  32 );
-			ObjRender_SetScaleXYZ( Obj, 1, 1, 1 );
-			//ObjSprite2D_SetSourceRect(bossObj, 128, Turn_Count * 128, 256, 128 + Turn_Count * 128);
-		}
-		else if( Turn_Count < 0) {
-			ObjSprite2D_SetSourceRect( Obj, -Turn_Count * 32 , ColorRect, 32 - Turn_Count * 32, ColorRect + 32 );
-			ObjRender_SetScaleXYZ( Obj, -1, 1, 1 );
-			//ObjSprite2D_SetSourceRect(bossObj, 256, -Turn_Count * 128, 384, 128 - Turn_Count * 128);
-		}	
-		
-		//c+=4;
-		Last_X = Current_X;	
-		
-		wait( 3 );
-		
-		yield;
-	}	
-	
-	
-}	
-
-*/
 
 task T_Render_SmallFairy_A1( Obj, Color ){
 	
@@ -413,7 +308,6 @@ task T_Render_SmallFairy_A1( Obj, Color ){
 	ObjRender_SetScaleXYZ( Obj, 1, 1, 1 );
 	
 	ObjSprite2D_SetSourceRect( Obj, 32, ColorRect, 32, ColorRect + 32 );
-	ObjRender_SetTextureFilter( Obj, FILTER_NONE, FILTER_NONE, FILTER_NONE );
 	
 	//:Skull:
 	
@@ -425,6 +319,9 @@ task T_Render_SmallFairy_A1( Obj, Color ){
 	case( ENEMY_PURPLE ){ ColorRect = 128; }	
 	case( ENEMY_WHITE ){ ColorRect = 160; }
 	case( ENEMY_BLACK ){ ColorRect = 192; }		
+	
+	ObjRender_SetTextureFilter( Obj, FILTER_POINT, FILTER_POINT, FILTER_POINT );		
+	T_Render_AtInt( Obj, RESOLUTION );
 	
 	while( !Obj_IsDeleted( Obj )){
 		
@@ -475,81 +372,6 @@ task T_Render_SmallFairy_A1( Obj, Color ){
 	}
 }		
 	
-
-/*
-task T_Render_SmallFairy_A1( Obj, Color ){
-	
-	//Abandon all hope ye who enter here - Seija
-	//This code is a PLACEHOLDER!!!!!!!!!! - Seija
-	
-	//int Anim_Dir = 0;
-	int Frame_Count_Idle = 0;
-	int Frame_Count_Moving = 5;
-	int ColorRect = 0;
-	
-	int Anim_Rate = 6;
-	
-	int Anim_Dir = 0;
-	int Last_Direction = 0;
-	
-	float X = ObjMove_GetX( Obj );
-	
-	Render_Enemy_Dropshadow( Obj, 0.8 );
-	
-	ObjPrim_SetTexture( Obj, Fairy_S );
-	ObjSprite2D_SetDestCenter( Obj );
-	ObjRender_SetScaleXYZ( Obj, 1, 1, 1 );
-	
-	ObjSprite2D_SetSourceRect( Obj, 32, ColorRect, 32, ColorRect + 32 );
-	ObjRender_SetTextureFilter( Obj, FILTER_NONE, FILTER_NONE, FILTER_NONE );
-	
-	//:Skull:
-	
-	alternative( Color )
-	case( ENEMY_RED ){ ColorRect = 0; }
-	case( ENEMY_BLUE ){ ColorRect = 32; }
-	case( ENEMY_GREEN ){ ColorRect = 64; }
-	case( ENEMY_YELLOW ){ ColorRect = 96; }
-	case( ENEMY_PURPLE ){ ColorRect = 128; }	
-	case( ENEMY_WHITE ){ ColorRect = 160; }
-	case( ENEMY_BLACK ){ ColorRect = 192; }	
-	
-	loop{
-		
-		ObjSprite2D_SetDestCenter( Obj );
-		if( Check_Fairy_Direction( Obj, "Right" ) == true ){ ObjRender_SetScaleXYZ( Obj, 1, 1, 1 ); Anim_Dir = 1; }
-		if( Check_Fairy_Direction( Obj, "Left" ) == true ){ ObjRender_SetScaleXYZ( Obj, -1, 1, 1 ); Anim_Dir = 1; } 		
-		if( Check_Fairy_Direction( Obj, "None" ) == true ){ 
-			
-			ObjRender_SetScaleXYZ( Obj, 1, 1, 1 ); Anim_Dir = 0; 		
-			
-		} 	
-		
-		if( Last_Direction == Anim_Dir ){
-			if( Anim_Dir == 0 ){
-					
-					
-				ObjSprite2D_SetSourceRect( Obj, 32 * ( Frame_Count_Idle ), ColorRect, 32 * ( Frame_Count_Idle + 1 ), ColorRect + 32 );	
-			}	
-			else{
-				
-				ObjSprite2D_SetSourceRect( Obj, 32 * ( Frame_Count_Moving ), ColorRect, 32 * ( Frame_Count_Moving + 1 ), ColorRect + 32 );
-					
-			}
-		}
-		else{ ObjSprite2D_SetSourceRect( Obj, 96, ColorRect, 128, ColorRect + 32 ); }
-		Last_Direction = Anim_Dir;
-		
-		Frame_Count_Idle += 1;
-		Frame_Count_Moving += 1;
-		if( Frame_Count_Idle == 4){ Frame_Count_Idle = 0;}
-		if( Frame_Count_Moving == 9){ Frame_Count_Moving = 5;}
-		wait( Anim_Rate );
-		yield;
-	}
-	
-}	
-*/
 
 task T_Render_MediumFairy_A1( Obj, Color ){
 	
@@ -692,6 +514,69 @@ task T_Render_MaidFairy_A1( Obj, Color ){
 	}
 	
 }	
+
+task T_Render_SunflowerFairy_A1( Obj, Color ){
+	
+	//Abandon all hope ye who enter here - Seija
+	//This code is a PLACEHOLDER!!!!!!!!!! - Seija
+	
+	//int Anim_Dir = 0;
+	int Frame_Count_Idle = 0;
+	int Frame_Count_Moving = 5;
+	int ColorRect = 0;
+	
+	int Anim_Rate = 6;
+	
+	int Anim_Dir = 0;
+	int Last_Direction = 0;
+	
+	float X = ObjMove_GetX( Obj );
+	
+	ObjPrim_SetTexture( Obj, Fairy_L );
+	ObjSprite2D_SetDestCenter( Obj );
+	ObjRender_SetScaleXYZ( Obj, 1, 1, 1 );
+	
+	ObjRender_SetTextureFilter( Obj, FILTER_NONE, FILTER_NONE, FILTER_NONE );	
+	ObjSprite2D_SetSourceRect( Obj, 0, ColorRect, 64, ColorRect + 64 );
+	
+	//:Skull:
+	
+	while( !Obj_IsDeleted( Obj ) ){
+		
+		ObjSprite2D_SetDestCenter( Obj );
+		if( Check_Fairy_Direction( Obj, "Right" ) == true ){ ObjRender_SetScaleXYZ( Obj, 1, 1, 1 ); Anim_Dir = 1; }
+		if( Check_Fairy_Direction( Obj, "Left" ) == true ){ ObjRender_SetScaleXYZ( Obj, -1, 1, 1 ); Anim_Dir = 1; } 		
+		if( Check_Fairy_Direction( Obj, "None" ) == true ){ 
+			
+			ObjRender_SetScaleXYZ( Obj, 1, 1, 1 ); Anim_Dir = 0; 		
+			
+		} 	
+		
+		if( Last_Direction == Anim_Dir ){
+			if( Anim_Dir == 0 ){
+					
+					
+				ObjSprite2D_SetSourceRect( Obj, 64 * ( Frame_Count_Idle ), ColorRect, 64 * ( Frame_Count_Idle + 1 ), ColorRect + 64 );	
+			}	
+			else{
+				
+				ObjSprite2D_SetSourceRect( Obj, 64 * ( Frame_Count_Moving ), ColorRect, 64 * ( Frame_Count_Moving + 1 ), ColorRect + 64 );
+					
+			}
+		}
+		else{ ObjSprite2D_SetSourceRect( Obj, 0, ColorRect, 64, ColorRect + 64 ); }
+		Last_Direction = Anim_Dir;
+		
+		Frame_Count_Idle += 1;
+		Frame_Count_Moving += 1;
+		if( Frame_Count_Idle == 4){ Frame_Count_Idle = 0;}
+		if( Frame_Count_Moving == 8){ Frame_Count_Moving = 5;}
+		wait( Anim_Rate );
+		yield;
+	}
+	
+}	
+
 
 task Render_Onibi_A1( Obj, Color ){
 	
@@ -946,5 +831,45 @@ task T_Render_Prism_A1( Obj ){
 	Obj_Delete( Glow );		
 	Obj_Delete( Outline );	
 	Obj_Delete( Inner_Prism );	
+	
+}	
+
+//----------------------------------------------------------------------------------------------
+
+task T_Enemy_Aura_A( Enemy, Color, Scale ){
+	
+	let Aura = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Enemy/Enemy_Aura_00.png";
+	
+	let Effect_Obj = Render2D_Texture_A1( Aura, [ 0, 0, 48, 64 ], ObjRender_GetX( Enemy ), ObjRender_GetY( Enemy ), 0.8, 0.26 );
+	ObjRender_SetBlendType( Effect_Obj, BLEND_ADD_ARGB );	
+	ObjRender_SetColor( Effect_Obj, Color[0], Color[1], Color[2] );
+	ObjRender_SetScaleXYZ( Effect_Obj, Scale, Scale, Scale );
+	
+	async{
+		
+		while( !Obj_IsDeleted( Enemy ) ){	
+		
+			ObjRender_SetPosition( Effect_Obj, ObjRender_GetX( Enemy ), ObjRender_GetY( Enemy ), 0 );	
+		
+			yield;
+		}
+		
+		Obj_Delete( Effect_Obj );
+	}	
+	
+	while( !Obj_IsDeleted( Enemy ) ){	
+	
+		//ObjRender_SetPosition( Effect_Obj, ObjRender_GetX( Enemy ), ObjRender_GetY( Enemy ), 0 );	
+	
+		ascent( i in 0..8 ){
+			
+			//ObjRender_SetPosition( Effect_Obj, ObjRender_GetX( Enemy ), ObjRender_GetY( Enemy ), 0 );	
+			ObjSprite2D_SetSourceRect( Effect_Obj, 48 * ( i ), 0, 48 * ( i + 1 ), 64 );
+			wait( 6 );
+		}
+	
+	}
+	
+	Obj_Delete( Effect_Obj );
 	
 }	

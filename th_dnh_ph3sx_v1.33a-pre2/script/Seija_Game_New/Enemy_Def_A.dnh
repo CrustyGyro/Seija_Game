@@ -2,6 +2,50 @@
 
 //-----------------------------------------------------------------------------
 
+task T_Template_Enemy_A( X, Y, Angle, Speed, Wvel, Color, ShotColor ){
+	
+	int Shotcounter = 0;
+			
+	let Enemy = Create_Enemy_A1( X, Y, 32, FAIRY_S_NORMAL, Color, 1 );
+	ObjMove_AddPatternA2( Enemy, 1, NO_CHANGE, Angle , 0.1, Speed, Wvel );
+		
+	float Enemy_X = ObjMove_GetX( Enemy );
+	float Enemy_Y = ObjMove_GetY( Enemy );		
+	float Frame = 0;
+	int Shot_Delay = 60;
+		
+	async{
+		while( !Obj_IsDeleted( Enemy ) ){
+				
+			Enemy_X = ObjMove_GetX( Enemy );
+			Enemy_Y = ObjMove_GetY( Enemy );	
+					
+			Frame++;
+			yield;			
+				
+		}			
+	}			
+	
+	wait( Shot_Delay );
+		
+	while( !Obj_IsDeleted( Enemy ) && Shotcounter < 6 ){
+			
+		if( !Obj_IsDeleted( Enemy ) ){
+								
+			Shotcounter += 1;	
+				
+			let Shot_A = ShotR1( Enemy_X, Enemy_Y, 8, 1, GetAngleToPlayer( Enemy ), ShotColor, 10, ShotColor );
+			T_PlaySE( SE_SHOT_03, 40 );
+				
+				
+		}		
+
+		wait( 60 );
+		yield;
+	}
+
+}
+
 //-----------------------------------------------------------------------------
 
 task T_Popcorn_A( X, Y, Angle, Wvel, NewWvel, Color, ShotColor ){
@@ -29,8 +73,8 @@ task T_Popcorn_A( X, Y, Angle, Wvel, NewWvel, Color, ShotColor ){
 				Enemy_X = ObjMove_GetX( Enemy );
 				Enemy_Y = ObjMove_GetY( Enemy );	
 				
-				ObjMove_SetY( Enemy, Enemy_X + 4 * cos( Frame ) );
-				ObjMove_SetY( Enemy, Enemy_Y + 0.5 * sin( Frame ) );
+				//ObjMove_SetX( Enemy, Enemy_X + 0.1 * cos( Frame*5 ) );
+				ObjMove_SetY( Enemy, Enemy_Y + 0.5 * sin( Frame  ) );
 				
 				
 				Frame++;
@@ -38,15 +82,10 @@ task T_Popcorn_A( X, Y, Angle, Wvel, NewWvel, Color, ShotColor ){
 				
 			}			
 			
-			ascent( i in 0..1 ){	
+			let Shot_A = ShotR1( Enemy_X, Enemy_Y, 8, 3, -90, SHOT_LARGE_MINT, 10, SHOT_LARGE_MINT );
+			ObjMove_AddPatternA2( Shot_A, 1, NO_CHANGE, NO_CHANGE, -0.1, 0, 0 );
+			ObjMove_AddPatternA2( Shot_A, 40, NO_CHANGE, NO_CHANGE, -0.05, -0.8, 0 );
 			
-				let Shot_A = ShotR1( Enemy_X, Enemy_Y, 8, 1 + i * 3/5, -90, SHOT_LARGE_MINT, 8, SHOT_LARGE_MINT );
-				ObjMove_AddPatternA2( Shot_A, 20, NO_CHANGE, NO_CHANGE, -0.05, 0, 0 );
-				ObjMove_AddPatternA2( Shot_A, 80, NO_CHANGE, 90, 0.01, 1, rand( -0.05, 0.05 ) );
-				
-				ObjShot_SetGrazeInvalidFrame( Shot_A, 30 );
-			
-			}
 		}			
 		
 		wait( RNG*2 );
@@ -57,24 +96,437 @@ task T_Popcorn_A( X, Y, Angle, Wvel, NewWvel, Color, ShotColor ){
 			if( !Obj_IsDeleted( Enemy ) ){
 									
 				Shotcounter += 1;	
-				T_PlaySE( SE_SHOT_03, 40 );
 				
+				//let Shot_A = ShotR1( Enemy_X, Enemy_Y, 8, 0, -90, SHOT_ICE_OLIVE, 10, SHOT_ICE_OLIVE );
+				//T_PlaySE( SE_SHOT_03, 40 );
+				
+			
 				ascent( i in 0..5 ){	
 				
-					let Shot_A = ShotR1( Enemy_X, Enemy_Y, 8, 1 + i * 3/5, -90, SHOT_ICE_OLIVE, 10, SHOT_ICE_OLIVE );
-					ObjMove_AddPatternA2( Shot_A, 20, NO_CHANGE, NO_CHANGE, -0.1, 0, 0 );
-					ObjMove_AddPatternA2( Shot_A, 60, NO_CHANGE, 90, 0.01, 1, rand( -0.01, 0.01 ) );		
+					T_PlaySE( SE_SHOT_03, 36 );
+				
+					let Shot_A = ShotR1( Enemy_X, Enemy_Y, 8, 1 + i * 3/5, GetAngleToPlayer( Enemy ), SHOT_ICE_OLIVE, 10, SHOT_ICE_OLIVE );
+					//ObjMove_AddPatternA2( Shot_A, 10, NO_CHANGE, NO_CHANGE, -0.1, 0, 0 );
+					ObjMove_AddPatternA2( Shot_A, 10, NO_CHANGE, NO_CHANGE, -0.01, 1 + i * 0.5/5, rand( -0.01, 0.01 ) );		
 					//ObjMove_AddPatternA2( Shot_B, 10, NO_CHANGE , NO_CHANGE, 0.08, 8 + i/5, Shot_Way );		
 					
 					Shot_Way = -Shot_Way;
+					
+					//wait( 1 );
 				
 				}	
+				
 			}		
 
-			wait( 80 );
+			wait( 10 );
 			yield;
 		}
 		*/
 	
 
 }
+
+//-----------------------------------------------------------------------------
+
+task T_Aimed_Fairy_A1( X, Y, Angle, Speed, Wvel, Color, ShotColor ){
+			
+
+		int Shotcounter = 0;
+			
+		let Enemy = Create_Enemy_A1( X, Y, 32, FAIRY_S_NORMAL, Color, 1 );
+		ObjMove_AddPatternA2( Enemy, 1, NO_CHANGE ,Angle, 0.1, Speed, Wvel );
+		
+		float Enemy_X = ObjMove_GetX( Enemy );
+		float Enemy_Y = ObjMove_GetY( Enemy );		
+		float Frame = 0;
+		int Shot_Delay = 60;
+		int[] ShotColor_Array = [ SHOT_BALL_ORANGE, SHOT_BALL_DORANGE, SHOT_BALL_YELLOW, SHOT_LARGE_YELLOW ]; 
+		
+		async{
+			while( !Obj_IsDeleted( Enemy ) ){
+				
+				Enemy_X = ObjMove_GetX( Enemy );
+				Enemy_Y = ObjMove_GetY( Enemy );	
+					
+				Frame++;
+				yield;			
+				
+			}			
+		}			
+		
+		wait( Shot_Delay );
+		
+		while( !Obj_IsDeleted( Enemy ) && Shotcounter < 3 ){
+			
+			if( !Obj_IsDeleted( Enemy ) ){
+									
+				Shotcounter += 1;	
+				float Shot_Angle =  GetAngleToPlayer( Enemy );
+				
+				ascent( i in 0..5 ){	
+				
+					let Shot_A = ShotR1( Enemy_X + rand( -8, 8 ), Enemy_Y + rand( -8, 8 ), 1, -2, Shot_Angle, ShotColor_Array[ rand_int( 0, 1 ) ], 10, SHOT_CLOUD_ORANGE );
+					ObjMove_AddPatternA2( Shot_A, 10, NO_CHANGE, NO_CHANGE, 0.06, 0, 0 );
+					ObjMove_AddPatternA2( Shot_A, 60, NO_CHANGE, NO_CHANGE, 0.06, 4, 0 );
+	
+					T_PlaySE( SE_SHOT_03, 36 );
+				
+				
+					wait( 3 );
+				}
+			}		
+
+			wait( 60 );
+			yield;
+		}
+		
+	
+
+}
+
+//-----------------------------------------------------------------------------
+
+
+task T_Wave1Fairy_A( X, Y, Angle, Speed, Wvel, Color, ShotColor ){
+			
+	int Shotcounter = 0;
+			
+	let Enemy = Create_Enemy_A1( X, Y, 160, FAIRY_S_NORMAL, Color, 1 );
+	//T_Enemy_Aura_A( Enemy, CC_PINK, 1.2 );
+	ObjMove_AddPatternA2( Enemy, 1, NO_CHANGE, Angle , 0.1, Speed, Wvel );
+	ObjMove_AddPatternA2( Enemy, 300, NO_CHANGE, NO_CHANGE, -0.01, 0.5, 0 );
+	ObjMove_AddPatternA2( Enemy, 500, NO_CHANGE, 90, 0.05, 1, 0 );
+		
+	float Enemy_X = ObjMove_GetX( Enemy );
+	float Enemy_Y = ObjMove_GetY( Enemy );		
+	float Frame = 0;
+	int Shot_Delay = 60;
+		
+	async{
+		while( !Obj_IsDeleted( Enemy ) ){
+				
+			Enemy_X = ObjMove_GetX( Enemy );
+			Enemy_Y = ObjMove_GetY( Enemy );	
+					
+			Frame++;
+			yield;			
+				
+		}			
+	}			
+	
+	wait( Shot_Delay );
+		
+	while( !Obj_IsDeleted( Enemy ) && Shotcounter < 3 ){
+			
+		if( !Obj_IsDeleted( Enemy ) ){
+								
+			Shotcounter += 1;	
+			
+			//let Shot_A = ShotA2( Enemy_X, Enemy_Y, -1.2, 90, ShotColor, 10, SHOT_CLOUD_BLUE );
+			//ObjMove_AddPatternA2( Shot_A, 10, NO_CHANGE, NO_CHANGE, 0.01, 0, 0 );
+			//ObjMove_AddPatternA2( Shot_A, 120, NO_CHANGE, 90 + rand( -10, 10 ), 0.06, 1.2, 0 );
+			//	
+			T_PlaySE( SE_SHOT_00, 35 );			
+			
+			
+			ascent( i in 0..4 ){
+				
+				let Shot_A = ShotA2( Enemy_X, Enemy_Y, -1, 90, ShotColor, 10, SHOT_CLOUD_BLUE );
+				ObjMove_AddPatternA2( Shot_A, 10, NO_CHANGE, NO_CHANGE, 0.01, 0, 0 );
+				ObjMove_AddPatternA2( Shot_A, 120, NO_CHANGE, 90 + rand( -2, 2 ), 0.01, 1 - i * 0.5/4, 0 );
+				
+				//T_PlaySE( SE_SHOT_03, 40 );
+				
+				wait( 8 );
+				
+			}	
+			
+		}		
+
+		wait( 120 );
+		yield;
+	}
+
+}
+
+//-----------------------------------------------------------------------------
+
+task T_Wave1Ghost_Enemy_A( X, Y, Angle, Speed, Wvel, Dir, Color, ShotColor ){
+	
+	int Shotcounter = 0;
+			
+	let Enemy = Create_Enemy_A1( X, Y, 100, YINYANG_S_NORMAL, Color, 1 );
+	ObjMove_AddPatternA2( Enemy, 1, NO_CHANGE, Angle , 0.1, Speed, Wvel );
+		
+	float Enemy_X = ObjMove_GetX( Enemy );
+	float Enemy_Y = ObjMove_GetY( Enemy );		
+	float Frame = 0;
+	int Shot_Delay = 60;
+		
+	async{
+		while( !Obj_IsDeleted( Enemy ) ){
+				
+			Enemy_X = ObjMove_GetX( Enemy );
+			Enemy_Y = ObjMove_GetY( Enemy );	
+			
+			ObjMove_SetX( Enemy, Enemy_X + Dir * cos( Frame*5 ) );
+			ObjMove_SetY( Enemy, Enemy_Y + Dir * sin( Frame*5 ) );			
+					
+			Frame++;
+			yield;			
+				
+		}			
+	}			
+	
+	wait( Shot_Delay );
+		
+	while( !Obj_IsDeleted( Enemy ) && Shotcounter < 3 ){
+			
+		if( !Obj_IsDeleted( Enemy ) ){
+								
+			Shotcounter += 1;	
+			float Shot_Angle =  GetAngleToPlayer( Enemy );
+				
+			ascent( i in 0..5 ){	
+				
+				let Shot_A = ShotR1( Enemy_X + rand( -8, 8 ), Enemy_Y + rand( -8, 8 ), 1, -2, Shot_Angle, ShotColor, 10, SHOT_CLOUD_ORANGE );
+				ObjMove_AddPatternA2( Shot_A, 10, NO_CHANGE, NO_CHANGE, 0.06, 0, 0 );
+				ObjMove_AddPatternA2( Shot_A, 60, NO_CHANGE, NO_CHANGE, 0.06, 3, 0 );
+				ObjMove_AddPatternA2( Shot_A, 160, NO_CHANGE, NO_CHANGE, -0.06, 0.6, 0 );
+	
+				T_PlaySE( SE_SHOT_03, 36 );
+				
+				
+				wait( 5 );
+			}
+		}		
+
+		wait( 60 );
+		yield;
+	}
+
+}
+
+//-----------------------------------------------------------------------------
+
+
+task T_BigFiaryA_Enemy_A( X, Y, Angle, Speed, Wvel, Color, ShotColor ){
+	
+	int Shotcounter = 0;
+			
+	let Enemy = Create_Enemy_A1( X, Y, 150, FAIRY_M_NORMAL, Color, 1 );
+	T_Enemy_Aura_A( Enemy, CC_PINK, 1.2 );
+	ObjMove_AddPatternA2( Enemy, 1, NO_CHANGE, Angle , 0.1, Speed, Wvel );
+	ObjMove_AddPatternA2( Enemy, 10, NO_CHANGE, Angle , -0.05, Speed/2, Wvel );
+		
+	float Enemy_X = ObjMove_GetX( Enemy );
+	float Enemy_Y = ObjMove_GetY( Enemy );		
+	float Frame = 0;
+	int Shot_Delay = 60;
+	
+	float Shot_Angle_A = 90;
+	float Shot_Angle_B = 90;
+	float Shot_Angle_C = 45;
+	float Shot_Count_A = 10;
+	float Shot_Count_B = 10;
+		
+	async{
+		while( !Obj_IsDeleted( Enemy ) ){
+				
+			Enemy_X = ObjMove_GetX( Enemy );
+			Enemy_Y = ObjMove_GetY( Enemy );	
+					
+			Frame++;
+			yield;			
+				
+		}			
+	}			
+	
+	wait( Shot_Delay );
+		
+	while( !Obj_IsDeleted( Enemy ) && Shotcounter < 2 ){
+			
+		if( !Obj_IsDeleted( Enemy ) ){
+								
+			Shotcounter += 1;	
+			ascent( c in 0..2 ){	
+				ascent( d in 0..2 ){
+					ascent( a in 0..Shot_Count_A ){	
+						ascent( b in 0..Shot_Count_B ){	
+							let Shot_A = ShotR1( Enemy_X, Enemy_Y, 8 + a * 1/Shot_Count_A, 1 + a * 1/Shot_Count_A + d *0.4/2, 180 + b * 360/Shot_Count_B + a * Shot_Angle_C/Shot_Count_A, ShotColor, 10, ShotColor );
+				
+							//ObjMove_AddPatternA2( Shot_A, 0, NO_CHANGE, NO_CHANGE, -0.1, 0, 0 );
+							//ObjMove_AddPatternA2( Shot_A, 1, 1, ObjMove_GetAngle( Shot_A ) + a * Shot_Angle_C/Shot_Count_A, -0.05, 1 + a * 1/Shot_Count_A, 0 );
+							//ObjMove_AddPatternA2( Shot_A, 80, 1 + a* 1/Shot_Count_A, ObjMove_GetAngle( Shot_A ) + a * Shot_Angle_C/Shot_Count_A, -0.05, 1 + a* 0.5/Shot_Count_A, 0 );
+							//ObjMove_AddPatternA2( Shot_A, 120, NO_CHANGE, NO_CHANGE, -0.01, 1 - a * 0.4/Shot_Count_A, 0 );
+							Shot_Angle_A = -Shot_Angle_A;		
+							//T_PlaySE( SE_SHOT_03, 40 );
+						}
+						
+						//wait( 5 );
+					}
+				}
+				Shot_Angle_C = -Shot_Angle_C;
+			}	
+		}		
+
+		wait( 120 );
+		yield;
+	}
+
+}
+
+//-----------------------------------------------------------------------------
+
+task T_BigFiary_A( X, Y, Angle, Speed, Wvel, Color, ShotColor ){
+	
+	int Shotcounter = 0;
+			
+	let Enemy = Create_Enemy_A1( X, Y, 150, YINYANG_S_NORMAL, Color, 1 );
+	ObjMove_AddPatternA2( Enemy, 1, Speed, Angle , 0.1, Speed, Wvel );
+	ObjMove_AddPatternA2( Enemy, 20, NO_CHANGE, Angle , -0.06, 0, Wvel );	
+	ObjMove_AddPatternA2( Enemy, 160, NO_CHANGE, -90, 0.01, 3, rand( -0.1, 0.1 ) );	
+		
+	float Enemy_X = ObjMove_GetX( Enemy );
+	float Enemy_Y = ObjMove_GetY( Enemy );		
+	float Frame = 0;
+	int Shot_Delay = 120;
+	
+	float Shot_Angle_A = 90;
+	float Shot_Angle_B = 90;
+	float Shot_Angle_C = 45;
+	float Shot_Count_A = 10;
+	float Shot_Count_B = 10;
+	
+	int Way = 4;
+	int Stack = 4;
+		
+	async{
+		while( !Obj_IsDeleted( Enemy ) ){
+				
+			Enemy_X = ObjMove_GetX( Enemy );
+			Enemy_Y = ObjMove_GetY( Enemy );	
+					
+			Frame++;
+			yield;			
+				
+		}			
+	}			
+	
+	wait( Shot_Delay );
+	
+	while( !Obj_IsDeleted( Enemy ) && Shotcounter < 24 ){
+			
+		if( !Obj_IsDeleted( Enemy ) ){
+									
+			Shotcounter += 1;	
+			float Shot_Angle =  GetAngleToPlayer( Enemy );
+				
+			ascent( a in 0..1 ){	
+				ascent( i in 0..1 ){	
+					
+					let Shot_A = ShotR1( Enemy_X, Enemy_Y, 4, 2, Shot_Angle, ShotColor, 10, SHOT_CLOUD_ORANGE );
+					//ObjMove_AddPatternA2( Shot_A, 10, NO_CHANGE, NO_CHANGE, 0.06, 0, 0 );
+					ObjMove_AddPatternA2( Shot_A, 40, NO_CHANGE, NO_CHANGE, -0.06, 1, 0 );
+		
+					//T_PlaySE( SE_SHOT_03, 36 );
+					
+					
+					//wait( 3 );
+				}
+			}	
+		}		
+
+		wait( 60 );
+		yield;
+	}	
+	
+	/*
+	while( !Obj_IsDeleted( Enemy ) && Shotcounter < 1 ){
+			
+		if( !Obj_IsDeleted( Enemy ) ){
+								
+			Shotcounter += 1;	
+			ascent( c in 0..1 ){	
+				
+				float RNG = 90 + rand( -45, 45 );
+				int[] Pattern_Obj = Pattern_Shot_A1( Enemy_X, Enemy_Y, 0.5, 24, 45, 1, ShotColor, PATTERN_POLYGON, Way, Stack, 20, ShotColor );
+				
+				for( int i = 0; i < Way * Stack; i++ ){
+					
+					ObjMove_AddPatternA2( Pattern_Obj[i], 30, NO_CHANGE, NO_CHANGE, 0.05, 1 + c * 2/2, 0 );
+			
+				}				
+				//let Shot_A = ShotR1( Enemy_X, Enemy_Y, 16, 1 + a * 1/Shot_Count_A + d *0.4/2, 180 + b * 360/Shot_Count_B + a * Shot_Angle_C/Shot_Count_A, ShotColor, 10, ShotColor );
+				
+			}
+			Shot_Angle_C = -Shot_Angle_C;
+		}	
+			
+		wait( 60 );
+	}		
+	*/
+}
+
+
+//-----------------------------------------------------------------------------
+
+task T_Wave2Fairy_A( X, Y, Angle, Speed, Wvel, Color, ShotColor ){
+	
+	int Shotcounter = 0;
+			
+	let Enemy = Create_Enemy_A1( X, Y, 32, FAIRY_S_NORMAL, Color, 3 );
+	T_Enemy_Aura_A( Enemy, CC_ORANGE, 1.2 );
+	
+	ObjMove_AddPatternA2( Enemy, 1, Speed, Angle , 0.1, Speed, Wvel );
+	ObjMove_AddPatternA2( Enemy, 30, NO_CHANGE, NO_CHANGE , -0.05, 0, Wvel );
+	ObjMove_AddPatternA2( Enemy, 120, NO_CHANGE, NO_CHANGE , 0.05, Speed/2, Wvel );
+		
+	float Enemy_X = ObjMove_GetX( Enemy );
+	float Enemy_Y = ObjMove_GetY( Enemy );		
+	float Frame = 0;
+	int Shot_Delay = 120;
+		
+	async{
+		while( !Obj_IsDeleted( Enemy ) ){
+				
+			Enemy_X = ObjMove_GetX( Enemy );
+			Enemy_Y = ObjMove_GetY( Enemy );	
+					
+			Frame++;
+			yield;			
+				
+		}			
+	}			
+	
+	wait( Shot_Delay );
+	
+	while( !Obj_IsDeleted( Enemy ) && Shotcounter < 1 ){
+			
+		if( !Obj_IsDeleted( Enemy ) ){
+								
+			Shotcounter += 1;	
+			float RNG = rand( -90, 90 );
+			
+			ascent( i in 0..20 ){
+				
+				ascent( a in 0..3 ){
+					let Shot_A = ShotA2( Enemy_X, Enemy_Y, 1 + a * 0.3/3, -90 + i * 360/20, ShotColor, 10, SHOT_CLOUD_BLUE );
+				}
+				//ObjMove_AddPatternA2( Shot_A, 10, NO_CHANGE, NO_CHANGE, 0.01, 0, 0 );
+				//ObjMove_AddPatternA2( Shot_A, 60, NO_CHANGE, 90, 0.01, 1 - i * 0.2/4, 0 );
+				
+				//T_PlaySE( SE_SHOT_03, 40 );
+				
+				//wait( 4 );
+				
+			}	
+		}		
+
+		wait( 60 );
+		yield;
+	}
+
+}
+
+//-----------------------------------------------------------------------------
