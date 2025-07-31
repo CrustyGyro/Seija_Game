@@ -67,8 +67,6 @@ let CutinTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Cutin/EGo
        SetScriptResult( 15000000 );
     }	
 
-
-
 } 
 
 @MainLoop {
@@ -124,7 +122,7 @@ task T_Main {
 	T_Boss_Shot_A();
 	
 	wait( 100 );
-	//T_Boss_Shot_D();
+	T_Boss_Shot_D();
 	//T_Movement_A( bossObj );
 	
 }	
@@ -147,19 +145,21 @@ task T_Movement_A( Obj ){
 
 task T_Boss_Shot_D{
 	
-	float Frame = 0;
+	//float Frame = 0;
+	
+	wait( 260 );
 	
 	while( !Obj_IsDeleted( bossObj ) ){
 	
 		ascent( i in 0..10 ){
 			
-			int Dummy_Shot_Core =  ShotA1( bossX, bossY, 1, 90 + i * 360/10 + 24 * sin( Frame ), SHOT_BILL_GREY, 10 );
+			int Dummy_Shot_Core =  ShotA1( bossX, bossY, 0.5, GetAngleToPlayer( bossObj ) + i * 360/10, SHOT_YING_YANG_AZURE, 10 );
 
 	
 		}
 		
-		Frame+= 4;
-		wait( 16 );
+		//Frame+= 4;
+		wait( 160 );
 	}
 	
 }	
@@ -222,8 +222,8 @@ task T_Boss_Shot_A{
 	task T_Manage_Laser( Shot, Next_Shot, PermitExpand, Can_Shoot, Color, Sub_Shot_Color ){
 			
 		//int Prism = Create_Famliar_A1( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), GHOST_S_NORMAL, ENEMY_RED, 1000, false, 1, 1, 400 );		
-		let Connector = CreateStraightLaserA1(  ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), 0, 0, 16, 99999, Color, 400 );
-		let Prifma_Connector = CreateStraightLaserA1( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), 0, 0, 16, 99999, Color, 400 );
+		let Connector = CreateStraightLaserA1(  ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), 0, 0, 16, 99999, Color, 200 );
+		let Prifma_Connector = CreateStraightLaserA1( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), 0, 0, 16, 99999, Color, 200 );
 		ObjStLaser_SetPermitExpand( Prifma_Connector, PermitExpand );
 		
 		//ObjRender_SetAlpha( Shot, 0 );
@@ -674,11 +674,12 @@ task T_End {
 		yield;
 		
 		SetAutoDeleteObject(true);
-		T_Boss_Shotdown( bossObj, "Petal", CC_RED );
+		T_Boss_Shotdown( bossObj, "Petal", CC_CYAN );
 		wait( 200 );
 		
 		Obj_Delete( bossObj );	
 		
+		//lol
 		ENEMY_CLEAR = true;
 		
 		yield;

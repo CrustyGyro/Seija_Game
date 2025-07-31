@@ -56,12 +56,14 @@ let CutinTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Cutin/FW_
 
 	alternative(GetEventType()) 
 	case( EV_REQUEST_LIFE ) { 
-		SetScriptResult( 900 ); // 3000-4500 For Nons ( At 100% Damage Rate. ) //3800
+		SetScriptResult( 10 ); // 3000-4500 For Nons ( At 100% Damage Rate. ) //3800
 	}
 	case( EV_REQUEST_TIMER ) { 
 		SetScriptResult( 40 ); //40-50 For standard Nons.
 	}	
-
+	case( EV_REQUEST_SPELL_SCORE ){
+		SetScriptResult( 50000000 );
+	}
 
 } 
 
@@ -102,7 +104,7 @@ task T_InitSpell(){
 task T_Main {
 
 
-	NotifyEventAll( EV_BOSS_EFFECT, bossObj, CC_RED );
+	//NotifyEventAll( EV_BOSS_EFFECT, bossObj, CC_RED );
 	
 	//let Color = [ DOT_GRAY, DOT_RED, DOT_YELLOW, DOT_CYAN, DOT_PURPLE, DOT_GREEN ];
 
@@ -129,7 +131,7 @@ task T_Main {
 
 	wait( 60 );
 
-	T_Boss_Shot_A;
+	//T_Boss_Shot_A;
 
 }	
 

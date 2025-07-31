@@ -75,7 +75,7 @@ task T_Start_Spell(){
 	if( typeEnd == END_FAILED ){
 		
 		T_Lose_Spell;
-		wait( 100 );	
+		wait( 200 );	
 		CloseScript(GetOwnScriptID());
 		return;
 	}
@@ -251,6 +251,34 @@ task T_Gain_Spell(score){
 		}			
 	}	
 
+	async{
+
+		wait(16);
+
+		int Effec_Obj = Render2D_Texture_A1( Path01, [ 0, 0, 240, 32 ], ObjRender_GetX( Obj ), ObjRender_GetY( Obj ), 1, 0.7 );
+
+		async{
+				
+			ObjRender_SetBlendType( Effec_Obj, BLEND_ADD_ARGB );
+			ObjRender_SetColor( Effec_Obj, 155, 155, 255 );
+
+			ascent (i in 0..30) {
+
+				float Scale = Interpolate_Decelerate( 1, 1.5, i/30 );
+				float Effect_Alpha = Interpolate_Decelerate( 155, 0, i/30 );
+
+				ObjRender_SetScaleXYZ( Effec_Obj , Scale, Scale, Scale );
+				ObjRender_SetAlpha( Effec_Obj,  Effect_Alpha );
+
+				yield;
+			}
+
+			Obj_Delete( Effec_Obj );
+				
+		}
+
+	}
+
 
 	ascent(a in 0..15){
 		
@@ -265,10 +293,15 @@ task T_Gain_Spell(score){
 	
 	wait( 120 );
 	
-	ascent( a in 0..60 ){
+	ascent( a in 0..30 ){
 		
-		ObjRender_SetX(Obj, ObjRender_GetX(Obj) - a * 256/60 );
-		ObjRender_SetX(objScore, ObjRender_GetX(objScore) + a * 256/60 );
+		ObjRender_SetAlpha( Obj, Interpolate_Linear( 255, 0, a/30 ));
+		ObjRender_SetScaleX( Obj, Interpolate_Decelerate( 1, 1.5, a/30 ) );
+		ObjRender_SetScaleY( Obj, Interpolate_Decelerate( 1, 0, a/30 ) );
+
+		ObjRender_SetAlpha( objScore, Interpolate_Linear( 255, 0, a/30 ));
+		ObjRender_SetScaleY( objScore, Interpolate_Decelerate( 1, 0, a/30 ) );
+
 		yield;
 		
 	}	
@@ -293,10 +326,16 @@ task T_Lose_Spell{
 	}
 	
 	wait( 60 );
-	
-	ascent(a in 0..15){
+
+	float Fail_Y = ObjRender_GetY( Obj );
+
+	ascent(a in 0..32 ){
 		
-		ObjRender_SetScaleY( Obj, cos( ObjRender_GetScaleY(Obj) - a * 100/15 ) );
+		ObjRender_SetY( Obj, Interpolate_Accelerate( Fail_Y, Fail_Y + 64, a/32 ) );
+		ObjRender_SetAngleZ( Obj, Interpolate_Linear(0, 32, a/32 ) );
+		ObjRender_SetAngleY( Obj, Interpolate_Linear(0, 45, a/32 ) );
+		ObjRender_SetAlpha( Obj, Interpolate_Linear( 255, 0, a/32 ) );
+
 		yield;
 		
 	}	
