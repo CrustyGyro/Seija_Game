@@ -12,8 +12,11 @@ function Create_Item_A1( X, Y, Type ){
 		T_Item_Handler_A1( Item_Obj, Type );
 	}
 	case( ITEM_S_LIFE_PIECE ){
+
+		T_PlaySE( SE_PIECE_00, 30 );
 		let Item_Obj = Render_Item_A1( X, Y, Type, [ 48, 0, 80, 32 ] );
 		T_Item_Handler_A1( Item_Obj, Type );
+		T_Piece_Handler_A( Item_Obj, ITEM_S_LIFE_PIECE );
 	}	
 	case( ITEM_S_SPELL_PIECE ){
 		
@@ -67,6 +70,33 @@ function Collect_Item_Check( Obj, Type ){
 			
 		AddScore( Point_Value );
 		T_RenderScore( Obj, Point_Value,[ 255, 255, 50 ] );
+		
+	}	
+	case( ITEM_S_LIFE_PIECE ){
+
+		T_PlaySE( SE_PIECE_01, 36 );
+		SetCommonData("Life_Piece_Count", GetCommonData( "Life_Piece_Count", 0 ) + 1 );
+		AddScore( 1000 );
+		
+		let Piece_Tracker = rtos( "0", GetCommonData( "Life_Piece_Count", 0 ) ) ~ "/4";
+		if( GetCommonData( "Life_Piece_Count", 0 ) < 4 ){
+			T_RenderPieceTest( Piece_Tracker, 8, [ 255, 155, 255 ] );
+		}
+		else{
+			
+			T_RenderPieceTest( "Life Extend!", 32, [ 255, 155, 255 ] );
+			
+		}			
+		
+		if(GetCommonData( "Life_Piece_Count", 0 ) == 4 ){
+			
+			//T_RenderPieceTest( "+1 Spell!", [ 155, 255, 155 ] );
+			T_PlaySE( SE_BOMB_EXTEND_00, 35 );
+			//ExtendText;
+			SetPlayerLife( GetPlayerLife() + 1 );
+			SetCommonData( "Life_Piece_Count", 0 );
+			AddScore( 1000 );
+		}			
 		
 	}	
 	case( ITEM_S_SPELL_PIECE ){

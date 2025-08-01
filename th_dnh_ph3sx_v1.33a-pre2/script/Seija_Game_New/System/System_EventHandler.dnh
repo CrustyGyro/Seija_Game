@@ -146,18 +146,55 @@ task T_Handle_Line(){
 
 task T_Handle_Line_A(){
 	
+	int Text_Size = 12;
+	let Text_Obj = ObjText_Create();
+
+	ObjRender_SetPosition( Text_Obj, Text_Size - Text_Size/2, GetStgFrameHeight-Text_Size*1.5, 0 );
+	ObjText_SetText( Text_Obj, "Next:" );
+	ObjText_SetFontSize( Text_Obj, Text_Size );
+	ObjText_SetFontBorderType( Text_Obj, BORDER_FULL );
+	ObjText_SetFontBorderColor( Text_Obj, 0, 0, 0 );
+	ObjText_SetFontBorderWidth( Text_Obj, Text_Size/10 );
+	//ObjText_SetHorizontalAlignment( Text_Obj, ALIGNMENT_CENTER );
+
+	//T_Text_AfterImage( Text_Obj, 64 );
+
+	ObjText_SetFontType( Text_Obj, "Chaney Thin Normal" );	
+
+
+	let Icon_Tex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/System/Items.png";
 	let Hud_Line = GetCurrentScriptDirectory() ~ "./../Resource/Textures/System/Line_Debug.png";
 	let Hud_Line_Obj = Render2D_Texture_A1( Hud_Line, [ 0, 0, 512, 16 ], 256, 140, 1, 0.70 );
 	
 	let Hud_Line_Arrow = GetCurrentScriptDirectory() ~ "./../Resource/Textures/System/Line_Indicator.png";
 	let Hud_Line_Obj_Sidebar = Render2D_Texture_A1( Hud_Line_Arrow, [ 0, 0, 32, 32 ], 16, 140, 1, 0 );	
-	
+	let Piece_Icon_Obj = Render2D_Texture_A1( Icon_Tex, [ 160, 0, 192, 32 ], 40, GetStgFrameHeight - Text_Size, 1, 0.50 );
+
+	/*
+	async{
+
+		float Frame = 0;
+
+		while( !Obj_IsDeleted( Piece_Icon_Obj )){
+
+			ObjRender_SetAngleZ( Piece_Icon_Obj, 0 + 16 * sin( Frame ));
+
+			Frame++;
+
+			yield;
+
+		}
+
+	}
+	*/
+
 	//float Graze_Timer = 1;
 	float Graze_Timer_Modifier = 0;
 	float Piece_Timer = 100;
 	float Y = 140;
-	
-	//T_Handle_Piece_Bonuses();
+
+	int Piece_Handler = 1;
+	// 1 for a spell piece, -1 for a life piece...
 	
 	while(true){
 		
@@ -168,7 +205,22 @@ task T_Handle_Line_A(){
 			//NotifyEventAll( EV_SPAWN_ITEM_NON, Get_CenterX, Get_CenterY/1.5, 10, 32 ); 
 			Graze_Timer = 8; LINE_MODIFIER = 0; 
 			
-			Create_Item_A1( GetPlayerX(), Get_CenterY/1.5, ITEM_S_SPELL_PIECE );
+			if( Piece_Handler == 1 ){ 
+			
+				ObjSprite2D_SetSourceRect( Piece_Icon_Obj, 128, 0, 160, 32 );
+				//ObjRender_SetColor( Hud_Line_Obj_Sidebar, 255, 100, 155 );
+				Create_Item_A1( GetPlayerX(), Get_CenterY/1.5, ITEM_S_SPELL_PIECE ); 
+
+			}
+			else{
+
+				ObjSprite2D_SetSourceRect( Piece_Icon_Obj, 160, 0, 192, 32 );
+				//ObjRender_SetColor( Hud_Line_Obj_Sidebar, 100, 255, 155 );
+				Create_Item_A1( GetPlayerX(), Get_CenterY/1.5, ITEM_S_LIFE_PIECE );
+
+			}
+
+			Piece_Handler = -Piece_Handler;
 			
 		}
 

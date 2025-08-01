@@ -109,15 +109,15 @@ task T_Main {
 	
 	T_Boss_Shot_A;
 	//T_Movement_A;
+	Create_Item_A1( Get_CenterX, Get_CenterY/1.5, ITEM_S_LIFE_PIECE );
+	
+	wait( 99 );
 	Create_Item_A1( Get_CenterX, Get_CenterY/1.5, ITEM_S_SPELL_PIECE );
 	
-	wait( 80 );
+	wait( 99 );
 	Create_Item_A1( Get_CenterX, Get_CenterY/1.5, ITEM_S_SPELL_PIECE );
 	
-	wait( 80 );
-	Create_Item_A1( Get_CenterX, Get_CenterY/1.5, ITEM_S_SPELL_PIECE );
-	
-	wait( 80 );
+	wait( 99 );
 	Create_Item_A1( Get_CenterX, Get_CenterY/1.5, ITEM_S_SPELL_PIECE );
 	//wait( 200 );
 
@@ -142,7 +142,7 @@ task T_Boss_Shot_A{
 	
 	while( Boss_Is_Alive( bossObj )){
 		
-		Create_Item_A1( Get_CenterX, Get_CenterY/1.5, ITEM_S_SPELL_PIECE );
+		//Create_Item_A1( Get_CenterX, Get_CenterY/1.5, ITEM_S_SPELL_PIECE );
 		
 		if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){
 			//T_Charge_A1( bossObj, 40, "Maple", CC_ORANGE );

@@ -9,15 +9,15 @@ task T_HitEffect( Target ){
 	
 	let Base_HP = ObjEnemy_GetInfo( Target, INFO_LIFE );
 	let Current_HP = Base_HP;
-	let Frame = 0;
+	float Frame = 0;
 	float Item_Frame = 0;
 	float Shot_Count = 20;
 	
 	//ObjEnemy_SetIntersectionCircleToShot( bossObj, bossX, bossY, 8 );
 	while(!Obj_IsDeleted( Target )){
 		
-		let X = ObjMove_GetX( Target );
-		let Y = ObjMove_GetY( Target );
+		float X = ObjMove_GetX( Target );
+		float Y = ObjMove_GetY( Target );
 		
 		Current_HP = ObjEnemy_GetInfo( Target, INFO_LIFE );
 		
@@ -422,7 +422,7 @@ task T_Shoot_Banner( Boss_Name, Color, Size ){
 	ObjRender_SetBlendType( Banner, BLEND_ADD_ARGB );
 	ObjRender_SetColor( Banner, Color[0], Color[1], Color[2] );
 	ObjRender_SetAlpha( Banner, 155 );
-
+	//T_AfterImage( Banner, 1.5 );
 	//ObjRender_SetAngleZ( Banner, -45 );
 	ObjRender_SetScaleX( Banner, 1.5 );
 
@@ -430,11 +430,13 @@ task T_Shoot_Banner( Boss_Name, Color, Size ){
 
 	ObjRender_SetPosition( Text_Obj, GetStgFrameWidth/2, GetStgFrameHeight/2 - 24, 0 );
 	ObjText_SetText( Text_Obj, "Shoot!" );
-	ObjText_SetFontSize( Text_Obj, Size );
+	ObjText_SetFontSize( Text_Obj, 64 );
 	ObjText_SetFontBorderType( Text_Obj, BORDER_FULL );
 	ObjText_SetFontBorderColor( Text_Obj, Color[0]/2, Color[1]/2, Color[2]/2 );
-	ObjText_SetFontBorderWidth( Text_Obj, Size/10 );
+	ObjText_SetFontBorderWidth( Text_Obj, 64/10 );
 	ObjText_SetHorizontalAlignment( Text_Obj, ALIGNMENT_CENTER );
+
+	//T_Text_AfterImage( Text_Obj, 64 );
 
 	ObjText_SetFontType( Text_Obj, "Chaney Thin Normal" );	
 
@@ -453,7 +455,7 @@ task T_Shoot_Banner( Boss_Name, Color, Size ){
 			yield;
 		}
 
-		wait( 8 );
+		wait( 20 );
 
 		async{
 
@@ -467,8 +469,8 @@ task T_Shoot_Banner( Boss_Name, Color, Size ){
 			ObjText_SetFontBorderWidth( Boss_Name_Obj, Size/10 );
 			ObjText_SetHorizontalAlignment( Boss_Name_Obj, ALIGNMENT_CENTER );
 
-			ObjText_SetFontType( Boss_Name_Obj, "Chaney Thin Normal" );		
-
+			ObjText_SetFontType( Boss_Name_Obj, "Chaney Thin Normal" );				
+			//T_Text_AfterImage( Boss_Name_Obj, Size );
 
 			ascent( i in 0..24 ){
 		
@@ -481,7 +483,7 @@ task T_Shoot_Banner( Boss_Name, Color, Size ){
 				yield;
 			}			
 
-			wait( 20 );
+			wait( 30 );
 
 			ascent( i in 0..24 ){
 		
@@ -535,7 +537,7 @@ task T_Shoot_Banner( Boss_Name, Color, Size ){
 
 		}
 
-		wait( 60 );
+		wait( 80 );
 
 		ascent( a in 0..24 ) {
 			
@@ -549,6 +551,25 @@ task T_Shoot_Banner( Boss_Name, Color, Size ){
 		Obj_Delete( Banner );
 	}
 
+	task T_AfterImage( Obj, Size ){
+		
+		wait( 10 );
 
+		while( !Obj_IsDeleted( Obj ) ){
+
+			let Effect_Obj = Render2D_Texture_A1( Tex_Path, [ 0, 0, 512, 128 ], ObjRender_GetX( Obj ), ObjRender_GetY( Obj ), 1, 0.44 );
+
+			ObjRender_SetScaleY( Effect_Obj, ObjRender_GetScaleY( Obj ));
+			ObjRender_SetAngleZ( Effect_Obj, ObjRender_GetAngleZ( Obj ) );
+			ObjRender_SetColor( Effect_Obj, Color[0], Color[1], Color[2] );
+			ObjRender_SetBlendType( Effect_Obj, BLEND_ADD_ARGB );
+
+			T_FadeOut_Delete( Effect_Obj, 20, 100 );
+			T_GrowToScale_A1( Effect_Obj, 20, 1.5  );
+
+			wait( 3 );
+
+		}
+	}
 
 }

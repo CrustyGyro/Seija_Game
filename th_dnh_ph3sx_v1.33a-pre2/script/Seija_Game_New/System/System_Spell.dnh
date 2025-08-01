@@ -210,7 +210,6 @@ task T_Gain_Spell(score){
 
 	let Obj = Render2D_Texture_A1( Path01, [ 0, 0, 240, 32 ], GetStgFrameWidth/2, 98, 1, 0.7 );
 	
-
 	//--Score Text--
 
 	let strScore = "+" ~ IntToString(score);
@@ -219,7 +218,7 @@ task T_Gain_Spell(score){
 	ObjText_SetFontSize( objScore,27);
 	ObjText_SetFontType( objScore,"Chaney Thin Normal");	
 	
-	ObjText_SetText( objScore, strScore );
+	ObjText_SetText( objScore, DigitToArray_Comma( strScore ) );
 	ObjText_SetFontBold( objScore, true);
 	
 	ObjText_SetFontColorTop( objScore, 255, 255, 255 );
@@ -265,7 +264,7 @@ task T_Gain_Spell(score){
 			ascent (i in 0..30) {
 
 				float Scale = Interpolate_Decelerate( 1, 1.5, i/30 );
-				float Effect_Alpha = Interpolate_Decelerate( 155, 0, i/30 );
+				float Effect_Alpha = Interpolate_Decelerate( 255, 0, i/30 );
 
 				ObjRender_SetScaleXYZ( Effec_Obj , Scale, Scale, Scale );
 				ObjRender_SetAlpha( Effec_Obj,  Effect_Alpha );

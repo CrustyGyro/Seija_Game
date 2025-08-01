@@ -62,7 +62,7 @@ let CutinTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Cutin/FW_
 		SetScriptResult( 40 ); //40-50 For standard Nons.
 	}	
 	case( EV_REQUEST_SPELL_SCORE ){
-		SetScriptResult( 50000000 );
+		SetScriptResult( 5000000 );
 	}
 
 } 
@@ -103,8 +103,7 @@ task T_InitSpell(){
 
 task T_Main {
 
-
-	//NotifyEventAll( EV_BOSS_EFFECT, bossObj, CC_RED );
+	NotifyEventAll( EV_BOSS_EFFECT, bossObj, CC_RED );
 	
 	//let Color = [ DOT_GRAY, DOT_RED, DOT_YELLOW, DOT_CYAN, DOT_PURPLE, DOT_GREEN ];
 
@@ -122,14 +121,14 @@ task T_Main {
 	//T_Charge_B1( bossX, bossY, 180, 3, 48, 40, 5, [ 255, 0, 0 ] );
 	//T_Charge_B1( bossX, bossY, 0, 3, 48, 40, 5, [ 0, 0, 255 ]);		
 	
-	//T_InitSpell();
+	T_InitSpell();
 	//ConcentrationA1( bossObj, 35, "Maple", CC_PURPLE );
 	wait( 35 );		
 	
 	ObjEnemy_SetDamageRate( bossObj, 0.2, 0.2 );
 	T_Lifebar( bossObj );
 
-	T_Shoot_Banner( "The Freaker", CC_RED, 64 );
+	//T_Shoot_Banner( "Amanowara no Nijie", CC_CYAN, 40 );
 
 	wait( 60 );
 

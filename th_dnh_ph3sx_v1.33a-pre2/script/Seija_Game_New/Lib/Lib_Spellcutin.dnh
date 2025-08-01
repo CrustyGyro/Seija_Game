@@ -14,6 +14,7 @@ task T_Call_Spell_Cutin( Path, Rect, Scale, Color ){
 	T_FadeIn_A1( Cutin_Obj, 30, 255 );
 	
 	T_Cutin_Trail( Path, Rect, Scale );
+	//T_SpellAttack_Text( Color );
 	
 	//let Scale_Modifier = 1.5;
 	
@@ -74,6 +75,41 @@ task T_Call_Spell_Cutin( Path, Rect, Scale, Color ){
 		
 	}	
 	
+}
+
+task T_SpellAttack_Text( Color ){
+
+	//WIP!!!!
+
+	let Text_Obj = ObjText_Create();
+	int Text_Size = 48;
+
+	ObjRender_SetPosition( Text_Obj, GetStgFrameWidth/2, GetStgFrameHeight/2 + 100, 0 );
+	ObjText_SetText( Text_Obj, "Spellcard Attack!" );
+	ObjText_SetFontSize( Text_Obj, Text_Size );
+	ObjText_SetFontBorderType( Text_Obj, BORDER_FULL );
+	ObjText_SetFontBorderColor( Text_Obj, Color[0]/2, Color[1]/2, Color[2]/2 );
+	ObjText_SetFontBorderWidth( Text_Obj, Text_Size/10 );
+	ObjText_SetHorizontalAlignment( Text_Obj, ALIGNMENT_CENTER );
+	Obj_SetRenderPriority( Text_Obj , 0.79 );
+
+	ObjText_SetFontType( Text_Obj, "Chaney Thin Normal" );	
+
+	async{
+
+		ObjRender_SetAngleZ( Text_Obj , -32 );
+
+		ascent (i in 0..30){
+
+			ObjRender_SetX( Text_Obj, Interpolate_Accelerate( -256, GetStgFrameWidth/2, i/30 ));
+
+			yield;
+		}
+
+	}
+
+
+
 }
 
 //---------------------------------------------------------------------------------------------------------------------

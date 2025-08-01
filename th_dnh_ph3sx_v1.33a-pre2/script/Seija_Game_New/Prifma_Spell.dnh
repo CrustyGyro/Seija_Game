@@ -108,6 +108,7 @@ task T_Main {
 
 
 	NotifyEventAll( EV_BOSS_EFFECT, bossObj, CC_GREEN );
+	T_Shoot_Banner( "Amanowara no Nijie", CC_CYAN, 40 );
 
 	wait( 125 );
 
