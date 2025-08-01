@@ -101,6 +101,7 @@ task T_Main {
 	wait( 35 );		
 	
 	ObjEnemy_SetDamageRate( bossObj, 1, 1 );
+	T_Shoot_Banner( "Fucked Up Thing", CC_RED, 48 );
 	T_Lifebar( bossObj );
 
 	wait( 60 );

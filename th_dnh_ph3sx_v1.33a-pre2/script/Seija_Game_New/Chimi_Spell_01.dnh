@@ -62,7 +62,7 @@ let CutinTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Cutin/FW_
 		SetScriptResult( 40 ); //40-50 For standard Nons.
 	}	
 	case( EV_REQUEST_SPELL_SCORE ){
-		SetScriptResult( 5000000 );
+		SetScriptResult( 3000000 );
 	}
 
 } 
@@ -132,7 +132,7 @@ task T_Main {
 
 	wait( 60 );
 
-	//T_Boss_Shot_A;
+	T_Boss_Shot_A;
 
 }	
 

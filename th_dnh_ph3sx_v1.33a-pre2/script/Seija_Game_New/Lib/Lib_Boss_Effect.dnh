@@ -360,7 +360,7 @@ task T_WaveShader( Target ){
 	
 	let Out_Fluct = 16; 
 	let Eff_Radius = 0; 
-	let Base_Eff_Radius = 132; 	
+	let Base_Eff_Radius = 128; 	
 	
 	let P_EffMin = 20; 
 	let P_EffMax = 26; 
@@ -384,10 +384,10 @@ task T_WaveShader( Target ){
 	ObjRender_SetPermitCamera( ObjWave, false );
 	
 	//ObjRender_SetColor( AuraWave, Color[0], Color[1], Color[2] );
-	ObjRender_SetAlpha( AuraWave, 100 );
+	ObjRender_SetAlpha( AuraWave, 255 );
 	ObjRender_SetBlendType( AuraWave, BLEND_MULTIPLY );
 	
-	let Path = GetCurrentScriptDirectory() ~ "./Shader/S_Boss_Distortion.dnh";
+	let Path = GetCurrentScriptDirectory() ~ "./Shader/S_Boss_Distortion_New.dnh";
 	ObjShader_SetShaderF( ObjWave, Path );
 	ObjShader_SetTechnique( ObjWave, "TecWave" );	
 
@@ -396,7 +396,7 @@ task T_WaveShader( Target ){
 	while( GetEnemyBossSceneObjectID != ID_INVALID  ){
 		
 		ObjRender_SetPosition( AuraWave, GetCommonData( "Effect_X", 0 ), GetCommonData( "Effect_Y", 0 ), 0);
-		Eff_Radius = Base_Eff_Radius + Out_Fluct * sin( Frame * 8 );
+		Eff_Radius = Base_Eff_Radius + Out_Fluct * sin( Frame * 6 );
 
 		let X = GetCommonData( "Effect_X", 0 );
 		let Y = GetCommonData( "Effect_Y", 0 );

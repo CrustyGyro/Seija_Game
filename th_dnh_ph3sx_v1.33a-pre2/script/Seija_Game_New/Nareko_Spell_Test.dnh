@@ -109,7 +109,7 @@ task T_InitSpell(){
 task T_Main {
 
 
-	//NotifyEventAll( EV_BOSS_EFFECT, bossObj, CC_RED );
+	NotifyEventAll( EV_BOSS_EFFECT, bossObj, CC_RED );
 
 	wait( 125 );
 

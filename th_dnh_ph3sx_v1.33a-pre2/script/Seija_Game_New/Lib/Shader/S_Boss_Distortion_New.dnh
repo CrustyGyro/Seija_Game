@@ -1,0 +1,87 @@
+//-----------------------------------------------------------
+
+sampler sampler0_ : register(s0);
+
+//-----------------------------------------------------------
+
+//Slowly going insane! - Seija
+
+static const float RENDER_WIDTH = 512;
+static const float RENDER_HEIGHT = 512;	
+
+texture textureMask_;
+sampler samplerMask_ = sampler_state{
+	Texture = <textureMask_>;
+};
+ 
+float frame_;
+float Xpos_;
+float Ypos_;
+float waveRadius_;
+
+struct PS_INPUT{	
+
+	float4 diffuse : COLOR0;  
+	float2 texCoord : TEXCOORD0; 
+	float2 vPos : VPOS; 
+	
+};
+
+struct PS_OUTPUT{
+	
+    float4 color : COLOR0; 
+	
+};
+
+PS_OUTPUT PsWave( PS_INPUT In ) : COLOR0{
+	PS_OUTPUT Out;
+	
+	float dist2 = pow( In.vPos.x-Xpos_, 2 ) + pow( In.vPos.y-Ypos_, 2 );
+	float dist = sqrt( dist2 );	
+	
+	float sinTheta = ( In.vPos.y - Ypos_) / dist;
+	float cosTheta = ( In.vPos.x - Xpos_) / dist;	
+	
+	float _angle  = In.vPos.y - Ypos_ + In.vPos.x - Xpos_ + frame_ * 2;
+	float _angle2 = In.vPos.y - Ypos_ + In.vPos.x - Xpos_ + frame_ * 2;	
+	
+	_angle  = radians(_angle);	
+	_angle2 = radians(_angle2);	
+	float angle  = sqrt(pow(_angle,2) + _angle2);	//these aren't even neccessary and possibly irrelevant but it looks nice so whatever
+	float angle2 = sqrt(pow(_angle2,2) + _angle);	
+	
+	float waveRadius_sub = max( cos( angle ) * sin(frame_ / 90),sin( angle2 ) * cos(frame_ / 90))+min(sin( angle ) * cos(frame_ / 90),cos( angle2 ) * sin(frame_ / 90));
+	float waveRadius = waveRadius_ + waveRadius_sub*10;	
+	
+	float powerRatio = (waveRadius - dist) / waveRadius;	
+	if(powerRatio < 0){powerRatio = 0;}	
+	
+	float biasRadiusY = (cos(frame_ / 90) + 5 + cos( angle ) * 2) * waveRadius * powerRatio * 4;
+	float biasRadiusX = (sin(frame_ / 90) + 5 + sin( angle ) * 2) * waveRadius * powerRatio * 4;
+		float biasX = biasRadiusX * cosTheta;
+		float biasY = biasRadiusY * sinTheta;
+	
+	float R_Width = RENDER_WIDTH * (36 + 30 * (powerRatio));
+	float R_Height = RENDER_HEIGHT * (36 + 30 * (powerRatio));
+	
+	float2 texUV;
+		texUV.x = -biasX / R_Width + In.texCoord.x;
+		texUV.y = -biasY / R_Height + In.texCoord.y;
+		
+	float4 colorTexture = tex2D(sampler0_, texUV);
+	float4 colorDiffuse = In.diffuse;
+	float4 color = colorTexture * colorDiffuse;		
+	
+	//color.a = waveColor.a;	//wave alpha
+
+	Out.color = color;
+
+	return Out;		
+	
+}
+
+technique TecWave{
+	pass P0{				
+		PixelShader = compile ps_3_0 PsWave();
+	}							
+}

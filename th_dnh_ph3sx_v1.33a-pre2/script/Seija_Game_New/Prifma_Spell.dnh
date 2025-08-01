@@ -154,7 +154,7 @@ task T_Boss_Shot_D{
 	
 		ascent( i in 0..10 ){
 			
-			int Dummy_Shot_Core =  ShotA1( bossX, bossY, 0.5, GetAngleToPlayer( bossObj ) + i * 360/10, SHOT_LARGE_STAR_GREY, 10 );
+			int Dummy_Shot_Core =  ShotA1( bossX, bossY, 0.5, GetAngleToPlayer( bossObj ) + i * 360/10, SHOT_BUTTERFLY_GREEN, 10 );
 
 	
 		}
@@ -213,6 +213,8 @@ task T_Boss_Shot_A{
 		
 		wait( 200 );
 		while( !Obj_IsDeleted( Shot ) ){
+
+			T_PlaySE( SE_SHOT_03, 30 );
 		
 			int Shot_A = ShotA1( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), 1, ObjMove_GetAngle( Shot ) -180 + 45, SHOT_ICE_AZURE, 10 );
 			//ObjShot_SetDeleteFrame( Shot_A, 160 );
@@ -247,6 +249,9 @@ task T_Boss_Shot_A{
 				while( !Obj_IsDeleted( Shot ) ){
 					
 					ascent( i in 0..Shot_Count ){
+
+						T_PlaySE( SE_CHIME_02, 30 );
+						
 						int Shot_A = ShotA1( ObjMove_GetX( Prifma_Connector ), ObjMove_GetY( Prifma_Connector ), 0, ObjMove_GetAngle( Prifma_Connector ), Sub_Shot_Color, 8 );
 						
 						T_Manage_Shot( Shot_A );
