@@ -74,6 +74,14 @@ function Load_Boss(){
 	
 	let CSD = GetCurrentScriptDirectory();
     let Boss_Obj = ObjEnemyBossScene_Create();
+
+    async{
+
+        wait( 10 );
+
+        T_Shoot_Banner( "Nareko Michigami", CC_ORANGE, 48 );
+
+    }
 	
     ObjEnemyBossScene_Add( Boss_Obj, 0, CSD ~ "Nareko_Non_01_New.dnh" );
     ObjEnemyBossScene_Add( Boss_Obj, 0, CSD ~ "Nareko_Spell_01_New.dnh" );

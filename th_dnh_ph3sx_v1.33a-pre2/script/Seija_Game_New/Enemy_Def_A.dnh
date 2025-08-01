@@ -191,11 +191,11 @@ task T_Wave1Fairy_A( X, Y, Angle, Speed, Wvel, Color, ShotColor ){
 			
 	int Shotcounter = 0;
 			
-	let Enemy = Create_Enemy_A1( X, Y, 160, FAIRY_S_NORMAL, Color, 1 );
+	let Enemy = Create_Enemy_A1( X, Y, 60, FAIRY_S_NORMAL, Color, 1 );
 	//T_Enemy_Aura_A( Enemy, CC_PINK, 1.2 );
 	ObjMove_AddPatternA2( Enemy, 1, NO_CHANGE, Angle , 0.1, Speed, Wvel );
-	ObjMove_AddPatternA2( Enemy, 300, NO_CHANGE, NO_CHANGE, -0.01, 0.5, 0 );
-	ObjMove_AddPatternA2( Enemy, 500, NO_CHANGE, 90, 0.05, 1, 0 );
+	ObjMove_AddPatternA2( Enemy, 190, NO_CHANGE, NO_CHANGE, -0.01, 0.5, 0 );
+	ObjMove_AddPatternA2( Enemy, 260, NO_CHANGE, 90, 0.05, 1, 0 );
 		
 	float Enemy_X = ObjMove_GetX( Enemy );
 	float Enemy_Y = ObjMove_GetY( Enemy );		
@@ -243,7 +243,7 @@ task T_Wave1Fairy_A( X, Y, Angle, Speed, Wvel, Color, ShotColor ){
 			
 		}		
 
-		wait( 120 );
+		wait( 40 );
 		yield;
 	}
 

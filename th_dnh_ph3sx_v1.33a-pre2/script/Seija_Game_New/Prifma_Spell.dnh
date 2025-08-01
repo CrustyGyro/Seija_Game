@@ -57,7 +57,7 @@ let CutinTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Cutin/EGo
 
 	alternative(GetEventType()) 
 	case( EV_REQUEST_LIFE ) { 
-		SetScriptResult( 3600 ); // 3000-4500 For Nons ( At 100% Damage Rate. )
+		SetScriptResult( 1000 ); // 3000-4500 For Nons ( At 100% Damage Rate. )
 	}
 	case( EV_REQUEST_TIMER ) { 
 		//SetScriptResult( 50 );
@@ -115,7 +115,7 @@ task T_Main {
 	
 	wait( 160 );
 
-	ObjEnemy_SetDamageRate( bossObj, 0.5, 0.8 );
+	ObjEnemy_SetDamageRate( bossObj, 0.1, 0.2 );
 	
 	//T_Boss_Shot_C;
 	
@@ -153,7 +153,7 @@ task T_Boss_Shot_D{
 	
 		ascent( i in 0..10 ){
 			
-			int Dummy_Shot_Core =  ShotA1( bossX, bossY, 0.5, GetAngleToPlayer( bossObj ) + i * 360/10, SHOT_YING_YANG_AZURE, 10 );
+			int Dummy_Shot_Core =  ShotA1( bossX, bossY, 0.5, GetAngleToPlayer( bossObj ) + i * 360/10, SHOT_LARGE_STAR_GREY, 10 );
 
 	
 		}
@@ -183,6 +183,7 @@ task T_Boss_Shot_A{
 	
 	for( int a = 0; a < Way * Stack; a++ ) {
 		
+		// HELL WORLD HELL WORLD
 		T_Manage_Pyramid( Dummy_Shot_Core, Dummy_Shots[a], 156, 90, 200, -0.2 );
 		T_Manage_Pyramid( Dummy_Shot_Core, Dummy_Shots_Outer[a], 256, -90, 300, -0.1 );
 		T_Manage_Pyramid( Dummy_Shot_Core, Dummy_Shots_Middle[a], 280, -90, 300, 0.1 );

@@ -77,24 +77,25 @@ task T_Wave_A{
 	
 		float Wvel = 0.03;
 		float Dir_A = 1;
+		int Fairy_Count = 12;
 		
 		//LINE_MOD_STAGE = 0.1;
 	
 		loop(1){
-			ascent( i in 0..8 ){
+			ascent( i in 0..Fairy_Count ){
 
-				T_Wave1Fairy_A( 32 + i * Get_MaxX/8, -24, 90, 1, Wvel, ENEMY_GREEN, SHOT_ICE_DBLUE );
+				T_Wave1Fairy_A( 32 + i * Get_MaxX/Fairy_Count, -24, 90, 2, Wvel, ENEMY_GREEN, SHOT_ICE_DBLUE );
 
 				Wvel = -Wvel;
-				wait( 30 );
+				wait( 20 );
 
 			}
-			descent( i in 0..8 ){
+			descent( i in 0..Fairy_Count ){
 
-				T_Wave1Fairy_A( 32 + i * Get_MaxX/8, -24, 90, 1, Wvel, ENEMY_GREEN, SHOT_ICE_DBLUE );
+				T_Wave1Fairy_A( 32 + i * Get_MaxX/Fairy_Count, -24, 90, 2, Wvel, ENEMY_GREEN, SHOT_ICE_DBLUE );
 
 				Wvel = -Wvel;
-				wait( 30 );
+				wait( 20 );
 
 			}			
 			

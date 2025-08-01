@@ -410,3 +410,145 @@ task T_ShotDown_Inverted( X, Y ){
 		}
 	}	
 }	
+
+//----------------------------------------------------------
+
+task T_Shoot_Banner( Boss_Name, Color, Size ){
+
+	let Tex_Path =  GetCurrentScriptDirectory() ~ "./../Resource/Textures/Effect/Shoot_Banner.png";
+
+	int Banner = Render2D_Texture_A1( Tex_Path, [ 0, 0, 512, 128 ], GetStgFrameWidth()/2, GetStgFrameHeight()/2, 1, 0.45 );
+
+	ObjRender_SetBlendType( Banner, BLEND_ADD_ARGB );
+	ObjRender_SetColor( Banner, Color[0], Color[1], Color[2] );
+	ObjRender_SetAlpha( Banner, 155 );
+
+	//ObjRender_SetAngleZ( Banner, -45 );
+	ObjRender_SetScaleX( Banner, 1.5 );
+
+	let Text_Obj = ObjText_Create();
+
+	ObjRender_SetPosition( Text_Obj, GetStgFrameWidth/2, GetStgFrameHeight/2 - 24, 0 );
+	ObjText_SetText( Text_Obj, "Shoot!" );
+	ObjText_SetFontSize( Text_Obj, Size );
+	ObjText_SetFontBorderType( Text_Obj, BORDER_FULL );
+	ObjText_SetFontBorderColor( Text_Obj, Color[0]/2, Color[1]/2, Color[2]/2 );
+	ObjText_SetFontBorderWidth( Text_Obj, Size/10 );
+	ObjText_SetHorizontalAlignment( Text_Obj, ALIGNMENT_CENTER );
+
+	ObjText_SetFontType( Text_Obj, "Chaney Thin Normal" );	
+
+	async{
+
+		ascent( i in 0..24 ){
+	
+			float Text_X = Interpolate_Decelerate( GetStgFrameWidth + Size*1.5, GetStgFrameWidth/2, i/24 );
+
+			
+			ObjRender_SetScaleX( Text_Obj, Interpolate_Decelerate( 0.5, 1, i/24 ) );
+			//ObjRender_SetScaleY( Text_Obj, Interpolate_Decelerate( 0.5, 1, i/24 ) );
+			//ObjText_SetFontSize( Text_X, Interpolate_Decelerate( Size/2, Size, i/24 ) );
+			ObjRender_SetPosition( Text_Obj, Text_X, GetStgFrameHeight/2 - 24, 0 );
+
+			yield;
+		}
+
+		wait( 8 );
+
+		async{
+
+			let Boss_Name_Obj = ObjText_Create();
+
+			ObjRender_SetPosition( Boss_Name_Obj, GetStgFrameWidth/2, GetStgFrameHeight/2 - 24, 0 );
+			ObjText_SetText( Boss_Name_Obj, Boss_Name );
+			ObjText_SetFontSize( Boss_Name_Obj, Size );
+			ObjText_SetFontBorderType( Boss_Name_Obj, BORDER_FULL );
+			ObjText_SetFontBorderColor( Boss_Name_Obj, Color[0]/2, Color[1]/2, Color[2]/2 );
+			ObjText_SetFontBorderWidth( Boss_Name_Obj, Size/10 );
+			ObjText_SetHorizontalAlignment( Boss_Name_Obj, ALIGNMENT_CENTER );
+
+			ObjText_SetFontType( Boss_Name_Obj, "Chaney Thin Normal" );		
+
+
+			ascent( i in 0..24 ){
+		
+				float Text_X = Interpolate_Decelerate( GetStgFrameWidth + Size*1.5, GetStgFrameWidth/2, i/24 );
+
+				
+				ObjRender_SetScaleX( Boss_Name_Obj, Interpolate_Decelerate( 0.5, 1, i/24 ) );
+				ObjRender_SetPosition( Boss_Name_Obj, Text_X, GetStgFrameHeight/2 - 24, 0 );
+
+				yield;
+			}			
+
+			wait( 20 );
+
+			ascent( i in 0..24 ){
+		
+				float Text_X = Interpolate_Decelerate( GetStgFrameWidth/2, 0 - Size*6.5, i/24 );
+
+				
+				ObjRender_SetScaleX( Boss_Name_Obj, Interpolate_Decelerate( 1, 3, i/24 ) );
+				ObjRender_SetScaleY( Boss_Name_Obj, Interpolate_Decelerate( 1, 0, i/24 ) );
+				ObjRender_SetPosition( Boss_Name_Obj, Text_X, GetStgFrameHeight/2 - 24, 0 );
+
+				yield;
+			}			
+
+			Obj_Delete( Boss_Name_Obj );	
+
+		}
+
+		ascent( i in 0..24 ){
+	
+			float Text_X = Interpolate_Decelerate( GetStgFrameWidth/2, 0 - Size*6.5, i/24 );
+
+			
+			ObjRender_SetScaleX( Text_Obj, Interpolate_Decelerate( 1, 3, i/24 ) );
+			ObjRender_SetScaleY( Text_Obj, Interpolate_Decelerate( 1, 0, i/24 ) );
+			//ObjText_SetFontSize( Text_X, Interpolate_Decelerate( Size/2, Size, i/24 ) );
+			ObjRender_SetPosition( Text_Obj, Text_X, GetStgFrameHeight/2 - 24, 0 );
+
+			yield;
+		}	
+
+		Obj_Delete( Text_Obj );	
+
+	}
+
+	async{
+
+		ascent( a in 0..200 ) {
+
+			ObjRender_SetAngleZ( Banner, Interpolate_Linear( -45, -16, a/200 ) );
+			yield;
+		}
+	}
+	
+	async{
+
+		ascent( a in 0..24 ) {
+			
+			ObjRender_SetScaleY( Banner, Interpolate_Decelerate( 0, 0.5, a/24 ) );
+
+			yield;
+
+		}
+
+		wait( 60 );
+
+		ascent( a in 0..24 ) {
+			
+			//ObjRender_SetScaleX( Banner, Interpolate_Smoother( 1, 1.5, a/24 ) );
+			ObjRender_SetScaleY( Banner, Interpolate_Decelerate( 0.5, 0, a/24 ) );
+
+			yield;
+
+		}		
+
+		Obj_Delete( Banner );
+	}
+
+
+
+}
