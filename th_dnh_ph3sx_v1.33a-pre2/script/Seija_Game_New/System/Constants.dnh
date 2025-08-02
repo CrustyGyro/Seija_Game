@@ -8,11 +8,31 @@
 	
 	//int STAGE_PHASE = 0;
 
+	//---------------------------
+
+	//Scene Indexes.
+
+	int INDEX_SCENE_MAIN_MENU = 0;
+	int INDEX_SCENE_DIFFICULTY = 1;
+	int INDEX_SCENE_PLAYER_SELECT = 2;
+	int INDEX_SCENE_SHOTYPE_SELECT = 3;
+	int INDEX_SCENE_STAGE_SCENE = 4;
+
+	//Main Menu Option Indexes.
+	int INDEX_GAME_START = 0;
+	int INDEX_EXTRA_START = 1;
+	int INDEX_PRACTICE_START = 2;
+	int INDEX_REPLAYS = 3;
+	int INDEX_PLAYER_DATA = 4;
+	int INDEX_MUSIC_ROOM = 5;
+	int INDEX_OPTIONS_MAIN = 6;
+	int INDEX_MANUAL = 7;
+	int INDEX_QUIT = 8;
 
 	//---------------------------
 	
 	// -- Player Characters --
-	let PLAYER_REIMU = 0;
+	let PLAYER_REIMU = "script/Seija_Game_New/Player/PL_Reimu.dnh";
 	let PLAYER_MARISA = 1;
 	//let PLAYER_SANAE = 2;
 	//let PLAYER_SAKUYA = 3;

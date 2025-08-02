@@ -1,0 +1,350 @@
+//-------------------------------------------------------------------------------------------------------------------------
+
+#include "./Common.dnh"
+#include "./Constants.dnh"
+
+//#include "./Lib/Lib_Sound.dnh"
+
+//-------------------------------------------------------------------------------------------------------------------------
+task T_Difficulty_Select(){
+
+	let BG_Tex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/White_Rect.png";
+	let BG_Obj = Render2D_Texture_A1( BG_Tex, [ 0, 0, 640, 480 ], GetScreenWidth()/2, GetScreenHeight()/2, 1, 0.01 );
+	T_Manage_BG();
+
+	task T_Manage_BG(){
+
+		ObjRender_SetBlendType( BG_Obj, BLEND_SUBTRACT );
+        ascent (i in 0..20) {
+			ObjRender_SetAlpha( BG_Obj, Interpolate_Smooth( 0, 25, i/20 ));
+			yield;
+		}
+
+		ObjRender_SetAlpha( BG_Obj, 25 );
+
+		while( Current_Scene_Index == INDEX_SCENE_DIFFICULTY && !End_Title_Scene ){
+
+            if( Current_Scene_Index != INDEX_SCENE_DIFFICULTY  ){
+
+                ascent (i in 0..20) {
+                    ObjRender_SetAlpha( BG_Obj, Interpolate_Smooth( 25, 0, i/20 ));
+                    yield;
+                }
+
+                Obj_Delete( BG_Obj );
+
+            }
+
+			yield;
+		}
+
+		Obj_Delete( BG_Obj );
+	}
+	
+	int Option_Wait_Time = 10;
+	let Menu_Input_Timer = 0;
+
+    int Selection_Index = 0;
+    int Option_Count = 3+1;
+    int[] Options_List = [];
+    float Options_Spacing = 28;
+   	float Frame_KeyHold = 0;
+
+    ascent( Index in 0..Option_Count ){
+
+        Options_List = Options_List ~ [ Create_Difficulty_Options_Text( GetScreenWidth()/2 -256, GetScreenHeight()/2 + Index * Options_Spacing , Index ) ];
+
+    }	
+
+	function Create_Difficulty_Options_Text( X, Y, Index ) {
+
+        let Option_Texts = [
+            "Easy Mode",
+            "Normal Mode",
+            "Hard Mode",
+			"Lunatic Mode",
+        ][ Index ];
+
+        let Option_Texts_Color = [
+			//Scary!
+          	0x72FF96,
+			0x332DFF,
+          	0xFD2D05,
+			0xFC0AFF
+        ];	
+
+		let Option_Obj = ObjText_Create();
+
+        ObjText_SetFontType( Option_Obj,"Chaney Thin Normal");
+		Obj_SetRenderPriority( Option_Obj, 0.03 );
+
+		ObjText_SetFontSize(  Option_Obj, 32 );
+		ObjText_SetFontColorTop( Option_Obj, Option_Texts_Color[ Index ] );
+		ObjText_SetFontColorBottom( Option_Obj, 255, 255, 255 );
+
+		ObjText_SetFontBorderType( Option_Obj,BORDER_FULL);
+		ObjText_SetFontBorderColor( Option_Obj, 0, 0, 0 );
+		ObjText_SetFontBorderWidth( Option_Obj, 2 );
+		ObjText_SetMaxWidth( Option_Obj, 512 );
+
+	    //ObjText_SetSidePitch(obj,-1);
+        ObjText_SetHorizontalAlignment( Option_Obj,  ALIGNMENT_CENTER );
+		ObjText_SetText( Option_Obj, Option_Texts );
+        ObjRender_SetPosition( Option_Obj, X, Y, 0 );
+
+		async{
+
+			ascent ( i in 0..25 ){
+				
+				ObjRender_SetY( Option_Obj, Interpolate_Decelerate( GetScreenHeight()/2, Y, i/25 ) );
+				ObjRender_SetAlpha( Option_Obj, Interpolate_Decelerate( 0, 255, i/25 ));
+
+				yield;
+			}
+
+		}
+
+
+		T_Manage_Options();
+
+		return Option_Obj;
+
+		task T_Manage_Options(){
+
+            float Frame = 0;
+            float X_Pos_Base = X;
+            float Option_Alpha_Base = 255;
+            float Selection_Offset = 32;
+
+            while( !Obj_IsDeleted( Option_Obj ) && !End_Title_Scene ){
+
+                if( Current_Scene_Index != INDEX_SCENE_DIFFICULTY ){
+
+                    ascent( i in 0..30 ) {
+                
+                        ObjRender_SetAlpha( Option_Obj, Interpolate_Linear( 255, 0, i/30 ));
+                       // ObjRender_SetX( Option_Obj, Interpolate_Smooth( X_Pos_Base, -400, i/30 ) ); 
+
+                        yield;
+                    }
+
+                    Obj_Delete( Option_Obj );
+                }
+                else{
+
+                   // ObjRender_SetAlpha( Option_Obj, 255 );
+                    let X_Pos_Move = X_Pos_Base;
+
+                    if( Index == Selection_Index ){
+
+                        //ObjRender_SetAngleZ( Option_Obj , ObjRender_GetAngleZ( Option_Obj ) - 0.08 * sin( Frame ));
+                        X_Pos_Move = ( GetScreenWidth()/2 - 256 ) + Selection_Offset; 
+                        ObjRender_SetColor( Option_Obj, 255, 255, 255 );
+
+                    }
+                    else{
+
+                        X_Pos_Move = X; 
+                        //ObjRender_SetAngleZ( Option_Obj , 0 );
+                        ObjRender_SetColor( Option_Obj, 100, 100, 100 ); 
+
+                    }
+                    
+                    X_Pos_Base += ( X_Pos_Move - X_Pos_Base )/2;
+                   
+                    //ObjRender_SetX( Option_Obj, X_Pos_Base );                
+                    //ObjRender_SetColor( Option_Obj, [ Selection_Color ], [ Selection_Color ], [ Selection_Color ] );
+                    //ObjRender_SetAngleZ( Option_Obj , 0 );
+                    Frame++;
+                }
+                yield;
+            }
+
+            Obj_Delete( Option_Obj );
+
+
+		}
+	}
+
+	wait( 40 );
+
+    while( Current_Scene_Index == INDEX_SCENE_DIFFICULTY && !End_Title_Scene ){
+
+        //HELL WORLD HELL WORLD HELL WORLD PART TWO!!!
+        if( Menu_Input_Timer <=0 ){
+
+			if( GetVirtualKeyState( VK_UP ) == KEY_PUSH ){
+
+                T_PlaySE( SE_UI_SELECT, 35 );
+				Selection_Index -= 1;
+			}
+			if( GetVirtualKeyState( VK_DOWN ) == KEY_PUSH ){
+
+                T_PlaySE( SE_UI_SELECT, 35 );
+				Selection_Index+=1;
+			}
+			else if( GetVirtualKeyState( VK_UP ) == KEY_HOLD ){
+
+				Frame_KeyHold+=1;
+				if( Frame_KeyHold >= 30 && Frame_KeyHold %5 ==0 ){
+
+                    T_PlaySE( SE_UI_SELECT, 35 );
+					Selection_Index-=1;
+				}
+			}
+			else if( GetVirtualKeyState( VK_DOWN ) == KEY_HOLD ){
+
+				Frame_KeyHold+=1;
+				if( Frame_KeyHold >= 30 && Frame_KeyHold % 5 ==0 ){
+
+                    T_PlaySE( SE_UI_SELECT, 35 );
+					Selection_Index+=1;
+				}
+			}
+			else{
+				Frame_KeyHold = 0;
+			}
+			Selection_Index %= Option_Count;
+
+            if( GetVirtualKeyState( VK_OK ) == KEY_PUSH ){
+
+                T_PlaySE( SE_UI_OK, 35 );
+
+				wait( 60 );
+				T_Stage_Scene( 1, 0, 0 );
+               // T_Flash_Option( Options_List[ Selection_Index ] );
+
+               // alternative( Selection_Index );
+               // T_Handle_Menu_Selection( Selection_Index );
+
+                wait( Option_Wait_Time );
+
+            }
+            if( GetVirtualKeyState( VK_CANCEL ) == KEY_PUSH ){
+
+                Selection_Index = 0;
+                T_PlaySE( SE_UI_CANCEL, 35 );
+				Current_Scene_Index = INDEX_SCENE_MAIN_MENU;
+				T_Init_Main();
+                //T_Flash_Option( Options_List[ Selection_Index ] );
+                wait( Option_Wait_Time );
+
+            }            
+
+            yield;
+        }
+    }	
+
+}
+
+
+task T_Stage_Scene( Stage_Index, Player_ID, Replay_Path ){
+
+	SetCommonData( "PAUSE_ALLOW" , false );
+
+	let STG_01 = GetCurrentScriptDirectory() ~ "./../Stage/STG_01/Stage.dnh";
+	let STG_02 = GetCurrentScriptDirectory() ~ "./../Stage/STG_02/Stage.dnh";
+
+    let Stage_Script_Path = [ STG_01, STG_02 ];
+    	
+	//--------------------------------------------------------------------
+
+	//Get_Difficulty(); //Will be handled with common data shenanigans later.
+	//Get_Setting(); //Same thing.
+	
+	//--------------------------------------------------------------------
+
+	InitializeStageScene();
+
+   	int Stage_ID_Index = Stage_Index; 
+	SetStageIndex( Stage_ID_Index );
+	SetStageMainScript( Stage_Script_Path[ Stage_ID_Index - 1 ] );
+	
+	SetStagePlayerScript( PLAYER_REIMU ); 
+    //Load Important Stuffs here!
+
+    StartStageScene();
+    
+    End_Title_Scene = true;
+    Current_Scene_Index = INDEX_SCENE_STAGE_SCENE;
+
+
+    loop{
+
+		if( GetVirtualKeyState( VK_PAUSE ) == KEY_PUSH ){
+			
+			if( GetCommonData( "PAUSE_ALLOW", true ) == true ){
+
+				let Result_Pause = RunPauseScene();
+				
+				alternative( Result_Pause )
+
+				case( RESULT_RETRY ){
+					
+					TerminateStageScene();
+					if( !IsReplay() ){
+						
+						T_Stage_Scene( Stage_Index, 0, 0 );
+					}
+					else{
+						T_Stage_Scene( 1, 0, 0 );
+						
+					}
+					return;
+				}
+				case( RESULT_END )
+				{
+					TerminateStageScene();
+					Current_Scene_Index = INDEX_SCENE_MAIN_MENU;
+					T_Init_Main();
+				}
+			}
+			
+		   alternative( GetStageSceneResult() )
+			case( STAGE_RESULT_BREAK_OFF ) {
+				//Loading Screen goes here.
+				//T_Loading();
+              //  End_Title_Scene = false;
+                Current_Scene_Index = INDEX_SCENE_MAIN_MENU;
+				T_Init_Main();
+				break;
+			}
+			case( STAGE_RESULT_PLAYER_DOWN ) {
+				
+               // End_Title_Scene = false;
+                Current_Scene_Index = INDEX_SCENE_MAIN_MENU;
+				//Will add End scene here later.
+				//T_Finalize_Stage();
+				//FinalizeStageScene();
+				break;
+			}
+			case( STAGE_RESULT_CLEARED ) {
+
+              //  End_Title_Scene = false;
+                Current_Scene_Index = INDEX_SCENE_MAIN_MENU;
+				//Will add End scene here later.
+				//T_Finalize_Stage();
+				//FinalizeStageScene();
+				break;
+			}			
+			
+		}	
+		
+		yield;
+	}    
+    
+}
+
+//-------------------------------------------------------------------------------
+
+function RunPauseScene() {
+	
+	PauseStageScene(true);
+
+    int scriptID = LoadScript( GetCurrentScriptDirectory() ~ "./System_Pause.dnh");
+    StartScript( scriptID, false );
+    while( !IsCloseScript(scriptID) ) yield;
+
+    PauseStageScene(false);
+    return GetScriptResult(scriptID);
+}

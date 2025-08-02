@@ -1,0 +1,102 @@
+//----------------------------------------------------------------------------------------------------------
+
+	#include "./../../System/Common.dnh"
+	#include "./../../System/Constants.dnh"
+
+	#include "./../../Lib/Lib_Enemy.dnh"
+	#include "./../../Lib/Lib_Shot.dnh"
+   	#include "./../../Lib/Shot/shot_const.dnh" 
+
+//----------------------------------------------------------------------------------------------------------
+task T_Template_Enemy_A( X, Y, Angle, Speed, Wvel, Color, ShotColor ){
+	
+	int Shotcounter = 0;
+			
+	let Enemy = Create_Enemy_A1( X, Y, 32, FAIRY_S_NORMAL, Color, 1 );
+	ObjMove_AddPatternA2( Enemy, 1, NO_CHANGE, Angle , 0.1, Speed, Wvel );
+		
+	float Enemy_X = ObjMove_GetX( Enemy );
+	float Enemy_Y = ObjMove_GetY( Enemy );		
+	float Frame = 0;
+	int Shot_Delay = 60;
+		
+	async{
+		while( !Obj_IsDeleted( Enemy ) ){
+				
+			Enemy_X = ObjMove_GetX( Enemy );
+			Enemy_Y = ObjMove_GetY( Enemy );	
+					
+			Frame++;
+			yield;			
+				
+		}			
+	}			
+	
+	wait( Shot_Delay );
+		
+	while( !Obj_IsDeleted( Enemy ) && Shotcounter < 6 ){
+			
+		if( !Obj_IsDeleted( Enemy ) ){
+								
+			Shotcounter += 1;	
+				
+			let Shot_A = ShotR1( Enemy_X, Enemy_Y, 8, 1, GetAngleToPlayer( Enemy ), ShotColor, 10, ShotColor );
+			T_PlaySE( SE_SHOT_03, 40 );
+				
+				
+		}		
+
+		wait( 60 );
+		yield;
+	}
+
+}
+
+//----------------------------------------------------------------------------------------------------------
+
+task T_Popcorn_Fairy_A1( X, Y, Angle, Speed, Wvel, Color, ShotColor ){
+	
+	int Shotcounter = 0;
+			
+	let Enemy = Create_Enemy_A1( X, Y, 32, FAIRY_S_NORMAL, Color, 1 );
+	ObjMove_AddPatternA2( Enemy, 1, NO_CHANGE, Angle , 0.1, Speed, Wvel );
+		
+	float Enemy_X = ObjMove_GetX( Enemy );
+	float Enemy_Y = ObjMove_GetY( Enemy );		
+	float Frame = 0;
+	int Shot_Delay = 60;
+		
+	async{
+		while( !Obj_IsDeleted( Enemy ) ){
+				
+			Enemy_X = ObjMove_GetX( Enemy );
+			Enemy_Y = ObjMove_GetY( Enemy );	
+					
+			Frame++;
+			yield;			
+				
+		}			
+	}			
+	
+	wait( Shot_Delay );
+		
+    /*   
+	while( !Obj_IsDeleted( Enemy ) && Shotcounter < 6 ){
+			
+		if( !Obj_IsDeleted( Enemy ) ){
+								
+			Shotcounter += 1;	
+				
+			let Shot_A = ShotR1( Enemy_X, Enemy_Y, 8, 1, GetAngleToPlayer( Enemy ), ShotColor, 10, ShotColor );
+			T_PlaySE( SE_SHOT_03, 40 );
+				
+				
+		}		
+
+		wait( 60 );
+		yield;
+	}
+    */
+}
+
+//----------------------------------------------------------------------------------------------------------

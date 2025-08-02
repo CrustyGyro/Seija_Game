@@ -1,0 +1,100 @@
+#TouhouDanmakufu[Stage]
+#ScriptVersion[3]
+#Title["Stage"]
+#Player[ "./../../Player/PL_Reimu.dnh" ]
+//#Background["./Stage/STG_01/STG_BG.dnh"];
+#System["./../../System/System_Main_Hud.dnh"]
+
+//--------------------------------------------------Variables------------------------------------------------------
+
+//---------------------------------------------------Include-------------------------------------------------------
+
+    #include "./Enemy_Def.dnh"
+	#include "./../../System/Common.dnh"
+	#include "./../../System/Constants.dnh"
+
+//----------------------------------------------------Start--------------------------------------------------------
+
+@Initialize {
+
+	//SetPlayerLife( 8 );
+	T_Main;
+	//T_End;
+	
+}
+
+
+@MainLoop {
+
+	yield;
+	
+}
+
+@Finalize {
+} 
+
+//----------------------------------------------------Patterns--------------------------------------------------------
+
+task T_Main {
+
+	T_Wave_A;
+	//wait( 5000 );
+	//CloseScript( GetOwnScriptID() );
+
+}	
+
+task T_Wave_A{
+
+    float Spawn_X = -16;
+    float Enemy_Angle = -360;
+    float Enemy_Speed = 2;
+    float Enemy_Wvel = -0.4;
+
+    int Spawn_Rate = 20;
+
+    //---Left----
+
+    loop (2) {
+        // do something
+
+        async {
+            
+            ascent (i in 0..3) {
+
+                T_Popcorn_Fairy_A1( Spawn_X, GetStgFrameHeight()/2 - 32, Enemy_Angle, Enemy_Speed-0.5, Enemy_Wvel, ENEMY_RED, SHOT_RICE_DORANGE );
+
+                wait( Spawn_Rate );
+
+                T_Popcorn_Fairy_A1( Spawn_X, GetStgFrameHeight()/2 - 32, Enemy_Angle, Enemy_Speed-0.5, Enemy_Wvel, ENEMY_BLUE, SHOT_RICE_DORANGE );
+
+                wait( Spawn_Rate );
+
+            }        
+            
+        }
+
+        ascent (i in 0..3) {
+
+            T_Popcorn_Fairy_A1( Spawn_X, GetStgFrameHeight()/2, Enemy_Angle, Enemy_Speed, Enemy_Wvel, ENEMY_RED, SHOT_RICE_DORANGE );
+
+            wait( Spawn_Rate );
+
+            T_Popcorn_Fairy_A1( Spawn_X, GetStgFrameHeight()/2, Enemy_Angle, Enemy_Speed, Enemy_Wvel, ENEMY_BLUE, SHOT_RICE_DORANGE );
+
+            wait( Spawn_Rate );
+
+        }
+
+        Spawn_X = GetStgFrameWidth() + 16;
+        Enemy_Angle = 180;
+        Enemy_Wvel = -Enemy_Wvel;
+
+        wait( 60 );
+
+    } 
+
+
+}	
+	
+
+

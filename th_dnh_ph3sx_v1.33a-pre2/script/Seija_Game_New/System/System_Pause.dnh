@@ -8,10 +8,6 @@
 
 bool EndScene = false;
 
-@Loading {
-
-}
-
 @Initialize{
 	
 	SetAutoDeleteObject( true );
@@ -27,6 +23,8 @@ bool EndScene = false;
 	
 }
 
+@Finalize{
+}
 
 //-----------------------------------------------------------------------------
 

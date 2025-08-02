@@ -7,6 +7,7 @@
 
 #include "./System/Common.dnh"
 #include "./System/Constants.dnh"
+#include "./System/System_StageHandler.dnh"
 
 #include "./Lib/Lib_Sound.dnh"
 
@@ -15,18 +16,32 @@
 bool End_Title_Scene = false;
 
 let Menu_Input_Timer = 0;
-//let Current_Menu_Index = INDEX_TITLE;
+let Current_Scene_Index = INDEX_SCENE_MAIN_MENU;
+int Option_Wait_Time = 10;
+int Menu_Anim = 1;
+int Logo_Anim = 1;
 
 //-------------------------------------------------------------------------------------------------------------------------
 
+let Particle_Tex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Effect/Maple.png";
+let Menu_Logo_Tex = GetCurrentScriptDirectory() ~ "./Resource/Textures/System/Logo.png";
+
+let BG_Reimu_Tex = GetCurrentScriptDirectory() ~ "./Resource/Textures/System/Menu_Reimu_Placeholder.png";
 let BG_Tex = GetCurrentScriptDirectory() ~ "./Resource/Textures/System/MainMenu_BG.png";
+let BG_Mountain_Tex = GetCurrentScriptDirectory() ~ "./Resource/Textures/System/MainMenu_Mountain.png";
 let BG_Scroll = GetCurrentScriptDirectory() ~ "./Resource/Textures/System/MainMenu_Scroll.png";
 
 //-------------------------------------------------------------------------------------------------------------------------
 
 @Loading {
 	
-   // LoadTexture( CutinTex );
+    LoadTexture( BG_Tex );
+    LoadTexture( BG_Scroll );
+
+    InstallFont( GetCurrentScriptDirectory() ~ "./Resource/Fonts/GenRyuMin2JP-B.otf");
+	InstallFont( GetCurrentScriptDirectory() ~ "./Resource/Fonts/RusselSquareOpti.otf");
+	InstallFont( GetCurrentScriptDirectory() ~ "./Resource/Fonts/Chaney Thin Normal.ttf");
+	InstallFont( GetCurrentScriptDirectory() ~ "./Resource/Fonts/Logopixies-owwBB.ttf");	    
 
 }
 
@@ -34,6 +49,7 @@ let BG_Scroll = GetCurrentScriptDirectory() ~ "./Resource/Textures/System/MainMe
 @Initialize {
 
     T_Init_Main();
+    T_Init_BG();
 
 }
 
@@ -54,14 +70,71 @@ let BG_Scroll = GetCurrentScriptDirectory() ~ "./Resource/Textures/System/MainMe
 
 //-------------------------------------------------------------------------------------------------------------------------
 
-task T_Init_Main(){
+task T_Init_BG{
 
+    //let Menu_Logo = Render2D_Texture_A1( Menu_Logo_Tex, [ 0, 0, 512, 256 ], GetScreenWidth()/2 - 100, GetScreenHeight()/2 - 128, 1, 0.04 );
 	let BG_Obj = Render2D_Texture_A1( BG_Tex, [ 0, 0, 640, 480 ], GetScreenWidth()/2, GetScreenHeight()/2, 1, 0.01 );
     let BG_Obj_Scroll = Render2D_Texture_A1( BG_Scroll, [ 0, 0, 640, 480 ], GetScreenWidth()/2, GetScreenHeight()/2, 1, 0.01 );
+    let BG_Obj_Mountain = Render2D_Texture_A1( BG_Mountain_Tex, [ 0, 0, 640, 480 ], GetScreenWidth()/2, GetScreenHeight()/2, 1, 0.01 );
+    //let Menu_Reimu = Render2D_Texture_A1( BG_Reimu_Tex, [ 0, 0, 1000, 960 ], GetScreenWidth()/2 + 64, GetScreenHeight()/2, 0.5, 0.02 );
+
+    let Credit_Text = ObjText_Create();
+    ObjText_SetFontType( Credit_Text,"Chaney Thin Normal");
+    ObjText_SetFontSize(  Credit_Text, 20 );
+
+    ObjText_SetFontColorTop( Credit_Text, 128, 240, 255 );
+    ObjText_SetFontColorBottom( Credit_Text, 128, 240, 255 );    
+
+	ObjText_SetText( Credit_Text, "©Team Cyber Idols 2025" );
+    ObjRender_SetPosition( Credit_Text, GetScreenWidth()/2, GetScreenHeight() - 24, 0 );
+    ObjText_SetHorizontalAlignment( Credit_Text,  ALIGNMENT_CENTER );
+   // ObjRender_SetAlpha( BG_Obj_Mountain, 25 );
 
     ObjRender_SetBlendType( BG_Obj_Scroll, BLEND_MULTIPLY );
+    ObjRender_SetBlendType( BG_Obj_Mountain, BLEND_ADD_ARGB );
 
     T_Manage_BGS();
+
+    async{
+
+        while(true){
+
+            T_Menu_Particles( prand( 0, GetScreenWidth() ), -24  , prand( 16, 100 ) );
+
+            wait( 20 );
+        }
+
+    }
+
+    task T_Menu_Particles( X, Y, Lifetime ){
+    
+        float Spin_Spee = prand( -2, 2 );
+
+        let Particle_Obj = Render2D_Texture_A1( Particle_Tex, [ 0, 0, 128, 128 ], X, Y, 0.6, 0.02 );
+
+        ObjRender_SetColor( Particle_Obj, 60, 0, 125 );
+        ObjRender_SetBlendType( Particle_Obj, BLEND_SUBTRACT );
+
+        async{
+
+            wait( prand( 200, 1000 ) );
+            T_FadeOut_Delete( Particle_Obj, 60, 255 );
+
+        }
+
+        while( !Obj_IsDeleted( Particle_Obj ) && !End_Title_Scene ){
+
+            ObjRender_SetX( Particle_Obj, ObjRender_GetX( Particle_Obj ) - 0.1 );
+            ObjRender_SetY( Particle_Obj, ObjRender_GetY( Particle_Obj ) + 0.5 );
+            ObjRender_SetAngleZ( Particle_Obj, ObjRender_GetAngleZ( Particle_Obj ) + Spin_Spee );
+
+            yield;
+        }
+        Obj_Delete( Particle_Obj );
+
+
+    }    
+  //  T_Manage_Logo();
 
     task T_Manage_BGS(){
 
@@ -76,7 +149,42 @@ task T_Init_Main(){
             yield;
         }
 
+        Obj_Delete( BG_Obj_Scroll );
         Obj_Delete( BG_Obj );
+        Obj_Delete( BG_Obj_Mountain );
+       // Obj_Delete( Menu_Logo );
+    }   
+
+}
+
+task T_Init_Main(){
+    
+    let Menu_Logo = Render2D_Texture_A1( Menu_Logo_Tex, [ 0, 0, 512, 256 ], GetScreenWidth()/2 - 100, GetScreenHeight()/2 - 128, 1, 0.04 );    
+
+    async{
+
+        ascent (i in 0..20) {
+            ObjRender_SetAlpha( Menu_Logo, Interpolate_Smooth( 0, 255, i/24 ));
+            yield;
+        }
+
+
+        while( !Obj_IsDeleted( Menu_Logo ) && !End_Title_Scene ){
+
+            if( Current_Scene_Index != INDEX_SCENE_MAIN_MENU  ){
+
+                ascent (i in 0..20) {
+                    ObjRender_SetAlpha( Menu_Logo, Interpolate_Smooth( 255, 0, i/20 ));
+                    yield;
+                }
+
+                Obj_Delete( Menu_Logo );
+
+            } 
+
+            yield;
+        }
+
     }
 
     function Create_Options_Text( X, Y, Index ) {
@@ -96,12 +204,12 @@ task T_Init_Main(){
 
 		let Option_Obj = ObjText_Create();
 
-        ObjText_SetFontType( Option_Obj,"Chaney Thin Normal" );
-		Obj_SetRenderPriority( Option_Obj, 0.02 );
+        ObjText_SetFontType( Option_Obj,"Chaney Thin Normal");
+		Obj_SetRenderPriority( Option_Obj, 0.03 );
 
-		ObjText_SetFontSize(  Option_Obj, 28 );
+		ObjText_SetFontSize(  Option_Obj, 26 );
 		ObjText_SetFontColorTop(  Option_Obj, 255, 255, 255 );
-		ObjText_SetFontColorBottom( Option_Obj, 128, 128, 128 );
+		ObjText_SetFontColorBottom( Option_Obj, 128, 240, 255 );
 
 		ObjText_SetFontBorderType( Option_Obj,BORDER_FULL);
 		ObjText_SetFontBorderColor( Option_Obj, 0, 0, 0 );
@@ -113,73 +221,121 @@ task T_Init_Main(){
 		ObjText_SetText( Option_Obj, Option_Texts );
         ObjRender_SetPosition( Option_Obj, X, Y, 0 );
 
-		ObjText_SetFontBold( Option_Obj, true );
+		//ObjText_SetFontBold( Option_Obj, true );
         T_Manage_Options();
 
         return Option_Obj;
 
         task T_Manage_Options(){
 
-            async{
+            T_DropShadow( Option_Obj );
+
+            task T_DropShadow( Option_Obj ){
 
                 //Lol Lmao...
                 let Drop_Shadow_Text = ObjText_Create();
 
-                ObjText_SetFontType( Drop_Shadow_Text,"Chaney Thin Normal" );
-                Obj_SetRenderPriority( Drop_Shadow_Text, 0.01 );
+                ObjText_SetFontType( Drop_Shadow_Text,"Chaney Thin Normal");
+                Obj_SetRenderPriority( Drop_Shadow_Text, 0.02 );
 
-                ObjText_SetFontSize(  Drop_Shadow_Text, 28 );
-                ObjText_SetFontColorTop(  Drop_Shadow_Text, 0, 0, 0 );
-                ObjText_SetFontColorBottom( Drop_Shadow_Text, 0, 0, 0 );
+                ObjText_SetFontSize(  Drop_Shadow_Text, 26 );
+                ObjText_SetFontColorTop(  Drop_Shadow_Text, 25, 0, 0 );
+                ObjText_SetFontColorBottom( Drop_Shadow_Text, 25, 0, 0 );
 
                 ObjText_SetFontBorderType( Drop_Shadow_Text,BORDER_FULL);
-                ObjText_SetFontBorderColor( Drop_Shadow_Text, 0, 0, 0 );
+                ObjText_SetFontBorderColor( Drop_Shadow_Text, 25, 0, 0 );
                 ObjText_SetFontBorderWidth( Drop_Shadow_Text, 2 );
                 ObjText_SetMaxWidth( Drop_Shadow_Text, 512 );
 
                 //ObjText_SetSidePitch(obj,-1);
                 ObjText_SetHorizontalAlignment( Drop_Shadow_Text,  ALIGNMENT_LEFT );
                 ObjText_SetText( Drop_Shadow_Text, ObjText_GetText( Option_Obj ) );
-                ObjRender_SetPosition( Drop_Shadow_Text, X, Y+2, 0 );
+                ObjRender_SetPosition( Drop_Shadow_Text, ObjRender_GetX( Option_Obj ) + 2, Y+4, 0 );
 
-                ObjText_SetFontBold( Drop_Shadow_Text, true );
+                //ObjText_SetFontBold( Drop_Shadow_Text, true );
                 ObjRender_SetAlpha( Drop_Shadow_Text, 155 );
 
                 while( !Obj_IsDeleted( Option_Obj ) && !End_Title_Scene ){
 
-                    ObjRender_SetX( Drop_Shadow_Text, ObjRender_GetX( Option_Obj ) + 2  );  
+                    ObjRender_SetX( Drop_Shadow_Text, ObjRender_GetX( Option_Obj )+2  );  
                     yield;
                 }
+
+                Obj_Delete( Drop_Shadow_Text );
 
             }
 
             float Frame = 0;
             float X_Pos_Base = X;
+            float Option_Alpha_Base = 255;
             float Selection_Offset = 32;
 
             while( !Obj_IsDeleted( Option_Obj ) && !End_Title_Scene ){
 
-                let X_Pos_Move = X_Pos_Base;
+                Menu_Anim = Menu_Anim;
 
-                if( Index == Selection_Index ){
+                if( Current_Scene_Index != INDEX_SCENE_MAIN_MENU  ){
 
-                    X_Pos_Move = ( GetScreenWidth()/2 - 256 ) + Selection_Offset;
-                    ObjRender_SetColor( Option_Obj, 255, 255, 255 );
+                    if( Menu_Anim == 1 ){
 
+                        Logo_Anim = -Logo_Anim;
+
+                        ascent( i in 0..30 ) {
+                            // do something
+                            ObjRender_SetAlpha( Option_Obj, Interpolate_Linear( 255, 0, i/30 ));
+                            ObjRender_SetX( Option_Obj, Interpolate_Smooth( X_Pos_Base, -400, i/30 ) ); 
+
+                            yield;
+                        }
+
+                        Menu_Anim = -Menu_Anim;
+                    }
+                    ObjRender_SetAlpha( Option_Obj, 0 );
+                    Obj_Delete( Option_Obj );
                 }
                 else{
 
-                    X_Pos_Move = X; 
-                    ObjRender_SetColor( Option_Obj, 100, 100, 100 ); 
+                   if( Menu_Anim == -1 ){
 
+                        Logo_Anim = -Logo_Anim;
+
+                        ascent( i in 0..30 ) {
+                            // do something
+                            ObjRender_SetAlpha( Option_Obj, Interpolate_Linear( 0, 255, i/30 ));
+                            ObjRender_SetX( Option_Obj, Interpolate_Smooth( -400, X_Pos_Base, i/30 ) ); 
+
+                            yield;
+                        }
+
+                        Menu_Anim = -Menu_Anim;
+                    }
+
+                   // Menu_Anim = 1;
+                    ObjRender_SetAlpha( Option_Obj, 255 );
+                    let X_Pos_Move = X_Pos_Base;
+
+                    if( Index == Selection_Index ){
+
+                        //ObjRender_SetAngleZ( Option_Obj , ObjRender_GetAngleZ( Option_Obj ) - 0.08 * sin( Frame ));
+                        X_Pos_Move = ( GetScreenWidth()/2 - 256 ) + Selection_Offset; 
+                        ObjRender_SetColor( Option_Obj, 255, 255, 255 );
+
+                    }
+                    else{
+
+                        X_Pos_Move = X; 
+                        //ObjRender_SetAngleZ( Option_Obj , 0 );
+                        ObjRender_SetColor( Option_Obj, 100, 100, 100 ); 
+
+                    }
+                    
+                    X_Pos_Base += ( X_Pos_Move - X_Pos_Base )/2;
+                    
+                    ObjRender_SetX( Option_Obj, X_Pos_Base );                
+                    //ObjRender_SetColor( Option_Obj, [ Selection_Color ], [ Selection_Color ], [ Selection_Color ] );
+                    //ObjRender_SetAngleZ( Option_Obj , 0 );
+                    Frame++;
                 }
-				
-				X_Pos_Base += ( X_Pos_Move - X_Pos_Base )/2;
-				
-				ObjRender_SetX( Option_Obj, X_Pos_Base );                
-                //ObjRender_SetColor( Option_Obj, [ Selection_Color ], [ Selection_Color ], [ Selection_Color ] );
-                //ObjRender_SetX( Option_Obj , ObjRender_GetX( Option_Obj ) - 0.08 * sin( Frame ));
-                Frame++;
                 yield;
             }
             Obj_Delete( Option_Obj );
@@ -189,20 +345,23 @@ task T_Init_Main(){
     }
 
     int Selection_Index = 0;
+    int Option_Count = INDEX_QUIT+1;
     int[] Options_List = [];
-    float Options_Spacing = 28;
-    float Frame_KeyHold = 0;
+    float Options_Spacing = 24;
+    int Frame_KeyHold = 0;
 
-    ascent( Index in 0..9 ){
+    ascent( Index in 0..Option_Count ){
 
-        Options_List = Options_List ~ [ Create_Options_Text( GetScreenWidth()/2 - 256 + Index * 16/9, GetScreenHeight()/2.5 + Index * Options_Spacing , Index ) ];
+        Options_List = Options_List ~ [ Create_Options_Text( GetScreenWidth()/2 - 260 + Index * 16/Option_Count, GetScreenHeight()/2.2 + Index * Options_Spacing , Index ) ];
 
     }
 
-    while( !End_Title_Scene ){
+   /// wait(15);
+
+    while( Current_Scene_Index == INDEX_SCENE_MAIN_MENU && Menu_Input_Timer <=0 && !End_Title_Scene ){
 
         //HELL WORLD HELL WORLD HELL WORLD
-        if( Menu_Input_Timer <=0 ){
+        // if( Current_Scene_Index == INDEX_SCENE_MAIN_MENU && Menu_Input_Timer <=0 ){
 
 			if( GetVirtualKeyState( VK_UP ) == KEY_PUSH ){
 
@@ -216,7 +375,7 @@ task T_Init_Main(){
 			}
 			else if( GetVirtualKeyState( VK_UP ) == KEY_HOLD ){
 
-				Frame_KeyHold+=1;
+				Frame_KeyHold +=1;
 				if( Frame_KeyHold >= 30 && Frame_KeyHold %5 ==0 ){
 
                     T_PlaySE( SE_UI_SELECT, 35 );
@@ -225,7 +384,7 @@ task T_Init_Main(){
 			}
 			else if( GetVirtualKeyState( VK_DOWN ) == KEY_HOLD ){
 
-				Frame_KeyHold+=1;
+				Frame_KeyHold +=1;
 				if( Frame_KeyHold >= 30 && Frame_KeyHold % 5 ==0 ){
 
                     T_PlaySE( SE_UI_SELECT, 35 );
@@ -235,22 +394,43 @@ task T_Init_Main(){
 			else{
 				Frame_KeyHold = 0;
 			}
-			Selection_Index %= 9;
+			Selection_Index %= Option_Count;
 
             if( GetVirtualKeyState( VK_OK ) == KEY_PUSH ){
 
                 T_PlaySE( SE_UI_OK, 35 );
                 T_Flash_Option( Options_List[ Selection_Index ] );
-                wait( 10 );
+
+               // alternative( Selection_Index );
+                T_Handle_Menu_Selection( Selection_Index );
+
+                wait( Option_Wait_Time );
 
             }
+            if( GetVirtualKeyState( VK_CANCEL ) == KEY_PUSH ){
 
-            yield;
-        }
+                Selection_Index = 8;
+                T_PlaySE( SE_UI_CANCEL, 35 );
+                //T_Flash_Option( Options_List[ Selection_Index ] );
+                wait( Option_Wait_Time );
+
+            }            
+
+           // yield;
+       // }
+
+        Menu_Input_Timer = max( 0, Menu_Input_Timer-1 );
+        yield;
     }
+
+   // Obj_Delete( BG_Obj_Scroll );
+  //  Obj_Delete( BG_Obj );
+  //  Obj_Delete( BG_Obj_Mountain );
+   // Obj_Delete( Menu_Logo );
 
     task T_Flash_Option( Obj ){
 
+        //Lol Lmao
         int Frame = 4;
 
         while( Frame >  0 ){
@@ -274,3 +454,40 @@ task T_Init_Main(){
 }
 
 //-------------------------------------------------------------------------------------------------------------------------
+
+task T_Handle_Menu_Selection( Index ){
+
+    alternative( Index )
+    case( INDEX_GAME_START ){
+
+        Option_Wait_Time = 30;
+       
+        wait( Option_Wait_Time );
+        Current_Scene_Index = INDEX_SCENE_DIFFICULTY;
+        T_Difficulty_Select();
+        //T_Stage_Scene( 1, 0, 0 );
+
+        Option_Wait_Time = 10;
+       // wait( 200 );
+       // Current_Scene_Index = INDEX_SCENE_MAIN_MENU;
+
+        yield;
+    }    
+    case( INDEX_QUIT ){
+
+        Option_Wait_Time = 30;
+        wait( Option_Wait_Time );
+        ClosePackage();
+
+        Option_Wait_Time = 10;
+
+        yield;
+    }
+
+
+
+
+
+
+
+}
