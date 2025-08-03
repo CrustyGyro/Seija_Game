@@ -79,16 +79,24 @@ task T_Popcorn_Fairy_A1( X, Y, Angle, Speed, Wvel, Color, ShotColor, Can_Shoot )
 	}			
 	
 	wait( Shot_Delay );
+
+	float[] Rank_Speed = [ 1, 2, 3, 3.5, 8 ]; 
+	int[] Rank_Count = [ 1, 2, 2, 4, 8 ]; 
+	int Rank = GetCommonData( "Difficulty", MODE_NORMAL );
 		
-    if( Can_Shoot == true ){
-		while( !Obj_IsDeleted( Enemy ) && Shotcounter < 1 ){
+    if( Can_Shoot == true || GetCommonData( "Difficulty", MODE_NORMAL ) >= MODE_HARD ){
+		while( !Obj_IsDeleted( Enemy ) && Shotcounter < 4 ){
 				
 			if( !Obj_IsDeleted( Enemy ) ){
 									
 				Shotcounter += 1;	
-					
-				let Shot_A = ShotR1( Enemy_X, Enemy_Y, 8, 1, GetAngleToPlayer( Enemy ), ShotColor, 10, ShotColor );
-				T_PlaySE( SE_SHOT_03, 40 );
+				ascent (i in 0..Rank_Count[ Rank ]) {
+	
+					let Shot_A = ShotR1( Enemy_X, Enemy_Y, 8, Rank_Speed[ Rank ] + i * 0.5/Rank_Count[ Rank ], GetAngleToPlayer( Enemy ), ShotColor, 10, ShotColor );
+
+				}	
+
+				T_PlaySE( SE_SHOT_01, 40 );
 					
 					
 			}		
@@ -129,17 +137,22 @@ task T_Popcorn_Fairy_A2( X, Y, Angle, Speed, Wvel, Color, ShotColor, Can_Shoot )
 	}			
 	
 	wait( Shot_Delay );
+
+	int[] Difficulty_Count = [ 3, 5, 8, 12, 0 ];
 		
     if( Can_Shoot == true ){
 		while( !Obj_IsDeleted( Enemy ) && Shotcounter < 5 ){
 				
+			int Shot_Count = Difficulty_Count[ GetCommonData( "Difficulty", MODE_NORMAL ) ];
+
+
 			if( !Obj_IsDeleted( Enemy ) ){
 									
 				Shotcounter += 1;	
 					
-				ascent (i in 0..8) {
-					let Shot_A = ShotR1( Enemy_X, Enemy_Y, 8, 2 + i * 1.5/8, ObjMove_GetAngle( Enemy ) + 90 , SHOT_BALL_DOLIVE, 10, SHOT_BALL_DOLIVE );
-					let Shot_B = ShotR1( Enemy_X, Enemy_Y, 8, 2 + i * 1.5/8, ObjMove_GetAngle( Enemy ) - 90 , SHOT_BALL_DOLIVE, 10, SHOT_BALL_DOLIVE );
+				ascent (i in 0..Shot_Count) {
+					let Shot_A = ShotR1( Enemy_X, Enemy_Y, 8, 2 + i * 1.5/Shot_Count, ObjMove_GetAngle( Enemy ) + 90 , SHOT_BALL_DOLIVE, 10, SHOT_BALL_DOLIVE );
+					let Shot_B = ShotR1( Enemy_X, Enemy_Y, 8, 2 + i * 1.5/Shot_Count, ObjMove_GetAngle( Enemy ) - 90 , SHOT_BALL_DOLIVE, 10, SHOT_BALL_DOLIVE );
 
 					ObjMove_AddPatternA2( Shot_A, 10, NO_CHANGE, NO_CHANGE, -0.05, 0, 0 );
 					ObjMove_AddPatternA2( Shot_B, 10, NO_CHANGE, NO_CHANGE, -0.05, 0, 0 );

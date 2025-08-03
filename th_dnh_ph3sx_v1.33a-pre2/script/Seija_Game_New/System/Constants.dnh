@@ -50,10 +50,10 @@
 	// -- Difficulty Settings --
 	
 	let MODE_EASY = 0;
-	let MODE_NORMAL = 0;
-	let MODE_HARD = 0;
-	let MODE_LUNATIC = 0;
-	let MODE_EXTRA = 0;
+	let MODE_NORMAL = 1;
+	let MODE_HARD = 2;
+	let MODE_LUNATIC = 3;
+	let MODE_EXTRA = 4;
 	
 	// -- User Settings --
 

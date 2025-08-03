@@ -45,7 +45,7 @@ task T_Difficulty_Select(){
 	let Menu_Input_Timer = 0;
 
     int Selection_Index = 0;
-    int Option_Count = 3+1;
+    int Option_Count = MODE_LUNATIC+1;
     int[] Options_List = [];
     float Options_Spacing = 28;
    	float Frame_KeyHold = 0;
@@ -211,11 +211,11 @@ task T_Difficulty_Select(){
                 T_PlaySE( SE_UI_OK, 35 );
 
 				wait( 60 );
-				T_Stage_Scene( 1, 0, 0 );
+				//T_Stage_Scene( 1, 0, 0 );
                // T_Flash_Option( Options_List[ Selection_Index ] );
 
                // alternative( Selection_Index );
-               // T_Handle_Menu_Selection( Selection_Index );
+               	T_Handle_Menu_Difficulty_Selection( Selection_Index );
 
                 wait( Option_Wait_Time );
 
@@ -237,6 +237,60 @@ task T_Difficulty_Select(){
 
 }
 
+task T_Handle_Menu_Difficulty_Selection( Index ){
+
+    alternative( Index )
+    case( MODE_EASY ){
+
+        Option_Wait_Time = 30;
+       
+        wait( Option_Wait_Time );
+		SetCommonData( "Difficulty", MODE_EASY );
+        //Current_Scene_Index = INDEX_SCENE_DIFFICULTY;
+        T_Stage_Scene( 1, 0, 0 );
+       // Current_Scene_Index = INDEX_SCENE_MAIN_MENU;
+
+        yield;
+    }    
+    case( MODE_NORMAL ){
+
+        Option_Wait_Time = 30;
+       
+        wait( Option_Wait_Time );
+		SetCommonData( "Difficulty", MODE_NORMAL );
+        //Current_Scene_Index = INDEX_SCENE_DIFFICULTY;
+        T_Stage_Scene( 1, 0, 0 );
+       // Current_Scene_Index = INDEX_SCENE_MAIN_MENU;
+
+        yield;
+    } 
+    case( MODE_HARD ){
+
+        Option_Wait_Time = 30;
+       
+        wait( Option_Wait_Time );
+		SetCommonData( "Difficulty", MODE_HARD );
+        //Current_Scene_Index = INDEX_SCENE_DIFFICULTY;
+        T_Stage_Scene( 1, 0, 0 );
+       // Current_Scene_Index = INDEX_SCENE_MAIN_MENU;
+
+        yield;
+    } 	
+    case( MODE_LUNATIC ){
+
+        Option_Wait_Time = 30;
+       
+        wait( Option_Wait_Time );
+		SetCommonData( "Difficulty", MODE_LUNATIC );
+        //Current_Scene_Index = INDEX_SCENE_DIFFICULTY;
+        T_Stage_Scene( 1, 0, 0 );
+       // Current_Scene_Index = INDEX_SCENE_MAIN_MENU;
+
+        yield;
+    } 
+
+
+}
 
 task T_Stage_Scene( Stage_Index, Player_ID, Replay_Path ){
 
