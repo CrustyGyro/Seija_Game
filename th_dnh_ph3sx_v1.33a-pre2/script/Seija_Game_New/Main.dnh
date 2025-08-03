@@ -76,11 +76,10 @@ task T_Init_BG{
 	let BG_Obj = Render2D_Texture_A1( BG_Tex, [ 0, 0, 640, 480 ], GetScreenWidth()/2, GetScreenHeight()/2, 1, 0.01 );
     let BG_Obj_Scroll = Render2D_Texture_A1( BG_Scroll, [ 0, 0, 640, 480 ], GetScreenWidth()/2, GetScreenHeight()/2, 1, 0.01 );
     let BG_Obj_Mountain = Render2D_Texture_A1( BG_Mountain_Tex, [ 0, 0, 640, 480 ], GetScreenWidth()/2, GetScreenHeight()/2, 1, 0.01 );
-    //let Menu_Reimu = Render2D_Texture_A1( BG_Reimu_Tex, [ 0, 0, 1000, 960 ], GetScreenWidth()/2 + 64, GetScreenHeight()/2, 0.5, 0.02 );
 
     let Credit_Text = ObjText_Create();
     ObjText_SetFontType( Credit_Text,"Chaney Thin Normal");
-    ObjText_SetFontSize(  Credit_Text, 20 );
+    ObjText_SetFontSize(  Credit_Text, 22 );
 
     ObjText_SetFontColorTop( Credit_Text, 128, 240, 255 );
     ObjText_SetFontColorBottom( Credit_Text, 128, 240, 255 );    
@@ -160,6 +159,8 @@ task T_Init_BG{
 task T_Init_Main(){
     
     let Menu_Logo = Render2D_Texture_A1( Menu_Logo_Tex, [ 0, 0, 512, 256 ], GetScreenWidth()/2 - 100, GetScreenHeight()/2 - 128, 1, 0.04 );    
+    //let Menu_Reimu = Render2D_Texture_A1( BG_Reimu_Tex, [ 0, 0, 1000, 960 ], GetScreenWidth()/2 + 64, GetScreenHeight()/2, 0.4, 0.02 );
+    //let Menu_Logo = Render2D_Texture_A1( Menu_Logo_Tex, [ 0, 0, 512, 256 ], GetScreenWidth()/2 - 100, GetScreenHeight()/2 - 128, 1, 0.04 );    
 
     async{
 
@@ -213,7 +214,7 @@ task T_Init_Main(){
 
 		ObjText_SetFontBorderType( Option_Obj,BORDER_FULL);
 		ObjText_SetFontBorderColor( Option_Obj, 0, 0, 0 );
-		ObjText_SetFontBorderWidth( Option_Obj, 2 );
+		ObjText_SetFontBorderWidth( Option_Obj, 3 );
 		ObjText_SetMaxWidth( Option_Obj, 512 );
 
 	    //ObjText_SetSidePitch(obj,-1);
@@ -244,7 +245,7 @@ task T_Init_Main(){
 
                 ObjText_SetFontBorderType( Drop_Shadow_Text,BORDER_FULL);
                 ObjText_SetFontBorderColor( Drop_Shadow_Text, 25, 0, 0 );
-                ObjText_SetFontBorderWidth( Drop_Shadow_Text, 2 );
+                ObjText_SetFontBorderWidth( Drop_Shadow_Text, 3 );
                 ObjText_SetMaxWidth( Drop_Shadow_Text, 512 );
 
                 //ObjText_SetSidePitch(obj,-1);
@@ -318,14 +319,23 @@ task T_Init_Main(){
 
                         //ObjRender_SetAngleZ( Option_Obj , ObjRender_GetAngleZ( Option_Obj ) - 0.08 * sin( Frame ));
                         X_Pos_Move = ( GetScreenWidth()/2 - 256 ) + Selection_Offset; 
-                        ObjRender_SetColor( Option_Obj, 255, 255, 255 );
+	                    ObjText_SetFontColorTop(  Option_Obj, 255, 155, 155 );
+		                ObjText_SetFontColorBottom( Option_Obj, 128, 240, 255 );   
+	                    //ObjText_SetFontColorTop(  Option_Obj, 255, 0, 0 );
+		               // ObjText_SetFontColorBottom( Option_Obj, 255, 0, 0 );                          
+                        ObjText_SetFontBorderColor( Option_Obj,  55, 0, 0 );                     
+                            // ObjRender_SetColor( Option_Obj, 255, 255, 255 );
 
                     }
                     else{
 
+                        ObjText_SetFontColorTop(  Option_Obj, 26, 90, 100 );
+		                ObjText_SetFontColorBottom( Option_Obj, 26, 90, 100 );    
+                        ObjText_SetFontBorderColor( Option_Obj, 25, 0, 0 );   
+
                         X_Pos_Move = X; 
                         //ObjRender_SetAngleZ( Option_Obj , 0 );
-                        ObjRender_SetColor( Option_Obj, 100, 100, 100 ); 
+                       // ObjRender_SetColor( Option_Obj, 100, 100, 100 ); 
 
                     }
                     
@@ -483,11 +493,5 @@ task T_Handle_Menu_Selection( Index ){
 
         yield;
     }
-
-
-
-
-
-
 
 }

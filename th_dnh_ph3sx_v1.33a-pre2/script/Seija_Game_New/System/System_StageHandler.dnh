@@ -52,7 +52,7 @@ task T_Difficulty_Select(){
 
     ascent( Index in 0..Option_Count ){
 
-        Options_List = Options_List ~ [ Create_Difficulty_Options_Text( GetScreenWidth()/2 -256, GetScreenHeight()/2 + Index * Options_Spacing , Index ) ];
+        Options_List = Options_List ~ [ Create_Difficulty_Options_Text( GetScreenWidth()/2 -256, GetScreenHeight()/2.5 + Index * Options_Spacing , Index ) ];
 
     }	
 

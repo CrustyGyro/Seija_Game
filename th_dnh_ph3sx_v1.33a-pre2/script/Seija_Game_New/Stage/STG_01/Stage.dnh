@@ -2,7 +2,7 @@
 #ScriptVersion[3]
 #Title["Stage"]
 #Player[ "./../../Player/PL_Reimu.dnh" ]
-//#Background["./Stage/STG_01/STG_BG.dnh"];
+#Background["./BG/STG_BG.dnh"];
 #System["./../../System/System_Main_Hud.dnh"]
 
 //--------------------------------------------------Variables------------------------------------------------------
@@ -38,6 +38,12 @@
 task T_Main {
 
 	T_Wave_A;
+
+    wait( 200 );
+
+    //T_Wave_B();
+
+    SetCommonData( "BG_Phase", 2 );
 	//wait( 5000 );
 	//CloseScript( GetOwnScriptID() );
 
@@ -45,47 +51,51 @@ task T_Main {
 
 task T_Wave_A{
 
-    float Spawn_X = -16;
+    float Spawn_X = -24;
     float Enemy_Angle = -360;
     float Enemy_Speed = 2;
     float Enemy_Wvel = -0.4;
 
     int Spawn_Rate = 20;
 
-    //---Left----
-
     loop (2) {
         // do something
+       // T_Fan_Fairy_A( Spawn_X, GetStgFrameHeight/2 - 16, Enemy_Angle, Enemy_Speed - 0.3, Enemy_Wvel, ENEMY_BLUE, SHOT_SCALE_MINT );
+
+        wait( 20 );
 
         async {
             
             ascent (i in 0..3) {
 
-                T_Popcorn_Fairy_A1( Spawn_X, GetStgFrameHeight()/2 - 32, Enemy_Angle, Enemy_Speed-0.5, Enemy_Wvel, ENEMY_RED, SHOT_RICE_DORANGE );
+                T_Popcorn_Fairy_A1( Spawn_X, GetStgFrameHeight()/2 - 32, Enemy_Angle, Enemy_Speed-0.5, Enemy_Wvel, ENEMY_RED, SHOT_BALL_RED, false );
 
                 wait( Spawn_Rate );
 
-                T_Popcorn_Fairy_A1( Spawn_X, GetStgFrameHeight()/2 - 32, Enemy_Angle, Enemy_Speed-0.5, Enemy_Wvel, ENEMY_BLUE, SHOT_RICE_DORANGE );
+                T_Popcorn_Fairy_A1( Spawn_X, GetStgFrameHeight()/2 - 32, Enemy_Angle, Enemy_Speed-0.5, Enemy_Wvel, ENEMY_BLUE, SHOT_BALL_RED, false );
 
                 wait( Spawn_Rate );
 
             }        
+
+          //  T_AimedFairy_A( Spawn_X, GetStgFrameHeight()/2 -32, Enemy_Angle, Enemy_Speed-0.5, Enemy_Wvel, ENEMY_BLUE, SHOT_RICE_DORANGE );
+
             
         }
 
         ascent (i in 0..3) {
 
-            T_Popcorn_Fairy_A1( Spawn_X, GetStgFrameHeight()/2, Enemy_Angle, Enemy_Speed, Enemy_Wvel, ENEMY_RED, SHOT_RICE_DORANGE );
+            T_Popcorn_Fairy_A1( Spawn_X, GetStgFrameHeight()/2, Enemy_Angle, Enemy_Speed, Enemy_Wvel, ENEMY_RED, SHOT_BALL_RED, false );
 
             wait( Spawn_Rate );
 
-            T_Popcorn_Fairy_A1( Spawn_X, GetStgFrameHeight()/2, Enemy_Angle, Enemy_Speed, Enemy_Wvel, ENEMY_BLUE, SHOT_RICE_DORANGE );
+            T_Popcorn_Fairy_A1( Spawn_X, GetStgFrameHeight()/2, Enemy_Angle, Enemy_Speed, Enemy_Wvel, ENEMY_BLUE, SHOT_BALL_RED, false );
 
             wait( Spawn_Rate );
 
         }
 
-        Spawn_X = GetStgFrameWidth() + 16;
+        Spawn_X = GetStgFrameWidth() + 24;
         Enemy_Angle = 180;
         Enemy_Wvel = -Enemy_Wvel;
 
@@ -93,8 +103,18 @@ task T_Wave_A{
 
     } 
 
+    T_Wave_B();
+
 
 }	
 	
 
+task T_Wave_B() {
 
+    T_Popcorn_Fairy_A2( -24, GetStgFrameHeight()/2.6, -360, 3, -0.4, ENEMY_BLUE, SHOT_SCALE_OLIVE, true );
+    wait( 200 );
+    T_Popcorn_Fairy_A2( GetStgFrameWidth() + 24, GetStgFrameHeight()/2.6, 180, 3, 0.4, ENEMY_BLUE, SHOT_SCALE_OLIVE, true );
+    wait( 200 );
+
+    // do something
+}

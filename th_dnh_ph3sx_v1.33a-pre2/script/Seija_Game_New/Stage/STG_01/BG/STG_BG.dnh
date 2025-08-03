@@ -1,0 +1,349 @@
+#TouhouDanmakufu[Stage]
+#Title["STG_BG"]
+#Text["Waow..."]
+#ScriptVersion[3]
+#Player[ "./../../../Player/PL_Reimu.dnh" ]
+#System["./../../../System/System_Main_Hud.dnh"]
+
+//--------------------------------------------------------------------------------------------------------------------------------------------
+
+#include "./../../../System/Common.dnh"
+#include "./../../../System/Constants.dnh"
+#include "./../../../Lib/Lib_StageBg.dnh"
+
+//--------------------------------------------------------------------------------------------------------------------------------------------
+
+// Stage Textures
+
+//TODO: Make a proper loading scene for these textures and the meshes.
+
+//let Tex_Water_00 = GetCurrentScriptDirectory() ~ "./../../Resource/Textures/Stage/01/Water_00.png";
+
+
+let Tex_Particle_00 = GetCurrentScriptDirectory() ~ "./../../../Resource/Textures/Effect/Particle_00.png";
+
+let Tex_Ground_00 = GetCurrentScriptDirectory() ~ "./../../../Resource/Textures/Stage/STG_01/World_A2.png";
+let Tex_Tree_00 = GetCurrentScriptDirectory() ~ "./../../../Resource/Textures/Stage/STG_01/World_A1.png";
+let Tex_Tree_01 = GetCurrentScriptDirectory() ~ "./../../../Resource/Textures/Stage/STG_01/World_B1.png";
+let Tex_Tree_02 = GetCurrentScriptDirectory() ~ "./../../../Resource/Textures/Stage/STG_01/World_C1.png";
+let Tex_Treeline = GetCurrentScriptDirectory() ~ "./../../../Resource/Textures/Stage/STG_01/World_C2.png";
+
+//--------------------------------------------------------------------------------------------------------------------------------------------
+
+//STAGE_PHASE = 0;
+
+float Camera_Speed = 1; // Camera does not actually move besides the little bobbing animation, this is for scaling the texture scrolling.
+
+float Cam_X = 0;
+float Cam_Y = 0;
+float Cam_Z = 0;
+
+//--------------------------------------------------------------------------------------------------------------------------------------------
+
+@Loading {
+	
+   // LoadTexture( Tex_Cliff_00 );
+	LoadTexture( Tex_Particle_00 );
+	LoadTexture( Tex_Ground_00 );
+
+}
+
+
+@Initialize{
+    
+	SetCommonData( "BG_Phase", 1 );
+	T_BuildStage();
+	T_BG_Phase();
+	
+}
+
+@MainLoop{ 
+	yield; 
+}
+
+@Finalize{ }
+
+task T_BG_Phase(){
+	
+	int Current_BG_Phase = 0;
+	
+	while( true ){
+		
+		while( GetCommonData( "BG_Phase", 0 ) == Current_BG_Phase ){ yield; } 
+		Current_BG_Phase = GetCommonData( "BG_Phase", 0);
+		
+		alternative( Current_BG_Phase )
+		case( 1 ){
+			//Initial Stage Reveal.
+			T_Cam_Phase_1();
+			T_Fog_Phase_1();
+		}
+		case( 2 ){
+			//Sky Reveal
+			T_Cam_Phase_2();
+			T_Fog_Phase_2();
+		}
+				
+		
+		yield;	
+	}
+	
+}
+
+//--------------------------------------------------------------------------------------------------------------------------------------------
+
+task T_BuildStage{
+
+	int Render_P = 21;
+	
+	int BG_Color = Render_3D_Sprite_A1( Tex_Ground_00, [ 0, 0, 1024, 1024 ], 0, 0, 512, Render_P-1, [ 1, 1, 1 ] );
+    int BG_Trees = Render_3D_Sprite_A1( Tex_Treeline, [ 0, 0, 1024, 512 ], 0, 256, 512, Render_P-1, [ 1, 1, 1 ] );
+
+    ObjRender_SetColor( BG_Color, 25, 0, 0 );
+    ObjRender_SetFogEnable( BG_Trees, false );
+    ObjSprite3D_SetBillboard( BG_Color, true );
+
+    descent (i in 0..25) {
+        
+        T_Repeating_Trees_A( Tex_Tree_00, -192, -160, i-5, 255, 0.5, 200, [ 255, 255, 255 ] );
+        T_Repeating_Trees_A( Tex_Tree_01, -192*1.5, -160, i-5.5, 255, 0.5, 200, [ 255, 255, 255 ] ); 
+
+        T_Repeating_Trees_A( Tex_Tree_01, -48, -96, i-5, 255, 0.5, 200, [ 255, 255, 255 ] );
+        T_Repeating_Trees_A( Tex_Tree_00, 48, -96, i-5.5, 255, 0.5, 200, [ 255, 255, 255 ] );
+
+        T_Repeating_Trees_A( Tex_Tree_01, 192, -160, i-5, 255, 0.5, 200, [ 255, 255, 255 ] );
+        T_Repeating_Trees_A( Tex_Tree_00, 192*1.5, -160, i-5.5, 255, 0.5, 200, [ 255, 255, 255 ] );       
+
+       // T_Repeating_Trees_A( Tex_Tree_01, -96*2, -96, i-5, 255, 0.5, 128, [ 255, 255, 255 ] );
+        //T_Repeating_Trees_A( Tex_Tree_01, 96*2, -96, i-5.5, 255, 0.5, 128, [ 255, 255, 255 ] );
+
+    }
+
+	
+	//----------------------------------------------------------------------------------------------------
+	
+	/*
+	task T_Particles{
+		
+		float Frame = 0;
+		
+		let Particle_Obj = ObjPrim_Create( OBJ_SPRITE_3D );
+		ObjPrim_SetTexture( Particle_Obj, Tex_Particle_00 );
+		ObjSprite3D_SetSourceDestRect( Particle_Obj, 0, 0, 64, 64 );
+		ObjRender_SetBlendType( Particle_Obj, BLEND_ADD_ARGB );
+		
+		Obj_SetRenderPriorityI( Particle_Obj, 24);
+		ObjRender_SetAngleZ( Particle_Obj, 180 );
+		
+		ObjRender_SetX( Particle_Obj, prand( -128, 128 ) );	
+		ObjRender_SetY( Particle_Obj, prand( -64, 64 ) );
+		ObjRender_SetZ( Particle_Obj, prand( -200, 200 ) );
+		
+		let Angle_X = rand( -2,2 );
+		let Angle_Y = rand( -2,2 );
+		let Angle_Z = prand( 0,360 );
+		let Scale_RNG = prand( 0.1, 0.3 );
+		
+		T_ManageParticle();
+
+		ObjRender_SetColor( Particle_Obj, 155, 50, 50 );
+		ObjRender_SetScaleXYZ( Particle_Obj, Scale_RNG, Scale_RNG, Scale_RNG );
+		ObjSprite3D_SetBillboard( Particle_Obj, true );	
+
+		//ObjRender_SetScale( Particle_Obj, rand( 0.5, 1.5 ) );
+		
+		while( !Obj_IsDeleted( Particle_Obj )){
+			
+			//ObjRender_SetX( Particle_Obj, ObjRender_GetX( Particle_Obj ) + 0.4 * sin( Frame*5 ) );
+			ObjRender_SetY( Particle_Obj, ObjRender_GetY( Particle_Obj ) + 0.4 );
+			ObjRender_SetAngleX( Particle_Obj, ObjRender_GetAngleX( Particle_Obj ) + Angle_X);
+			ObjRender_SetAngleY( Particle_Obj, ObjRender_GetAngleY( Particle_Obj ) + Angle_Y);
+			ObjRender_SetAngleZ( Particle_Obj, Angle_Z );
+			//ObjRender_SetScaleXYZ( Particle_Obj, Scale_RNG - 1/200, Scale_RNG - 1/200 , Scale_RNG - 1/200  );
+			
+			//Angle_X += 0.8;
+			//Angle_Y += 0.8;
+			Angle_Z += 1;
+			Frame++;
+		
+			yield;
+		
+		}
+		
+		task T_ManageParticle(){
+			
+			T_FadeIn_A1( Particle_Obj, 160, 255 );
+			
+			wait( 100 );
+			
+			T_FadeOut_Delete( Particle_Obj, prand( 60, 100 ), 255 );
+			
+		}	
+		
+		//Obj_Delete( Particle_Obj );
+		
+	}	
+	*/		
+	//----------------------------------------------------------------------------------------------------
+
+    task T_Repeating_Trees_A( Texture, X, Y, Z, Alpha, Scale, Gap, Color ){
+        
+        let Obj =  Render_3D_Sprite_A1( Texture, [ 0, 0, 512, 512 ], X, Y, Z, 22, [ Scale, Scale, Scale ]);
+        ObjRender_SetAngleXYZ( Obj, 0, 0, 180 );	
+        
+        ObjRender_SetColor( Obj, Color[0], Color[1], Color[2] );
+        ObjRender_SetAlpha( Obj, Alpha );
+
+        //ObjRender_SetFogEnable( Obj, false );
+        ObjSprite3D_SetBillboard( Obj, true);
+        ObjRender_SetTextureFilter( Obj, FILTER_ANISOTROPIC, FILTER_ANISOTROPIC, FILTER_ANISOTROPIC );
+        
+        float pos = 0;
+        
+        loop{
+
+            if(pos >= Gap){pos = 0;}
+            
+            ObjRender_SetZ(Obj, Z*Gap - pos);
+
+            pos+= 0.4 *Camera_Speed;
+            
+            yield;
+        }	
+            
+        
+    }		
+
+
+}
+
+//----------------------------------------------------------------------
+
+task T_Fog_Phase_1{
+	
+	float Reveal_Time = 500;
+	
+	// ---- Phase 0; ----
+	// Transition from BG phase 0 to Phase 1.
+	
+	let Fog_Color_Initial = [ 0, 0, 0 ];
+	let Fog_Color_Reveal =[ 25, 0, 0 ];
+	
+	let Fog_Range_Inital = [ 512, 1000 ];
+	let Fog_Range_Reveal = [ 512, 1000 ];	
+	
+	float Current_BG_Phase = 0;
+	
+	// --------------------
+	
+	SetFogParam( Fog_Range_Inital[0], Fog_Range_Inital[1], Fog_Color_Initial[0], Fog_Color_Initial[1], Fog_Color_Initial[2] );
+	
+	ascent( time in 0..Reveal_Time ){
+		
+		float[] Color = Interpolate_Smoother( Fog_Color_Initial, Fog_Color_Reveal, time/Reveal_Time );
+		float[] Range = Interpolate_Smoother( Fog_Range_Inital, Fog_Range_Reveal, time/Reveal_Time );		
+		
+		
+		SetFogParam( Range[0], Range[1], Color[0], Color[1], Color[2] );
+		
+		yield;
+		
+	}	
+	
+	//wait( 200 );
+	//SetCommonData( "BG_Phase", 2 );	
+	//SetCommonData( "BG_Phase", 2 );
+	
+}	
+
+//------------------------------------------------------------------------
+
+task T_Fog_Phase_2{
+	
+	float Reveal_Time = 500;
+	
+	let Fog_Color_Initial = [ 190, 40, 20 ];
+	let Fog_Color_Reveal =  [ 25, 0, 0 ];
+	
+	let Fog_Range_Inital = [ 512, 1000 ];	
+	//let Fog_Range_Reveal = [ 256, 512 ];	
+	
+	float Current_BG_Phase = 0;
+	
+	// --------------------
+	
+//	SetFogParam( Fog_Range_Inital[0], Fog_Range_Inital[1], Fog_Color_Initial[0], Fog_Color_Initial[1], Fog_Color_Initial[2] );
+	/*
+	ascent( time in 0..Reveal_Time ){
+		
+		float[] Color = Interpolate_Smoother( Fog_Color_Initial, Fog_Color_Reveal, time/Reveal_Time );
+		//float[] Range = Interpolate_Smoother( Fog_Range_Inital, Fog_Range_Inital, time/Reveal_Time );		
+		
+		
+		SetFogParam( Fog_Range_Inital[0], Fog_Range_Inital[1], Color[0], Color[1], Color[2] );
+		
+		yield;
+		
+	}	
+	*/
+//	wait( 200 );
+//	SetCommonData( "BG_Phase", 2 );	
+	//SetCommonData( "BG_Phase", 2 );
+	
+}	
+
+//----------------------------------------------------------------------
+
+task T_Cam_Phase_1{
+	
+	Cam_X = 0;
+	Cam_Y = 0;
+	Cam_Z = 0;	
+	
+	SetCameraPerspectiveClip( -1, 1000 );
+	SetCameraPosEye( Cam_X, Cam_Y, Cam_Z );
+	SetCameraAzimuthAngle( -90 );
+	SetCameraElevationAngle( 45 );
+	SetCameraRadius( 400 );
+		
+	yield;
+	
+}
+
+//----------------------------------------------------------------------
+
+task T_Cam_Phase_2{
+	
+	Cam_X = 0;
+	Cam_Y = 0;
+	Cam_Z = 0;	
+	
+	float Reveal_Time = 500;	
+	
+	SetCameraPerspectiveClip( -1, 1000 );
+	SetCameraPosEye( Cam_X, Cam_Y, Cam_Z );
+	SetCameraAzimuthAngle( -90 );
+	SetCameraElevationAngle( 45 );
+	SetCameraRadius( 400 );
+	
+	
+	ascent( time in 0..Reveal_Time ){
+		
+		Cam_Y = Interpolate_Smoother( 0, 64, time/Reveal_Time );
+		float Elevation = Interpolate_Smoother( 45, 20, time/Reveal_Time );		
+		
+		
+		SetCameraElevationAngle( Elevation );
+		SetCameraPosEye( Cam_X, Cam_Y, Cam_Z );
+		
+		yield;
+		
+	}		
+
+	yield;
+	
+}
+
+//----------------------------------------------------------------------
+
+//--------------------------------------------------------------------------------------------------------------------------------------------
