@@ -209,11 +209,11 @@ task T_Init_Main(){
 		Obj_SetRenderPriority( Option_Obj, 0.03 );
 
 		ObjText_SetFontSize(  Option_Obj, 26 );
-		ObjText_SetFontColorTop(  Option_Obj, 255, 255, 255 );
-		ObjText_SetFontColorBottom( Option_Obj, 128, 240, 255 );
+        ObjText_SetFontColorTop(  Option_Obj, 26, 90, 100 );
+	    ObjText_SetFontColorBottom( Option_Obj, 26, 90, 100 );    
+        ObjText_SetFontBorderColor( Option_Obj, 25, 0, 0 );   
 
 		ObjText_SetFontBorderType( Option_Obj,BORDER_FULL);
-		ObjText_SetFontBorderColor( Option_Obj, 0, 0, 0 );
 		ObjText_SetFontBorderWidth( Option_Obj, 3 );
 		ObjText_SetMaxWidth( Option_Obj, 512 );
 

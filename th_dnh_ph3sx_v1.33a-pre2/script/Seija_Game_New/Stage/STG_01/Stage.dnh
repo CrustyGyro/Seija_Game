@@ -7,11 +7,14 @@
 
 //--------------------------------------------------Variables------------------------------------------------------
 
+    let Boss_BGM = ID_INVALID;
+
 //---------------------------------------------------Include-------------------------------------------------------
 
     #include "./Enemy_Def.dnh"
 	#include "./../../System/Common.dnh"
 	#include "./../../System/Constants.dnh"
+
 
 //----------------------------------------------------Start--------------------------------------------------------
 
@@ -33,19 +36,48 @@
 @Finalize {
 } 
 
+task T_StageBGM {
+	
+    //PLACEHOLDER!!!
+	Boss_BGM = ObjSound_Create();
+	ObjSound_Load( Boss_BGM, GetCurrentScriptDirectory() ~ "./../../Resource/Bgm/BGM_01_PLACEHOLDER.ogg" );
+	
+	ObjSound_SetResumeEnable( Boss_BGM, true );
+	ObjSound_SetSoundDivision( Boss_BGM, SOUND_BGM );
+	ObjSound_SetLoopEnable( Boss_BGM, true );
+	ObjSound_SetLoopSampleCount( Boss_BGM, 5220292, 10354052 );
+	ObjSound_SetVolumeRate( Boss_BGM, 15 );
+	ObjSound_Play( Boss_BGM );
+	
+}
+
+
+
+
 //----------------------------------------------------Patterns--------------------------------------------------------
 
 task T_Main {
 
-	T_Wave_A;
+    //SetCommonData( "Difficulty", 3 );
+    T_StageBGM;    
+    T_Wave_A();
 
-    wait( 200 );
+    //T_Flower_Fiary_A1( GetStgFrameWidth()/2, GetStgFrameHeight()/4, 180, 1, 0.2, ENEMY_RED, SHOT_BALL_RED );
+    // T_Wave_B;
 
-    //T_Wave_B();
-
-    SetCommonData( "BG_Phase", 2 );
+    //SetCommonData( "BG_Phase", 2 );
 	//wait( 5000 );
 	//CloseScript( GetOwnScriptID() );
+    /*
+    ascent (i in 0..3) {
+        T_Telegraph_Fairy_A( GetStgFrameWidth()/2 + rand( -64, 64 ), GetStgFrameHeight()/8 + rand( -32, 32 ) , 90, 2.5, -0.2, ENEMY_RED, SHOT_BALL_RED );
+
+        wait( 10 );
+
+        T_Telegraph_Fairy_A( GetStgFrameWidth()/2 + rand( -64, 64 ), GetStgFrameHeight()/8 + rand( -32, 32 ) , 90, 2.5, -0.2, ENEMY_BLUE, SHOT_BALL_RED );
+        wait( 10 );
+    }    
+    */
 
 }	
 
@@ -58,7 +90,27 @@ task T_Wave_A{
 
     int Spawn_Rate = 20;
 
+    async{
+
+        wait( 120 );
+        ascent (i in 0..4) {
+
+            if( i % 2 == 0 ){
+            T_Aimed_Fiary_A1( GetStgFrameWidth()/2 + 64 + i * 128/4, GetStgFrameHeight/2, 90, 3, 0.4, ENEMY_BLUE, SHOT_RICE_RED );
+            }
+            else{
+            T_Aimed_Fiary_A1( GetStgFrameWidth()/2 + 64 + i * 128/4, GetStgFrameHeight/2, 90, 3, 0.4, ENEMY_RED, SHOT_RICE_BLUE );
+
+            }
+            //T_Aimed_Fiary_A1( GetStgFrameWidth()/2 - 64 - i * 128/4, GetStgFrameHeight/2, 90, 3, 0.3, ENEMY_BLUE, SHOT_BALL_RED );
+
+            wait( 20 );
+        }
+
+    }
+
     loop (2) {
+
         // do something
        // T_Fan_Fairy_A( Spawn_X, GetStgFrameHeight/2 - 16, Enemy_Angle, Enemy_Speed - 0.3, Enemy_Wvel, ENEMY_BLUE, SHOT_SCALE_MINT );
 
@@ -76,7 +128,8 @@ task T_Wave_A{
 
                 wait( Spawn_Rate );
 
-            }        
+            }      
+        
 
           //  T_AimedFairy_A( Spawn_X, GetStgFrameHeight()/2 -32, Enemy_Angle, Enemy_Speed-0.5, Enemy_Wvel, ENEMY_BLUE, SHOT_RICE_DORANGE );
 
@@ -102,6 +155,7 @@ task T_Wave_A{
         wait( 60 );
 
     } 
+    
 
     T_Wave_B();
 
@@ -112,9 +166,198 @@ task T_Wave_A{
 task T_Wave_B() {
 
     T_Popcorn_Fairy_A2( -24, GetStgFrameHeight()/2.6, -360, 3, -0.4, ENEMY_BLUE, SHOT_SCALE_OLIVE, true );
-    wait( 200 );
-    T_Popcorn_Fairy_A2( GetStgFrameWidth() + 24, GetStgFrameHeight()/2.6, 180, 3, 0.4, ENEMY_BLUE, SHOT_SCALE_OLIVE, true );
-    wait( 200 );
+    wait( 100 );
+   // T_Subwave_B( GetStgFrameWidth/2 + 64, GetStgFrameHeight/3.5 );
 
+    wait( 100 );
+    T_Popcorn_Fairy_A2( GetStgFrameWidth() + 24, GetStgFrameHeight()/2.6, 180, 3, 0.4, ENEMY_BLUE, SHOT_SCALE_OLIVE, true );
+    wait( 100 );
+   // T_Subwave_B( GetStgFrameWidth/2 - 64, GetStgFrameHeight/3.5 );
+    async{
+
+        //wait( 120 );
+        ascent (i in 0..4) {
+
+            if( i % 2 == 0 ){
+                T_Aimed_Fiary_A1( GetStgFrameWidth()/2 - 64 - i * 128/4, GetStgFrameHeight/2, 90, 3, -0.4, ENEMY_BLUE, SHOT_RICE_RED );
+            }
+            else{
+                T_Aimed_Fiary_A1( GetStgFrameWidth()/2 - 64 - i * 128/4, GetStgFrameHeight/2, 90, 3, -0.4, ENEMY_RED, SHOT_RICE_BLUE );
+
+            }
+            //T_Aimed_Fiary_A1( GetStgFrameWidth()/2 - 64 - i * 128/4, GetStgFrameHeight/2, 90, 3, 0.3, ENEMY_BLUE, SHOT_BALL_RED );
+
+            wait( 20 );
+        }
+
+        wait( 60 );
+
+        ascent (i in 0..4) {
+
+            if( i % 2 == 0 ){
+                T_Aimed_Fiary_A1( GetStgFrameWidth()/2 + 64 - i * 128/4, GetStgFrameHeight/3, 90, 3, -0.4, ENEMY_BLUE, SHOT_RICE_RED );
+            }
+            else{
+                T_Aimed_Fiary_A1( GetStgFrameWidth()/2 + 64 - i * 128/4, GetStgFrameHeight/3, 90, 3, -0.4, ENEMY_RED, SHOT_RICE_BLUE );
+
+            }
+            //T_Aimed_Fiary_A1( GetStgFrameWidth()/2 - 64 - i * 128/4, GetStgFrameHeight/2, 90, 3, 0.3, ENEMY_BLUE, SHOT_BALL_RED );
+
+            wait( 20 );
+        }                     
+
+    }   
+
+    wait( 460 );
+
+    T_Wave_D();
+
+    //T_Flower_Fiary_A1( GetStgFrameWidth()/2, GetStgFrameHeight()/4, -90, 1, 0.4, ENEMY_RED, SHOT_BALL_RED );
+   // T_Wave_C();
     // do something
+}
+
+task T_Subwave_B( X, Y ){
+
+    T_Aimed_Fiary_A1( X + 20, Y, 90 + rand( -20, 20 ), 3, -0.2, ENEMY_BLUE, SHOT_BALL_RED );
+    T_Aimed_Fiary_A1( X - 20, Y, 90 + rand( -20, 20 ), 3, -0.2, ENEMY_RED, SHOT_BALL_RED );
+
+    T_Aimed_Fiary_A1( X, Y -20, 90 + rand( -20, 20 ), 3, 0.2, ENEMY_BLUE, SHOT_BALL_RED );
+    T_Aimed_Fiary_A1( X, Y + 20, 90 + rand( -20, 20 ), 3, 0.2, ENEMY_RED, SHOT_BALL_RED );
+
+
+}
+
+task T_Wave_C(){
+
+
+    ascent (i in 0..4) {
+
+        if( i % 2 == 0 ){
+          T_Aimed_Fiary_A1( GetStgFrameWidth()/2 + 64 + i * 128/4, GetStgFrameHeight/2, 90, 3, 0.4, ENEMY_BLUE, SHOT_BALL_AURA_RED );
+        }
+        else{
+          T_Aimed_Fiary_A1( GetStgFrameWidth()/2 + 64 + i * 128/4, GetStgFrameHeight/2, 90, 3, 0.4, ENEMY_RED, SHOT_BALL_AURA_BLUE );
+
+        }
+
+        wait( 10 );
+
+        if( i % 2 == 0 ){
+          T_Aimed_Fiary_A1( GetStgFrameWidth()/2 - 64 - i * 128/4, GetStgFrameHeight/2, 90, 3, -0.4, ENEMY_BLUE, SHOT_BALL_AURA_RED );
+        }
+        else{
+          T_Aimed_Fiary_A1( GetStgFrameWidth()/2 - 64 - i * 128/4, GetStgFrameHeight/2, 90, 3, -0.4, ENEMY_RED, SHOT_BALL_AURA_BLUE );
+
+        }
+        //T_Aimed_Fiary_A1( GetStgFrameWidth()/2 - 64 - i * 128/4, GetStgFrameHeight/2, 90, 3, 0.3, ENEMY_BLUE, SHOT_BALL_RED );
+
+        wait( 10 );
+    }
+
+    ascent (i in 0..4) {
+
+        if( i % 2 == 0 ){
+          T_Aimed_Fiary_A1( GetStgFrameWidth()/2 + 64 + i * 128/4, GetStgFrameHeight/4, 90, 3, 0.4, ENEMY_BLUE, SHOT_BALL_AURA_RED );
+        }
+        else{
+          T_Aimed_Fiary_A1( GetStgFrameWidth()/2 + 64 + i * 128/4, GetStgFrameHeight/4, 90, 3, 0.4, ENEMY_RED, SHOT_BALL_AURA_BLUE );
+
+        }
+
+        wait( 10 );
+
+        if( i % 2 == 0 ){
+          T_Aimed_Fiary_A1( GetStgFrameWidth()/2 - 64 - i * 128/4, GetStgFrameHeight/4, 90, 3, -0.4, ENEMY_BLUE, SHOT_BALL_AURA_RED );
+        }
+        else{
+          T_Aimed_Fiary_A1( GetStgFrameWidth()/2 - 64 - i * 128/4, GetStgFrameHeight/4, 90, 3, -0.4, ENEMY_RED, SHOT_BALL_AURA_BLUE );
+
+        }
+        //T_Aimed_Fiary_A1( GetStgFrameWidth()/2 - 64 - i * 128/4, GetStgFrameHeight/2, 90, 3, 0.3, ENEMY_BLUE, SHOT_BALL_RED );
+
+        wait( 10 );
+    }   
+
+    ascent (i in 0..4) {
+
+        if( i % 2 == 0 ){
+          T_Aimed_Fiary_A1( GetStgFrameWidth()/2 + 64 + i * 128/4, GetStgFrameHeight/3, 90, 3, 0.4, ENEMY_BLUE, SHOT_BALL_AURA_RED );
+        }
+        else{
+          T_Aimed_Fiary_A1( GetStgFrameWidth()/2 + 64 + i * 128/4, GetStgFrameHeight/3, 90, 3, 0.4, ENEMY_RED, SHOT_BALL_AURA_BLUE );
+
+        }
+
+        wait( 10 );
+
+        if( i % 2 == 0 ){
+          T_Aimed_Fiary_A1( GetStgFrameWidth()/2 - 64 - i * 128/4, GetStgFrameHeight/3, 90, 3, -0.4, ENEMY_BLUE, SHOT_BALL_AURA_RED );
+        }
+        else{
+          T_Aimed_Fiary_A1( GetStgFrameWidth()/2 - 64 - i * 128/4, GetStgFrameHeight/3, 90, 3, -0.4, ENEMY_RED, SHOT_BALL_AURA_BLUE );
+
+        }
+        //T_Aimed_Fiary_A1( GetStgFrameWidth()/2 - 64 - i * 128/4, GetStgFrameHeight/2, 90, 3, 0.3, ENEMY_BLUE, SHOT_BALL_RED );
+
+        wait( 10 );
+    }         
+
+
+}
+
+
+task T_Wave_D(){
+
+    ascent (i in 0..3) {
+        T_Telegraph_Fairy_A( GetStgFrameWidth() - 24 + rand( -32, 8 ), GetStgFrameHeight/3, 90, 3, 0.1, ENEMY_BLUE, SHOT_BALL_RED );
+
+        wait( 20 );
+
+        T_Telegraph_Fairy_A( GetStgFrameWidth() - 24 + rand( -32, 8 ), GetStgFrameHeight/3, 90, 3, 0.1, ENEMY_RED, SHOT_BALL_RED );
+
+        wait( 20 );        
+    }
+
+    ascent (i in 0..3) {
+        T_Popcorn_Fairy_A1( GetStgFrameWidth() - 28, GetStgFrameHeight + 24, -90, 2, -0.2, ENEMY_BLUE, SHOT_BALL_RED, false );
+      //  T_Telegraph_Fairy_A( GetStgFrameWidth() - 24 + rand( -32, 8 ), GetStgFrameHeight/3, 90, 3, 0.1, ENEMY_BLUE, SHOT_BALL_RED );
+
+        wait( 20 );
+
+       T_Popcorn_Fairy_A1( GetStgFrameWidth() - 28, GetStgFrameHeight + 24, -90, 2, -0.2, ENEMY_RED, SHOT_BALL_RED, true );
+
+        wait( 20 );        
+    }    
+
+    ascent (i in 0..3) {
+        T_Telegraph_Fairy_A( 24 + rand( 8, 32 ), GetStgFrameHeight/3, 90, 3, -0.1, ENEMY_BLUE, SHOT_BALL_RED );
+
+        wait( 20 );
+
+        T_Telegraph_Fairy_A( 24 + rand( 8, 32 ), GetStgFrameHeight/3, 90, 3, -0.1, ENEMY_RED, SHOT_BALL_RED );
+
+        wait( 20 );        
+    }
+
+    T_Aimed_Fiary_A1( GetStgFrameWidth()/2 - 64, GetStgFrameHeight/3, 90, 3, 0.4, ENEMY_BLUE, SHOT_RICE_BLUE );
+    T_Aimed_Fiary_A1( GetStgFrameWidth()/2 + 64, GetStgFrameHeight/3, 90, 3, -0.4, ENEMY_BLUE, SHOT_RICE_BLUE );
+
+    T_Aimed_Fiary_A1( GetStgFrameWidth()/2 - 128, GetStgFrameHeight/3, 90, 3, 0.4, ENEMY_BLUE, SHOT_RICE_BLUE );
+    T_Aimed_Fiary_A1( GetStgFrameWidth()/2 + 128, GetStgFrameHeight/3, 90, 3, -0.4, ENEMY_BLUE, SHOT_RICE_BLUE );    
+
+    ascent (i in 0..3) {
+        T_Popcorn_Fairy_A1( 28, GetStgFrameHeight + 24, -90, 2, 0.2, ENEMY_BLUE, SHOT_BALL_RED, false );
+      //  T_Telegraph_Fairy_A( GetStgFrameWidth() - 24 + rand( -32, 8 ), GetStgFrameHeight/3, 90, 3, 0.1, ENEMY_BLUE, SHOT_BALL_RED );
+
+        wait( 20 );
+
+       T_Popcorn_Fairy_A1( 28, GetStgFrameHeight + 24, -90, 2, 0.2, ENEMY_RED, SHOT_BALL_RED, true );
+
+        wait( 20 );        
+    }  
+
+    SetCommonData( "BG_Phase", 2 );
+
+
 }

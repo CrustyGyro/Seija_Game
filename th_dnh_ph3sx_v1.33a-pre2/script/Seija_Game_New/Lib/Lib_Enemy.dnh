@@ -21,6 +21,31 @@
 
 //-----------------------------------------------------------------------------	
 
+task T_Enemy_FadeIn_A1( Obj, Time, Scale, Telegraph_Only ){
+
+	Obj_SetValue( Obj, "Harmable", false );
+
+	ObjRender_SetAlpha( Obj , 0 );
+	ObjRender_SetColorHSV( Obj, 0, 0, 0 );
+	ObjRender_SetScaleXYZ( Obj, Scale, Scale, Scale );
+
+	ascent ( i in 0..Time ) {
+		
+		float Scale_XYZ = Interpolate_Linear( Scale, 1, i/Time );
+		ObjRender_SetAlpha( Obj, Interpolate_Smooth( 0, 255, i/Time ));
+		ObjRender_SetColorHSV( Obj, 0, 0, Interpolate_Smooth( 0, 255, i/Time ) );
+		ObjRender_SetScaleXYZ( Obj, Scale_XYZ, Scale_XYZ, Scale_XYZ );
+
+		yield;
+	}
+
+	ObjRender_SetAlpha( Obj, 255 );
+	if( Telegraph_Only == false ){
+		Obj_SetValue( Obj, "Harmable", true );
+	}
+
+}
+
 function Check_Fairy_Direction( Obj, Direction ){
 	
 	let Dir = false;
@@ -121,11 +146,14 @@ task T_Handle_Enemy_A1( Enemy, HP, Type, Color, PointDropValue ){
 	float Enemy_Y = ObjMove_GetY( Enemy );	
 	int Current_HP = HP;
 	float Score_Mult = 5;
-	
+	Obj_SetValue( Enemy, "Harmable", true );
+
 	while( ObjEnemy_GetInfo( Enemy, INFO_LIFE ) > 0 ){
-		
-		ObjEnemy_SetIntersectionCircleToShot( Enemy, Enemy_X, Enemy_Y, 16 );
-		ObjEnemy_SetIntersectionCircleToPlayer( Enemy, Enemy_X, Enemy_Y, 8 );
+		if( Obj_GetValue( Enemy, "Harmable") == true ){
+			ObjEnemy_SetIntersectionCircleToShot( Enemy, Enemy_X, Enemy_Y, 16 );
+			ObjEnemy_SetIntersectionCircleToPlayer( Enemy, Enemy_X, Enemy_Y, 8 );
+
+		}
 		
 		if( ObjEnemy_GetInfo( Enemy,INFO_LIFE) < HP && ObjEnemy_GetInfo( Enemy, INFO_LIFE ) > 0 ){
 			
@@ -301,7 +329,7 @@ task T_Render_SmallFairy_A1( Obj, Color ){
 	float Current_X = ObjMove_GetX( Obj );
 	float Last_X = Current_X;	
 	
-	Render_Enemy_Dropshadow( Obj, 0.8 );
+	//Render_Enemy_Dropshadow( Obj, 0.8 );
 	
 	ObjPrim_SetTexture( Obj, Fairy_S );
 	ObjSprite2D_SetDestCenter( Obj );
@@ -701,9 +729,11 @@ task Render_WheelGhost_A1( Obj, Color ){
 task Render_Enemy_Dropshadow( Obj, Scale ){
 	
 	let Shadow_Obj = Render2D_Texture_A1( DropShadow, [ 0, 0, 96, 96 ], ObjRender_GetX( Obj ), ObjRender_GetY( Obj ), Scale, 0.30 );
+	ObjRender_SetAlpha( Shadow_Obj, 0 );
 	
 	while( !Obj_IsDeleted( Obj ) ) {
 		
+		ObjRender_SetAlpha( Shadow_Obj, 0 + ObjRender_GetAlpha( Obj ));
 		ObjRender_SetPosition( Shadow_Obj, ObjRender_GetX( Obj ), ObjRender_GetY( Obj ), 0 );
 		
 		yield;
