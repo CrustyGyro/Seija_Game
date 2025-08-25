@@ -29,6 +29,7 @@ let BossTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Test_Boss.
 	ObjEnemy_Regist( bossObj );	
 
 	T_Lifebar( bossObj );
+	T_HitEffect( bossObj );
 	ObjEnemy_SetDamageRate( bossObj, 0, 0 );	
 
 	Render_WheelGhost_A1( bossObj, ENEMY_BLUE );

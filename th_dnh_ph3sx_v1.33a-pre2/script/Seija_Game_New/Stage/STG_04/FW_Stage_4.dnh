@@ -1,0 +1,296 @@
+#TouhouDanmakufu[Stage]
+#Title["FW_Stage_4"]
+#Text["Peenid"]
+#ScriptVersion[3]
+#Player[ "./../../Player/PL_Reimu.dnh" ]
+#System["./../../System/System_Main_Hud.dnh"]
+
+//--------------------------------------------------------------------------------------------------------------------------------------------
+
+#include "./../../System/Common.dnh"
+#include "./../../System/Constants.dnh"
+#include "./../../Lib/Lib_StageBg.dnh"
+
+//--------------------------------------------------------------------------------------------------------------------------------------------
+
+// Stage Textures
+
+//TODO: Make a proper loading scene for these textures and the meshes.
+
+//let Tex_Water_00 = GetCurrentScriptDirectory() ~ "./../../Resource/Textures/Stage/01/Water_00.png";
+let Tex_Red = GetCurrentScriptDirectory() ~ "./../../Resource/Textures/Stage/STG_04/FW_Wall_Red.png";
+let Tex_Blue = GetCurrentScriptDirectory() ~ "./../../Resource/Textures/Stage/STG_04/FW_Wall_Blue.png";
+let Tex_Green = GetCurrentScriptDirectory() ~ "./../../Resource/Textures/Stage/STG_04/FW_Wall_Green.png";
+let Tex_Yellow = GetCurrentScriptDirectory() ~ "./../../Resource/Textures/Stage/STG_04/FW_Wall_Yellow.png";
+
+let Tex_Red_Stream = GetCurrentScriptDirectory() ~ "./../../Resource/Textures/Stage/STG_04/FW_Wall_Red_Stream.png";
+let Tex_Blue_Stream = GetCurrentScriptDirectory() ~ "./../../Resource/Textures/Stage/STG_04/FW_Wall_Blue_Stream.png";
+let Tex_Green_Stream = GetCurrentScriptDirectory() ~ "./../../Resource/Textures/Stage/STG_04/FW_Wall_Green_Stream.png";
+let Tex_Yellow_Stream = GetCurrentScriptDirectory() ~ "./../../Resource/Textures/Stage/STG_04/FW_Wall_Yellow_Stream.png";
+let Tex_Ground_00 = GetCurrentScriptDirectory() ~ "./../../Resource/Mesh/Ground_00.png";
+
+let Tex_Particle_00 = GetCurrentScriptDirectory() ~ "./../../Resource/Textures/Effect/Particle_01.png";
+
+//--------------------------------------------------------------------------------------------------------------------------------------------
+
+//STAGE_PHASE = 0;
+
+float Camera_Speed = 1; // Camera does not actually move besides the little bobbing animation, this is for scaling the texture scrolling.
+
+float Cam_X = 0;
+float Cam_Y = 0;
+float Cam_Z = 0;
+
+//--------------------------------------------------------------------------------------------------------------------------------------------
+
+@Loading {
+	
+    LoadTexture( Tex_Red );
+	LoadTexture( Tex_Blue );
+	LoadTexture( Tex_Green );
+	LoadTexture( Tex_Yellow );
+
+}
+
+
+@Initialize{
+    
+	SetCommonData( "BG_Phase", 1 );
+	T_BuildStage();
+	T_BG_Phase();
+	
+}
+
+@MainLoop{ 
+	yield; 
+}
+
+@Finalize{ }
+
+task T_BG_Phase(){
+	
+	int Current_BG_Phase = 0;
+	
+	while( true ){
+		
+		while( GetCommonData( "BG_Phase", 0 ) == Current_BG_Phase ){ yield; } 
+		Current_BG_Phase = GetCommonData( "BG_Phase", 0);
+		
+		alternative( Current_BG_Phase )
+		case( 1 ){
+			//Initial Stage Reveal
+			T_Cam_Phase_1();
+			T_Fog_Phase_1();
+		}
+		yield;	
+	}
+	
+}
+
+//--------------------------------------------------------------------------------------------------------------------------------------------
+
+task T_BuildStage{
+
+	int Render_P = 20;
+	
+	int Cliff_Tiling = 1;
+	float Cliff_Speed = -1;
+
+	ascent( i in 0..8 ){
+		int Wall_A = Render_3D_Sprite_A1( Tex_Blue, [ 0, 0, 512, 512 ], 0, -256, 0 - i * 4096/8, Render_P, [ 1, 1, 1 ] );
+		int Wall_D = Render_3D_Sprite_A1( Tex_Red, [ 0, 0, 512, 512 ], 0, 256, 0 - i * 4096/8, Render_P, [ 1, 1, 1 ] );
+		int Wall_B = Render_3D_Sprite_A1( Tex_Green, [ 0, 0, 512, 512 ], -256, 0, 0  - i * 4096/8, Render_P, [ 1, 1, 1 ] );
+		int Wall_C = Render_3D_Sprite_A1( Tex_Yellow, [ 0, 0, 512, 512 ], 256, 0, 0  - i * 4096/8, Render_P, [ 1, 1, 1 ] );
+		
+		int Wall_A_Stream = Render_3D_Sprite_A1( Tex_Blue_Stream, [ 0, 0, 512, 512 ], 0, -256, 0 - i * 4096/8, Render_P, [ 1, 1, 1 ] );
+		int Wall_D_Stream = Render_3D_Sprite_A1( Tex_Red_Stream, [ 0, 0, 512, 512 ], 0, 256, 0 - i * 4096/8, Render_P, [ 1, 1, 1 ] );
+		int Wall_B_Stream = Render_3D_Sprite_A1( Tex_Green_Stream, [ 0, 0, 512, 512 ], -256, 0, 0  - i * 4096/8, Render_P, [ 1, 1, 1 ] );
+		int Wall_C_Stream = Render_3D_Sprite_A1( Tex_Yellow_Stream, [ 0, 0, 512, 512 ], 256, 0, 0  - i * 4096/8, Render_P, [ 1, 1, 1 ] );		
+
+		T_Scroll_A1( Wall_A, [ 0, 0, 512*Cliff_Tiling , 512*Cliff_Tiling ], Cliff_Speed, Camera_Speed );
+		T_Scroll_A1( Wall_B, [ 0, 0, 512*Cliff_Tiling , 512*Cliff_Tiling ], Cliff_Speed, Camera_Speed );
+		ObjRender_SetAngleX( Wall_A, 90 );
+		ObjRender_SetAngleY( Wall_B, 90 );
+		ObjRender_SetAngleZ( Wall_B, 90 );
+		
+		ObjRender_SetAngleX( Wall_A_Stream, 90 );
+		ObjRender_SetAngleY( Wall_B_Stream, 90 );
+		ObjRender_SetAngleZ( Wall_B_Stream, 90 );		
+		
+		ObjRender_SetAngleX( Wall_D_Stream, 90 );
+		ObjRender_SetAngleY( Wall_C_Stream, 90 );
+		ObjRender_SetAngleZ( Wall_C_Stream, 90 );	
+
+		T_Scroll_A1( Wall_A_Stream, [ 0, 0, 512*Cliff_Tiling , 512*Cliff_Tiling ], -Cliff_Speed, Camera_Speed );
+		T_Scroll_A1( Wall_D_Stream, [ 0, 0, 512*Cliff_Tiling , 512*Cliff_Tiling ], -Cliff_Speed, Camera_Speed );
+		T_Scroll_A1( Wall_B_Stream, [ 0, 0, 512*Cliff_Tiling , 512*Cliff_Tiling ], -Cliff_Speed, Camera_Speed );
+		T_Scroll_A1( Wall_C_Stream, [ 0, 0, 512*Cliff_Tiling , 512*Cliff_Tiling ], -Cliff_Speed, Camera_Speed );
+		
+		/*
+		ObjRender_SetBlendType( Wall_A_Stream, BLEND_MULTIPLY );
+		ObjRender_SetBlendType( Wall_D_Stream, BLEND_MULTIPLY );
+		ObjRender_SetBlendType( Wall_B_Stream, BLEND_MULTIPLY );
+		ObjRender_SetBlendType( Wall_C_Stream, BLEND_MULTIPLY );
+		*/
+		
+		
+		T_Scroll_A1( Wall_C, [ 0, 0, 512*Cliff_Tiling , 512*Cliff_Tiling ], Cliff_Speed, Camera_Speed );		
+		ObjRender_SetAngleY( Wall_C, 90 );
+		ObjRender_SetAngleZ( Wall_C, 90 );
+		
+		T_Scroll_A1( Wall_D, [ 0, 0, 512*Cliff_Tiling , 512*Cliff_Tiling ], Cliff_Speed, Camera_Speed );
+		ObjRender_SetAngleX( Wall_D, 90 );
+	}	
+
+	//T_Scroll_A1( Cliff_B, [ 0, 0, 512*Cliff_Tiling, 512*Cliff_Tiling ], Cliff_Speed, Camera_Speed );
+	
+	yield;
+	
+	
+	while( GetCommonData( "BG_Phase", 0 ) < 3 ){ 
+	
+		//T_Mist( 128, rand( -100, 32 ), rand( 48, 128 ), 24, BLEND_SUBTRACT );
+		
+		
+		//wait( 60 );
+		yield; 
+	}
+	
+	//Obj_Delete( Water_A );
+	//Obj_Delete( Water_B );
+
+	//SetCommonData( "BG_Phase", 1 );
+
+	//----------------------------------------------------------------------------------------------------
+	
+	//----------------------------------------------------------------------------------------------------
+	
+	task T_Particles{
+		
+		let Particle_Obj = ObjPrim_Create( OBJ_SPRITE_3D );
+		ObjPrim_SetTexture( Particle_Obj, Tex_Particle_00 );
+		ObjSprite3D_SetSourceDestRect( Particle_Obj, 0, 0, 64, 64 );
+		ObjRender_SetBlendType( Particle_Obj, BLEND_ADD_ARGB );
+		
+		Obj_SetRenderPriorityI( Particle_Obj, 24);
+		ObjRender_SetAngleZ( Particle_Obj, 180 );
+		
+		ObjRender_SetX( Particle_Obj, prand( -64, 64 ) );	
+		ObjRender_SetY( Particle_Obj, prand( -32, 32 ) );
+		ObjRender_SetZ( Particle_Obj, prand( -32, 200 ) );
+		
+		//let Angle_X = rand( 0,360 );
+		//let Angle_Y = rand( 0,360 );
+		let Angle_Z = prand( 0,360 );
+		let Scale_RNG = prand( 0.1, 0.4 );
+		
+		T_ManageParticle();
+
+		ObjRender_SetColor( Particle_Obj, 255, 155, 0 );
+		ObjRender_SetScaleXYZ( Particle_Obj, Scale_RNG, Scale_RNG, Scale_RNG );
+		ObjSprite3D_SetBillboard( Particle_Obj, true );	
+
+		//ObjRender_SetScale( Particle_Obj, rand( 0.5, 1.5 ) );
+		
+		while( !Obj_IsDeleted( Particle_Obj )){
+			
+			ObjRender_SetY( Particle_Obj, ObjRender_GetY( Particle_Obj ) + 0.3 );
+			ObjRender_SetAngleZ( Particle_Obj, Angle_Z );
+			//ObjRender_SetScaleXYZ( Particle_Obj, Scale_RNG - 1/200, Scale_RNG - 1/200 , Scale_RNG - 1/200  );
+			
+			//Angle_X += 0.8;
+			//Angle_Y += 0.8;
+			Angle_Z += 1;
+		
+			yield;
+		
+		}
+		
+		task T_ManageParticle(){
+			
+			T_FadeIn_A1( Particle_Obj, 160, 100 );
+			
+			wait( 200 );
+			
+			T_FadeOut_Delete( Particle_Obj, prand( 100, 300 ), 100 );
+			
+		}	
+		
+		//Obj_Delete( Particle_Obj );
+		
+	}	
+		
+	//----------------------------------------------------------------------------------------------------
+	
+}
+
+//----------------------------------------------------------------------
+
+task T_Fog_Phase_1{
+	
+	float Reveal_Time = 500;
+	
+	// ---- Phase 0; ----
+	// Transition from BG phase 0 to Phase 1.
+	
+	let Fog_Color_Initial = [ 10, 0, 10 ];
+	let Fog_Color_Reveal =[ 0, 0, 0 ];
+	
+	let Fog_Range_Inital = [ 1, 200 ];
+	let Fog_Range_Reveal = [ 512, 2000 ];	
+	
+	float Current_BG_Phase = 0;
+	
+	// --------------------
+	
+	SetFogParam( Fog_Range_Inital[0], Fog_Range_Inital[1], Fog_Color_Initial[0], Fog_Color_Initial[1], Fog_Color_Initial[2] );
+	
+	ascent( time in 0..Reveal_Time ){
+		
+		float[] Color = Interpolate_Smoother( Fog_Color_Initial, Fog_Color_Reveal, time/Reveal_Time );
+		float[] Range = Interpolate_Smoother( Fog_Range_Inital, Fog_Range_Reveal, time/Reveal_Time );		
+		
+		
+		SetFogParam( Range[0], Range[1], Color[0], Color[1], Color[2] );
+		
+		yield;
+		
+	}	
+	
+//	wait( 200 );
+//	SetCommonData( "BG_Phase", 2 );	
+	//SetCommonData( "BG_Phase", 2 );
+	
+}	
+
+//----------------------------------------------------------------------
+
+task T_Cam_Phase_1{
+	
+	Cam_X = 0;
+	Cam_Y = 0;
+	Cam_Z = -3000;	
+	
+	SetCameraPerspectiveClip( -1, 2000 );
+	SetCameraPosEye( Cam_X, Cam_Y, Cam_Z );
+	SetCameraAzimuthAngle( -90 );
+	SetCameraElevationAngle( 0 );
+	SetCameraRadius( 64 );
+	
+	float Cam_Roll = 0;
+		
+	loop{
+		
+		//float Cam_Roll = 0;
+		
+		SetCameraRoll( Cam_Roll );
+		
+		Cam_Roll += 0.05;
+		yield;
+	}	
+		
+	yield;
+	
+}
+
+//--------------------------------------------------------------------------------------------------------------------------------------------

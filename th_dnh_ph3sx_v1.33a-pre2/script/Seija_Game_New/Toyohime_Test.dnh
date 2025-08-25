@@ -1,0 +1,466 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title["Toyohime_Test"]
+#Background["./Stage/STG_06/LOLK_Stage_6.dnh"];
+#Player[ "./Player/PL_Reimu.dnh" ]
+#System["./System/System_Main_Hud.dnh"]
+
+//--------------------------------------------------Variables------------------------------------------------------
+
+let bossObj;
+let objScene = GetEnemyBossSceneObjectID();
+let bossX = 0;
+let bossY = 0;
+
+int Shot_Go = 1;
+
+//SetIntersectionVisualization( true );
+
+let BossTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Test_Boss.png";
+
+//---------------------------------------------------Include-------------------------------------------------------
+
+	#include "./lib/Index_Boss.dnh"
+
+//----------------------------------------------------Start--------------------------------------------------------
+
+@Initialize {
+
+	bossObj = ObjEnemy_Create(OBJ_ENEMY_BOSS);	
+	
+	ObjEnemy_Regist( bossObj );	
+
+	T_Lifebar( bossObj );
+    T_HitEffect( bossObj );
+	ObjEnemy_SetDamageRate( bossObj, 0, 0 );	
+
+	Init_Boss_Toyohime( bossObj );
+
+	ObjRender_SetTextureFilter( bossObj, FILTER_NONE, FILTER_NONE, FILTER_NONE );
+	
+	ObjMove_SetDestAtWeight( bossObj, GetStgFrameWidth/2, Get_CenterY/2 + 16, 15, 8 );
+	
+	
+	//SetPlayerLife( 8 );
+	T_Main;
+	T_End;
+	
+}
+
+@Event { 
+
+	alternative(GetEventType()) 
+	case( EV_REQUEST_LIFE ) { 
+		SetScriptResult( 3000 ); // 3000-4500 For Nons ( At 100% Damage Rate. )
+	}
+	case( EV_REQUEST_TIMER ) { 
+		SetScriptResult( 45 ); //40-50 For standard Nons.
+	}	
+
+
+} 
+
+@MainLoop {
+
+	bossX = ObjMove_GetX( bossObj );
+	bossY = ObjMove_GetY( bossObj );
+	
+	SetCommonData( "Effect_X", bossX );
+	SetCommonData( "Effect_Y", bossY );	
+
+	ObjEnemy_SetIntersectionCircleToShot( bossObj, bossX, bossY, 16 );
+	ObjEnemy_SetIntersectionCircleToPlayer( bossObj, bossX, bossY, 8 );
+	
+	yield;
+}
+
+@Finalize {
+} 
+
+//----------------------------------------------------Patterns--------------------------------------------------------
+
+task T_Main {
+
+
+	NotifyEventAll( EV_BOSS_EFFECT, bossObj, CC_RED );
+	
+	//let Color = [ DOT_GRAY, DOT_RED, DOT_YELLOW, DOT_CYAN, DOT_PURPLE, DOT_GREEN ];
+
+	yield;
+
+	wait( 45 );	
+	
+	T_PlaySE( SE_CHARGE_00, 30 );
+	T_Charge_A1( bossObj, 20, "Petal", CC_PINK );
+
+	wait( 34 );	
+	
+	ObjEnemy_SetDamageRate( bossObj, 1, 1 );
+    //T_BossShot_C;
+
+	while( Boss_Is_Alive( bossObj ) ){
+		
+		//Do Stuff, fire some bullets or something.
+		yield;
+
+	}
+}	
+
+task T_BossShot_C(){
+
+    float Base_Angle = 45;
+    float Base_Radius = 32;
+    float Frame = 0;
+    int Wait_Time = 1;
+
+    while( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ) {
+
+        ascent (b in 0..64) {
+            ascent (c in 0..2) {
+                let Shot_A = ShotR1( bossX, bossY, Base_Radius*2, 0, Base_Angle + b * 360/64 + c * 360/2, SHOT_BALL_RED, 8, SHOT_BILL_DRED );
+                        //T_ShotManage_B( Shot_A, Shot_Go, 32 );
+                ObjMove_AddPatternA2( Shot_A, 1, NO_CHANGE, NO_CHANGE, 0.01, 3, 0.5 );
+                //ObjMove_AddPatternA2( Shot_A, 30, 0, ObjMove_GetAngle( Shot_A ) + 45, 0.01, 3, 0 );
+                    //ObjMove_SetAngle( Shot_A,  ObjMove_GetAngle( Shot_A ) + a * 90/6 );
+
+                let Shot_B = ShotR1( bossX, bossY, Base_Radius*2, 0, Base_Angle - b * 360/64 + c * 360/2, SHOT_BALL_PINK, 8, SHOT_BILL_PINK );
+                        //T_ShotManage_B( Shot_A, Shot_Go, 32 );
+                ObjMove_AddPatternA2( Shot_B, 1, NO_CHANGE, NO_CHANGE, 0.01, 4, -0.5 );
+                    //ObjMove_SetAngle( Shot_B,  ObjMove_GetAngle( Shot_B ) );
+      
+
+            }
+
+            Base_Radius = 32 + 8 * sin( Frame );
+            Frame+= 64;
+            wait( 3 );
+        }
+
+        wait( 1 );
+        yield;
+    }   
+
+
+}    
+
+task T_BossShot_B(){
+
+    float Base_Angle = 45;
+    float Base_Radius = 32;
+    float Frame = 0;
+    int Wait_Time = 1;
+
+    while( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ) {
+
+        ascent (b in 0..32) {
+            ascent (a in 0..6) {
+                let Shot_A = ShotR1( bossX, bossY, Base_Radius + a * 32/6, 0, Base_Angle + b * 360/32, SHOT_BILL_DRED, 8, SHOT_BILL_DRED );
+                    //T_ShotManage_B( Shot_A, Shot_Go, 32 );
+                ObjMove_AddPatternA2( Shot_A, 1, NO_CHANGE, NO_CHANGE, 0.01, 3+  a * 2/6, 0 );
+                ObjMove_SetAngle( Shot_A,  ObjMove_GetAngle( Shot_A ) + a * 90/6 );
+
+                let Shot_B = ShotR1( bossX, bossY, Base_Radius*2 + a * 32/6, 0, Base_Angle - b * 360/32, SHOT_BILL_PINK, 8, SHOT_BILL_PINK );
+                    //T_ShotManage_B( Shot_A, Shot_Go, 32 );
+                ObjMove_AddPatternA2( Shot_B, 1, NO_CHANGE, NO_CHANGE, 0.01, 3 + a * 2/6, 0 );
+                ObjMove_SetAngle( Shot_B,  ObjMove_GetAngle( Shot_B ) - a * 90/6 );
+
+                /*
+                let Shot_C = ShotR1( bossX, bossY, Base_Radius + a * 32/6, 0, Base_Angle + b * 360/32, SHOT_DOT_RED, 8, SHOT_STAR_RED );
+                ObjMove_AddPatternA2( Shot_C, 14, NO_CHANGE, NO_CHANGE, 0.01, 3+  a * 2/6, 0 );
+                ObjMove_SetAngle( Shot_C,  ObjMove_GetAngle( Shot_C ) + a * 90/6 );
+
+                let Shot_D = ShotR1( bossX, bossY, Base_Radius*2 + a * 32/6, 0, Base_Angle - b * 360/32, SHOT_DOT_PINK, 8, SHOT_STAR_PINK );
+                ObjMove_AddPatternA2( Shot_D, 14, NO_CHANGE, NO_CHANGE, 0.01, 3 + a * 2/6, 0 );
+                ObjMove_SetAngle( Shot_D,  ObjMove_GetAngle( Shot_D ) - a * 90/6 );        
+                */        
+
+            }
+
+            Base_Radius = 32 + 16 * sin( Frame );
+            Frame+= 32;
+
+            wait( 5 );
+        }
+
+        
+        yield;
+    }   
+
+
+}    
+
+task T_BossShot_A(){
+
+    float Base_Angle = 45;
+    float Base_Radius = 16;
+    int Wait_Time = 1;
+
+    while( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ) {
+
+        loop( 1 ){
+            ascent (b in 0..32) {
+                ascent (a in 0..6) {
+                    let Shot_A = ShotR1( bossX, bossY, Base_Radius + a * 32/6, 0, Base_Angle + b * 360/32, SHOT_BILL_DRED, 8, SHOT_BILL_DRED );
+                    //T_ShotManage_B( Shot_A, Shot_Go, 32 );
+                    ObjMove_AddPatternA2( Shot_A, 1, NO_CHANGE, NO_CHANGE, 0.01, 3 - a * 2/6, 0 );
+                    ObjMove_SetAngle( Shot_A,  ObjMove_GetAngle( Shot_A ) + a * 90/6 );
+                }
+
+                //Base_Angle += 10;
+              // wait( Wait_Time );
+            }
+
+            ascent (b in 0..32) {
+                ascent (a in 0..6) {
+                    let Shot_A = ShotR1( bossX, bossY, 32 + Base_Radius + a * 32/6, 0, Base_Angle + b * 360/32, SHOT_BILL_PINK, 8, SHOT_BILL_PINK );
+                    //T_ShotManage_B( Shot_A, Shot_Go, 16 );
+                    ObjMove_AddPatternA2( Shot_A, 1, NO_CHANGE, NO_CHANGE, 0.01, 3 - a * 2/6, 0 );
+                    ObjMove_SetAngle( Shot_A,  ObjMove_GetAngle( Shot_A )  + a * 90/6 );
+                }
+
+                //Base_Angle += 10;
+               // wait( Wait_Time );
+            } 
+
+        } 
+
+        Base_Radius = 16;
+        //Shot_Go = -Shot_Go;
+
+        wait( 120 );
+
+        loop( 1 ){
+            ascent (b in 0..32) {
+                ascent (a in 0..6) {
+                    let Shot_A = ShotR1( bossX, bossY, Base_Radius + a * 32/6, 0, -Base_Angle - b * 360/32, SHOT_BILL_DRED, 8, SHOT_BILL_DRED );
+                    //T_ShotManage_B( Shot_A, Shot_Go, 32 );
+                    ObjMove_AddPatternA2( Shot_A, 1, NO_CHANGE, NO_CHANGE, 0.01, 3 - a * 2/6, 0 );
+                    ObjMove_SetAngle( Shot_A,  ObjMove_GetAngle( Shot_A ) - a * 90/6 );
+                }
+
+                //Base_Angle += 10;
+               //wait( Wait_Time );
+            }
+
+            /*
+            ascent (b in 0..32) {
+                ascent (a in 0..6) {
+                    let Shot_A = ShotR1( bossX, bossY, 32 + Base_Radius + a * 32/6, 0, -Base_Angle - b * 360/32, SHOT_BILL_PINK, 8, SHOT_BILL_PINK );
+                    //T_ShotManage_B( Shot_A, Shot_Go, 16 );
+                    ObjMove_AddPatternA2( Shot_A, 1, NO_CHANGE, NO_CHANGE, 0.01, 3 - a * 2/6, 0 );
+                    ObjMove_SetAngle( Shot_A,  ObjMove_GetAngle( Shot_A ) - a * 90/6 );
+                }
+
+                //Base_Angle += 10;
+                //wait( Wait_Time );
+            } 
+            */
+
+        } 
+
+        Base_Radius = 16;
+        //Shot_Go = -Shot_Go;
+
+        wait( 120 );
+
+    }
+
+    task T_ShotManage_A( Obj, Delay, Angle ){
+
+        let Shot_A = ShotR1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0, 0, 0, SHOT_DROPSHADOW, 0, SHOT_DROPSHADOW );
+        Obj_SetRenderPriorityI( Shot_A, Obj_GetRenderPriorityI( Obj ) - 1 );
+       // ObjMove_AddPatternA2( Obj, 20, NO_CHANGE, NO_CHANGE, -0.05, 0, 0 );
+        ObjShot_SetSpellResist( Shot_A, true );
+        ObjShot_SetSpellResist( Obj, true );
+
+        //T_LightningEffect( Obj, 4, CC_RED );
+
+        float Scale_XYZ = 1;
+        float Frame = 0;     
+
+        async{
+
+
+            while( !Obj_IsDeleted(  Obj )){
+
+                ascent (i in 0..10) {
+                    int Shot_B = ShotR1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), Scale_XYZ*8, 0, i * 360/10, SHOT_BULLET_AQUA, 10, SHOT_BULLET_AQUA );
+                    //ObjShot_SetDeleteFrame( Shot_B, 10 );
+                }
+
+
+                wait( 30 );
+            }
+
+
+        }        
+
+        async{
+
+            while( !Obj_IsDeleted(  Shot_A )){
+
+                //Scale_XYZ = 2 * sin( Frame );
+                Scale_XYZ += 0.02;
+                ObjRender_SetScaleXYZ( Shot_A, 0 + Scale_XYZ, 0 +  Scale_XYZ, 0 +  Scale_XYZ);
+                Frame+=1;
+
+                yield;
+            }
+
+
+        }
+
+        async{
+
+            while( !Obj_IsDeleted(  Obj )){
+
+                ObjMove_SetPosition( Shot_A, ObjMove_GetX( Obj ), ObjMove_GetY( Obj ) );
+            
+
+                yield;
+            }
+
+            Obj_Delete( Shot_A );
+
+        }
+
+        task T_LightningEffect(int objPearl_, Radius, color) {
+            
+            const int NUM_VERTS = 5;
+            while(!Obj_IsDeleted(objPearl_)) {
+                wait(rand_int(20, 50));
+                TCreateLightning();
+                TCreateLightning();
+            }
+
+            task TCreateLightning() {
+                int objLine = ObjPrim_Create(OBJ_PRIMITIVE_2D);
+                ObjPrim_SetPrimitiveType(objLine, PRIMITIVE_LINESTRIP);
+                ObjPrim_SetVertexCount(objLine, NUM_VERTS);
+                Obj_SetRenderPriority(objLine, 0.24);
+                ObjRender_SetBlendType( objLine, BLEND_ADD_ARGB );
+
+                float baseAng = prand(0, 360);
+                float pearlX = ObjRender_GetX(objPearl_);
+                float pearlY = ObjRender_GetY(objPearl_);
+
+                loop(rand_int(15, 22)) {
+                    if(Obj_IsDeleted(objPearl_)) break;
+                // int[] color = ObjRender_GetColor(objPearl_);
+                    float ang = baseAng;
+                    float[][] pos = [[pearlX, pearlY]];
+                    ascent(int i in 0..NUM_VERTS) {
+                        float[] newPos = [pos[i][0] + Radius * cos(ang), pos[i][1] + Radius * sin(ang)];
+                        pos = pos ~ [newPos];
+                        ObjPrim_SetVertexPosition(objLine, i, pos[i][0], pos[i][1], 1);
+                        ObjPrim_SetVertexPosition(objLine, i + 1, pos[i + 1][0], pos[i + 1][1], 1);
+                        ObjPrim_SetVertexAlpha(objLine, i, Interpolate_Accelerate(255, 50, i / (NUM_VERTS - 1)));
+                        ObjPrim_SetVertexColor(objLine, i, color[0], color[1], color[2]);
+                        ang += prand(-50, 50);
+                    }
+
+                    baseAng += prand(-90, 90);
+                    pearlX = ObjRender_GetX(objPearl_);
+                    pearlY = ObjRender_GetY(objPearl_);
+                    wait(2);
+                }
+                Obj_Delete(objLine);
+            }
+        }
+
+        wait( Delay );
+
+    }
+
+    task T_ShotManage_B( Obj, Go_Signal, Time ){
+
+        //wait( 120 - Time );
+
+        ObjMove_AddPatternA2( Obj, 120, NO_CHANGE, NO_CHANGE, 0.01, 3, 0 );
+
+
+       // let Shot_Effect = ShotR1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0, 0, ObjMove_GetAngle( Obj ) + 180, SHOT_CLOUD_PINK, 10, SHOT_CLOUD_PINK );
+       // ObjShot_SetDeleteFrame( Shot_Effect, 8 );
+
+        /*
+        let Shot_B = ShotR1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0, 0, ObjMove_GetAngle( Obj ) + 180, SHOT_LARGE_PINK, 0, SHOT_BILL_PINK );
+        ObjMove_AddPatternA2( Shot_B, 10, NO_CHANGE, NO_CHANGE, 0.01, 2, 0 );
+        ObjRender_SetScaleXYZ( Shot_B, 1.2, 1.2, 1.2 );
+        ObjRender_SetColor( Shot_B, 255, 0, 0 );
+        ObjRender_SetBlendType( Shot_B, BLEND_ADD_ARGB );
+        */
+
+        /*
+        let Shot_C = ShotR1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0, 0, ObjMove_GetAngle( Obj ) + 180, SHOT_SCALE_PINK, 10, SHOT_SCALE_PINK );
+        ObjMove_AddPatternA2( Shot_C, 10, NO_CHANGE, NO_CHANGE, 0.01, 2, 0 );
+        let Shot_D = ShotR1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0, 0, ObjMove_GetAngle( Obj ) + 180, SHOT_DOT_PINK, 10, SHOT_DOT_PINK );
+        ObjMove_AddPatternA2( Shot_D, 16, NO_CHANGE, NO_CHANGE, 0.01, 2, 0 );
+        */
+
+        //T_DeleteShot_Effect( Obj );
+        //Obj_Delete( Obj );
+        //ObjShot_ToItem( Obj );
+        //ObjShot_SetDeleteFrame( Obj, 8 );
+
+
+
+    }
+
+}
+
+//-----------------------------------------------------Death---------------------------------------------------------
+
+task T_End {
+	
+    while( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ) {
+	     yield;
+	}
+	
+	if( ObjEnemyBossScene_GetInfo( GetEnemyBossSceneObjectID, INFO_IS_LAST_STEP ) ){
+
+		NotifyEventAll( EV_CLEAR_ENEMY_SHOTS, GetPlayerObjectID(), 60, 12 );
+		
+		yield;
+		
+		SetAutoDeleteObject(true);
+		T_Boss_Shotdown( bossObj, "Petal", CC_RED );
+		wait( 200 );
+		
+		Obj_Delete( bossObj );	
+		
+		ENEMY_CLEAR = true;
+		
+		yield;
+		
+		ENEMY_CLEAR = false;
+		
+		wait( 500 );
+		
+		CloseScript( GetOwnScriptID() );
+		
+	}	
+	else{
+	
+	
+		NotifyEventAll( EV_CLEAR_ENEMY_SHOTS, GetPlayerObjectID(), 60, 12 );
+		//DeleteShotAll( TYPE_ALL, TYPE_ITEM );
+		
+		yield;
+		
+		SetAutoDeleteObject(true);
+		
+		Obj_Delete( bossObj );	
+		
+		wait( 500 );
+		
+		CloseScript( GetOwnScriptID() );
+	
+	}
+	
+	//SetAutoDeleteObject(true);
+	
+	//Obj_Delete( bossObj );	
+	//CloseScript( GetOwnScriptID() );
+	
+}
+

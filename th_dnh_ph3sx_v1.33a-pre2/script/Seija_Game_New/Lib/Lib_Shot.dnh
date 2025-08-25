@@ -307,3 +307,86 @@ task T_LaserDespawn( Laser, Width, Time, Delay ){
 	}	
 	
 }	
+
+//------------------------------------------------------
+
+task T_DeleteShot_Effect( shot ){
+	
+	T_PlaySE( SE_BULLET_DELETE, 30 );
+	ObjShot_SetIntersectionEnable( shot, false );
+
+	let Break_Tex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/System/BulletDelete_Nixxiam.png";
+	
+	let Obj = ObjPrim_Create(OBJ_SPRITE_2D);
+	let Sprite = ObjShot_GetImageID( shot );
+	let Color = GetShotDataInfoA1( Sprite, TARGET_ENEMY, INFO_DELAY_COLOR );
+	let Size = 16 + GetShotDataInfoA1( Sprite, TARGET_ENEMY, INFO_COLLISION );
+	
+	let X = ObjMove_GetX( shot );
+	let Y = ObjMove_GetY( shot );
+	let Add = 0;
+	
+	//Create_Item_A1( ObjMove_GetX( shot ), ObjMove_GetY( shot ), ITEM_S_BONUS );
+	
+	ObjPrim_SetTexture( Obj, Break_Tex );
+	Obj_SetRenderPriority( Obj, 0.31 );
+	ObjSprite2D_SetDestRect( Obj, -Size, -Size, Size, Size );
+	ObjRender_SetAngleZ( Obj, prand( 0, 360 ) );
+	ObjRender_SetColor( Obj, Color[0], Color[1], Color[2] );
+	ObjRender_SetPosition( Obj, X, Y, 0 );
+	ObjRender_SetBlendType( Obj, BLEND_ADD_ARGB );
+
+	ascent(i in 0..16 ){
+		
+		ObjSprite2D_SetSourceRect( Obj, 0 + Add, 0, 128 + Add, 128 );
+		Add += 128;
+		wait( 2 );
+	}
+	
+	Obj_Delete( Obj );
+	//Obj_Delete( shot );
+
+}
+
+//------------------------------------------------------
+
+
+task T_DeleteShot_Effect_Reverse( shot ){
+	
+	//T_PlaySE( SE_BULLET_DELETE, 30 );
+	//ObjShot_SetIntersectionEnable( shot, false );
+
+	let Break_Tex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/System/BulletDelete_Nixxiam.png";
+	
+	let Obj = ObjPrim_Create(OBJ_SPRITE_2D);
+	let Sprite = ObjShot_GetImageID( shot );
+	let Color = GetShotDataInfoA1( Sprite, TARGET_ENEMY, INFO_DELAY_COLOR );
+	let Size = 16 + GetShotDataInfoA1( Sprite, TARGET_ENEMY, INFO_COLLISION );
+	
+	let X = ObjMove_GetX( shot );
+	let Y = ObjMove_GetY( shot );
+	let Add = 0;
+	
+	//Create_Item_A1( ObjMove_GetX( shot ), ObjMove_GetY( shot ), ITEM_S_BONUS );
+	
+	ObjPrim_SetTexture( Obj, Break_Tex );
+	Obj_SetRenderPriority( Obj, 0.31 );
+	ObjSprite2D_SetDestRect( Obj, -Size, -Size, Size, Size );
+	ObjRender_SetAngleZ( Obj, prand( 0, 360 ) );
+	ObjRender_SetColor( Obj, Color[0], Color[1], Color[2] );
+	ObjRender_SetPosition( Obj, X, Y, 0 );
+	ObjRender_SetBlendType( Obj, BLEND_ADD_ARGB );
+
+	descent(i in 0..16 ){
+		
+		ObjSprite2D_SetSourceRect( Obj, 0 + Add, 0, 128 + Add, 128 );
+		Add += 128;
+		wait( 2 );
+	}
+	
+	Obj_Delete( Obj );
+	//Obj_Delete( shot );
+
+}
+
+//------------------------------------------------------

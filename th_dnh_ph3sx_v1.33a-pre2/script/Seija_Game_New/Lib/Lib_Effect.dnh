@@ -368,6 +368,32 @@ task T_Burst_Circle_A1( Target, Color ){
 	
 }
 
+task T_Burst_Circle_A2( Target, Fade_Time, Max_Scale, Color ){
+	
+	//Same as A1 but scalable
+	float ScaleAdd = 0;
+	
+	//wait( Delay );
+	
+	let Path = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Effect/CircleEff.png";
+	let Obj_EffCircle = Render2D_Texture_A1( Path, [ 0, 0, 128, 128 ], ObjMove_GetX( Target ), ObjMove_GetY( Target ), 1, 0.32 );
+	ObjRender_SetBlendType( Obj_EffCircle, BLEND_ADD_ARGB );
+	
+	ObjRender_SetColor( Obj_EffCircle, Color[ 0 ], Color[ 1 ], Color [2 ] );
+
+	T_FadeOut_Delete( Obj_EffCircle, Fade_Time, 255 );
+		
+	loop( Fade_Time ){
+				
+		ObjRender_SetScaleXYZ( Obj_EffCircle, 0.1 + ScaleAdd, 0.1 + ScaleAdd, 0 );
+				
+		ScaleAdd += Max_Scale/Fade_Time;				
+			
+		yield;
+				
+	}		
+	
+}
 
 task T_ShotDown_Inverted( X, Y ){
 	

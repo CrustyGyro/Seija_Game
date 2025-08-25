@@ -1,0 +1,104 @@
+#TouhouDanmakufu[Plural]
+#ScriptVersion[3]
+#Title["Nina_Plural"]
+//#Background["./Stage/STG_03/STG_BG.dnh"];
+#Background["./Stage/STG_05/FW_Stage_5.dnh"];
+//#Background["./Stage/STG_03/STG_BG.dnh"];
+#Player[ "./Player/PL_Reimu.dnh" ]
+#System["./System/System_Main_Hud.dnh"]
+
+//-------------------------------------------------------------------------------
+
+	#include "./lib/Index_Boss.dnh"
+
+//-------------------------------------------------------------------------------
+
+let Boss_BGM = ID_INVALID;
+
+//-------------------------------------------------------------------------------
+
+
+@Initialize{
+	
+    T_Plural;
+	SetPlayerLife( 4 );
+	
+}
+@MainLoop{
+    yield;
+}
+
+task T_BossBGM {
+	
+	Boss_BGM = ObjSound_Create();
+	ObjSound_Load( Boss_BGM, GetCurrentScriptDirectory() ~ "./Resource/Bgm/BGM_Nina.ogg" );
+	
+	ObjSound_SetResumeEnable( Boss_BGM, true );
+	ObjSound_SetSoundDivision( Boss_BGM, SOUND_BGM );
+	ObjSound_SetLoopEnable( Boss_BGM, true );
+	ObjSound_SetLoopSampleCount( Boss_BGM, 46224, 7846276 );
+	ObjSound_SetVolumeRate( Boss_BGM, 15 );
+	ObjSound_Play( Boss_BGM );
+	
+}
+
+
+
+task T_Plural{
+
+	T_BossBGM;
+	SetCommonData( "BG_Phase", 1 );
+
+    let Boss = Load_Boss();
+    ObjEnemyBossScene_Regist( Boss );
+	
+	
+	NotifyEventAll( EV_BOSS_EFFECT, 0, CC_RED );
+	//NotifyEventAll( EV_USER + 13, 0 ); // Boss Magic Circle and Shader Effects.
+	
+    while( !Obj_IsDeleted( Boss ) ){
+        yield;
+    }
+	/*
+   loop( 300 ) {
+        ObjSound_SetVolumeRate( Boss_BGM, ObjSound_GetVolumeRate( Boss_BGM ) - 0.3 );
+        yield;
+    }
+	
+    ObjSound_Stop( Boss_BGM );	
+	*/
+    CloseScript( GetOwnScriptID() );
+}
+
+function Load_Boss(){
+	
+	let CSD = GetCurrentScriptDirectory();
+    let Boss_Obj = ObjEnemyBossScene_Create();
+
+    async{
+
+        wait( 10 );
+
+        T_Shoot_Banner( "Nina Watari", CC_PINK, 54 );
+
+    }
+	
+    ObjEnemyBossScene_Add( Boss_Obj, 0, CSD ~ "Nina_Non_01.dnh" );
+    ObjEnemyBossScene_Add( Boss_Obj, 0, CSD ~ "Nina_Spell_01.dnh" );
+    ObjEnemyBossScene_Add( Boss_Obj, 1, CSD ~ "Nina_Non_02.dnh" );
+    ObjEnemyBossScene_Add( Boss_Obj, 1, CSD ~ "Nina_Spell_01.dnh" );	
+    ObjEnemyBossScene_Add( Boss_Obj, 2, CSD ~ "Nina_Non_01.dnh" );
+    ObjEnemyBossScene_Add( Boss_Obj, 2, CSD ~ "Nina_Spell_01.dnh" );
+    ObjEnemyBossScene_Add( Boss_Obj, 3, CSD ~ "Nina_Non_02.dnh" );
+    ObjEnemyBossScene_Add( Boss_Obj, 3, CSD ~ "Nina_Spell_01.dnh" );
+    ObjEnemyBossScene_Add( Boss_Obj, 4, CSD ~ "Nina_Non_01.dnh" );
+    ObjEnemyBossScene_Add( Boss_Obj, 4, CSD ~ "Nina_Spell_01.dnh" );		
+  //  ObjEnemyBossScene_Add( Boss_Obj, 1, CSD ~ "Nareko_Non_01_New.dnh" );
+   // ObjEnemyBossScene_Add( Boss_Obj, 1, CSD ~ "Nareko_Spell_01_New.dnh" );			
+	 	 
+	 
+    ObjEnemyBossScene_LoadInThread( Boss_Obj );
+	
+	return Boss_Obj;
+
+}	

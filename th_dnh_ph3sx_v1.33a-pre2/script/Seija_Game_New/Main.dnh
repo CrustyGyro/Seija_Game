@@ -159,7 +159,8 @@ task T_Init_BG{
 task T_Init_Main(){
     
     let Menu_Logo = Render2D_Texture_A1( Menu_Logo_Tex, [ 0, 0, 512, 256 ], GetScreenWidth()/2 - 100, GetScreenHeight()/2 - 128, 1, 0.04 );    
-    //let Menu_Reimu = Render2D_Texture_A1( BG_Reimu_Tex, [ 0, 0, 1000, 960 ], GetScreenWidth()/2 + 64, GetScreenHeight()/2, 0.4, 0.02 );
+   // let Menu_Reimu = Render2D_Texture_A1( BG_Reimu_Tex, [ 0, 0, 512, 912 ], GetScreenWidth()/2 + 160, GetScreenHeight()/2 - 8, 0.45, 0.02 );
+   // ObjRender_SetTextureFilter( Menu_Reimu, FILTER_NONE, FILTER_NONE,  FILTER_NONE);
     //let Menu_Logo = Render2D_Texture_A1( Menu_Logo_Tex, [ 0, 0, 512, 256 ], GetScreenWidth()/2 - 100, GetScreenHeight()/2 - 128, 1, 0.04 );    
 
     async{

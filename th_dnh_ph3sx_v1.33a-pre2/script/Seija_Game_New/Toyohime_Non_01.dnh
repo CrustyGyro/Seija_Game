@@ -1,0 +1,370 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title["Toyohime_Non_01"]
+#Background["./Stage/STG_06/LOLK_Stage_6.dnh"];
+#Player[ "./Player/PL_Reimu.dnh" ]
+#System["./System/System_Main_Hud.dnh"]
+
+//--------------------------------------------------Variables------------------------------------------------------
+
+let bossObj;
+let objScene = GetEnemyBossSceneObjectID();
+let bossX = 0;
+let bossY = 0;
+
+//SetIntersectionVisualization( true );
+
+let BossTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Test_Boss.png";
+
+//---------------------------------------------------Include-------------------------------------------------------
+
+	#include "./lib/Index_Boss.dnh"
+
+//----------------------------------------------------Start--------------------------------------------------------
+
+@Initialize {
+
+	bossObj = ObjEnemy_Create(OBJ_ENEMY_BOSS);	
+	
+	ObjEnemy_Regist( bossObj );	
+
+	T_Lifebar( bossObj );
+    T_HitEffect( bossObj );
+	ObjEnemy_SetDamageRate( bossObj, 0, 0 );	
+
+	Init_Boss_Toyohime( bossObj );
+
+	ObjRender_SetTextureFilter( bossObj, FILTER_NONE, FILTER_NONE, FILTER_NONE );
+	
+	ObjMove_SetDestAtWeight( bossObj, GetStgFrameWidth/2, Get_CenterY/2 + 16, 15, 8 );
+	
+	
+	//SetPlayerLife( 8 );
+	T_Main;
+	T_End;
+	
+}
+
+@Event { 
+
+	alternative(GetEventType()) 
+	case( EV_REQUEST_LIFE ) { 
+		SetScriptResult( 3000 ); // 3000-4500 For Nons ( At 100% Damage Rate. )
+	}
+	case( EV_REQUEST_TIMER ) { 
+		SetScriptResult( 45 ); //40-50 For standard Nons.
+	}	
+
+
+} 
+
+@MainLoop {
+
+	bossX = ObjMove_GetX( bossObj );
+	bossY = ObjMove_GetY( bossObj );
+	
+	SetCommonData( "Effect_X", bossX );
+	SetCommonData( "Effect_Y", bossY );	
+
+	ObjEnemy_SetIntersectionCircleToShot( bossObj, bossX, bossY, 16 );
+	ObjEnemy_SetIntersectionCircleToPlayer( bossObj, bossX, bossY, 8 );
+	
+	yield;
+}
+
+@Finalize {
+} 
+
+//----------------------------------------------------Patterns--------------------------------------------------------
+
+task T_Main {
+
+
+	NotifyEventAll( EV_BOSS_EFFECT, bossObj, CC_RED );
+	
+	//let Color = [ DOT_GRAY, DOT_RED, DOT_YELLOW, DOT_CYAN, DOT_PURPLE, DOT_GREEN ];
+
+	yield;
+
+	wait( 45 );	
+	
+	T_PlaySE( SE_CHARGE_00, 30 );
+	T_Charge_A1( bossObj, 20, "Petal", CC_PINK );
+
+	wait( 34 );	
+	
+	ObjEnemy_SetDamageRate( bossObj, 1, 1 );
+    T_BossShot_A;
+
+	while( Boss_Is_Alive( bossObj ) ){
+		
+		//Do Stuff, fire some bullets or something.
+		yield;
+
+	}
+}	
+
+task T_BossShot_A(){
+
+    float Base_Angle = 0;
+
+    while( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ) {
+
+        ascent (a in 0..16) {
+
+            T_PlaySE( SE_SHOT_03, 36 );
+            
+            ascent (i in 0..6) {
+            
+                let Shot_A = ShotR1( bossX, bossY, 32, 2, Base_Angle + a * 360/16 + i * 360/6 + 180, SHOT_DDP_STAR_PINK, 10, SHOT_DDP_STAR_PINK );
+                //let Shot_B = ShotR1( GetPlayerX(), GetPlayerY(), 128, 0, Base_Angle + a * 360/5 + i * 360/8 + 180, SHOT_LARGE_PINK, 0, SHOT_CLOUD_PINK );
+
+               // ObjMove_AddPatternA2( Shot_B, 10, NO_CHANGE, NO_CHANGE, 0.01, 2, 0 );
+               // ObjRender_SetScaleXYZ( Shot_B, 1.2, 1.2, 1.2 );
+                ///ObjRender_SetColor( Shot_B, 255, 0, 0 );
+                //ObjRender_SetBlendType( Shot_B, BLEND_ADD_ARGB ); 
+                //ObjShot_SetDeleteFrame( Shot_B, 8 );
+                               
+                T_ShotManage_A( Shot_A, 60, Base_Angle + a * 360/16 + i * 360/6 + 180 );
+                //ObjMove_AddPatternA2( Shot_A, 60, NO_CHANGE, NO_CHANGE, -0.01, -2, 0 );
+
+                
+            }
+
+            Base_Angle += 20;
+
+            wait( 8 );
+
+        }
+
+        wait( 20 );
+
+        ObjMove_SetDestAtWeight( bossObj, GetStgFrameWidth/2 + rand( - 32, 32 ), Get_CenterY/2 + 16, 15, 8 );
+
+        wait( 190 );
+
+    }
+
+    task T_ShotManage_A( Obj, Delay, Angle ){
+
+        ObjMove_AddPatternA2( Obj, 20, NO_CHANGE, NO_CHANGE, -0.05, 0, 0 );
+        ObjShot_SetSpellResist( Obj, true );
+
+        async{
+
+            wait( Delay );
+            /*
+            ascent (i in 0..Delay) {
+
+                //float Scale = 1.5 - i * 1/Delay;
+
+                ObjRender_SetColor( Obj, 255, 255 - i * 255/Delay, 255 - i * 255/Delay );
+                //ObjRender_SetScaleXYZ( Obj, Scale, Scale, Scale );
+
+               yield;
+            }
+            */
+
+            T_PlaySE( SE_CHIME_02, 36 );
+
+            if( !Obj_IsDeleted( Obj ) ){
+                let Shot_Effect = ShotR1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0, 0, 0, SHOT_DDP_STAR_PINK, 0, SHOT_DDP_STAR_PINK );
+                 // ObjMove_AddPatternA2( Shot_Effect, 10, NO_CHANGE, NO_CHANGE, 0.01, 2, 0 );
+                //ObjRender_SetScaleXYZ( Shot_Effect, 1.2, 1.2, 1.2 );
+                ObjRender_SetColor( Shot_Effect, 255, 0, 0 );
+                ObjRender_SetBlendType( Shot_Effect, BLEND_ADD_ARGB );
+                ObjShot_SetDeleteFrame( Shot_Effect, 3 );           
+
+                ascent (i in 0..10) {
+
+                    float Scale = 1 - i * 1/10;
+                    float Scale_Effect = 1.5 - i * 1.5/10;
+
+                    ObjRender_SetScaleXYZ( Obj, Scale, Scale, Scale );
+                    ObjRender_SetScaleXYZ( Shot_Effect, Scale_Effect, Scale_Effect, Scale_Effect );
+
+                    yield;
+
+                }
+
+                Obj_Delete( Shot_Effect );
+                Obj_Delete( Obj );
+            }
+
+
+        }
+
+        wait( Delay );
+
+        // let Shot_Effect = ShotR1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0, 0, ObjMove_GetAngle( Obj ) + 180, SHOT_CLOUD_PINK, 10, SHOT_CLOUD_PINK );
+        // ObjShot_SetDeleteFrame( Shot_Effect, 8 );
+
+        let Shot_A = ShotR1( GetPlayerX(), GetPlayerY(), 128, 0, Angle, SHOT_DDP_STAR_PINK, 10, SHOT_DDP_STAR_PINK );
+
+            
+        let Shot_B = ShotR1( GetPlayerX(), GetPlayerY(), 128, 0, Angle, SHOT_DDP_STAR_PINK, 0, SHOT_DDP_STAR_PINK );
+        ObjMove_AddPatternA2( Shot_B, 10, NO_CHANGE, NO_CHANGE, 0.01, 2, 0 );
+        ObjRender_SetScaleXYZ( Shot_B, 1.4, 1.4, 1.4 );
+        ObjRender_SetColor( Shot_B, 255, 0, 0 );
+        ObjRender_SetBlendType( Shot_B, BLEND_ADD_ARGB );
+        ObjShot_SetDeleteFrame( Shot_B, 8 );
+
+        async{
+
+            wait( 60 );
+
+            if( !Obj_IsDeleted( Shot_A ) ){
+
+                T_PlaySE( SE_CHIME_02, 36 );
+
+                let Shot_C = ShotR1( ObjMove_GetX( Shot_A ), ObjMove_GetY( Shot_A ), 0, 0, ObjMove_GetAngle( Shot_A ) + 180, SHOT_GLOWSTICK_RED, 10, SHOT_GLOWSTICK_RED );
+                ObjMove_AddPatternA2( Shot_C, 10, NO_CHANGE, NO_CHANGE, 0.01, 2, 0 );
+                //let Shot_D = ShotR1( ObjMove_GetX( Shot_A ), ObjMove_GetY( Shot_A ), 0, 0, ObjMove_GetAngle( Shot_A ) + 180, SHOT_BALL_AURA_PINK, 10, SHOT_BALL_AURA_PINK );
+                ObjMove_AddPatternA2( Shot_C, 160, NO_CHANGE, NO_CHANGE, -0.05, 0, 0 );
+                async{
+
+                    //Re-teleport back 2 boss...
+
+                    wait( rand( 180, 190 ) );
+
+                    async{
+                        T_PlaySE( SE_CHIME_02, 36 );
+
+                        if( !Obj_IsDeleted( Shot_C ) ){
+                            let Shot_Effect = ShotR1( ObjMove_GetX( Shot_C ), ObjMove_GetY( Shot_C ), 0, 0, 0, SHOT_CLOUD_RED, 0, SHOT_CLOUD_RED );
+                            // ObjMove_AddPatternA2( Shot_Effect, 10, NO_CHANGE, NO_CHANGE, 0.01, 2, 0 );
+                            //ObjRender_SetScaleXYZ( Shot_Effect, 1.2, 1.2, 1.2 );
+                            // ObjRender_SetColor( Shot_Effect, 100, 0, 0 );
+                            ObjRender_SetBlendType( Shot_Effect, BLEND_ADD_ARGB );
+                            ObjShot_SetIntersectionEnable( Shot_Effect, false );
+                            ObjShot_SetDeleteFrame( Shot_Effect, 3 );           
+
+                            ascent (i in 0..10) {
+
+                                float Scale = 1 - i * 1/10;
+                                float Scale_Effect = 1.5 - i * 1.5/10;
+
+                                //ObjRender_SetScaleXYZ( Obj, Scale, Scale, Scale );
+                                ObjRender_SetScaleXYZ( Shot_Effect, Scale_Effect, Scale_Effect, Scale_Effect );
+
+                                yield;
+
+                            }
+
+                            Obj_Delete( Shot_Effect );
+                           // Obj_Delete( Obj );
+                        }                    
+
+                    }
+
+                    float X_Pos = bossX + rand( -32, 32 );
+                    float Y_Pos = bossY + rand( -32, 32 );
+
+
+                    ObjMove_SetPosition( Shot_C, X_Pos, Y_Pos );
+                    ObjMove_AddPatternA2( Shot_C, 0, NO_CHANGE, GetAngleToPlayer( Shot_C ), 0.05, 2, 0 );
+
+                    //T_DeleteShot_Effect_Reverse( Shot_C );
+
+
+                }
+
+                //T_DeleteShot_Effect( Shot_A );
+                Obj_Delete( Shot_A );       
+            }    
+
+        }
+
+
+    }
+
+    task T_ShotManage_B( Obj, Delay ){
+
+        wait( Delay );
+
+
+       // let Shot_Effect = ShotR1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0, 0, ObjMove_GetAngle( Obj ) + 180, SHOT_CLOUD_PINK, 10, SHOT_CLOUD_PINK );
+       // ObjShot_SetDeleteFrame( Shot_Effect, 8 );
+
+        /*
+        let Shot_B = ShotR1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0, 0, ObjMove_GetAngle( Obj ) + 180, SHOT_LARGE_PINK, 0, SHOT_BILL_PINK );
+        ObjMove_AddPatternA2( Shot_B, 10, NO_CHANGE, NO_CHANGE, 0.01, 2, 0 );
+        ObjRender_SetScaleXYZ( Shot_B, 1.2, 1.2, 1.2 );
+        ObjRender_SetColor( Shot_B, 255, 0, 0 );
+        ObjRender_SetBlendType( Shot_B, BLEND_ADD_ARGB );
+        */
+
+        /*
+        let Shot_C = ShotR1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0, 0, ObjMove_GetAngle( Obj ) + 180, SHOT_SCALE_PINK, 10, SHOT_SCALE_PINK );
+        ObjMove_AddPatternA2( Shot_C, 10, NO_CHANGE, NO_CHANGE, 0.01, 2, 0 );
+        let Shot_D = ShotR1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0, 0, ObjMove_GetAngle( Obj ) + 180, SHOT_DOT_PINK, 10, SHOT_DOT_PINK );
+        ObjMove_AddPatternA2( Shot_D, 16, NO_CHANGE, NO_CHANGE, 0.01, 2, 0 );
+        */
+
+        T_DeleteShot_Effect( Obj );
+        Obj_Delete( Obj );
+        //ObjShot_ToItem( Obj );
+        //ObjShot_SetDeleteFrame( Obj, 8 );
+
+
+
+    }
+
+}
+
+//-----------------------------------------------------Death---------------------------------------------------------
+
+task T_End {
+	
+    while( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ) {
+	     yield;
+	}
+	
+	if( ObjEnemyBossScene_GetInfo( GetEnemyBossSceneObjectID, INFO_IS_LAST_STEP ) ){
+
+		NotifyEventAll( EV_CLEAR_ENEMY_SHOTS, GetPlayerObjectID(), 60, 12 );
+		
+		yield;
+		
+		SetAutoDeleteObject(true);
+		T_Boss_Shotdown( bossObj, "Petal", CC_RED );
+		wait( 200 );
+		
+		Obj_Delete( bossObj );	
+		
+		ENEMY_CLEAR = true;
+		
+		yield;
+		
+		ENEMY_CLEAR = false;
+		
+		wait( 500 );
+		
+		CloseScript( GetOwnScriptID() );
+		
+	}	
+	else{
+	
+	
+		NotifyEventAll( EV_CLEAR_ENEMY_SHOTS, GetPlayerObjectID(), 60, 12 );
+		//DeleteShotAll( TYPE_ALL, TYPE_ITEM );
+		
+		yield;
+		
+		SetAutoDeleteObject(true);
+		
+		Obj_Delete( bossObj );	
+		
+		wait( 500 );
+		
+		CloseScript( GetOwnScriptID() );
+	
+	}
+	
+	//SetAutoDeleteObject(true);
+	
+	//Obj_Delete( bossObj );	
+	//CloseScript( GetOwnScriptID() );
+	
+}
+

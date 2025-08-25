@@ -59,7 +59,7 @@ task T_StageBGM {
 task T_Main {
 
     //SetCommonData( "Difficulty", 3 );
-    T_StageBGM;    
+    //T_StageBGM;    
     T_Wave_A();
 
     //T_Flower_Fiary_A1( GetStgFrameWidth()/2, GetStgFrameHeight()/4, 180, 1, 0.2, ENEMY_RED, SHOT_BALL_RED );
