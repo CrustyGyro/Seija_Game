@@ -119,7 +119,7 @@ task T_Main {
 	
 	//T_Boss_Shot_C;
 	
-	//T_Boss_Shot_C();
+	T_Boss_Shot_C();
 	
 	wait( 100 );
 
@@ -147,18 +147,52 @@ task T_Main {
 task T_Boss_Shot_C{
 
     float Y_Radius = 0; 
-    float Frame = 0; 
-	ascent (i in 0..24) {
-		int Orb_Obj = ShotR2( bossX, bossY, 64, 24, 0, 0 + i * 180/24, SHOT_BALL_BLUE, 1, SHOT_ORB_YELLOW );
-        int Orb_Obj_B = ShotR2( bossX, bossY, 64, 24, 0, 180 + i * 180/24, SHOT_BALL_BLUE, 1, SHOT_ORB_YELLOW );
-        ObjRender_SetBlendType( Orb_Obj, BLEND_ADD_ARGB );
-        ObjRender_SetBlendType( Orb_Obj_B, BLEND_ADD_ARGB );
+    float Frame = 0;
+	float Dir = 45;
 
-        Y_Radius += 24 * sin( Frame );
-        Frame++;
+	loop{
+		ascent (c in 0..10) {
+			ascent (i in 0..16) {
+				ascent (a in 0..1) {
+					int Orb_Obj = ShotR2( bossX + c * 48/10, bossY, 32 - c * 32/10, 32 - c * 32/10, 0, 0 + i * 360/16 + a * 360/1, DELAY_CLOUD_GREY, 20, DELAY_CLOUD_RED );
+					T_Manage_Shot_A( Orb_Obj, Dir );
+				}
+				//int Orb_Obj_B = ShotR2( bossX, bossY, 64, 24, 0, 180 + i * 180/24, SHOT_BALL_BLUE, 1, SHOT_ORB_YELLOW );
+				//ObjRender_SetBlendType( Orb_Obj, BLEND_ADD_ARGB );
+				//ObjRender_SetBlendType( Orb_Obj_B, BLEND_ADD_ARGB );
 
-        yield;
-		//T_Manage_Shot_A( Orb_Obj, bossX, bossY, i, 6, Dir, 1, Wvel );
+				//Y_Radius += 1 * sin( Frame );
+				//Dir = -Dir;
+				Frame++;
+
+				wait( 8 );
+				//T_Manage_Shot_A( Orb_Obj, bossX, bossY, i, 6, Dir, 1, Wvel );
+			}
+
+			//wait( 80 );
+
+		}	
+
+		wait( 80 );
+		yield;
+	}
+	task T_Manage_Shot_A( Obj, Dir ){
+
+		ascent (a in 0..5) {
+			int Orb_Obj = ShotR2( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0, 0, 1 - a * 0.3/5, ObjMove_GetAngle( Obj ) - a * 16/5, SHOT_COIN_RED, 1, DELAY_CLOUD_GREY );
+			int Orb_Obj_B = ShotR2( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0, 0, 1 - a * 0.3/5, ObjMove_GetAngle( Obj ) + a * 16/5, SHOT_COIN_RED, 1, DELAY_CLOUD_GREY );
+
+			ObjMove_SetAngle( Orb_Obj, ObjMove_GetAngle( Orb_Obj ) + Dir );
+			ObjMove_SetAngle( Orb_Obj_B, ObjMove_GetAngle( Orb_Obj_B ) + Dir );
+
+			yield;
+
+		}
+
+		wait( 20 );
+
+		Obj_Delete( Obj );
+
 	}
 
 } 

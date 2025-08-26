@@ -108,12 +108,12 @@ task T_BuildStage{
 
 	descent( i in 0..8 ){
 		T_Repeating_Vines_A( Tex_Vine_Left, -132, 256, i, 255, -1, 700, 6, 4 );
-		T_Repeating_Vines_A( Tex_Vine_Left, -100, 0, i - 0.5, 255, -1, 700, 6, -6 );
+		T_Repeating_Vines_A( Tex_Vine_Right, -100, 0, i - 0.5, 255, 1, 700, 6, -6 );
 	}
 
 	descent( i in 0..8 ){
 		T_Repeating_Vines_A( Tex_Vine_Right, 100, 0, i, 255, -1, 700, 6, 6 );
-		T_Repeating_Vines_A( Tex_Vine_Right, 132, 256, i - 0.5, 255, -1, 700, 6, -4 );
+		T_Repeating_Vines_A( Tex_Vine_Left, 132, 256, i - 0.5, 255, 1, 700, 6, -4 );
 	}	
 		
 	
