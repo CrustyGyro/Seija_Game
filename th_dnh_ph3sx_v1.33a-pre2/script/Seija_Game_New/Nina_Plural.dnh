@@ -89,9 +89,9 @@ function Load_Boss(){
     ObjEnemyBossScene_Add( Boss_Obj, 1, CSD ~ "Nina_Spell_02.dnh" );
     ObjEnemyBossScene_Add( Boss_Obj, 2, CSD ~ "Nina_Non_01.dnh" );
     ObjEnemyBossScene_Add( Boss_Obj, 2, CSD ~ "Nina_Spell_03.dnh" );
-	/*
     ObjEnemyBossScene_Add( Boss_Obj, 3, CSD ~ "Nina_Non_02.dnh" );
-    ObjEnemyBossScene_Add( Boss_Obj, 3, CSD ~ "Nina_Spell_02.dnh" );
+    ObjEnemyBossScene_Add( Boss_Obj, 3, CSD ~ "Nina_Spell_04.dnh" );
+	/*
     ObjEnemyBossScene_Add( Boss_Obj, 4, CSD ~ "Nina_Non_01.dnh" );
     ObjEnemyBossScene_Add( Boss_Obj, 4, CSD ~ "Nina_Spell_01.dnh" );
     ObjEnemyBossScene_Add( Boss_Obj, 5, CSD ~ "Nina_Non_02.dnh" );
