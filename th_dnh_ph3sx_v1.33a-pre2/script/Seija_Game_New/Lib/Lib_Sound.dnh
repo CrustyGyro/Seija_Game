@@ -17,7 +17,7 @@ task T_PlaySE( Name, Volume ){
 
 	ObjSound_SetSoundDivision( SE_Obj, SOUND_SE );
    	ObjSound_Load( SE_Obj, Path ~ Name );
-  	ObjSound_SetVolumeRate( SE_Obj, ( Volume - 20 ) * ( GetAreaCommonData( "Settings", SETTING_SE_VOLUME, 100 ) / 100 ) );
+  	ObjSound_SetVolumeRate( SE_Obj, ( Volume ) * ( GetAreaCommonData( "Settings", SETTING_SE_VOLUME, 100 ) / 100 ) );
   	ObjSound_Play( SE_Obj );
 
 }

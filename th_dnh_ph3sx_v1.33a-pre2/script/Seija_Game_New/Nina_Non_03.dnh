@@ -1,6 +1,6 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
-#Title["Nina_Non_02"]
+#Title["Nina_Non_03"]
 #Background["./Stage/STG_05/FW_Stage_5.dnh"];
 #Player[ "./Player/PL_Reimu.dnh" ]
 #System["./System/System_Main_Hud.dnh"]
@@ -104,9 +104,9 @@ task T_Main {
 
 
     T_Movement_A;
-   // T_BossaShot_B();
+    T_BossaShot_D();
 
-    T_BossaShot_E;
+    //T_BossShot_B;
 
 	/*
 	wait( 300 );	
@@ -126,48 +126,6 @@ task T_Main {
 
 	}
 }	
-
-task T_BossaShot_E(){
-
-
-   	int Shot_Count_B = 3;
-	int Shot_Count_I = 30;
-
-	float Base_Angle = 0;
-	float Frame = 0;
-	float Dir = 0;	
-
-	while( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ) {
-		ascent (a in 0..Shot_Count_I) {
-
-			descent (b in 0..Shot_Count_B) {
-				let Shot_A = ShotR2( bossX, bossY, 128 + 16 * sin( Frame ), 64 + 16 * sin( Frame ), 0 , 0 + a * 180/Shot_Count_I + Base_Angle, SHOT_BALL_MAGENTA, 10, DELAY_CLOUD_PINK );
-				//ObjRender_SetColor( Shot_A, 255, 255, 255 - b * 255/Shot_Count_B );
-				ObjRender_SetBlendType( Shot_A,  BLEND_ADD_ARGB );
-				ObjMove_AddPatternA2( Shot_A, 60, NO_CHANGE, NO_CHANGE, 0.05 + b * 0.02/Shot_Count_B, 3, Dir );
-			}
-						
-
-			descent (b in 0..Shot_Count_B) {
-				let Shot_A = ShotR2( bossX, bossY, 128 + 16 * sin( Frame ), 64 + 16 * sin( Frame ), 0 , 180 + a * 180/Shot_Count_I, SHOT_BALL_MAGENTA, 10, DELAY_CLOUD_PINK );
-				ObjRender_SetBlendType( Shot_A,  BLEND_ADD_ARGB );
-				ObjMove_AddPatternA2( Shot_A, 60, NO_CHANGE, NO_CHANGE, 0.05 + b * 0.02/Shot_Count_B, 3, Dir );
-
-			}				
-
-			Frame += 32;
-
-			yield;
-
-			//Dir = -Dir;
-
-		}	
-
-		wait( 1 );
-
-	}
-
-}
 
 task T_BossaShot_D(){
 
@@ -193,28 +151,28 @@ task T_BossaShot_D(){
 
 		T_PlaySE( SE_CHIME_01, 36 );
 
-		//T_Burst_Circle_A2( bossObj, 30, 3, CC_PINK );
+		T_Burst_Circle_A2( bossObj, 30, 3, CC_PINK );
 		ascent ( i in 0..4 ) {
 			T_Create_Clam( 8.5, -45 + i * 360/4, 4, 0, 0 );
 
 			//wait( 60 );
 		}			
 
-		wait( 20 );	
+		wait( 290 );	
 
 		//T_Concentrate_Glow_A( bossX, bossY, 128, CC_PINK );
 		if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) <= 0 ){ break; }
 
 		T_PlaySE( SE_CHIME_01, 36 );
 
-		//T_Burst_Circle_A2( bossObj, 30, 3, CC_PINK );
+		T_Burst_Circle_A2( bossObj, 30, 3, CC_PINK );
 		ascent ( i in 0..4 ) {
 			T_Create_Clam( 8.5, 45 + i * 360/4, -4, 0, 0 );
 
 			//wait( 60 );
 		}	
 
-		wait( 20 );		
+		wait( 290 );		
 
 		yield;
 	}
@@ -227,8 +185,74 @@ task T_BossaShot_D(){
 		float Base_Angle = 0;
 		float Frame = 0;	
 
-		//int Center_Pearl = ShotR1( bossX, bossY, 32, Speed, Angle, SHOT_LARGE_AQUA, 10, SHOT_CLOUD_AQUA );
-		//ObjMove_AddPatternA2( Center_Pearl, 1, NO_CHANGE, NO_CHANGE, -0.1, 0, Wvel );
+		int Center_Pearl = ShotR1( bossX, bossY, 32, Speed, Angle, SHOT_LARGE_AQUA, 10, SHOT_CLOUD_AQUA );
+		ObjMove_AddPatternA2( Center_Pearl, 1, NO_CHANGE, NO_CHANGE, -0.1, 0, Wvel );
+		/*
+		async{
+
+			float Frame = 0;
+
+			while( !Obj_IsDeleted( Center_Pearl ) && Frame <= 100 ){
+
+				int Dummy_Shot = ShotR1( ObjMove_GetX( Center_Pearl ), ObjMove_GetY( Center_Pearl ), 0, 1, ObjMove_GetAngle( Center_Pearl ) + 180 + rand( -24, 24 ), SHOT_FIREBALL_MAGENTA, 0, SHOT_FIREBALL_BLUE );
+				ObjShot_SetDeleteFrame( Dummy_Shot, 4 );
+				//T_AfterImage( Dummy_Shot );
+				Frame++;	
+				wait( 1 );
+			}
+
+			task T_AfterImage( Obj ){
+
+				ObjShot_SetIntersectionEnable( Obj, false );
+				ObjRender_SetAlpha( Obj, 100 );
+
+				wait( 1 );
+				ascent (i in 0..20) {
+					ObjRender_SetScaleXYZ( Obj, 1 - i *1/20,  1 - i *1/20, 1 - i *1/20 );
+					yield;
+				}
+
+				Obj_Delete( Obj );
+			}
+
+		}
+		*/
+		async{
+
+			wait( 10 );
+
+			float Frame = 0;
+			float Angle_Sub = 180;
+			int Sub_Shot_Count = 4;
+
+			int Dummy_Shot = ShotR1( ObjMove_GetX( Center_Pearl ), ObjMove_GetY( Center_Pearl ), 0, 0, ObjMove_GetAngle( Center_Pearl ), SHOT_ORB_PINK, 10, SHOT_ORB_PINK );
+			//ObjShot_SetDeleteFrame( Dummy_Shot, 8 );			
+
+			while( !Obj_IsDeleted( Center_Pearl ) ){
+
+				ObjMove_SetPosition( Dummy_Shot, ObjMove_GetX( Center_Pearl ), ObjMove_GetY( Center_Pearl ) );
+				//int Dummy_Shot = ShotR1( ObjMove_GetX( Center_Pearl ), ObjMove_GetY( Center_Pearl ), 0, 0, ObjMove_GetAngle( Center_Pearl ), SHOT_ORB_GREY, 10, SHOT_ORB_GREY );
+				//ObjShot_SetDeleteFrame( Dummy_Shot, 8 );
+
+				/*
+				ascent (i in 0..Sub_Shot_Count) {
+					int Sub_Shot_A = ShotR1( ObjMove_GetX(Center_Pearl), ObjMove_GetY(Center_Pearl), 0, 0, ObjMove_GetAngle( Center_Pearl ) + Angle_Sub, SHOT_DROP_DAQUA, 10, SHOT_CLOUD_AQUA );
+					//int Sub_Shot_B = ShotR1( ObjMove_GetX(Center_Pearl), ObjMove_GetY(Center_Pearl), 0, 0, ObjMove_GetAngle( Center_Pearl ) - Angle_Sub, SHOT_DROP_DAQUA, 10, SHOT_CLOUD_AQUA );
+
+					ObjMove_AddPatternA2( Sub_Shot_A, 60, NO_CHANGE, 90, 0.05, 1 + i * 0.3/Sub_Shot_Count, 0 );
+					//ObjMove_AddPatternA2( Sub_Shot_B, 60, NO_CHANGE, NO_CHANGE, 0.05, 1 + i * 1/Sub_Shot_Count, 0 );
+				}	
+				*/
+				//ObjShot_SetDeleteFrame( Dummy_Shot, 8 );
+				Frame++;
+				yield;
+			}
+
+			ObjShot_SetDeleteFrame( Dummy_Shot, 8 );
+
+
+		}
+		
 
 		
 		async{
@@ -236,36 +260,40 @@ task T_BossaShot_D(){
 			int Shot_Go = 1;
 
 			wait( 120 );
+
+			if( !Obj_IsDeleted( Center_Pearl )){
+
 			ascent (a in 0..Shot_Count_I) {
 
 				//if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) <= 0 ){ break; }
-					//T_PlaySE( SE_CHIME_00, 36 );
+				if( !Obj_IsDeleted( Center_Pearl )){
+					T_PlaySE( SE_CHIME_00, 36 );
 					
-				descent (b in 0..Shot_Count_B) {
-					let Shot_A = ShotR2( bossX, bossY, 128 + 16 * sin( Frame ), 64 + 16 * sin( Frame ), 0 , 0 + a * 180/Shot_Count_I + Base_Angle, SHOT_BALL_MAGENTA, 10, SHOT_CLOUD_PINK );
-					//ObjRender_SetColor( Shot_A, 255, 255, 255 - b * 255/Shot_Count_B );
-					ObjRender_SetBlendType( Shot_A,  BLEND_ADD_ARGB );
+					descent (b in 0..Shot_Count_B) {
+						let Shot_A = ShotR2( ObjMove_GetX(Center_Pearl), ObjMove_GetY(Center_Pearl), 64 + 8 * sin( Frame ), 16 + 8 * sin( Frame ), 0 , 0 + a * 180/Shot_Count_I + Base_Angle, SHOT_BALL_MAGENTA, 10, SHOT_CLOUD_PINK );
+						ObjRender_SetColor( Shot_A, 255, 255, 255 - b * 255/Shot_Count_B );
+						ObjRender_SetBlendType( Shot_A,  BLEND_ADD_ARGB );
 
-					//T_Manage_Clam( Shot_A, 120, 0 + a * 180/Shot_Count_I, Dir );
-					//ObjMove_AddPatternA2( Shot_A, 270, 0, 0 + a * 180/Shot_Count_I, 0.1, 4, 0 );
-					//ObjMove_AddPatternA2( Shot_A, 32, NO_CHANGE, NO_CHANGE, 0.01 + b*0.002/Shot_Count_B, 3 + b*2/Shot_Count_B, Dir + b * 0.03/Shot_Count_B );
-					ObjMove_AddPatternA2( Shot_A, 60, NO_CHANGE, NO_CHANGE, 0.01, 2, Dir + b * 0.05/Shot_Count_B );
-				}
+						T_Manage_Clam( Shot_A, 120, 0 + a * 180/Shot_Count_I, Dir );
+						//ObjMove_AddPatternA2( Shot_A, 270, 0, 0 + a * 180/Shot_Count_I, 0.1, 4, 0 );
+						//ObjMove_AddPatternA2( Shot_A, 32, NO_CHANGE, NO_CHANGE, 0.01 + b*0.002/Shot_Count_B, 3 + b*2/Shot_Count_B, Dir + b * 0.03/Shot_Count_B );
+						//ObjMove_AddPatternA2( Shot_A, 60, NO_CHANGE, ObjMove_GetAngle( Shot_A ) + 45, NO_CHANGE, NO_CHANGE, Dir + b * 0.05/Shot_Count_B );
+					}
 					
 
-				descent (b in 0..Shot_Count_B) {
-					let Shot_A = ShotR2( bossX, bossY, 128 + 16 * sin( Frame ), 64 + 16 * sin( Frame ), 0 , 180 + a * 180/Shot_Count_I, SHOT_BALL_MAGENTA, 10, SHOT_CLOUD_PINK );
-					ObjRender_SetColor( Shot_A, 255, 255, 255 - b * 255/Shot_Count_B );
-					//ObjRender_SetBlendType( Shot_A,  BLEND_ADD_ARGB );
-					//ObjMove_AddPatternA2( Shot_A, 30, 3, -90, -0.1, 0, 0 );
-					ObjMove_AddPatternA2( Shot_A, 60, NO_CHANGE, NO_CHANGE, 0.01, 2, Dir + b * 0.05/Shot_Count_B );
+					descent (b in 0..Shot_Count_B) {
+						let Shot_A = ShotR2( ObjMove_GetX(Center_Pearl), ObjMove_GetY(Center_Pearl), 64 + 8 * sin( Frame ), 16 + 8 * sin( Frame ), 0 , 180 + a * 180/Shot_Count_I, SHOT_BALL_MAGENTA, 10, SHOT_CLOUD_PINK );
+						ObjRender_SetColor( Shot_A, 255, 255, 255 - b * 255/Shot_Count_B );
+						ObjRender_SetBlendType( Shot_A,  BLEND_ADD_ARGB );
+						ObjMove_AddPatternA2( Shot_A, 30, 3, -90, -0.1, 0, 0 );
 
-					//T_Manage_Clam( Shot_A, 120, 180 + a * 180/Shot_Count_I, Dir );
-				}				
+						T_Manage_Clam( Shot_A, 120, 180 + a * 180/Shot_Count_I, Dir );
+					}				
 
-				Frame += 32;
+					Frame += 32;
 
-				//yield;
+					yield;
+				}	
 			}			
 
 			//wait( 2 );
@@ -281,6 +309,10 @@ task T_BossaShot_D(){
 			*/
 
 			task T_Manage_Clam( Obj, Delay, Angle, Dir ){
+
+				while( Shot_Go == 1 ){
+					yield;
+				}
 
 				wait( Delay );
 
@@ -319,6 +351,31 @@ task T_BossaShot_D(){
 		}		
 		*/
 
+		if( !Obj_IsDeleted( Center_Pearl )){
+
+			ascent (i in 0..20) {
+
+				if( !Obj_IsDeleted( Center_Pearl )){
+
+					T_PlaySE( SE_CHIME_02, 36 );
+				
+					int Pearl_Subshot = ShotA2( ObjMove_GetX( Center_Pearl ) + rand( -14, 14 ), ObjMove_GetY( Center_Pearl ) + rand( -14, 14 ), 4 , GetAngleToPlayer( Center_Pearl ), SHOT_BALL_AQUA, 10, SHOT_CLOUD_AQUA );
+					ObjMove_AddPatternA2( Pearl_Subshot, 20, NO_CHANGE, NO_CHANGE, -0.05, 0.5, 0 );
+					//ObjRender_SetColor( Pearl_Subshot, 255, 255, 255 - i * 80/20 );
+					//wait( 3 );
+
+				}
+
+				wait( 3 );
+			}
+
+		}
+		Obj_Delete( Center_Pearl );
+
+
+	}
+
+
 
 }
 
@@ -329,7 +386,7 @@ task T_Movement_A{
 	
 	while( Boss_Is_Alive( bossObj ) ){
 
-		ObjMove_SetDestAtWeight( bossObj, Get_CenterX + 64 * cos( X ), Get_CenterY/2 + 32 * sin( Y ), 64, 3 );
+		ObjMove_SetDestAtWeight( bossObj, Get_CenterX + 16 * cos( X ), Get_CenterY/2 + 16 + 4 * sin( Y ), 64, 3 );
 		X += 0.5;
 		Y += 0.5;
 		

@@ -83,6 +83,8 @@ task T_Main {
 	yield;
 
 	wait( 45 );	
+
+	T_Create_Pillar( GetStgFrameWidth(), GetStgFrameHeight(), 0, -55, 55, 0 );
 	
 	//T_PlaySE( SE_CHARGE_00, 30 );
 	//T_Charge_A1( bossObj, 20, "Petal", CC_PINK );
@@ -95,7 +97,7 @@ task T_Main {
 
 	//let Obj = ShotA1( bossX, bossY, 2, rand( 0, 360 ), SHOT_ORB_BLUE, 200 );
 
-	T_Create_Cage_Wall( Get_MaxX, Get_MaxY, -90, 50, 0, -512 );
+	//T_Create_Cage_Wall( Get_MaxX, Get_MaxY, -90, 50, 0, -512 );
 	//T_Create_Cage_Wall( 0, Get_MaxY, -90, 50, 0, -512 );
 	
 	
@@ -105,6 +107,196 @@ task T_Main {
 		
 		//Do Stuff, fire some bullets or something.
 		yield;
+
+	}
+}	
+
+task T_Create_Pillar( X, Y, Angle, X_Offset_A, X_Offset_B, Y_Offset ) {
+
+	let Laser_Start = ShotR1( bossX, bossY, 0, 0, Angle, SHOT_ORB_RED, 160, SHOT_ORB_RED );
+	let Laser_End = ShotR1( bossX, bossY, 0, 0, Angle, SHOT_ORB_RED, 160, SHOT_ORB_RED );
+
+	let Laser_Start_B = ShotR1( bossX, bossY, 0, 0, Angle, SHOT_ORB_RED, 160, SHOT_ORB_RED );
+	let Laser_End_B = ShotR1( bossX, bossY, 0, 0, Angle, SHOT_ORB_RED, 160, SHOT_ORB_RED );
+
+	T_Manage_CageWall( Laser_Start, Laser_End, 0, X_Offset_A );
+	T_Manage_CageWall( Laser_Start_B, Laser_End_B, GetStgFrameWidth(), X_Offset_B );
+
+	async{
+		
+		wait( 160 );
+
+		float Bounce_Count = 1;
+			
+		loop( 10 ){
+
+			//float Bounce_Count = 1;
+
+			ascent (i in 0..6) {
+				ascent (a in 0..1) {
+
+					let Bouncy_Shot_A = ShotR1( bossX, bossY, 32, 1, i * 360/6 + a * 8/1, SHOT_ORB_RED, 0, SHOT_ORB_RED );
+					T_Manage_Collision( Laser_Start, Laser_End, Bouncy_Shot_A, Bounce_Count );
+					T_Manage_Collision( Laser_Start_B, Laser_End_B, Bouncy_Shot_A, Bounce_Count );
+
+					// do something
+
+				}
+
+				//wait( 10 );
+			}
+
+			Bounce_Count = 1;
+			/*
+			int Way = 4;
+			int Stack = 6;		
+			
+			let Shots = Pattern_Shot_A1( bossX, bossY, 2, 14, 1, 1, SHOT_ORB_RED, PATTERN_POLYGON, Way, Stack, 10, SHOT_ORB_RED );
+			
+			for( int i = 0; i < Way * Stack; i++ ) {
+			
+				T_Manage_Collision( Laser_Start, Laser_End, Shots[i] );
+				T_Manage_Collision( Laser_Start_B, Laser_End_B, Shots[i] );
+			
+			}
+			*/
+			wait( 9999 );
+		}	
+
+		task T_Manage_Collision( Laser_Start, Laser_End, Shot_Obj, Bounce_Count){
+			
+			//ObjShot_SetIntersectionEnable( Star_End_B, false );
+			//let Connector = CreateStraightLaserA1(  ObjMove_GetX( Dummy_Shot ), ObjMove_GetY( Dummy_Shot ), Angle, 512, 32, 99999, SHOT_LASER_RED, 10 );	
+			//let Laser_End_Dummy = ShotA1( ObjMove_GetX( Dummy_Shot ), ObjMove_GetY( Dummy_Shot ) - 64, 0, 0, SHOT_ORB_RED, 1 );		
+			
+			//ObjShot_SetAutoDelete(  Laser_End, false );
+			
+			//ObjStLaser_SetSource( Connector, false );
+
+			//int Bounce_Count = 0;
+			int[] Shot_Bounce_Colors = [ SHOT_BALL_BLUE, SHOT_BALL_YELLOW, SHOT_BALL_RED, SHOT_BALL_RED ];
+			
+			async{
+
+				//int Bounce_Colors = 0;
+				//ObjShot_SetGraphic( Shot_Obj, Shot_Bounce_Colors[ 0 ] );
+				
+				while( !Obj_IsDeleted( Laser_Start ) ){
+					
+					let Intersection = IsIntersected_Point_Line( ObjMove_GetX( Shot_Obj ), ObjMove_GetY( Shot_Obj ),  ObjMove_GetX( Laser_Start ), ObjMove_GetY( Laser_Start ), ObjMove_GetX( Laser_End ), ObjMove_GetY( Laser_End ), 32  );
+
+					if( ObjMove_GetY( Shot_Obj ) >= GetStgFrameHeight() ){
+
+						ObjMove_AddPatternA2( Shot_Obj, 1, 0, GetAngleToPlayer( Shot_Obj ), 0.1, 2 , 0 );
+						wait( 30 );
+
+					}
+
+					if( ObjMove_GetY( Shot_Obj ) <= 0 ){
+
+						ObjMove_AddPatternA2( Shot_Obj, 1, 0, GetAngleToPlayer( Shot_Obj ), 0.1, 2 , 0 );
+						wait( 30 );
+						
+					}					
+
+					if( Intersection == true ){ 
+					
+						Bounce_Count -= 1;
+						//Bounce_Colors += 1;
+						ObjMove_AddPatternA2( Shot_Obj, 1, 0, GetAngleToPlayer( Shot_Obj ), 0.1, 2 , 0 );
+						//ObjMove_SetSpeed( Shot_Obj, ObjMove_GetSpeed( Shot_Obj ) + 0.3 );
+						//ObjMove_SetAngle( Shot_Obj, GetAngleToPlayer( Shot_Obj ) + rand( -5, 5 ) ); 
+						//ObjShot_SetGraphic( Shot_Obj, SHOT_BALL_RED );
+						//if( Bounce_Count < 0 ){ T_DeleteShot_Effect( Shot_Obj ); Obj_Delete( Shot_Obj ); break; }
+						wait( 30 );
+						//break;
+					
+					}	
+
+					yield;
+				}						
+				
+			}			
+			
+			
+		}	
+		
+		task T_Check_Intersection( Obj, Laser_End_Dummy ){
+		
+			let Intersection = IsIntersected_Point_Line( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ),  ObjMove_GetX( Laser_Start ), ObjMove_GetY( Laser_Start ), ObjMove_GetX( Laser_End ), ObjMove_GetY( Laser_End ), 32  );
+			if( Intersection == true ){ 
+				
+				ShotA1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 2, ObjMove_GetAngle( Obj ) +180, SHOT_ORB_BLUE, 10 );
+				//break;
+				//ObjMove_SetAngle( Obj, ObjMove_GetAngle( Obj ) - 180 ); 
+				wait( 60 );
+					
+			}
+			
+		}			
+	
+	}
+
+
+	task T_Manage_CageWall( Start, End, Init_X, Offset ){
+
+		float Time = 120;
+
+		async{
+
+			let Connector = CreateStraightLaserA1(  ObjMove_GetX( Start ), ObjMove_GetY( Start ), 0, 0, 16, 99999, SHOT_LASER_AQUA, 1 ); 
+			ObjShot_SetSpellResist( Start, true );
+			ObjShot_SetAutoDelete( Start, false );	
+
+			ObjShot_SetSpellResist( End, true );
+			ObjShot_SetAutoDelete( End, false );			
+
+			ObjShot_SetAutoDelete( Connector, false );	
+
+			while( !Obj_IsDeleted( Start ) || !Obj_IsDeleted( End ) ){
+
+				if( Obj_IsDeleted( End ) ){ break; }
+				if( Obj_IsDeleted( Start ) ){ break; }
+				
+				//ObjMove_SetPosition( Prifma_Connector, ObjMove_GetX( Shot ), ObjMove_GetY( Shot ) ); 
+				//ObjStLaser_SetAngle( Prifma_Connector, dottheta( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), bossX, bossY ) );
+				//ObjLaser_SetLength( Prifma_Connector, distance( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), bossX, bossY ) + 1 );							
+							
+				//ObjMove_SetPosition( Prism, ObjMove_GetX( Shot ), ObjMove_GetY( Shot ) ); 			
+				ObjMove_SetPosition( Connector, ObjMove_GetX( Start ), ObjMove_GetY( Start ) ); 
+				ObjStLaser_SetAngle( Connector, dottheta( ObjMove_GetX( Start ), ObjMove_GetY( Start ), ObjMove_GetX( End ), ObjMove_GetY( End ) ) );
+				ObjLaser_SetLength( Connector, distance( ObjMove_GetX( Start ), ObjMove_GetY( Start ), ObjMove_GetX( End ), ObjMove_GetY( End ) ) + 1 );	
+
+				yield;
+			}
+			
+			Obj_Delete( Connector );			
+
+
+		}
+		
+		ascent( i in 0..Time ){
+			
+			ObjMove_SetX( Start, Interpolate_Smoother( bossX, Init_X, i/Time ));
+			ObjMove_SetY( Start, Interpolate_Smoother( bossY, Y, i/Time ));
+
+			ObjMove_SetX( End, Interpolate_Smoother( bossX, Init_X, i/Time ));
+			ObjMove_SetY( End, Interpolate_Smoother( bossY, 0, i/Time ));			
+				
+			yield;
+		}		
+	
+	
+		wait( Time*1.5 );
+		
+		ascent( i in 0..1000 ){
+			
+			ObjMove_SetX( Start, Interpolate_Linear( Init_X, Get_CenterX + Offset, i/1000 ));
+			ObjMove_SetX( End, Interpolate_Linear( Init_X, Get_CenterX + Offset, i/1000 ));
+			//ObjMove_SetY( Dummy_Shot, Interpolate_Linear( Y, Get_CenterY, i/1000 ));
+				
+			yield;
+		}			
 
 	}
 }	
@@ -155,16 +347,18 @@ task T_Create_Cage_Wall( X, Y, Angle, Time, X_Offset, Y_Offset ){
 		}
 	
 	}
+
+	//task T_Dummy_Laser( Dummy)
 	
 	task T_Manage_Collision( Dummy_Shot, Shot_Obj ){
 		
 		//ObjShot_SetIntersectionEnable( Star_End_B, false );
-		let Connector = CreateStraightLaserA1(  ObjMove_GetX( Dummy_Shot ), ObjMove_GetY( Dummy_Shot ), Angle, 512, 32, 99999, SHOT_LASER_RED, 10 );	
-		let Laser_End_Dummy = ShotA1( ObjMove_GetX( Connector ), ObjMove_GetY( Connector ) + 128, 0, 0, SHOT_ORB_RED, 30 );		
+		//let Connector = CreateStraightLaserA1(  ObjMove_GetX( Dummy_Shot ), ObjMove_GetY( Dummy_Shot ), Angle, 512, 32, 99999, SHOT_LASER_RED, 10 );	
+		let Laser_End_Dummy = ShotA1( ObjMove_GetX( Dummy_Shot ), ObjMove_GetY( Dummy_Shot ) - 64, 0, 0, SHOT_ORB_RED, 1 );		
 		
 		ObjShot_SetAutoDelete(  Laser_End_Dummy, false );
 		
-		ObjStLaser_SetSource( Connector, false );
+		//ObjStLaser_SetSource( Connector, false );
 		
 		async{
 				
@@ -174,7 +368,7 @@ task T_Create_Cage_Wall( X, Y, Angle, Time, X_Offset, Y_Offset ){
 
 				if( Intersection == true ){ 
 				
-					ObjMove_SetAngle( Shot_Obj, ObjMove_GetAngle( Shot_Obj ) - 180 ); 
+					ObjMove_SetAngle( Shot_Obj, ObjMove_GetAngle( Shot_Obj ) - 180 - 45 ); 
 					wait( 60 );
 				
 				}	
@@ -187,7 +381,7 @@ task T_Create_Cage_Wall( X, Y, Angle, Time, X_Offset, Y_Offset ){
 		while( !Obj_IsDeleted( Dummy_Shot ) ){
 			
 			
-			ObjMove_SetPosition( Connector, ObjMove_GetX( Dummy_Shot ), ObjMove_GetY( Dummy_Shot ) ); 	
+			//ObjMove_SetPosition( Connector, ObjMove_GetX( Dummy_Shot ), ObjMove_GetY( Dummy_Shot ) ); 	
 			ObjMove_SetPosition( Laser_End_Dummy, ObjMove_GetX( Dummy_Shot ) + X_Offset, ObjMove_GetY( Dummy_Shot ) + Y_Offset );
 	
 			//T_Check_Intersection( Shot_Obj, Laser_End_Dummy );			
