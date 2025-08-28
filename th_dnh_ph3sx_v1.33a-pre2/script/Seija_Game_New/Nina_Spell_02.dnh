@@ -151,7 +151,7 @@ task T_Main {
 task T_Boss_Shot_B(){
 
 
-    int Shot_Count_A = 32;
+    int Shot_Count_A = 28;
     int Shot_Dir = 45;
     int Shot_Dir_B = 0;
     int Shot_Angle = 90;
@@ -164,24 +164,28 @@ task T_Boss_Shot_B(){
 
     wait( 120 );
 
-    async{
+    task T_Sub_Pattern_A{
 
-        wait( 120 );
+       // wait( 120 );
 
         float Frame_Sub = 0;
         //int Shot_Dir_Sub = 45;
         
-        loop( 50 ){
+        loop( 50 ){ 
+            if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){ 
+                ascent (i in 0..16) {
+                    int Shot_Obj_A =  ShotR1( bossX, bossY + 32, 32, 0, -90 - 90 + i * 180/16 - 45 * sin( Frame_Sub ), SHOT_ICE_RED, 10, SHOT_ICE_RED );
+                    int Shot_Obj_B =  ShotR1( bossX, bossY + 32, 32, 0, -90 + 90 - i * 180/16 + 45 * sin( Frame_Sub ), SHOT_ICE_RED, 10, SHOT_ICE_RED );
 
-            ascent (i in 0..8) {
-                int Shot_Obj_A =  ShotA2( bossX, bossY, 3, -90 + 45 + i * 90/8 - 32 * sin( Frame_Sub ), SHOT_KNIFE_GREY, 10, SHOT_ORB_RED );
-                int Shot_Obj_B =  ShotA2( bossX, bossY, 3, -90 - 45 - i * 90/8 + 32 * sin( Frame_Sub ), SHOT_KNIFE_GREY, 10, SHOT_ORB_RED );
+                    ObjMove_AddPatternA2( Shot_Obj_A, 30, 0, NO_CHANGE, 0.01, 8, 0 );
+                    ObjMove_AddPatternA2( Shot_Obj_B, 30, 0, NO_CHANGE, 0.01, 8, 0 );
+                }
+
+                Frame_Sub+=3;
             }
-
-            Frame_Sub+=10;
             //Shot_Dir_Sub = -Shot_Dir_Sub;
 
-            wait( 10 + Shot_Count_A );
+            wait( 10 );
         } 
         
 
@@ -192,6 +196,8 @@ task T_Boss_Shot_B(){
         if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){ 
             ObjMove_SetDestAtFrame( bossObj, GetStgFrameWidth()/2, GetStgFrameHeight/18, 600, LERP_SMOOTHER );
         }
+
+        T_Sub_Pattern_A;
 
         loop( 10 ){
             if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){ 
@@ -206,7 +212,7 @@ task T_Boss_Shot_B(){
                 Dir_Wvel = -Dir_Wvel;
                 Shot_Dir_B = -Shot_Dir_B;
                 Trail_Speed += 1.7/10;
-                Shot_Count_A -= 25/10;
+                Shot_Count_A -= 21/10;
                 //Shot_Dir += 180/10;
                 //Frame += 
             }
