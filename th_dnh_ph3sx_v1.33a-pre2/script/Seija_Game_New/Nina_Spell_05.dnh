@@ -146,7 +146,7 @@ task T_Main {
 	*/
 	//T_Boss_Shot_D();
 	//T_Movement_A( );
-	
+
 }	
 
 task T_Movement_A{
@@ -190,7 +190,6 @@ task T_Boss_Shot_A(){
         T_Charge_A1( bossObj, 20, "Petal", CC_PINK );
 
         wait( 30 );    
-
         ascent ( i in 0..55 ) {
             ascent ( b in 0..40 ) {
                 int ShotObj_A = ShotR2( bossX, bossY, 32, 32, 6 - b * 4/40, i * 360/55, SHOT_RICE_PINK, 10, SHOT_RICE_PINK );

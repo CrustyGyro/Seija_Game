@@ -1,0 +1,394 @@
+#UserShotData
+
+shot_image = "./shot_3.png"
+//-------------------------------------
+//SEIJA_FIREBALL
+
+ShotData{
+	//RED
+	id = 2065
+	collision = (4,0,8)
+    render = ADD_ARGB
+	AnimationData{
+		animation_data = (5,0,0,50,50)
+		animation_data = (5,0,50,50,100)
+		animation_data = (5,0,100,50,150)
+		animation_data = (5,0,150,50,200)
+
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+
+ShotData{
+	//ORANGE
+	id = 2066
+	collision = (4,0,8)
+    render = ADD_ARGB
+	AnimationData{
+		animation_data = (5,50,0,100,50)
+		animation_data = (5,50,50,100,100)
+		animation_data = (5,50,100,100,150)
+		animation_data = (5,50,150,100,200)
+
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+
+
+ShotData{
+	//YELLOW
+	id = 2067
+	collision = (4,0,8)
+    render = ADD_ARGB
+	AnimationData{
+		animation_data = (5,100,0,150,50)
+		animation_data = (5,100,50,150,100)
+		animation_data = (5,100,100,150,150)
+		animation_data = (5,100,150,150,200)
+
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+
+ShotData{
+	//OLIVE
+	id = 2068
+	collision = (4,0,8)
+    render = ADD_ARGB
+	AnimationData{
+		animation_data = (5,150,0,200,50)
+		animation_data = (5,150,50,200,100)
+		animation_data = (5,150,100,200,150)
+		animation_data = (5,150,150,200,200)
+
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+
+
+ShotData{
+	//GREEN
+	id = 2069
+	collision = (4,0,8)
+    render = ADD_ARGB
+	AnimationData{
+		animation_data = (5,200,0,250,50)
+		animation_data = (5,200,50,250,100)
+		animation_data = (5,200,100,250,150)
+		animation_data = (5,200,150,250,200)
+
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+
+ShotData{
+	//MINT
+	id = 2070
+	collision = (4,0,8)
+    render = ADD_ARGB
+	AnimationData{
+		animation_data = (5,250,0,300,50)
+		animation_data = (5,250,50,300,100)
+		animation_data = (5,250,100,300,150)
+		animation_data = (5,250,150,300,200)
+
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+
+ShotData{
+	//AQUA
+	id = 2071
+	collision = (4,0,8)
+    render = ADD_ARGB
+	AnimationData{
+		animation_data = (5,300,0,350,50)
+		animation_data = (5,300,50,350,100)
+		animation_data = (5,300,100,350,150)
+		animation_data = (5,300,150,350,200)
+
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+
+ShotData{
+	//AZURE
+	id = 2072
+	collision = (4,0,8)
+    render = ADD_ARGB
+	AnimationData{
+		animation_data = (5,350,0,400,50)
+		animation_data = (5,350,50,400,100)
+		animation_data = (5,350,100,400,150)
+		animation_data = (5,350,150,400,200)
+
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+
+ShotData{
+	//BLUE
+	id = 2073
+	collision = (4,0,8)
+    render = ADD_ARGB
+	AnimationData{
+		animation_data = (5,400,0,450,50)
+		animation_data = (5,400,50,450,100)
+		animation_data = (5,400,100,450,150)
+		animation_data = (5,400,150,450,200)
+
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+
+ShotData{
+	//PURPLE
+	id = 2074
+	collision = (4,0,8)
+    render = ADD_ARGB
+	AnimationData{
+		animation_data = (5,450,0,500,50)
+		animation_data = (5,450,50,500,100)
+		animation_data = (5,450,100,500,150)
+		animation_data = (5,450,150,500,200)
+
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+
+ShotData{
+	//MAGENTA
+	id = 2075
+	collision = (4,0,8)
+    render = ADD_ARGB
+	AnimationData{
+		animation_data = (5,500,0,550,50)
+		animation_data = (5,500,50,550,100)
+		animation_data = (5,500,100,550,150)
+		animation_data = (5,500,150,550,200)
+
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+
+ShotData{
+	//PINK
+	id = 2076
+	collision = (4,0,8)
+    render = ADD_ARGB
+	AnimationData{
+		animation_data = (5,550,0,600,50)
+		animation_data = (5,550,50,600,100)
+		animation_data = (5,550,100,600,150)
+		animation_data = (5,550,150,600,200)
+
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+
+ShotData{
+	//GREY
+	id = 2077
+	collision = (4,0,8)
+    render = ADD_ARGB
+	AnimationData{
+		animation_data = (5,600,0,650,50)
+		animation_data = (5,600,50,650,100)
+		animation_data = (5,600,100,650,150)
+		animation_data = (5,600,150,650,200)
+
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+
+
+/*
+ShotData{
+	//YELLOW
+	id = 2054
+	collision = 3
+	fixed_angle = true
+	AnimationData{
+		animation_data = (3,68,1632,102,1666)
+		animation_data = (3,68,1666,102,1700)
+		animation_data = (3,68,1632,102,1666)
+		animation_data = (3,68,1700,102,1734)
+
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+
+ShotData{
+	//OLIVE
+	id = 2055
+	collision = 3
+	fixed_angle = true
+	AnimationData{
+		animation_data = (3,102,1632,136,1666)
+		animation_data = (3,102,1666,136,1700)
+		animation_data = (3,102,1632,136,1666)
+		animation_data = (3,102,1700,136,1734)
+
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+
+ShotData{
+	//GREEN
+	id = 2056
+	collision = 3
+	fixed_angle = true
+	AnimationData{
+		animation_data = (3,136,1632,170,1666)
+		animation_data = (3,136,1666,170,1700)
+		animation_data = (3,136,1632,170,1666)
+		animation_data = (3,136,1700,170,1734)
+
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+
+ShotData{
+	//MINT
+	id = 2057
+	collision = 3
+	fixed_angle = true
+	AnimationData{
+		animation_data = (3,170,1632,204,1666)
+		animation_data = (3,170,1666,204,1700)
+		animation_data = (3,170,1632,204,1666)
+		animation_data = (3,170,1700,204,1734)
+
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+
+ShotData{
+	//AQUA
+	id = 2058
+	collision = 3
+	fixed_angle = true
+	AnimationData{
+		animation_data = (3,204,1632,238,1666)
+		animation_data = (3,204,1666,238,1700)
+		animation_data = (3,204,1632,238,1666)
+		animation_data = (3,204,1700,238,1734)
+
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+
+ShotData{
+	//AZURE
+	id = 2059
+	collision = 3
+	fixed_angle = true
+	AnimationData{
+		animation_data = (3,238,1632,272,1666)
+		animation_data = (3,238,1666,272,1700)
+		animation_data = (3,238,1632,272,1666)
+		animation_data = (3,238,1700,272,1734)
+
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+
+ShotData{
+	//BLUE
+	id = 2060
+	collision = 3
+	fixed_angle = true
+	AnimationData{
+		animation_data = (3,272,1632,306,1666)
+		animation_data = (3,272,1666,306,1700)
+		animation_data = (3,272,1632,306,1666)
+		animation_data = (3,272,1700,306,1734)
+
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+
+ShotData{
+	//PURPLE
+	id = 2061
+	collision = 3
+	fixed_angle = true
+	AnimationData{
+		animation_data = (3,306,1632,340,1666)
+		animation_data = (3,306,1666,340,1700)
+		animation_data = (3,306,1632,340,1666)
+		animation_data = (3,306,1700,340,1734)
+
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+
+ShotData{
+	//MAGENTA
+	id = 2062
+	collision = 3
+	fixed_angle = true
+	AnimationData{
+		animation_data = (3,340,1632,374,1666)
+		animation_data = (3,340,1666,374,1700)
+		animation_data = (3,340,1632,374,1666)
+		animation_data = (3,340,1700,374,1734)
+
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+
+ShotData{
+	//PINK
+	id = 2063
+	collision = 3
+	fixed_angle = true
+	AnimationData{
+		animation_data = (3,374,1632,408,1666)
+		animation_data = (3,374,1666,408,1700)
+		animation_data = (3,374,1632,408,1666)
+		animation_data = (3,374,1700,408,1734)
+
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+
+ShotData{
+	//GREY
+	id = 2064
+	collision = 3
+	fixed_angle = true
+	AnimationData{
+		animation_data = (3,408,1632,442,1666)
+		animation_data = (3,408,1666,442,1700)
+		animation_data = (3,408,1632,442,1666)
+		animation_data = (3,408,1700,442,1734)
+
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+*/

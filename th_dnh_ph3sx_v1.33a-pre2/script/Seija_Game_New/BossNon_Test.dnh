@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
-#Title["Iwabami_Non_00"]
-//#Background["./Stage/BG/STG_00.dnh"];
+#Title["BossNon_Test"]
+#Background["./Stage/BG/STG_00.dnh"];
 #Player[ "./Player/PL_Reimu.dnh" ]
 #System["./System/System_Main_Hud.dnh"]
 
@@ -29,6 +29,7 @@ let BossTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Test_Boss.
 	ObjEnemy_Regist( bossObj );	
 
 	T_Lifebar( bossObj );
+	T_HitEffect( bossObj );
 	ObjEnemy_SetDamageRate( bossObj, 0, 0 );	
 
 	Render_WheelGhost_A1( bossObj, ENEMY_BLUE );
@@ -48,7 +49,7 @@ let BossTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Test_Boss.
 
 	alternative(GetEventType()) 
 	case( EV_REQUEST_LIFE ) { 
-		SetScriptResult( 4500 ); // 3000-4500 For Nons ( At 100% Damage Rate. )
+		SetScriptResult( 100 ); // 3000-4500 For Nons ( At 100% Damage Rate. )
 	}
 	case( EV_REQUEST_TIMER ) { 
 		SetScriptResult( 45 ); //40-50 For standard Nons.
@@ -61,6 +62,9 @@ let BossTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Test_Boss.
 
 	bossX = ObjMove_GetX( bossObj );
 	bossY = ObjMove_GetY( bossObj );
+	
+	SetCommonData( "Effect_X", bossX );
+	SetCommonData( "Effect_Y", bossY );	
 
 	ObjEnemy_SetIntersectionCircleToShot( bossObj, bossX, bossY, 16 );
 	ObjEnemy_SetIntersectionCircleToPlayer( bossObj, bossX, bossY, 8 );
@@ -75,8 +79,6 @@ let BossTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Test_Boss.
 
 task T_Main {
 
-
-	float Shot_Angle = 0;
 
 	NotifyEventAll( EV_BOSS_EFFECT, bossObj, CC_CYAN );
 	
@@ -95,32 +97,67 @@ task T_Main {
 
 	while( Boss_Is_Alive( bossObj ) ){
 		
-		T_PlaySE( SE_SHOT_03, 30 );
-		
-		T_Boss_Shot_A( 24 * sin( Shot_Angle ));
-		
-		Shot_Angle+=10;
-		
-		wait( 20 );
+		int Shot_Count = 16;
+		int[] Color = [ SHOT_ANIMATED_BUTTERFLY_RED, SHOT_ANIMATED_BUTTERFLY_YELLOW, SHOT_ANIMATED_BUTTERFLY_GREEN, SHOT_ANIMATED_BUTTERFLY_BLUE ];
+
+		ascent ( a in 0..Shot_Count ) {
+			ascent ( b in 0..4 ) {
+				int Shot_Name_A = ShotR1( bossX, bossY, 32, 2 + b *0.5/4, 90 + a * 360/Shot_Count + b *8/4, SHOT_SEIJA_FIREBALL_RED, 8, DELAY_CLOUD_RED );
+				int Shot_Name_B = ShotR1( bossX, bossY, 32, 2 + b *0.5/4, 90 - a * 360/Shot_Count - b *8/4, SHOT_SEIJA_FIREBALL_AZURE, 8, DELAY_CLOUD_RED );
+				T_BulletTrail( Shot_Name_A, CC_RED, 6, SHOT_BALL_RED, 1 );
+				T_BulletTrail( Shot_Name_B, CC_BLUE, 6, SHOT_BALL_AZURE, 1 );
+				//int Shot_Name_B =CreateShotA1( bossX, bossY, 2 - b *0.5/4, 90 + a * 360/Shot_Count + b *8/4, SHOT_BALL_RED, 4 );
+
+				ObjMove_AddPatternA2( Shot_Name_A, 30, 0, NO_CHANGE, 0.01, 1 - b * 0.5/4, 0.3 );
+				ObjMove_AddPatternA2( Shot_Name_B, 30, 0, NO_CHANGE, 0.01, 1 - b * 0.5/4, -0.3 );
+
+
+				ObjMove_AddPatternA2( Shot_Name_A, 120, NO_CHANGE, NO_CHANGE, 0.01, 5, 0.1 );
+				ObjMove_AddPatternA2( Shot_Name_B, 120, NO_CHANGE, NO_CHANGE, 0.01, 5, -0.1 );				
+				//ObjMove_AddPatternA2( Shot_Name_B, 30, 0, NO_CHANGE, 0.01, 1 - b * 0.5/4, 0 );
+			}
+
+			wait( 10 );
+		}	
+
+		wait( 1 );
 		yield;
 
 	}
-}	
 
-task T_Boss_Shot_A( Angle ){
-	
-	int Way = 8;
-	int Stack = 1;
-	
-	//int[] Color_Array = [ SHOT_DROP_AZURE, SHOT_DROP_PURPLE, SHOT_DROP_AZURE, SHOT_DROP_AZURE];
-	
-	ascent( a in 0..3 ){
-		let Pattern_Obj_A = Pattern_Shot_A1( bossX, bossY, 2, 32, -90 + Angle + a*8/2, 16, SHOT_SEIJA_FIREBALL_GREEN, PATTERN_FAN, Way, Stack, 20, SHOT_CLOUD_BLUE );
-		for( int i = 0; i < Way * Stack; i++ ) {
-			ObjMove_AddPatternC2( Pattern_Obj_A[ i ], 10, NO_CHANGE, NO_CHANGE, NO_CHANGE, 0.05, 1, 3, 0, 0  ); 
+	task T_BulletTrail( Obj, Color, Rate, Graphic, Size ){
+
+		while( !Obj_IsDeleted( Obj )){
+
+			//int Shot_Name_A = ShotR1( ObjMove_GetX(Obj), ObjMove_GetY(Obj), 0, 1,  ObjMove_GetAngle(Obj) + 180 + rand( -32, 32 ), SHOT_BALL_PURPLE, 0, SHOT_BALL_PURPLE );
+			//ObjRender_SetBlendType( Shot_Name_A, BLEND_ADD_ARGB );
+			//ObjRender_SetColor( Shot_Name_A, 255, 255, 255 );
+			//ObjShot_SetDeleteFrame( Shot_Name_A, 1 );
+
+			int Shot_Name_B = ShotR1( ObjMove_GetX(Obj), ObjMove_GetY(Obj), 0, 1,  ObjMove_GetAngle(Obj) + 180 + rand( -32, 32 ), Graphic, 0, Graphic );
+			ObjRender_SetBlendType( Shot_Name_B, BLEND_ADD_ARGB );
+			ObjRender_SetColor( Shot_Name_B, Color[0], Color[1], Color[2] );
+			T_ManageTrail_Obj( Shot_Name_B );
+			ObjShot_SetDeleteFrame( Shot_Name_B, 1 );			
+
+			wait( Rate );
 		}
+
+		task T_ManageTrail_Obj( Trail_Shot ){
+
+			ascent (i in 0..20) {
+				
+				ObjRender_SetScaleXYZ( Trail_Shot, Size - i * Size/20, Size - i * Size/20, Size - i * Size/20 );
+
+				yield;
+			}
+
+		}
+
+
 	}
 }	
+
 
 //-----------------------------------------------------Death---------------------------------------------------------
 
@@ -137,8 +174,8 @@ task T_End {
 		yield;
 		
 		SetAutoDeleteObject(true);
-		
-		//wait( 60 );
+		T_Boss_Shotdown( bossObj, "Petal", CC_RED );
+		wait( 200 );
 		
 		Obj_Delete( bossObj );	
 		

@@ -88,7 +88,7 @@ task T_InitSpell(){
 	
 	//let CutinTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Cutin/CurseOfRa.png";
 	
-	T_CallSpell_A1( "\"Truth: Dead Internet\"", 0, "Normal", objScene );
+	T_CallSpell_A1( "\"Cadaverous Connections: Dead Internet\"", 0, "Normal", objScene );
 	T_Call_Spell_Cutin( CutinTex, [ 0, 0, 450, 480 ], 0.8, CC_PINK );	
 	
 	ObjEnemyBossScene_StartSpell( objScene );
@@ -154,9 +154,11 @@ task T_Movement_A(){
 	float X = 0;
 	float Y = 0;
 	
+    wait( 280 );
+
 	while( Boss_Is_Alive( bossObj ) ){
 
-		ObjMove_SetDestAtWeight( bossObj, bossX + 64 * cos( X ), bossY + 32 * sin( Y ), 64, 1 );
+		ObjMove_SetDestAtWeight( bossObj, bossX - 48 * cos( X ), bossY + 16 * sin( Y ), 64, 1 );
 		X -= 0.5;
 		Y -= 0.5;
 		
@@ -168,7 +170,7 @@ task T_Movement_A(){
 task T_Boss_Shot_A{
 	
 	let Base_Angle = atan2( Get_MaxY, Get_MaxX );
-	let Shot_Count = 22;
+	let Shot_Count = 24;
 	
 	let Shot_Angle = Base_Angle;
 	let Base_X = 0;	
@@ -179,16 +181,21 @@ task T_Boss_Shot_A{
 		
 		
 		//Base_X += GetStgFrameWidth();
+        float Shot_Delay = 260;
 		
 		ascent( a in 0..1 ){	
 			ascent( i in 0..Shot_Count ){		
+
+                //T_PlaySE( SE_SHOT_00, 30 );
 				//let sx = Base_X + (i-(Shot_Count-1)/2)/Shot_Count*2*Get_MaxX;
 				
-				int Shot_A = ShotA1( bossX, bossY, 2, 90 + i * 360/Shot_Count + a * 32/1, SHOT_HEART_RED, 10 );
+				int Shot_A = ShotA1( bossX, bossY, 5, 90 + i * 360/Shot_Count + a * 32/1, SHOT_HEART_RED, 10 );
 				//int Dummy_Shot = ShotA1( bossX, bossY, 0, 90 + i * 360/Shot_Count , SHOT_HEART_RED, 0 );
-				T_Manage_Laser( Shot_A, bossObj, true );
+				T_Manage_Laser( Shot_A, bossObj, true, Shot_Delay + i * ( 200 )/Shot_Count  );
 				
 				T_Rebound( Shot_A );
+
+                //wait( 3 );
 				//yield;
 			}
 		}
@@ -225,11 +232,11 @@ task T_Boss_Shot_A{
 		
 	}	
 	
-	task T_Manage_Laser( Shot, Next_Shot, PermitExpand ){
+	task T_Manage_Laser( Shot, Next_Shot, PermitExpand, Shot_Delay ){
 			
 		//int Prism = Create_Famliar_A1( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), PRISM_S_NORMAL, ENEMY_RED, 1000, false, 1, 1, 400 );	
-        let Connector_Dark = CreateStraightLaserA1(  ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), 0, 0, 8, 99999, SHOT_FIREBALL_GREEN, 1 );	
-		let Connector = CreateStraightLaserA1(  ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), 0, 0, 16, 99999, SHOT_LASER_AQUA, 1 ); 
+        let Connector_Dark = CreateStraightLaserA1(  ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), 0, 0, 8, 99999, SHOT_SEIJA_FIREBALL_GREEN, 200 );	
+		let Connector = CreateStraightLaserA1(  ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), 0, 0, 16, 99999, SHOT_LASER_AQUA, 200 ); 
 		//let Prifma_Connector = CreateStraightLaserA1( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), 0, 0, 16, 99999, SHOT_LASER_AQUA, 400 );
 		ObjStLaser_SetPermitExpand( Connector, PermitExpand );
 		
@@ -246,17 +253,48 @@ task T_Boss_Shot_A{
 
         async{
 
-            wait( 300 );
+            wait( Shot_Delay );
 
-            while( !Obj_IsDeleted( Shot ) ){
+			while( !Obj_IsDeleted( Connector ) ){
+					
+				T_PlaySE( SE_CHIME_02, 36 );
+				int ShotObj_A = ShotA2( ObjMove_GetX( Connector ), ObjMove_GetY( Connector ), 0, ObjStLaser_GetAngle( Connector ) +  90, SHOT_BALL_AURA_GREEN, 6, SHOT_BALL_AURA_GREEN );
+				T_Manage_LaserShot( ShotObj_A, Connector );
 
-                ascent (i in 0..3) {
-          
-                    int Aimed_Shot = ShotA2( ObjMove_GetX( Shot ), ObjMove_GetY( Shot ), 0, GetAngleToPlayer( Shot ), SHOT_KUNAI_RED, 10, DELAY_CLOUD_RED );
-                    ObjMove_AddPatternA2( Aimed_Shot, 1, 0, NO_CHANGE, 0.01, 1 + i * 0.2/3 , 0 );
 
-                } 
-                wait( 280 );
+				wait( 260 );
+			}	            
+
+            task T_Manage_LaserShot( Obj, Laser_Obj ){
+
+			    ObjShot_SetAutoDelete( Obj, false );
+			    ObjRender_SetBlendType( Obj, BLEND_ADD_ARGB );
+
+			    float Shot_Time = 300;	
+
+				descent( i in 0..Shot_Time ){
+
+					//ObjRender_SetAngleZ( Dummy_Shot, ObjRender_GetAngleZ( Obj ) );
+					ObjRender_SetAngleZ( Obj, ObjRender_GetAngleZ( Obj ) +  4 );
+
+					if( Obj_IsDeleted( Laser_Obj )){ ObjShot_SetGraphic( Obj, SHOT_BALL_AURA_DRED ); break; }
+					let L_Length = ObjLaser_GetLength( Laser_Obj ) * i/Shot_Time;
+					let L_Angle = ObjStLaser_GetAngle( Laser_Obj );
+				
+					ObjMove_SetAngle( Obj, L_Angle );
+					ObjMove_SetPosition( Obj, ObjMove_GetX( Laser_Obj ) + L_Length *cos( L_Angle ), ObjMove_GetY( Laser_Obj ) + L_Length *sin( L_Angle ) );
+					//ObjMove_SetPosition( Dummy_Shot, ObjMove_GetX( Obj ), ObjMove_GetY( Obj ) );
+								
+					yield;
+					
+				}
+
+				T_PlaySE( SE_SHOT_00, 36 );
+                int Aimed_Shot = ShotA2( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0, GetAngleToPlayer( Obj ), SHOT_MAMIZOU_HUMAN_MAGENTA, 24, DELAY_CLOUD_RED );
+                ObjMove_AddPatternA2( Aimed_Shot, 1, 0, NO_CHANGE, 0.01, 1 , 0 );    
+
+                Obj_Delete( Obj );     
+
             } 
 
         }

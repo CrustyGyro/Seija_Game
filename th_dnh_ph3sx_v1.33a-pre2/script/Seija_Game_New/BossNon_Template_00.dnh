@@ -97,7 +97,21 @@ task T_Main {
 
 	while( Boss_Is_Alive( bossObj ) ){
 		
-		//Do Stuff, fire some bullets or something.
+		int Shot_Count = 24;
+
+		ascent ( a in 0..Shot_Count ) {
+			ascent ( b in 0..4 ) {
+				int Shot_Name_A = CreateShotA1( bossX, bossY, 2 + b *0.5/4, 90 + a * 360/Shot_Count + b *8/4, SHOT_BALL_RED, 10 );
+				int Shot_Name_B =CreateShotA1( bossX, bossY, 2 - b *0.5/4, 90 + a * 360/Shot_Count - b *8/4, SHOT_BALL_RED, 10 );
+
+				ObjMove_AddPatternA2( Shot_Name_A, 30, 0, NO_CHANGE, 0.01, 6, 0 );
+				ObjMove_AddPatternA2( Shot_Name_B, 30, 0, NO_CHANGE, 0.01, 6, 0 );
+			}
+
+			wait( 4 );
+		}	
+
+		wait( 70 );
 		yield;
 
 	}
