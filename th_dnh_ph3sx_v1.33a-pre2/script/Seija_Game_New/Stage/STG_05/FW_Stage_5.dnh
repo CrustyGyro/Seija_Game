@@ -226,7 +226,7 @@ task T_Repeating_Vines_A( Texture, X, Y, Z, Alpha, Scale, Gap, Tiling, Tilt ){
 	let Obj =  Render_3D_Sprite_A1( Texture, [ 0, 0, 512, 512 * Tiling ], X, Y, Z, 22, [ Scale, Scale, Scale ]);
 	ObjRender_SetAngleXYZ( Obj, 0, 0, 180 + Tilt );	
 	
-	//ObjRender_SetColor( Obj, Color[0], Color[1], Color[2] );
+	ObjRender_SetColor( Obj, 0, 0, 0 );
 	ObjRender_SetAlpha( Obj, Alpha );
 
 	//ObjRender_SetFogEnable( Obj, false );
@@ -234,6 +234,21 @@ task T_Repeating_Vines_A( Texture, X, Y, Z, Alpha, Scale, Gap, Tiling, Tilt ){
 	//ObjRender_SetTextureFilter( Obj, FILTER_ANISOTROPIC, FILTER_ANISOTROPIC, FILTER_ANISOTROPIC );
 	
 	float pos = 0;
+	
+	async{
+		
+		wait( 300 );
+		
+		ascent( time in 0..800 ){
+			
+			float[] Color = Interpolate_Smoother( [ 0,0,0], [255,255,255], time/800 );
+			ObjRender_SetColor( Obj, Color[0], Color[1], Color[2] );
+			
+		
+			yield;
+		}		
+		
+	}		
 	
 	loop{
 		if(pos >= Gap){pos = 0;}

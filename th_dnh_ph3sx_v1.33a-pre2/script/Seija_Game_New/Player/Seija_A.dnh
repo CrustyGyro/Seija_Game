@@ -1,0 +1,748 @@
+#TouhouDanmakufu[ Player ]
+#ScriptVersion[ 3 ]
+#ID["Seija_A"]
+#Title["Seija_A"]
+#ReplayName["Reimu"]
+
+//--------------------------------------------
+
+	#include"./../Lib/Lib_Player.dnh"
+	
+//--------------------------------------------
+
+let PL_Tex_Reimu = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Player/PL_Seija.png";
+let PL_Tex_Reimu_Bomb = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Player/PL_Bomb_Reimu.png";
+
+let PL_Speed = [ 4.5, 2 ];
+
+int Shot_Count_Main = 0;
+int Shot_Count_Fam = 0;
+
+//--------------------------------------------
+
+@Initialize{
+	
+	ObjPlayer_AddIntersectionCircleA1( GetPlayerObjectID(), 0, 0, 2, 26 );
+
+	T_Render_Reimu( PL_Tex_Reimu );
+
+	LoadPlayerShotData( GetCurrentScriptDirectory() ~ "ShotData_Reimu.dnh" );
+	Init_Main();
+	SetPlayerSpeed( PL_Speed[ 0 ], PL_Speed[ 1 ] );
+	
+	ObjRender_SetTextureFilter( GetPlayerObjectID(), FILTER_NONE, FILTER_NONE, FILTER_NONE );
+	
+	//T_Manage_Familiars_A();
+	//T_Init_Reimu_A();
+}
+
+@MainLoop{
+	
+	Main_Loop();
+	
+	Player_Shoot_A();
+	yield;
+	
+}
+
+@Finalize{
+	
+	Main_Fin();
+	yield;
+	
+}
+
+@Event{
+	
+	PL_Event_Handler();
+	
+    alternative( GetEventType() )
+
+	case( EV_REQUEST_SPELL ){
+		
+		int Spell_Count = GetPlayerSpell();
+		if( Spell_Count >= 1 && Is_Bomb_Active == true ){
+			
+			//Play_SFX( SFX_SPELL_CALL, 50 );
+			
+			Is_Bomb_Active = true;
+			SetScriptResult( true );
+			SetPlayerSpell( Spell_Count - 1 );
+			T_Bomb_Reimu();
+
+		}
+		else{
+			
+			SetScriptResult( false );
+		}
+		//SetScriptResult( false );
+	}	
+	
+	yield;
+	
+}
+
+task T_Render_Reimu( Texture ){
+	
+	//THIS CODE IS PLACEHOLDER!!
+	
+	//let Frame_Count = 0;
+	//T_Create_Familiar_A();
+	
+	ObjPrim_SetTexture( GetPlayerObjectID(), Texture );
+	ObjSprite2D_SetDestCenter( GetPlayerObjectID() );
+	
+	ObjRender_SetScaleX( GetPlayerObjectID(), 1 );
+	ObjRender_SetScaleY( GetPlayerObjectID(), 1 );	
+	
+	int Sprite_Width = 32;
+	int Sprite_Height = 48;
+	
+	int Frame_Width = Sprite_Width;
+	int Frame_Height = Sprite_Height;
+	
+	int Move_Dir = 0;
+	
+	float Anim_Rate = 0;
+	//ObjRender_SetTextureFilter( GetPlayerObjectID(), FILTER_NONE, FILTER_NONE, FILTER_NONE );
+	
+	loop{
+		
+		Sprite_Width = 32;
+		Sprite_Height = 48;
+		
+		Frame_Width = Sprite_Width;
+		Frame_Height = Sprite_Height;		
+		
+		Move_Dir = 0; //IDLE
+		
+		while( Move_Dir == 0 ){
+			//IDLE
+			
+			ObjSprite2D_SetSourceRect( GetPlayerObjectID(), Sprite_Width-Frame_Width, Sprite_Height-Frame_Height, Sprite_Width, Sprite_Height);
+			ObjSprite2D_SetDestCenter( GetPlayerObjectID() );
+			
+			if( GetVirtualKeyState( VK_LEFT ) == KEY_PUSH || GetVirtualKeyState( VK_LEFT ) == KEY_HOLD ){ Sprite_Height = Frame_Height *2; Move_Dir = 1; }
+			if( GetVirtualKeyState( VK_RIGHT ) == KEY_PUSH || GetVirtualKeyState( VK_RIGHT ) == KEY_HOLD ){ Sprite_Height = Frame_Height *3; Move_Dir = 2; }			
+			
+			Anim_Rate+=1;
+			if( Anim_Rate % 10 ==0 ){ Sprite_Width += Frame_Width;}
+			if( Sprite_Width > ( 256 ) ){ Sprite_Width = Frame_Width;}
+			yield;
+		
+		}
+		
+		Anim_Rate = 0;
+		Sprite_Width = 256/8;
+
+		while( Move_Dir != 0 ){
+			
+			ObjSprite2D_SetSourceRect( GetPlayerObjectID(), Sprite_Width-Frame_Width, Sprite_Height-Frame_Height, Sprite_Width, Sprite_Height );
+			ObjSprite2D_SetDestCenter( GetPlayerObjectID() );
+			if( Move_Dir == 1 ){
+				
+				if( GetVirtualKeyState( VK_LEFT ) != KEY_HOLD ){
+					Move_Dir = 0;
+				}
+			}
+			if( Move_Dir == 2 ){
+				if( GetVirtualKeyState( VK_RIGHT ) != KEY_HOLD ){
+					Move_Dir = 0;
+				}
+			}
+			
+			Anim_Rate +=1;
+			
+			if( Anim_Rate % 8 ==0 ){ Sprite_Width += Frame_Width; }
+			if( Sprite_Width > ( 256 ) ){ Sprite_Width = 96; }
+			
+			
+			yield;
+		}		
+		
+		
+		yield;
+	}
+}	
+
+/*
+task T_Render_Reimu( Texture ){
+	
+	//THIS CODE IS PLACEHOLDER!!
+	
+	//let Frame_Count = 0;
+	//T_Create_Familiar_A();
+	
+	ObjPrim_SetTexture( GetPlayerObjectID(), Texture );
+	ObjSprite2D_SetDestCenter( GetPlayerObjectID() );
+	
+	ObjRender_SetScaleX( GetPlayerObjectID(), 1 );
+	ObjRender_SetScaleY( GetPlayerObjectID(), 1 );	
+	
+	//ObjRender_SetTextureFilter( GetPlayerObjectID(), FILTER_NONE, FILTER_NONE, FILTER_NONE );
+	
+	loop{
+
+		ascent( a in 0..8 ){
+			
+			ObjSprite2D_SetSourceRect( GetPlayerObjectID, 32*a, 0, 32*( a + 1 ), 48 );
+			ObjSprite2D_SetDestCenter( GetPlayerObjectID );
+			
+			if( GetVirtualKeyState( VK_LEFT ) == KEY_FREE && GetVirtualKeyState( VK_RIGHT ) == KEY_FREE ){
+				wait( 12 );
+			}
+			
+		}
+		ascent( b in 3..8 ){
+						
+			if( GetVirtualKeyState( VK_LEFT ) == KEY_FREE && GetVirtualKeyState( VK_RIGHT ) == KEY_FREE ){
+				
+				ObjSprite2D_SetSourceRect( GetPlayerObjectID, 32*b, 0, 32*( b + 1 ), 48 );
+				ObjSprite2D_SetDestCenter( GetPlayerObjectID );
+				
+			}			
+			
+			if( GetVirtualKeyState( VK_LEFT ) == KEY_HOLD ){
+
+				ObjSprite2D_SetSourceRect( GetPlayerObjectID, 32*b, 48, 32*( b + 1 ), 96 );
+				ObjSprite2D_SetDestCenter( GetPlayerObjectID );	
+	
+			}	
+			
+			if( GetVirtualKeyState( VK_RIGHT ) == KEY_HOLD ){
+
+				ObjSprite2D_SetSourceRect( GetPlayerObjectID, 32*b, 96, 32*( b + 1 ), 144 );
+				ObjSprite2D_SetDestCenter( GetPlayerObjectID );	
+
+			}	
+			
+			wait( 12 );
+		}
+		
+		yield;
+	}
+}	
+*/
+//--------------------------------------------------------------------
+
+function Player_Shoot_A(){
+	
+	if( GetVirtualKeyState( VK_SHOT ) == KEY_PUSH || GetVirtualKeyState( VK_SHOT ) == KEY_HOLD && GetPlayerState() == STATE_NORMAL && Can_Fire == true ){
+		
+		Shot_Count_Main++;
+		
+		if( Shot_Count_Main >= 15 ){
+			
+			Shot_Count_Main = 0;
+			
+		}
+		
+		if( Shot_Count_Main == 0 || Shot_Count_Main == 5 || Shot_Count_Main == 10 ){
+			
+			//Play_SFX( SFX_PL_SHOT01, 55 );
+			T_PlaySE( SE_PL_SHOT_00, 25 );
+			T_Reimu_Shot_Main( GetPlayerX() - 8, GetPlayerY(), 22, -90, 2 );
+			T_Reimu_Shot_Main( GetPlayerX() + 8, GetPlayerY(), 22, -90, 2 );
+			
+		}	
+	}	
+}	
+
+//-------------------- Familiars ----------------------
+
+function T_Create_Reimu_Familiar_A(){
+	
+	let Fam_Obj = Render2D_Texture_A1( PL_Tex_Reimu, [ 16, 255, 32, 271 ], GetPlayerX, GetPlayerY, 1, 0.47 );
+	
+	T_Render_Famliars();
+	
+	task T_Render_Famliars(){
+		
+		let Effect_Obj = Render2D_Texture_A1( PL_Tex_Reimu, [ 64, 255, 80, 271 ], 0, 0, 1.4, 0.46 );
+		ObjRender_SetBlendType( Effect_Obj, BLEND_ADD_ARGB );
+		ObjRender_SetAlpha( Effect_Obj, 200 );
+		
+		loop{
+			
+			ObjRender_SetAngleZ( Effect_Obj, ObjRender_GetAngleZ( Effect_Obj ) + 2 );
+			ObjRender_SetAngleZ( Fam_Obj, ObjRender_GetAngleZ( Fam_Obj ) - 2 );
+			
+			ObjRender_SetPosition( Effect_Obj, ObjRender_GetX( Fam_Obj ), ObjRender_GetY( Fam_Obj ), 0 );
+		
+			yield;
+		
+		}
+		
+	}		
+	
+	return Fam_Obj;
+	
+}	
+
+function T_Manage_Familiars_A(){
+	
+	//AAAAAAAHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH 
+	let Objs = [];
+	
+	let Objs_Pos = [ [ 16, 28 ], [ -16, 28 ], [ 34, 18 ], [ -34, 18 ] ];
+	let Objs_Pos_Focused = [ [ 10, -28 ], [ -10, -28 ], [ 28, -20 ], [ -28, -20 ] ];	
+	
+	let Shot_Angles = [ -80, -100, -90 + 32, -90 - 32 ];
+	let Shot_Angles_Focused = [ -90, -90, -90 - 4, -90 + 4 ];	
+	
+	ascent( a in 0..4 ){
+		
+		Objs = Objs ~ [ T_Create_Reimu_Familiar_A() ];
+		//T_Handle( Objs[a], a );
+		
+	}	
+	
+	float Dest_X = GetPlayerX();
+	float Dest_Y = GetPlayerY();
+	
+	float Dist = 0;
+	float Dir = 0;
+	
+	float Weight = 0.3;
+		
+	T_Handle();	
+		
+	task T_Handle(){
+		
+		loop{
+			ascent(i in 0..4) {	
+			
+				Familiar_Shoot_A( Objs[i], Shot_Angles[i], Shot_Angles_Focused[i] );
+			
+			if( GetVirtualKeyState( VK_SLOWMOVE ) == KEY_HOLD ){
+				Dest_X = GetPlayerX() + Objs_Pos_Focused[ i ][0];
+				Dest_Y = GetPlayerY() + Objs_Pos_Focused[ i ][1];
+			}
+			else{
+				Dest_X = GetPlayerX() + Objs_Pos[ i ][0];
+				Dest_Y = GetPlayerY() + Objs_Pos[ i ][1];
+			}			
+		
+			Dist = (( Dest_X - ObjRender_GetX( Objs[i] )) ^ 2 + ( Dest_Y - ObjRender_GetY( Objs[i] )) ^ 2 ) ^ 0.4;
+			Dir = atan2( Dest_Y - ObjRender_GetY( Objs[i] ), Dest_X - ObjRender_GetX( Objs[i] ) );	
+			
+			if( Dist >= 1 ){
+				
+				ObjRender_SetPosition( Objs[i], ObjRender_GetX( Objs[i] ) + cos( Dir ) * Dist * Weight, ObjRender_GetY( Objs[i] ) + sin( Dir ) * Dist * Weight, 0 );
+				
+				
+			}
+			else{
+								
+				ObjRender_SetPosition( Objs[i], Dest_X, Dest_Y, 0 );
+								
+			}
+			}
+			yield;
+		
+		}
+	}
+}	
+	
+function Familiar_Shoot_A( Obj, Angle, Angle_Focused ){
+		
+	if( GetVirtualKeyState( VK_SHOT ) == KEY_PUSH || GetVirtualKeyState( VK_SHOT ) == KEY_HOLD && GetPlayerState() == STATE_NORMAL && Can_Fire == true ){
+			
+		Shot_Count_Fam++;
+				
+		if( Shot_Count_Fam % 13 == 0  ){
+			if( GetVirtualKeyState( VK_SLOWMOVE ) == KEY_HOLD ){		
+
+				T_Reimu_Shot_Needle( ObjRender_GetX( Obj ), ObjRender_GetY( Obj ), 24, -90, 1.4 );
+					
+			}	
+		}
+		if( Shot_Count_Fam % 15 == 0  ){
+			if( GetVirtualKeyState( VK_SLOWMOVE ) == KEY_FREE ){
+					
+				T_Reimu_Shot_Fam( ObjRender_GetX( Obj ), ObjRender_GetY( Obj ), 0, Angle, 1 );
+					
+			}	
+		}	
+	}	
+}		
+	
+//-------------------- Shots ----------------------
+	
+task T_Reimu_Shot_Main( X, Y, Speed, Angle, Dmg ){
+	
+	float Shot_X = 0;
+	float Shot_Y = 0;
+	
+	let Shot_Obj = CreatePlayerShotA1( X, Y, Speed, Angle, Dmg, 2, 15 );
+	Obj_SetRenderPriorityI( Shot_Obj, 47 );	
+	
+	//T_Homing( Shot_Obj );
+	
+	T_Impact( Shot_Obj );
+	
+	task T_Impact( Shot_Obj ){
+	
+		float Scale = 0.1;
+	
+		while( !Obj_IsDeleted( Shot_Obj ) ){
+			
+			Shot_X = ObjMove_GetX( Shot_Obj );
+			Shot_Y = ObjMove_GetY( Shot_Obj );
+			
+			yield;
+		}	
+			
+		let E_Impact = Render2D_Texture_A1( PL_Tex_Reimu, [ 32, 191, 48, 207 ], Shot_X, Shot_Y, 2, 0.47 );
+		ObjRender_SetBlendType( E_Impact, BLEND_ADD_ARGB );
+		
+		ObjSprite2D_SetDestCenter( E_Impact );
+		T_FadeOut_Delete( E_Impact, 30, 255 );
+		
+		while( !Obj_IsDeleted( E_Impact ) ){
+			
+			ObjRender_SetPosition( E_Impact, ObjRender_GetX( E_Impact ), ObjRender_GetY( E_Impact ) - 1 , 0 );
+			ObjRender_SetScaleXYZ( E_Impact, Scale, Scale, Scale );
+			
+			Scale += 0.1;
+			
+			yield;
+			
+		}	
+	
+	}	
+
+}	
+
+task T_Reimu_Shot_Needle( X, Y, Speed, Angle, Dmg ){
+	
+	float Shot_X = 0;
+	float Shot_Y = 0;
+	
+	let Shot_Obj = CreatePlayerShotA1( X, Y, Speed, Angle, Dmg, 2, 6 );
+	Obj_SetRenderPriorityI( Shot_Obj, 47 );	
+	
+	//T_Homing( Shot_Obj );
+	
+	T_Impact( Shot_Obj );
+	
+	task T_Impact( Shot_Obj ){
+	
+		float Scale = 0.1;
+	
+		while( !Obj_IsDeleted( Shot_Obj ) ){
+			
+			Shot_X = ObjMove_GetX( Shot_Obj );
+			Shot_Y = ObjMove_GetY( Shot_Obj );
+			
+			yield;
+		}	
+			
+		let E_Impact = Render2D_Texture_A1( PL_Tex_Reimu, [ 96, 144, 112, 208 ], Shot_X, Shot_Y, 2, 0.47 );
+		ObjRender_SetBlendType( E_Impact, BLEND_ADD_ARGB );
+		
+		ObjRender_SetAngleZ( E_Impact, ObjRender_GetAngleZ( E_Impact ) + prand( -10, 10 ));
+		
+		ObjSprite2D_SetDestCenter( E_Impact );
+		T_FadeOut_Delete( E_Impact, 30, 255 );
+		
+		while( !Obj_IsDeleted( E_Impact ) ){
+			
+			ObjRender_SetPosition( E_Impact, ObjRender_GetX( E_Impact ), ObjRender_GetY( E_Impact ) - 1 , 0 );
+			ObjRender_SetScaleXYZ( E_Impact, Scale, Scale, Scale );
+			
+			Scale += 0.1;
+			
+			yield;
+			
+		}	
+	
+	}	
+
+}	
+
+task T_Reimu_Shot_Fam( X, Y, Speed, Angle, Dmg ){
+	
+	float Shot_X = 0;
+	float Shot_Y = 0;
+	
+	let Shot_Obj = CreatePlayerShotA1( X, Y, Speed, Angle, Dmg, 2, 7 );
+	Obj_SetRenderPriorityI( Shot_Obj, 47 );
+	ObjMove_AddPatternA2( Shot_Obj, 1, NO_CHANGE, NO_CHANGE, 0.05, 11, 0 );	
+
+	T_GrowToScale_A1( Shot_Obj, 20, 1 );
+	
+	
+	T_Homing( Shot_Obj );
+	
+	//T_Impact( Shot_Obj );
+	
+	task T_Impact( Shot_Obj ){
+	
+		float Scale = 0.1;
+	
+		while( !Obj_IsDeleted( Shot_Obj ) ){
+			
+			Shot_X = ObjMove_GetX( Shot_Obj );
+			Shot_Y = ObjMove_GetY( Shot_Obj );
+			
+			yield;
+		}	
+			
+		let E_Impact = Render2D_Texture_A1( PL_Tex_Reimu, [ 32, 191, 48, 207 ], Shot_X, Shot_Y, 2, 0.47 );
+		ObjRender_SetBlendType( E_Impact, BLEND_ADD_ARGB );
+		
+		ObjSprite2D_SetDestCenter( E_Impact );
+		T_FadeOut_Delete( E_Impact, 30, 255 );
+		
+		while( !Obj_IsDeleted( E_Impact ) ){
+			
+			ObjRender_SetPosition( E_Impact, ObjRender_GetX( E_Impact ), ObjRender_GetY( E_Impact ) - 1 , 0 );
+			ObjRender_SetScaleXYZ( E_Impact, Scale, Scale, Scale );
+			
+			Scale += 0.1;
+			
+			yield;
+			
+		}	
+	
+	}	
+
+}	
+
+//---------------------------------------------------
+
+task T_Bomb_Reimu(){
+	
+	Can_Fire = false;
+	SetPlayerInvincibilityFrame( 400 );
+	
+	T_Blink();
+	
+	ascent( a in 0..6 ){
+		
+		T_Bomb_Effect( 90 + 60 * a, a );
+		
+	}		
+	
+	wait( 800 );
+	
+	Can_Fire = true;
+	Obj_Delete( GetSpellManageObject() );
+	//Is_Bomb_Active = false;
+	
+	task T_Bomb_Effect( Angle, Color ){
+		
+		let Spell_Obj = CreatePlayerShotA1( GetPlayerX(), GetPlayerY(), rand( 0, 1 ), rand( -150, -30 ) , 6, 9999, 50 );
+		//-----
+		ObjShot_SetEraseShot( Spell_Obj, true );
+		ObjShot_SetSpellFactor( Spell_Obj, true );
+		ObjShot_SetAutoDelete( Spell_Obj, false );
+		ObjShot_SetSpellResist( Spell_Obj, true );	
+		Obj_SetVisible( Spell_Obj, false );		
+		//-----
+		
+		float X = GetPlayerX();
+		float Y = GetPlayerY();	
+
+		float PL_X = GetPlayerX();
+		float PL_Y = GetPlayerY();		
+
+		float X_Radius = GetPlayerX();
+		float Y_Radius = GetPlayerY();			
+			
+		float Radius = 128;
+		
+		//let Effect_Obj = RenderImg2D_A1( PL_Bomb_Tex, [ 128 * ( Color * 1 ), 0, 128 * ( Color + 1 * 1 ), 128 ], PL_X, PL_Y, BLEND_ADD_ARGB, 1, 0.45 );
+		let Effect_Obj = Render2D_Texture_A1( PL_Tex_Reimu_Bomb, [ 128 * ( Color * 1 ), 0, 128 * ( Color + 1 * 1 ), 128 ], GetPlayerX(), GetPlayerY(), 1, 0.45  );
+		ObjRender_SetBlendType( Effect_Obj, BLEND_ADD_ARGB );
+		
+		//Trail
+		
+		async{
+			
+			async{
+				
+				while( !Obj_IsDeleted( Spell_Obj ) ){
+					
+					int Trail_Obj = Render2D_Texture_A1( PL_Tex_Reimu_Bomb, [ 128 * ( Color * 1 ), 128, 128 * ( Color + 1 * 1 ), 256 ], ObjRender_GetX( Spell_Obj ), ObjRender_GetY( Spell_Obj ), 1, 0.44  );
+					T_FadeOut_Delete( Trail_Obj, 60, 155 );
+					ObjRender_SetBlendType( Trail_Obj, BLEND_ADD_ARGB );
+				
+					wait( 6 );
+				
+					yield;
+				}
+				
+			}	
+			
+			while( !Obj_IsDeleted( Spell_Obj ) ){
+				
+				ObjRender_SetPosition( Effect_Obj, ObjRender_GetX( Spell_Obj ), ObjRender_GetY( Spell_Obj ), 0 );	
+				
+				yield;
+			}			
+			
+		}	
+		
+		async{
+			
+			ascent( i in 0..200 ){
+			
+				if( Obj_IsDeleted( Spell_Obj ) ){ return; }
+			
+				PL_X = GetPlayerX;
+				PL_Y = GetPlayerY;	
+				
+				X = X_Radius + Radius * i/200 * cos( Angle );
+				Y = Y_Radius + Radius * i/200 *sin( Angle );
+				
+				X_Radius += ( GetPlayerX - X_Radius )/15;
+				Y_Radius += ( GetPlayerY - Y_Radius )/15;
+				
+				Angle += 8 - i * 7/200;
+				
+				ObjSpell_SetIntersectionCircle( Spell_Obj, X, Y, 128 );
+				ObjMove_SetPosition( Spell_Obj, X, Y );	
+				ObjRender_SetPosition( Effect_Obj, ObjRender_GetX( Spell_Obj ), ObjRender_GetY( Spell_Obj ), 0 );			
+			
+				yield;
+			
+			}
+			
+			ObjMove_AddPatternA2( Spell_Obj, 60, NO_CHANGE, NO_CHANGE, -0.1, 0, 0.1 );
+			T_Spell_Homing( Spell_Obj );
+
+			wait( rand( 1, 30 ) );	
+		}	
+		
+		task T_Spell_Homing( Shot_Obj ){
+			
+			loop( 300 ){
+				
+				let ID = GetIntersectionRegistedEnemyID;
+				
+				ascent( i in 0..length( ID ) ){
+					
+					if( !Obj_IsDeleted( ID[ i ]) ){
+						
+						float Angle = Homing_Angle( GetEnemyNearest( Shot_Obj ), ObjMove_GetAngle( Shot_Obj ), ( ObjMove_GetSpeed( Shot_Obj )/4 )  );
+						
+						ObjMove_SetAngle( Shot_Obj, Angle );
+						
+					}
+				}		
+				
+				ObjMove_SetSpeed( Shot_Obj, ObjMove_GetSpeed( Shot_Obj ) + 10/300 );
+				yield;
+				
+			}
+			
+			ObjMove_AddPatternA2( Shot_Obj, 1, NO_CHANGE, NO_CHANGE, -0.1, 0, 0 );
+			
+			wait( 200 );
+			
+			/*
+			
+			let Enemy_X = 0;
+			let Enemy_Y = 0;	
+				
+			let pos = GetEnemyIntersectionPosition( Enemy_X, Enemy_Y, 1 );
+			let RNG = rand( 10, 30 );
+				
+			if( length( pos ) > 0 ){
+					
+				Enemy_X = pos[0][0];
+				Enemy_Y = pos[0][1];
+			}	
+			else{
+					
+				Enemy_X = ObjMove_GetX( Shot_Obj );
+				Enemy_Y = ObjMove_GetY( Shot_Obj );
+					
+				ObjMove_AddPatternA2( Shot_Obj, 1, NO_CHANGE, NO_CHANGE, -0.1, 0, 0 );
+				//RNG = 90;
+					
+			}
+				
+
+			wait( rand( 1, 16 ) );
+			float X_Shot = ObjMove_GetX( Shot_Obj );
+			float Y_Shot = ObjMove_GetX( Shot_Obj );
+			
+			ascent( i in 0..60 ){
+				
+				Interpolate_Accelerate( X_Shot, Enemy_X, i/60 );
+				Interpolate_Accelerate( Y_Shot, Enemy_Y, i/60 );
+				ObjRender_SetPosition( Shot_Obj, X_Shot, Y_Shot, 0 );
+				
+				yield;
+				
+			}
+
+	
+			//ObjRender_SetDestSmoothStep( Shot_Obj, Enemy_X, Enemy_Y, RNG );
+			//ObjMove_SetSpeed( Shot_Obj, 0 );
+			//wait( RNG - 5 );
+			*/
+				
+			Obj_Delete( Shot_Obj );		
+			Obj_Delete( Effect_Obj );	
+			
+		}		
+				
+		
+	}	
+	
+}	
+
+
+//---------------------------------------------------
+
+function GetEnemyNearest( Obj ){
+	
+	let E_Pos = GetEnemyIntersectionPosition( ObjRender_GetX( Obj ), ObjRender_GetY( Obj ), 1 );
+	let Angle = atan2( E_Pos[0][1]-ObjRender_GetY( Obj ), E_Pos[0][0] - ObjRender_GetX( Obj ) );
+	return Angle;
+	
+}
+
+task T_Homing( Shot_Obj ){
+	
+	while( !Obj_IsDeleted( Shot_Obj ) ){
+		
+		let ID = GetIntersectionRegistedEnemyID;
+		
+		ascent( i in 0..length( ID ) ){
+			
+			if( !Obj_IsDeleted( ID[ i ]) ){
+				
+				float Angle = Homing_Angle( GetEnemyNearest( Shot_Obj ), ObjMove_GetAngle( Shot_Obj ), ( ObjMove_GetSpeed( Shot_Obj )/6 )^1  );
+				
+				ObjMove_SetAngle( Shot_Obj, Angle );
+				
+			}
+		}		
+		
+		ObjMove_SetSpeed( Shot_Obj, ObjMove_GetSpeed( Shot_Obj ) + 10/80 );
+		yield;
+	}
+}
+
+function Homing_Angle( To_Angle, Angle, D_Angle ){
+	
+	//I have created hell and now i can no longer unmake it 
+	//I may have uncreated hell 
+	To_Angle = NormalizeAngle( To_Angle );
+	Angle = NormalizeAngle( Angle );
+
+	float dist = AngularDistance( Angle, To_Angle );
+
+	if( (|dist|) < D_Angle ) { return( To_Angle ); }
+	
+	Angle += Float_GetSign( dist ) * D_Angle;
+
+	return NormalizeAngle( Angle );
+}
+
+//---------------------------------------------------

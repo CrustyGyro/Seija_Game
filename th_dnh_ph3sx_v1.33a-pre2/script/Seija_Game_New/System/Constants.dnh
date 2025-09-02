@@ -131,6 +131,9 @@
 	//---
 	
 	let SE_PL_SHOT_00		= "SE_PlayerShot_00.wav";
+	let SE_PL_SHOT_01		= "SE_PlayerShot_01.wav";
+	let SE_PL_SHOT_02		= "SE_PlayerShot_02.wav";
+	
 	let SE_GRAZE		= "SE_Graze.wav";
 	
 	//---
@@ -140,8 +143,16 @@
 	
 	let SE_SHOT_00		= "SE_Shot_00.wav";
 	let SE_SHOT_01		= "SE_Shot_01.wav";
+	let SE_SHOT_02		= "SE_Shot_02.wav";
 	let SE_SHOT_03		= "SE_Shot_03.wav";
+	let SE_SHOT_04		= "SE_Shot_04.wav";
+	let SE_SHOT_05		= "SE_Shot_05.wav";
+	let SE_SHOT_06		= "SE_Shot_06.wav";
 	
+	let SE_SPECIAL_00	= "SE_Special_00.wav";
+	let SE_SPECIAL_01	= "SE_Special_01.wav";
+	let SE_SPECIAL_02	= "SE_Special_02.wav";
+
 	let SE_CHIME_00		= "SE_Chime_00.wav";
 	let SE_CHIME_01		= "SE_Chime_01.wav";	
 	let SE_CHIME_02		= "SE_Chime_02.wav";
@@ -150,9 +161,13 @@
 	let SE_LASER_01		= "SE_Laser_01.wav";
 	let SE_LASER_02		= "SE_Laser_02.wav";
 	let SE_LASER_03		= "SE_Laser_03.wav";
+	let SE_LASER_04 	= "SE_Laser_04.wav";
+	let SE_LASER_05 	= "SE_Laser_05.wav";	
 
 	let SE_CHARGE_00	= "SE_Charge_00.wav";
 	let SE_CHARGE_01	= "SE_Charge_01.wav";	
+	let SE_CHARGE_02	= "SE_Charge_02.wav";	
+	let SE_CHARGE_03	= "SE_Charge_03.wav";	
 
 	let SE_BURST_00		= "SE_Burst.wav";
 	let SE_BURST_01		= "SE_BossBurst.wav";

@@ -85,6 +85,8 @@ task T_BG_Phase(){
 
 //--------------------------------------------------------------------------------------------------------------------------------------------
 
+
+
 task T_BuildStage{
 
 	int Render_P = 20;
@@ -118,7 +120,7 @@ task T_BuildStage{
 	
 	T_Scroll_A1( Water_D, [ 0, 0, 512*Cliff_Tiling, 512*Cliff_Tiling ], Cliff_Speed + 0.3, Camera_Speed );
     ObjRender_SetBlendType( Water_D, BLEND_ADD_ARGB ); 
-    ObjRender_SetAlpha( Water_D, 200 );
+    ObjRender_SetAlpha( Water_D, 155 );
     ObjRender_SetAngleX( Water_D, 90 );
 
 	int Water_E = Render_3D_Sprite_A1( Tex_Water_02, [ 0, 0, 1024, 1024 ], 0, 64, 0, Render_P, [ 1, 1, 1 ] );
@@ -126,7 +128,7 @@ task T_BuildStage{
 	
 	T_Scroll_A1( Water_E, [ 0, 0, 512*8, 512*8 ], -Cliff_Speed - 0.2, Camera_Speed );
     ObjRender_SetBlendType( Water_E, BLEND_SUBTRACT ); 
-    ObjRender_SetAlpha( Water_E, 200 );
+    ObjRender_SetAlpha( Water_E, 155 );
     ObjRender_SetAngleX( Water_E, 90 );
     ObjRender_SetAngleZ( Water_D, -90 );      
     //ObjRender_SetAngleZ( Water_D, 90 );    
@@ -147,6 +149,8 @@ task T_BuildStage{
 	//T_Scroll_A1( Cliff_B, [ 0, 0, 512*Cliff_Tiling, 512*Cliff_Tiling ], Cliff_Speed, Camera_Speed );
 	
 	yield;
+	
+	//T_PrimTube( Tex_Gradient_00, 0, 32, 128, 255, 32, 128, 128, CC_RED, 1, 1 );
 	
 	
 	while( GetCommonData( "BG_Phase", 0 ) < 3 ){ 

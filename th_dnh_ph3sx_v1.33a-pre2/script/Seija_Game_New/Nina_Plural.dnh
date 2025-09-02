@@ -4,7 +4,7 @@
 //#Background["./Stage/STG_03/STG_BG.dnh"];
 #Background["./Stage/STG_05/FW_Stage_5.dnh"];
 //#Background["./Stage/STG_03/STG_BG.dnh"];
-#Player[ "./Player/PL_Reimu.dnh" ]
+#Player[ "./Player/PL_Reimu.dnh", "./Player/PL_Marisa.dnh", "./Player/PL_Remilia.dnh" ]
 #System["./System/System_Main_Hud.dnh"]
 
 //-------------------------------------------------------------------------------

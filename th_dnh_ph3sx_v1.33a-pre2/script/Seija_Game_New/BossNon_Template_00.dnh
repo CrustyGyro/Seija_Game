@@ -1,8 +1,8 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
 #Title["BossNon_Template_00"]
-#Background["./Stage/BG/STG_00.dnh"];
-#Player[ "./Player/PL_Reimu.dnh" ]
+#Background["./Stage/STG_06/LOLK_Stage_6.dnh"];
+#Player[ "./Player/PL_Reimu.dnh", "./Player/PL_Marisa.dnh", "./Player/PL_Remilia.dnh" ]
 #System["./System/System_Main_Hud.dnh"]
 
 //--------------------------------------------------Variables------------------------------------------------------
@@ -49,7 +49,7 @@ let BossTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Test_Boss.
 
 	alternative(GetEventType()) 
 	case( EV_REQUEST_LIFE ) { 
-		SetScriptResult( 100 ); // 3000-4500 For Nons ( At 100% Damage Rate. )
+		SetScriptResult( 3000 ); // 3000-4500 For Nons ( At 100% Damage Rate. )
 	}
 	case( EV_REQUEST_TIMER ) { 
 		SetScriptResult( 45 ); //40-50 For standard Nons.
@@ -82,7 +82,7 @@ task T_Main {
 
 	NotifyEventAll( EV_BOSS_EFFECT, bossObj, CC_CYAN );
 	
-	//let Color = [ DOT_GRAY, DOT_RED, DOT_YELLOW, DOT_CYAN, DOT_PURPLE, DOT_GREEN ];
+	int[] Color = [ SHOT_SEIJA_FIREBALL_ALT_BLUE, SHOT_SEIJA_FIREBALL_ALT_RED, SHOT_SEIJA_FIREBALL_ALT_BLUE, SHOT_SEIJA_FIREBALL_ALT_RED, SHOT_SEIJA_FIREBALL_ALT_BLUE, SHOT_SEIJA_FIREBALL_ALT_RED ];
 
 	yield;
 
@@ -95,26 +95,50 @@ task T_Main {
 	
 	ObjEnemy_SetDamageRate( bossObj, 1, 1 );
 
+	/*
 	while( Boss_Is_Alive( bossObj ) ){
 		
-		int Shot_Count = 24;
+		int Shot_Count = 12;
+		float Shot_Dir = 0.5;
 
 		ascent ( a in 0..Shot_Count ) {
-			ascent ( b in 0..4 ) {
-				int Shot_Name_A = CreateShotA1( bossX, bossY, 2 + b *0.5/4, 90 + a * 360/Shot_Count + b *8/4, SHOT_BALL_RED, 10 );
-				int Shot_Name_B =CreateShotA1( bossX, bossY, 2 - b *0.5/4, 90 + a * 360/Shot_Count - b *8/4, SHOT_BALL_RED, 10 );
+			ascent ( c in 0..2 ) {
+				ascent ( b in 0..4 ) {
+					int Shot_Name_A = ShotR1( bossX, bossY, 32, 2 + b *0.5/4, GetAngleToPlayer( bossObj ) + a * 360/Shot_Count + b *16/4 + c * 360/2, Color[c], 10, DELAY_CLOUD_RED );
+					//int Shot_Name_B =CreateShotA1( bossX, bossY, 2 - b *0.5/4, 90 + a * 360/Shot_Count - b *8/4, 2089, 10 );
 
-				ObjMove_AddPatternA2( Shot_Name_A, 30, 0, NO_CHANGE, 0.01, 6, 0 );
-				ObjMove_AddPatternA2( Shot_Name_B, 30, 0, NO_CHANGE, 0.01, 6, 0 );
+					//T_ManageShot( Shot_Name_A );
+					ObjMove_AddPatternA2( Shot_Name_A, 30, 0, NO_CHANGE, 0.01, 6, Shot_Dir );
+					//ObjMove_AddPatternA2( Shot_Name_B, 30, 0, NO_CHANGE, 0.01, 6, 0 );
+				}
+
+				Shot_Dir = -Shot_Dir;
 			}
-
-			wait( 4 );
+			wait( 8 );
 		}	
 
-		wait( 70 );
+		wait( 1 );
 		yield;
 
 	}
+	*/
+
+	task T_ManageShot( Obj ){
+
+		wait( 30 );
+
+		while( !Obj_IsDeleted( Obj )){
+
+			ObjMove_AddPatternA2( Obj, 0, -2, NO_CHANGE, 0.05, 6, 0 );
+			wait( 120 );
+
+
+			yield;
+		}
+
+			
+	}
+
 }	
 
 

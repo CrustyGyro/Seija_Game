@@ -172,6 +172,9 @@ task T_Boss_Shot_B(){
         //int Shot_Dir_Sub = 45;
         
         loop( 50 ){ 
+
+            T_PlaySE( SE_SHOT_01, 28 );
+
             if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){ 
                 ascent (i in 0..16) {
                     int Shot_Obj_A =  ShotR1( bossX, bossY + 32, 32, 0, -90 - 90 + i * 180/16 - 45 * sin( Frame_Sub ), SHOT_ICE_RED, 10, SHOT_ICE_RED );

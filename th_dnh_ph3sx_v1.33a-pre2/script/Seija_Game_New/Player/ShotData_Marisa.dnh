@@ -1,19 +1,16 @@
 //----------------------------------
 
-shot_image  = "./../Resource/img/Player/PL_Marisa.png"
+shot_image  = "./../Resource/Textures/Player/PL_Marisa.png"
 
 //----------------------------------
 
-//--Stars--
+ShotData { id = 1 rect = ( 0, 160, 16, 208 ) render = ADD_ARGB alpha = 155 collision = 16 } 	//-Missile-
+ShotData { id = 2 rect = ( 0, 144, 16, 160 ) render = ADD_ARGB alpha = 255 collision = 16 } 	//-Star-
+ShotData { id = 3 rect = ( 256, 0, 272, 512 ) render = ADD_ARGB alpha = 255 }   				//--Start Laser--
+ShotData { id = 4 rect = ( 16, 160, 32, 176 ) render = ADD_ARGB alpha = 255 }   				//-Dummy Laser-
 
-ShotData { id = 1 rect = ( 160, 144, 176, 160 ) render = ALPHA alpha = 120 collision = 15 } 	//-Green-
-ShotData { id = 2 rect = ( 176, 144, 192, 160 ) render = ALPHA alpha = 120 collision = 15 }		//-Red-
-ShotData { id = 3 rect = ( 192, 144, 208, 160 ) render = ALPHA alpha = 120 collision = 15 }		//-Blue-
+//----------------------------------
 
-//--Arrows--
+//--Reimu Bomb Dummy Bullet--
 
-ShotData { id = 4 rect = ( 208, 144, 224, 176 ) render = ALPHA alpha = 120 collision = 18 } 	//-Green-
-ShotData { id = 5 rect = ( 224, 144, 240, 176 ) render = ALPHA alpha = 120 collision = 18 }		//-Red-
-ShotData { id = 6 rect = ( 240, 144, 256, 176 ) render = ALPHA alpha = 120 collision = 18 }		//-Blue-
-
-ShotData { id = 1 rect = ( 144, 144, 160, 176 ) render = ALPHA alpha = 120 collision = 24 }   	//-Missile-
+ShotData { id = 50 rect = ( 0, 0, 0, 0 ) render = ALPHA alpha = 120 collision = 64 } 	//-Pink-

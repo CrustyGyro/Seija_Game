@@ -59,7 +59,7 @@ let CutinTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Cutin/Cur
 
 	alternative(GetEventType()) 
 	case( EV_REQUEST_LIFE ) { 
-		SetScriptResult( 2500 ); // 3000-4500 For Nons ( At 100% Damage Rate. ) 2000
+		SetScriptResult( 780 ); // 3000-4500 For Nons ( At 100% Damage Rate. ) 2000
 	}
 	case( EV_REQUEST_TIMER ) { 
 		//SetScriptResult( 50 );
@@ -95,7 +95,7 @@ task T_InitSpell(){
 	
 	//let CutinTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Cutin/CurseOfRa.png";
 	
-	T_CallSpell_A1( "Peenid Sign: \"Peenid Spellcard\"", 0, "Normal", objScene );
+	T_CallSpell_A1( "\"Flooding Oubliette\"", 0, "Normal", objScene );
 	//T_Call_Spell_Cutin( CutinTex, [ 0, 0, 200, 384 ], 1, CC_BLUE );	
 	
 	ObjEnemyBossScene_StartSpell( objScene );
@@ -119,56 +119,109 @@ task T_Main {
 	
 	wait( 160 );
 
-	ObjEnemy_SetDamageRate( bossObj, 0.3, 0.8 );
+	ObjEnemy_SetDamageRate( bossObj, 0.3, 0.4 );
 	
 	T_Boss_Shot_A;
-	//T_Boss_Shot_C;
+	T_Boss_Shot_C;
 	
 }	
+
+task T_Boss_Shot_C{
+
+	int[] Color = [ SHOT_KNIFE_RED, SHOT_KNIFE_ORANGE, SHOT_SEIJA_FIREBALL_ALT_BLUE, SHOT_SEIJA_FIREBALL_ALT_RED, SHOT_SEIJA_FIREBALL_ALT_BLUE, SHOT_SEIJA_FIREBALL_ALT_RED ];
+
+
+	while( Boss_Is_Alive( bossObj ) ){
+		
+		int Shot_Count = 8;
+		float Shot_Dir = 0.1;
+
+		ascent ( a in 0..Shot_Count ) {
+			ascent ( c in 0..2 ) {
+				ascent ( b in 0..2 ) {
+					int Shot_Name_A = ShotR1( bossX, bossY, 32, 2 + b *0.5/4, GetAngleToPlayer( bossObj ) + a * 360/Shot_Count + b *6/2 + c * 360/2, Color[c], 10, DELAY_CLOUD_RED );
+					//int Shot_Name_B =CreateShotA1( bossX, bossY, 2 - b *0.5/4, 90 + a * 360/Shot_Count - b *8/4, 2089, 10 );
+
+					//T_ManageShot( Shot_Name_A );
+					ObjMove_AddPatternA2( Shot_Name_A, 30, 0, NO_CHANGE, 0.01, 6, Shot_Dir );
+					//ObjMove_AddPatternA2( Shot_Name_B, 30, 0, NO_CHANGE, 0.01, 6, 0 );
+				}
+
+				Shot_Dir = -Shot_Dir;
+			}
+			wait( 8 );
+		}	
+
+		wait( 1 );
+		yield;
+
+	}
+
+}
 
 task T_Boss_Shot_A{
 	
 	float Frame = 0;
+	float Pattern_Time = 0;
 	float Frame_B = 0;
-	float Base_Y = Get_CenterY;
+	float Base_Y = 0;
 	
-	async{
-		
-		while( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ) {
-		
-			ascent( i in 0..1 ){
+	loop{
 
-				int Shot_A = ShotR1( 0, Base_Y - 64 + i * Get_MaxY/1, 1, 2, 0 + 2 * sin( Frame_B*35 ), SHOT_BALL_DAQUA, 10, SHOT_CLOUD_AQUA );
-				int Shot_B = ShotR1( Get_MaxX, Base_Y - 64 + i * Get_MaxY/1, 1, 2.2, 180 - 2 * sin( Frame_B*25 ), SHOT_BALL_AQUA, 10, SHOT_CLOUD_AQUA );
-				ObjRender_SetBlendType( Shot_A, BLEND_ADD_ARGB );
-				ObjRender_SetBlendType( Shot_B, BLEND_ADD_ARGB );
+		Frame_B = 0;
+		Frame = 0;
+		Pattern_Time = 0;
 
+		loop( 100 ){
 
-			}	
-			
-			
-			//Base_Y--;
-			Frame_B++;
-			wait( 4 );
-		}
-	}	
-	
-	while( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ) {
+			descent( a in 0..1 ){
+				ascent( i in 0..6 ){
 
-		descent( a in 0..1 ){
-			ascent( i in 0..6 ){
+					int Shot_A = ShotR1( -24, Base_Y + i * Get_MaxY/5, 1, 1.6, 0 + Frame_B * sin( Frame ) + a * 4/2, SHOT_BALL_DAQUA, 10, SHOT_CLOUD_AQUA );
+					//int Shot_B = ShotR1( -24, Base_Y + i * Get_MaxY/5, 1, 1.2, 180 - 8 * sin( Frame ) + a * 4/2, SHOT_BALL_AQUA, 10, SHOT_CLOUD_AQUA );
+					//int Shot_B = ShotR1( Get_MaxX, Base_Y - 64 + i * Get_MaxY/1, 1, 2.2, 180 - 2 * sin( Frame_B*25 ), SHOT_BALL_AQUA, 10, SHOT_CLOUD_AQUA );
+					ObjRender_SetBlendType( Shot_A, BLEND_ADD_ARGB );
+					//ObjRender_SetBlendType( Shot_B, BLEND_ADD_ARGB );
 
-				int Shot_A = ShotR1( -24, Base_Y - 24 + i * Get_MaxY/6, 1, 1.4, 0 + 8 * sin( Frame*12 ) + a * 4/2, SHOT_BALL_DAQUA, 10, SHOT_CLOUD_AQUA );
-				int Shot_B = ShotR1( Get_MaxX +24, Base_Y - 24 + i * Get_MaxY/6, 1, 1.2, 180 - 8 * sin( Frame*6 ) + a * 4/2, SHOT_BALL_AQUA, 10, SHOT_CLOUD_AQUA );
-				//int Shot_B = ShotR1( Get_MaxX, Base_Y - 64 + i * Get_MaxY/1, 1, 2.2, 180 - 2 * sin( Frame_B*25 ), SHOT_BALL_AQUA, 10, SHOT_CLOUD_AQUA );
-				ObjRender_SetBlendType( Shot_A, BLEND_ADD_ARGB );
-				ObjRender_SetBlendType( Shot_B, BLEND_ADD_ARGB );
-
+				}
 			}
-		}
-		Frame++;
+			if( Frame_B <= 32 ){ 
+				Frame_B += 32/100;
+			}
+			Frame += 10;
+			Pattern_Time += 4/120;
 
-		wait( 32 );
+			wait( 8 - Pattern_Time );
+		}
+
+		Frame_B = 0;
+		Frame = 0;
+		Pattern_Time = 0;
+
+		loop( 100 ){
+
+			descent( a in 0..1 ){
+				ascent( i in 0..6 ){
+
+					int Shot_A = ShotR1( GetStgFrameWidth() + 24, Base_Y + i * Get_MaxY/5, 1, 1.6, 180 - Frame_B * sin( Frame ) + a * 4/2, SHOT_BALL_DAQUA, 10, SHOT_CLOUD_AQUA );
+					//int Shot_B = ShotR1( -24, Base_Y + i * Get_MaxY/5, 1, 1.2, 180 - 8 * sin( Frame ) + a * 4/2, SHOT_BALL_AQUA, 10, SHOT_CLOUD_AQUA );
+					//int Shot_B = ShotR1( Get_MaxX, Base_Y - 64 + i * Get_MaxY/1, 1, 2.2, 180 - 2 * sin( Frame_B*25 ), SHOT_BALL_AQUA, 10, SHOT_CLOUD_AQUA );
+					ObjRender_SetBlendType( Shot_A, BLEND_ADD_ARGB );
+					//ObjRender_SetBlendType( Shot_B, BLEND_ADD_ARGB );
+
+				}
+			}
+			if( Frame_B <= 32 ){ 
+				Frame_B += 32/100;
+			}
+			Frame += 10;
+			Pattern_Time += 4/120;
+
+			wait( 8 - Pattern_Time );
+		}
+
+		yield;
+
 	}
 }
 

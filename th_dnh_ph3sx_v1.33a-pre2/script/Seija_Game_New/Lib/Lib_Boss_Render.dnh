@@ -31,6 +31,32 @@ task Init_Boss_Prifma( Obj ){
 
 //-----------------------
 
+task Init_Boss_Eternity( Obj ){
+	
+	let BossTex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/TH16_Eternity.png";
+	
+	//ObjPrim_SetTexture( Obj, BossTex );
+	//Render_Boss_Basic( Obj, BossTex, 11, 4, 4, 64, 96 );
+	T_Boss_Name( Obj, 0, "Eternity Larva", [ 155, 255, 155 ] );
+	//let BossTex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/TH13_Miko.png";
+	//ObjPrim_SetTexture( Obj, BossTex );	
+	
+	//Render_Idle_A1( Obj, 0, 0, 11, 64, 96, 6 );
+	Render_Boss_Basic( Obj, BossTex, 5, 3, 5, 80, 96 );
+	ObjRender_SetTextureFilter( Obj, FILTER_NONE, FILTER_NONE, FILTER_NONE );
+	//ObjPrim_SetTexture( Obj, BossTex );
+	
+	//ObjSprite2D_SetSourceRect( Obj, 0, 0, 128, 128 );
+	//ObjSprite2D_SetDestCenter( Obj );
+	
+	
+	ObjRender_SetScaleXYZ( Obj, 1, 1, 1 );
+	
+}	
+
+//-----------------------
+
+
 task Init_Boss_Toyohime( Obj ){
 	
 	let BossTex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/TH20_Toyohime.png";

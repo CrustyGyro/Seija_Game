@@ -131,12 +131,12 @@ task T_Main {
 	while( Boss_Is_Alive( bossObj ) ){
 		
 		T_Create_Pillar( GetStgFrameWidth(), GetStgFrameHeight(), 0, GetStgFrameWidth()/2 + 32, GetStgFrameWidth()/2 + 128, 0 );
-		//Do Stuff, fire some bullets or something.
-		wait( 400 );
+        //ObjMove_SetDestAtFrame( bossObj, GetStgFrameWidth/2 + 64, bossY, 300, LERP_SMOOTHER );
+		wait( 360 );
 
 		T_Create_Pillar( GetStgFrameWidth(), GetStgFrameHeight(), 0, GetStgFrameWidth()/2 - 128, GetStgFrameWidth()/2 - 32, 0 );
-		//Do Stuff, fire some bullets or something.
-		wait( 400 );		
+        //ObjMove_SetDestAtFrame( bossObj, GetStgFrameWidth/2 - 64, bossY, 300, LERP_SMOOTHER );
+		wait( 360 );		
 
 	}
 }	
@@ -158,15 +158,20 @@ task T_Create_Pillar( X, Y, Angle, X_Dest_Left, X_Dest_Right, Y_Offset ) {
 
 		float Bounce_Count = 1;
 			
-		/*
-		loop( 10 ){
+		
+		loop( 1 ){
 
 			//float Bounce_Count = 1;
 
-			ascent (i in 0..24) {
-				ascent (a in 0..1) {
+			float Angle_RNG = rand( 0, 90 );
 
-					let Bouncy_Shot_A = ShotR1( bossX, bossY, 32, 1, i * 360/24 + a * 8/1, SHOT_SEIJA_FIREBALL_BLUE, 0, SHOT_ORB_RED );
+
+			ascent (i in 0..32) {
+
+				ascent (a in 0..2) {
+
+					let Bouncy_Shot_A = ShotR1( bossX, bossY, 16, 2, -90 - i * 360/32 + a * 360/2, SHOT_BALL_AURA_RED, 8, SHOT_ORB_RED );
+					//ObjMove_AddPatternA2( Bouncy_Shot_A, 1, 1, //GetAngleToPlayer( Bouncy_Shot_A ), 0.01, 8 , 0 );
 					//T_BulletTrail( Bouncy_Shot_A, CC_ORANGE, 2, SHOT_SEIJA_FIREBALL_RED, 0.5 );
 					T_Manage_Collision( Laser_Start, Laser_End, Bouncy_Shot_A, Bounce_Count );
 					T_Manage_Collision( Laser_Start_B, Laser_End_B, Bouncy_Shot_A, Bounce_Count );
@@ -175,14 +180,14 @@ task T_Create_Pillar( X, Y, Angle, X_Dest_Left, X_Dest_Right, Y_Offset ) {
 
 				}
 
-				wait( 10 );
+				yield;
 			}
 
 			Bounce_Count = 1;
 
-			wait( 10 );
+			wait( 1 );
+                        
 		}	
-		*/
 
 		task T_Manage_Collision( Laser_Start, Laser_End, Shot_Obj, Bounce_Count){
 			
@@ -213,13 +218,14 @@ task T_Create_Pillar( X, Y, Angle, X_Dest_Left, X_Dest_Right, Y_Offset ) {
 						Bounce_Count -= 1;
 						Obj_SetValue( Shot_Obj, "Bounced", true );
 						//Bounce_Colors += 1;
-						ObjMove_AddPatternA2( Shot_Obj, 1, 0, GetAngleToPlayer( Shot_Obj ), 0.01, 8 , 0 );
+						ObjMove_AddPatternA2( Shot_Obj, 1, 1, 90 + rand( -16, 16 ), 0.01, 1 , 0 );
 						//ObjMove_SetSpeed( Shot_Obj, ObjMove_GetSpeed( Shot_Obj ) + 0.3 );
 						//ObjMove_SetAngle( Shot_Obj, GetAngleToPlayer( Shot_Obj ) + rand( -5, 5 ) ); 
-						ObjShot_SetGraphic( Shot_Obj, SHOT_SEIJA_FIREBALL_RED );
+						T_DeleteShot_Effect( Shot_Obj );
+						ObjShot_SetGraphic( Shot_Obj, SHOT_BALL_AURA_DAQUA );
 						//T_BulletTrail( Shot_Obj, CC_ORANGE, 3, SHOT_BALL_RED, 1 );
 						//if( Bounce_Count < 0 ){ T_DeleteShot_Effect( Shot_Obj ); Obj_Delete( Shot_Obj ); break; }
-						//wait( 30 );
+						wait( 10 );
 						break;
 					
 					}	
@@ -360,12 +366,14 @@ task T_Create_Pillar( X, Y, Angle, X_Dest_Left, X_Dest_Right, Y_Offset ) {
 		}		
 	
 	
-		wait( Time*1.5 );
+		wait( 120 );
 		
-		ascent( i in 0..400 ){
+        //ObjMove_SetDestAtFrame( bossObj, Offset, bossY, 300, LERP_SMOOTHER );
+
+		ascent( i in 0..300 ){
 			
-			ObjMove_SetX( Start, Interpolate_Smoother( Init_X, Offset, i/400 ));
-			ObjMove_SetX( End, Interpolate_Smoother( Init_X, Offset, i/400 ));
+			ObjMove_SetX( Start, Interpolate_Smoother( Init_X, Offset, i/300 ));
+			ObjMove_SetX( End, Interpolate_Smoother( Init_X, Offset, i/300 ));
 			//ObjMove_SetY( Dummy_Shot, Interpolate_Linear( Y, Get_CenterY, i/1000 ));
 				
 			yield;

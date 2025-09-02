@@ -1,0 +1,37 @@
+//----------------------------------
+
+shot_image  = "./../Resource/Textures/Player/PL_Remi.png"
+
+//----------------------------------
+
+//--Amulets--
+
+ShotData { id = 1 rect = ( 0, 144, 16, 192 ) render = ALPHA alpha = 120 collision = 24 } 	//-Pink-
+ShotData { id = 2 rect = ( 16, 144, 32, 192 ) render = ALPHA alpha = 120 collision = 24 }	//-Blue-
+ShotData { id = 15 rect = ( 0, 176, 16, 208 ) render = ALPHA alpha = 120 collision = 18 } //-Red With Outline-
+
+//--Amulets( Homing )--
+
+ShotData { id = 3 rect = ( 48, 144, 64, 160 ) render = ALPHA alpha = 120 collision = 15 }	//-Blue-
+ShotData { id = 4 rect = ( 64, 144, 80, 160 ) render = ALPHA alpha = 120 collision = 15 }	//-Yellow-
+ShotData { id = 7 rect = ( 0, 208, 16, 240 ) render = ALPHA alpha = 120 collision = 24 }	//-Blue-
+
+//--Remi Needles--
+
+ShotData { id = 5 rect = ( 208, 144, 240, 208 ) render = ADD_ARGB alpha = 120 collision = 24 }	//-Red-
+ShotData { id = 6 rect = ( 240, 144, 256, 192 ) render = ADD_ARGB alpha = 120 collision = 24 }	//-Orange-
+
+//--Spring--
+
+ShotData { id = 8 rect = ( 176, 144, 208, 176 ) render = ADD_ARGB alpha = 120 collision = 28 } //Pink Petal
+
+//--Fangs--
+
+ShotData { id = 9 rect = ( 0, 176, 16, 208 ) render = ALPHA alpha = 130 collision = 18 }
+ShotData { id = 10 rect = ( 0, 176, 16, 208 ) render = ALPHA alpha = 130 collision = 18 }
+
+//----------------------------------
+
+//--Reimu Bomb Dummy Bullet--
+
+ShotData { id = 50 rect = ( 0, 0, 0, 0 ) render = ALPHA alpha = 120 collision = 64 } 	//-Pink-

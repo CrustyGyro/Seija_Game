@@ -171,7 +171,7 @@ task T_Boss_Shot_A(){
     while( Boss_Is_Alive( bossObj ) ){
 
         //-------------------------------------------------------------------------------
-        
+        /*
         ascent ( a in 0..50 ) {
             ascent ( i in 0..55 ) {
                 ascent ( b in 0..1 ) {
@@ -179,6 +179,7 @@ task T_Boss_Shot_A(){
                     ObjRender_SetBlendType( ShotObj_A, BLEND_ADD_ARGB );
                     ObjRender_SetAlpha( ShotObj_A, 155 );
                     ObjShot_SetIntersectionEnable( ShotObj_A, false );
+					ObjRender_SetColor( ShotObj_A, 255, 0, 155 );
                 }
             }
 
@@ -199,22 +200,161 @@ task T_Boss_Shot_A(){
 
         wait( 100 );
         
-        //-------------------------------------------------------------------------------
+        */
+		float Base_Angle = 0;
 
+		loop( 8 ){
+			ascent ( a in 0..6 ) {
+				ascent ( i in 0..12 ) {
+					ascent ( b in 0..1 ) {
+						int ShotObj_A = ShotR2( bossX, bossY, 32, 32, 8, Base_Angle + i * 360/12 + a * 6/6, SHOT_RICE_INVERT_PURPLE, 0, SHOT_RICE_INVERT_PURPLE );
+						ObjRender_SetBlendType( ShotObj_A, BLEND_ADD_ARGB );
+						ObjRender_SetAlpha( ShotObj_A, 155 );
+						ObjShot_SetIntersectionEnable( ShotObj_A, false );
+						ObjRender_SetColor( ShotObj_A, 255, 0, 155 );
+					}
+				}
+
+				wait( 2 );
+			}
+
+			Base_Angle += 45;
+		}
+        T_PlaySE( SE_CHARGE_00, 30 );
+        T_Charge_A1( bossObj, 20, "Petal", CC_PINK );
+
+        wait( 100 );	
+
+		Base_Angle = 0;
+
+		loop( 8 ){
+			ascent ( a in 0..6 ) {
+				ascent ( i in 0..12 ) {
+					ascent ( b in 0..1 ) {
+						int ShotObj_A = ShotR2( bossX, bossY, 32, 32, 8, Base_Angle + i * 360/12 + a * 6/6, SHOT_RICE_INVERT_PURPLE, 0, SHOT_RICE_INVERT_PURPLE );
+						//ObjRender_SetBlendType( ShotObj_A, BLEND_ADD_ARGB );
+						//ObjRender_SetAlpha( ShotObj_A, 155 );
+						//ObjShot_SetIntersectionEnable( ShotObj_A, false );
+						//ObjRender_SetColor( ShotObj_A, 255, 0, 155 );
+					}
+				}
+
+				wait( 2 );
+			}
+
+			Base_Angle += 45;
+		}			
+        //-------------------------------------------------------------------------------
+		/*
         float Angle_Shot = 0;
 
         ascent ( a in 0..20 ) {
             ascent ( i in 0..25 ) {
                 ascent ( b in 0..1 ) {
-                    int ShotObj_A = ShotR2( bossX, bossY, 32, 32, 6, i * 360/25 + a * 45/20, SHOT_RICE_INVERT_PURPLE, 0, SHOT_RICE_INVERT_PURPLE );
+                    int ShotObj_A = ShotR2( bossX, bossY, 32, 32, 8.5, i * 360/25 + a * 16/20, SHOT_RICE_INVERT_PURPLE, 0, SHOT_RICE_INVERT_PURPLE );
                     ObjRender_SetBlendType( ShotObj_A, BLEND_ADD_ARGB );
                     ObjRender_SetAlpha( ShotObj_A, 155 );
                     ObjShot_SetIntersectionEnable( ShotObj_A, false );
+					ObjRender_SetColor( ShotObj_A, 255, 0, 155 );
                 }
             }
 
             wait( 2 );
-        }        
+        }     
+
+       // float Angle_Shot = 0;
+
+        T_PlaySE( SE_CHARGE_00, 30 );
+        T_Charge_A1( bossObj, 20, "Petal", CC_PINK );
+
+        wait( 60 );    		
+
+        ascent ( a in 0..20 ) {
+            ascent ( i in 0..25 ) {
+                ascent ( b in 0..1 ) {
+                    int ShotObj_A = ShotR2( bossX, bossY, 32, 32, 8.5, i * 360/25 + a * 16/20, SHOT_RICE_PINK, 0, SHOT_RICE_PINK );
+
+                }
+            }
+
+            wait( 2 );
+        }    	
+
+		wait( 60 );    
+
+        descent ( a in 0..20 ) {
+            ascent ( i in 0..25 ) {
+                ascent ( b in 0..1 ) {
+                    int ShotObj_A = ShotR2( bossX, bossY, 32, 32, 8.5, i * 360/25 + a * 16/20, SHOT_RICE_INVERT_PURPLE, 0, SHOT_RICE_INVERT_PURPLE );
+                    ObjRender_SetBlendType( ShotObj_A, BLEND_ADD_ARGB );
+                    ObjRender_SetAlpha( ShotObj_A, 155 );
+                    ObjShot_SetIntersectionEnable( ShotObj_A, false );
+					ObjRender_SetColor( ShotObj_A, 255, 0, 155 );
+                }
+            }
+
+            wait( 2 );
+        }  
+
+        T_PlaySE( SE_CHARGE_00, 30 );
+        T_Charge_A1( bossObj, 20, "Petal", CC_PINK );
+
+        wait( 60 );    		
+
+        descent ( a in 0..20 ) {
+            ascent ( i in 0..25 ) {
+                ascent ( b in 0..1 ) {
+                    int ShotObj_A = ShotR2( bossX, bossY, 32, 32, 8.5, i * 360/25 + a * 16/20, SHOT_RICE_PINK, 0, SHOT_RICE_PINK );
+
+                }
+            }
+
+            wait( 2 );
+        }  		 
+
+		float X_Pos = GetPlayerX();
+		float Y_Pos = GetPlayerY();
+
+        //-------------------------------------------------------------------------------
+        */
+		/*
+		float X_Pos = GetPlayerX();
+		float Y_Pos = GetPlayerY();
+
+        ascent ( a in 0..6 ) {
+            ascent ( i in 0..20 ) {
+                ascent ( b in 0..1 ) {
+                    int ShotObj_A = ShotR2( X_Pos, Y_Pos, 64, 64, -0.5, i * 360/20 + a * 10/6, SHOT_RICE_INVERT_PURPLE, 0, SHOT_RICE_INVERT_PURPLE );
+					int ShotObj_B = ShotR2( X_Pos, Y_Pos, 70, 70, 0.5 , i * 360/20 - a * 10/6 , SHOT_RICE_INVERT_PURPLE, 0, SHOT_RICE_INVERT_PURPLE );
+                    ObjRender_SetBlendType( ShotObj_A, BLEND_ADD_ARGB );
+                    ObjRender_SetAlpha( ShotObj_A, 155 );
+                    ObjShot_SetIntersectionEnable( ShotObj_A, false );
+					ObjRender_SetColor( ShotObj_A, 255, 0, 155 );
+					ObjShot_SetDeleteFrame( ShotObj_A, 40 );
+                }
+            }
+
+            wait( 5 );
+        }	
+
+		wait( 60 );
+
+        ascent ( a in 0..6 ) {
+            ascent ( i in 0..20 ) {
+                ascent ( b in 0..1 ) {
+                    int ShotObj_A = ShotR2( X_Pos, Y_Pos, 64, 64, -0.5, i * 360/20 + a * 10/6, SHOT_RICE_INVERT_PURPLE, 0, SHOT_RICE_INVERT_PURPLE );
+					//int ShotObj_B = ShotR2( X_Pos, Y_Pos, 70, 70, 0.6 , i * 360/55, SHOT_RICE_INVERT_PURPLE, 0, SHOT_RICE_INVERT_PURPLE );
+                   // ObjRender_SetBlendType( ShotObj_A, BLEND_ADD_ARGB );
+                   // ObjRender_SetAlpha( ShotObj_A, 155 );
+                   // ObjShot_SetIntersectionEnable( ShotObj_A, false );
+					//ObjRender_SetColor( ShotObj_A, 255, 0, 155 );
+					//ObjShot_SetDeleteFrame( ShotObj_A, 40 );
+                }
+            }
+
+            wait( 5 );
+        }		
+		*/	  			   
         /*
         ascent ( i in 0..32 ) {
             ascent ( b in 0..32 ) {
@@ -232,9 +372,59 @@ task T_Boss_Shot_A(){
         wait( 60 );    
 
         */
-        wait( 300 );
+        wait( 120 );
 
     }
+
+
+}
+
+task T_Boss_Shot_B(){
+
+	while( Boss_Is_Alive( bossObj ) ){
+
+		ascent ( i in 0..25 ) {
+			int ShotObj_A = ShotR1( bossX, bossY, 32, 1, 90 + i * 360/25, SHOT_SEIJA_FIREBALL_RED, 0, SHOT_SEIJA_FIREBALL_RED );
+			//T_BulletTrail( ShotObj_A, CC_ORANGE, 2, SHOT_BALL_RED, 1.5 );
+			ObjMove_AddPatternA2( ShotObj_A, 1, 0, NO_CHANGE, 0.01, 6, 0 );
+
+			//yield;
+		}
+		wait( 80 );
+	}
+
+	task T_BulletTrail( Obj, Color, Rate, Graphic, Size ){
+
+		while( !Obj_IsDeleted( Obj )){
+
+			//int Shot_Name_A = ShotR1( ObjMove_GetX(Obj), ObjMove_GetY(Obj), 0, 1,  ObjMove_GetAngle(Obj) + 180 + rand( -32, 32 ), SHOT_BALL_PURPLE, 0, SHOT_BALL_PURPLE );
+			//ObjRender_SetBlendType( Shot_Name_A, BLEND_ADD_ARGB );
+			//ObjRender_SetColor( Shot_Name_A, 255, 255, 255 );
+			//ObjShot_SetDeleteFrame( Shot_Name_A, 1 );
+
+			int Shot_Name_B = ShotR1( ObjMove_GetX(Obj), ObjMove_GetY(Obj), 0, 1,  ObjMove_GetAngle(Obj) + 180 + rand( -32, 32 ), Graphic, 0, Graphic );
+			ObjRender_SetBlendType( Shot_Name_B, BLEND_ADD_ARGB );
+			ObjRender_SetColor( Shot_Name_B, Color[0], Color[1], Color[2] );
+			T_ManageTrail_Obj( Shot_Name_B );
+			ObjShot_SetDeleteFrame( Shot_Name_B, 1 );	
+			ObjShot_SetIntersectionEnable( Shot_Name_B, false );
+
+			wait( Rate );
+		}
+
+		task T_ManageTrail_Obj( Trail_Shot ){
+
+			ascent (i in 0..20) {
+				
+				ObjRender_SetScaleXYZ( Trail_Shot, Size - i * Size/20, Size - i * Size/20, Size - i * Size/20 );
+
+				yield;
+			}
+
+		}
+
+
+	}	
 
 
 }

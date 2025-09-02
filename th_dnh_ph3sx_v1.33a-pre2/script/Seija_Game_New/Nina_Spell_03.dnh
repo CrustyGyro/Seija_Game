@@ -2,7 +2,7 @@
 #ScriptVersion[3]
 #Title["Nina_Spell_03"]
 #Background["./Stage/STG_05/FW_Stage_5.dnh"];
-#Player[ "./Player/PL_Reimu.dnh" ]
+#Player[ "./Player/PL_Reimu.dnh", "./Player/PL_Remilia.dnh"]
 #System["./System/System_Main_Hud.dnh"]
 
 //--------------------------------------------------Variables------------------------------------------------------
@@ -16,6 +16,7 @@ int Dir_Switch = 1;
 
 //SetIntersectionVisualization( true );
 let CutinTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Cutin/FW_Boss_EX.png";
+
 
 //---------------------------------------------------Include-------------------------------------------------------
 
@@ -128,22 +129,44 @@ task T_Main {
 	
 	wait( 100 );
 
-	/*
+    async{
+
+        wait( 400 );
+
+        T_PlaySE( SE_CHARGE_00, 30 );
+        T_Charge_A1( bossObj, 20, "Petal", CC_GREEN );
+
+        wait( 80 );         
+
+        while ( !Obj_IsDeleted( bossObj )) {
+
+            T_PlaySE( SE_SHOT_01, 30 );
+
+            ascent (i in 0..4) {
+                int Aimed_Shots_A = ShotA2( bossX, bossY, 0.6, GetAngleToPlayer( bossObj ) + i * 10/4, SHOT_GEM_GREEN, 10, SHOT_GEM_GREEN );
+                Obj_SetRenderPriorityI( Aimed_Shots_A, Obj_GetRenderPriorityI( Aimed_Shots_A ) + 1 );
+
+                int Aimed_Shots_B = ShotA2( bossX, bossY, 0.6, GetAngleToPlayer( bossObj ) - i * 10/4, SHOT_GEM_GREEN, 10, SHOT_GEM_GREEN );
+                Obj_SetRenderPriorityI( Aimed_Shots_B, Obj_GetRenderPriorityI( Aimed_Shots_B ) + 1 );                
+            }
+
+            wait( 200 );
+        }
+    }
+	
 	while ( !Obj_IsDeleted( bossObj )) {
 		// do something
-		ascent (a in 0..4) {
-			ascent (i in 0..180) {
 
-				let Laser_A = Laser_A1( ObjMove_GetX( bossObj ), ObjMove_GetY( bossObj ), 90 + i * 360/180 + a * 45/4, 512, 14, 12, SHOT_LASER_DYELLOW, 8 );
-				wait( 4 );
-			}
-
-			//wait( 4 );
-		}	
-		wait( 4 );
+        ObjMove_SetDestAtFrame( bossObj, GetStgFrameWidth()/2 + rand( -64, 64 ), GetStgFrameHeight/3 + rand( -64, 16 ), 300, LERP_SMOOTHER );
+		wait( 300 );
+        /*
+        ascent (i in 0..12) {
+            ShotA2( bossX, bossY, 1, GetAngleToPlayer( bossObj ) + i * 360/12, SHOT_SEIJA_FIREBALL_ALT_GREEN, 20, SHOT_SEIJA_FIREBALL_ALT_GREEN );
+        }
+        */
+		wait( 100 );
 	}
-	*/
-	//T_Boss_Shot_D();
+    //T_Boss_Shot_D();
 	//T_Movement_A( bossObj );
 	
 }	
@@ -155,6 +178,9 @@ task T_Boss_Shot_A{
 
 
     while( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ){ 
+
+        T_PlaySE( SE_SPECIAL_00, 30 );
+
         ascent (a in 0..4) {
 
             if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) <= 0 ){ break; } 
@@ -169,6 +195,8 @@ task T_Boss_Shot_A{
 
         Dir = -Dir;
         wait( 144 );
+
+        T_PlaySE( SE_SPECIAL_00, 30 );
 
         ascent (a in 0..5) {
 
@@ -200,8 +228,10 @@ task T_Boss_Shot_A{
         ObjRender_SetBlendType( Sun_Core_Dummy, BLEND_ADD_ARGB );
         ObjRender_SetColor( Sun_Core_Dummy, 155, 55, 55 );
 
+        T_Burst_Circle_A2( Sun_Core, 40, 2.8, CC_YELLOW );
+
         int Sun_Core_Dummy_Glow = ShotA2( X, Y, Speed,Angle, SHOT_ORB_RED, 0, SHOT_ORB_RED );
-        ObjRender_SetScaleXYZ( Sun_Core_Dummy_Glow, 2, 2, 2 );
+        ObjRender_SetScaleXYZ( Sun_Core_Dummy_Glow, 1.8, 1.8, 1.8 );
         ObjRender_SetBlendType( Sun_Core_Dummy_Glow, BLEND_ADD_ARGB );
         ObjRender_SetColor( Sun_Core_Dummy_Glow, 255, 100, 100 );  
         ObjRender_SetAlpha( Sun_Core_Dummy_Glow, 55 );      

@@ -319,6 +319,8 @@ task T_Boss_Shot_B{
 
                 float L_Width = 16;
 
+                T_PlaySE( SE_SPECIAL_00, 30 );
+
                 ascent ( i in 0..30 ) {
                     L_Width -= 16/30;	
 

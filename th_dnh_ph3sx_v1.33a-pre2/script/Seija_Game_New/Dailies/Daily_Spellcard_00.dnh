@@ -1,0 +1,278 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title["Daily_Spellcard_00"]
+//#Background["./Stage/BG/STG_00.dnh"];
+#Player[ "./../Player/PL_Reimu.dnh", "./../Player/PL_Luna.dnh" ]
+#System["./../System/System_Main_Hud.dnh"]
+#Text["Date: 0/0/25, Time: 30 Mins[r]User: ???, Name: \"???\"[r]Template Script for the other Dailies"]
+
+//--------------------------------------------------Variables------------------------------------------------------
+
+let bossObj;
+let objScene = GetEnemyBossSceneObjectID();
+let bossX = 0;
+let bossY = 0;
+
+//SetIntersectionVisualization( true );
+
+let BossTex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Boss/Test_Boss.png";
+
+//---------------------------------------------------Include-------------------------------------------------------
+
+	#include "./../lib/Index_Boss.dnh"
+	#include "./../lib/Lib_Spell.dnh"
+	#include "./../lib/Lib_SpellCutin.dnh"	
+
+//----------------------------------------------------Start--------------------------------------------------------
+
+@Initialize {
+
+	bossObj = ObjEnemy_Create(OBJ_ENEMY_BOSS);	
+	
+	ObjEnemy_Regist( bossObj );	
+
+	T_Lifebar( bossObj );
+	T_HitEffect( bossObj );
+	ObjEnemy_SetDamageRate( bossObj, 0, 0 );	
+
+	Init_Boss_Eternity( bossObj );
+
+	//Render_WheelGhost_A1( bossObj, ENEMY_BLUE );
+
+	ObjRender_SetTextureFilter( bossObj, FILTER_NONE, FILTER_NONE, FILTER_NONE );
+	
+	ObjMove_SetDestAtWeight( bossObj, GetStgFrameWidth/2, Get_CenterY/2 + 16, 15, 8 );
+	
+	
+	//SetPlayerLife( 8 );
+	T_Main;
+	T_End;
+	
+}
+
+@Event { 
+
+	alternative(GetEventType()) 
+	case( EV_REQUEST_LIFE ) { 
+		SetScriptResult( 830 ); // 3000-4500 For Nons ( At 100% Damage Rate. )
+	}
+	case( EV_REQUEST_TIMER ) { 
+		SetScriptResult( 40 ); //40-50 For standard Nons.
+	}	
+	case( EV_REQUEST_SPELL_SCORE ){
+       SetScriptResult( 1500000 );
+    }	
+
+} 
+
+@MainLoop {
+
+	bossX = ObjMove_GetX( bossObj );
+	bossY = ObjMove_GetY( bossObj );
+	
+	SetCommonData( "Effect_X", bossX );
+	SetCommonData( "Effect_Y", bossY );	
+
+	ObjEnemy_SetIntersectionCircleToShot( bossObj, bossX, bossY, 16 );
+	ObjEnemy_SetIntersectionCircleToPlayer( bossObj, bossX, bossY, 8 );
+	
+	yield;
+}
+
+@Finalize {
+} 
+
+task T_InitSpell(){
+	
+	//let CutinTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Cutin/CurseOfRa.png";
+	
+	T_CallSpell_A1( "\"Scale Tipping Scales\"", 0, "Normal", objScene );
+	//T_Call_Spell_Cutin( CutinTex, [ 0, 0, 450, 480 ], 0.8, CC_PINK );	
+	
+	ObjEnemyBossScene_StartSpell( objScene );
+	
+	yield;
+	//T_SpellBG_Nina();
+	
+}	
+
+
+//----------------------------------------------------Patterns--------------------------------------------------------
+
+task T_Main {
+
+
+	NotifyEventAll( EV_BOSS_EFFECT, bossObj, CC_GREEN );
+	T_Shoot_Banner( "Eternity Larva", CC_GREEN, 40 );
+
+	wait( 125 );
+
+	T_PlaySE( SE_CHARGE_00, 30 );
+	T_Charge_A1( bossObj, 20, "Petal", CC_PINK );
+
+	wait( 80 );    
+
+	T_InitSpell();
+	
+	wait( 160 );  
+	
+	ObjEnemy_SetDamageRate( bossObj, 0.24, 0.2 );
+
+	while( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ) {
+		
+		int Shot_Count = 4;
+		float Spread = 32;
+		float Frame = 0;
+		float Dir = 0.1; 
+		float Radius = 0;
+		int[] Color = [ SHOT_ANIMATED_BUTTERFLY_RED, SHOT_ANIMATED_BUTTERFLY_YELLOW, SHOT_ANIMATED_BUTTERFLY_GREEN, SHOT_ANIMATED_BUTTERFLY_BLUE ];
+		float Base_Angle = GetAngleToPlayer( bossObj);
+
+		ascent ( b in 0..16 ) {
+
+			if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) <= 0 ) {  break; }
+
+			T_PlaySE( SE_SHOT_01, 30 );
+
+			ascent ( a in 0..Shot_Count ) {
+				ascent ( c in 0..2 ) {
+					int Shot_Name_A = ShotR1( bossX, bossY, 64 - Radius, 1, Base_Angle + a * ( Spread )/Shot_Count + c * 2/2, SHOT_DROP_DMINT, 8, DELAY_CLOUD_GREEN );
+					int Shot_Name_B = ShotR1( bossX, bossY, 64 - Radius, 1, Base_Angle - a * ( Spread )/Shot_Count - c * 2/2, SHOT_DROP_DYELLOW, 8, DELAY_CLOUD_YELLOW );
+
+					ObjMove_AddPatternA2( Shot_Name_A, 24, 0, NO_CHANGE, 0.01, 8, Dir );
+					ObjMove_AddPatternA2( Shot_Name_B, 24, 0, NO_CHANGE, 0.01, 8, Dir );
+				}
+				//wait( 1 );
+
+				Dir = -Dir;
+			}
+			Frame+= 1;
+
+			Radius += 64/16;
+			Spread += 10;
+			Shot_Count+=1;
+			//yield;
+			wait( 8 + b * 10/16);
+		}	
+	
+		wait( 120 );
+
+		ObjMove_SetDestAtFrame( bossObj, GetStgFrameWidth()/2 +rand( -64, 64 ), GetStgFrameHeight()/3 + rand( -64, 16 ), 200, LERP_SMOOTHER );
+
+		async {
+
+			ascent ( a in 0..12 ) {
+
+				if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) <= 0 ) {  break; }
+
+				T_PlaySE( SE_CHIME_00, 30 );
+				float Angle_RNG = rand( -45, 45 );
+
+				ascent ( b in 0..4 ) {
+
+					int Shot_Name_A = ShotR1( bossX, bossY, 16, 2 + b * 0.2/4, GetAngleToPlayer(bossObj) + Angle_RNG, SHOT_BALL_RED, 8, DELAY_CLOUD_RED );
+					ObjMove_AddPatternA2( Shot_Name_A, 30, NO_CHANGE, NO_CHANGE, -0.05, 0.5+ b * 0.2/4, 0 );
+					//yield;
+
+				}
+
+				wait( 10 );
+			}	
+
+		}	
+
+		wait( 120 );
+		yield;
+
+	}
+
+	task T_BulletTrail( Obj, Color, Rate, Graphic, Size ){
+
+		while( !Obj_IsDeleted( Obj )){
+
+			//int Shot_Name_A = ShotR1( ObjMove_GetX(Obj), ObjMove_GetY(Obj), 0, 1,  ObjMove_GetAngle(Obj) + 180 + rand( -32, 32 ), SHOT_BALL_PURPLE, 0, SHOT_BALL_PURPLE );
+			//ObjRender_SetBlendType( Shot_Name_A, BLEND_ADD_ARGB );
+			//ObjRender_SetColor( Shot_Name_A, 255, 255, 255 );
+			//ObjShot_SetDeleteFrame( Shot_Name_A, 1 );
+
+			int Shot_Name_B = ShotR1( ObjMove_GetX(Obj), ObjMove_GetY(Obj), 0, 1,  ObjMove_GetAngle(Obj) + 180 + rand( -32, 32 ), Graphic, 0, Graphic );
+			ObjRender_SetBlendType( Shot_Name_B, BLEND_ADD_ARGB );
+			ObjRender_SetColor( Shot_Name_B, Color[0], Color[1], Color[2] );
+			T_ManageTrail_Obj( Shot_Name_B );
+			ObjShot_SetDeleteFrame( Shot_Name_B, 1 );			
+
+			wait( Rate );
+		}
+
+		task T_ManageTrail_Obj( Trail_Shot ){
+
+			ascent (i in 0..20) {
+				
+				ObjRender_SetScaleXYZ( Trail_Shot, Size - i * Size/20, Size - i * Size/20, Size - i * Size/20 );
+
+				yield;
+			}
+
+		}
+
+
+	}
+}	
+
+
+//-----------------------------------------------------Death---------------------------------------------------------
+
+task T_End {
+	
+    while( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ) {
+	     yield;
+	}
+	
+	if( ObjEnemyBossScene_GetInfo( GetEnemyBossSceneObjectID, INFO_IS_LAST_STEP ) ){
+
+		NotifyEventAll( EV_CLEAR_ENEMY_SHOTS, GetPlayerObjectID(), 60, 12 );
+		
+		yield;
+		
+		SetAutoDeleteObject(true);
+		T_Boss_Shotdown( bossObj, "Petal", CC_RED );
+		wait( 200 );
+		
+		Obj_Delete( bossObj );	
+		
+		ENEMY_CLEAR = true;
+		
+		yield;
+		
+		ENEMY_CLEAR = false;
+		
+		wait( 500 );
+		
+		CloseScript( GetOwnScriptID() );
+		
+	}	
+	else{
+	
+	
+		NotifyEventAll( EV_CLEAR_ENEMY_SHOTS, GetPlayerObjectID(), 60, 12 );
+		//DeleteShotAll( TYPE_ALL, TYPE_ITEM );
+		
+		yield;
+		
+		SetAutoDeleteObject(true);
+		
+		Obj_Delete( bossObj );	
+		
+		wait( 500 );
+		
+		CloseScript( GetOwnScriptID() );
+	
+	}
+	
+	//SetAutoDeleteObject(true);
+	
+	//Obj_Delete( bossObj );	
+	//CloseScript( GetOwnScriptID() );
+	
+}
+

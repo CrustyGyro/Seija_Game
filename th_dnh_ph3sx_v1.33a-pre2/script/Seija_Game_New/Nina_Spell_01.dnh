@@ -150,6 +150,8 @@ task T_Boss_Shot_B{
 	
 	wait( 30 );
 
+	T_Burst_Circle_A2( bossObj, 30, 4, CC_YELLOW );
+
 	ascent (i in 0..6) {
 		int Orb_Obj = ShotR1( bossX, bossY, 24, 0, -90, SHOT_ORB_YELLOW, 1, SHOT_ORB_YELLOW );
 
@@ -157,6 +159,8 @@ task T_Boss_Shot_B{
 	}
 
 	async {
+
+		
 		wait( 180 );
 		T_Telegraph();
 
@@ -216,40 +220,61 @@ task T_Boss_Shot_B{
 	task T_Manage_Shot_A( Obj, Init_X, Init_Y, ID, Count, Dir, Max_Speed, Wvel ){
 
 		ObjShot_SetSpellResist( Obj, true );
+		ObjShot_SetAutoDelete( Obj, false );
 
-		ascent (i in 0..100) {
-		
-			float X_Pos = Interpolate_Smoother( Init_X, ID * GetStgFrameWidth()/Count + 32, i/100 );
-			float Y_Pos = Interpolate_Smoother( Init_Y, GetStgFrameHeight()/2 , i/100 );
+		T_PlaySE( SE_SHOT_04, 36 );
 
-			ObjMove_SetPosition( Obj, X_Pos, Y_Pos );
-			yield;
+		async{
 
+			float Arrival_Time_A = rand( 60, 120 );
+
+			ascent (i in 0..Arrival_Time_A) {
+			
+				float X_Pos = Interpolate_Smoother( Init_X, ID * GetStgFrameWidth()/Count + 32, i/Arrival_Time_A );
+				float Y_Pos = Interpolate_Smoother( Init_Y, GetStgFrameHeight()/2 , i/Arrival_Time_A );
+
+				ObjMove_SetPosition( Obj, X_Pos, Y_Pos );
+				yield;
+
+			}
+
+			float Y_Base = ObjMove_GetY( Obj );
+			float Arrival_Time = rand( 80, 100 );
+
+			T_PlaySE( SE_SPECIAL_00, 36 );
+
+			//T_Burst_Circle_A2( Obj, 30, 1.8, CC_YELLOW );
+
+			ascent (i in 0..Arrival_Time) {
+			
+				//float X_Pos = Interpolate_Smoother( Init_X, ID * GetStgFrameWidth()/Count + 32, i/100 );
+				float Y_Pos = Interpolate_Smoother( Y_Base, 32 , i/Arrival_Time );
+
+				ObjMove_SetPosition( Obj, ObjMove_GetX( Obj ), Y_Pos );
+				yield;
+
+			}
 		}
 
-		float Y_Base = ObjMove_GetY( Obj );
-		float Arrival_Time = 100;
+		//wait( 100 );
 
-		ascent (i in 0..Arrival_Time) {
-		
-			//float X_Pos = Interpolate_Smoother( Init_X, ID * GetStgFrameWidth()/Count + 32, i/100 );
-			float Y_Pos = Interpolate_Smoother( Y_Base, 32 , i/Arrival_Time );
+		//T_PlaySE( SE_SPECIAL_00, 36 );
 
-			ObjMove_SetPosition( Obj, ObjMove_GetX( Obj ), Y_Pos );
-			yield;
+		//T_Burst_Circle_A2( Obj, 30, 1.8, CC_YELLOW );		
 
-		}
-		
+		wait( 200 );
 		
 
 		//ObjMove_AddPatternA2( Obj, 0, 0, -90, 0.05, Max_Speed, 0 );
-		T_PlaySE( SE_LASER_03, 36 );
+		T_Burst_Circle_A2( Obj, 30, 1.8, CC_YELLOW );	
+		T_PlaySE( SE_SPECIAL_00, 36 );
 		T_ShotLaser();
 
 		async {
 			wait( 60 );
-
-			T_PlaySE( SE_LASER_02, 36 );
+			
+			//T_Burst_Circle_A2( Obj, 10, 2.8, CC_PINK );
+			T_PlaySE( SE_LASER_05, 36 );
 		}
 		//ObjMove_AddPatternA2( Obj, 220, NO_CHANGE, NO_CHANGE, -0.01, 0, 0 );
 		//T_ShotLaser();
@@ -263,16 +288,37 @@ task T_Boss_Shot_B{
 
 			float Frame = 0;
 
-			let Laser_A = CreateStraightLaserA1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 90 , 512, 24, 999999, SHOT_LIGHTNING, 60 );
+			let Laser_A = CreateStraightLaserA1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 90 , 512, 24, 999999, SHOT_LIGHTNING, 80 );
 			ObjRender_SetColor( Laser_A, 255, 0, 255 );
 			ObjRender_SetAlpha( Laser_A, 100 );
 			ObjLaser_SetIntersectionWidth( Laser_A, 0 );
+
+			let Laser_Flare = CreateStraightLaserA1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 90 , 512, 24, 999999, SHOT_LASER_DPINK, 60 );
+			ObjRender_SetColor(  Laser_Flare, 155, 0, 155 );
+			//ObjRender_SetAlpha( Laser_Flare, 155 );
+			ObjStLaser_SetSource( Laser_Flare , false );
+			ObjLaser_SetIntersectionWidth( Laser_Flare, 0 );			
 
 			let Laser_A_Dummy = CreateStraightLaserA1( ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 90 , 512, 24, 999999, SHOT_LASER_DYELLOW, 60 );
 			//ObjRender_SetColor( Laser_A, 255, 255, 0 );
 			//ObjRender_SetAlpha( Laser_A, 100 );
 			//ObjLaser_SetIntersectionWidth( Laser_A, 0 );			
 			ObjStLaser_SetPermitExpand( Laser_A_Dummy, false );
+
+			async{
+
+				wait( 60 );
+
+				ascent (i in 0..30) {
+					ObjLaser_SetRenderWidth( Laser_Flare, 16 + i * 80/30 );
+					ObjRender_SetAlpha( Laser_Flare, 255 - i * 255/30 );
+					yield;
+				}
+
+				Obj_Delete( Laser_Flare );
+
+			}
+
 			async {
 				
 				wait( 1 );
@@ -295,7 +341,10 @@ task T_Boss_Shot_B{
 				ObjStLaser_SetAngle( Laser_A, ObjMove_GetAngle( Obj ) + 180  + 16 * sin( Frame ));
 
 				ObjMove_SetPosition( Laser_A_Dummy, ObjMove_GetX( Obj ), ObjMove_GetY( Obj ) );
-				ObjStLaser_SetAngle( Laser_A_Dummy, ObjMove_GetAngle( Obj ) + 180  + 16 * sin( Frame ));				
+				ObjStLaser_SetAngle( Laser_A_Dummy, ObjMove_GetAngle( Obj ) + 180  + 16 * sin( Frame ));
+
+				ObjMove_SetPosition( Laser_Flare, ObjMove_GetX( Obj ), ObjMove_GetY( Obj ) );
+				ObjStLaser_SetAngle( Laser_Flare, ObjMove_GetAngle( Obj ) + 180  + 16 * sin( Frame ));				
 
 				Frame += 0.5;
 				//ObjLaser_SetAngle( Laser_A, ObjMove_GetAngle( Obj ) + 180 );

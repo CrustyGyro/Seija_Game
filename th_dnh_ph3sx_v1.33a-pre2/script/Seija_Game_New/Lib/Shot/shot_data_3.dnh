@@ -214,6 +214,222 @@ ShotData{
 	delay_id = 0
 }
 
+//Test_Shot
+ShotData { id = 9999 rect = (650,0,750,100) collision = 1 render = ADD_ARGB angular_velocity = 0 delay_color = (255,120,120) delay_id = 0 } //RED
+
+//-------------------
+
+//SEIJA_FIREBALL_ALT
+
+ShotData{
+	//RED
+	id = 2078
+	collision = (4,0,8)
+    render = ADD_ARGB
+	AnimationData{
+		animation_data = (5,0,400,50,450)
+		animation_data = (5,0,450,50,500)
+		animation_data = (5,0,500,50,550)
+		animation_data = (5,0,550,50,600)
+
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+
+ShotData{
+	//ORANGE
+	id = 2079
+	collision = (4,0,8)
+    render = ADD_ARGB
+	AnimationData{
+		animation_data = (5,50,400,100,450)
+		animation_data = (5,50,450,100,500)
+		animation_data = (5,50,500,100,550)
+		animation_data = (5,50,550,100,600)
+
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+
+
+ShotData{
+	//YELLOW
+	id = 2080
+	collision = (4,0,8)
+    render = ADD_ARGB
+	AnimationData{
+		animation_data = (5,100,400,150,450)
+		animation_data = (5,100,450,150,500)
+		animation_data = (5,100,500,150,550)
+		animation_data = (5,100,550,150,600)
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+
+ShotData{
+	//OLIVE
+	id = 2081
+	collision = (4,0,8)
+    render = ADD_ARGB
+	AnimationData{
+		animation_data = (5,150,400,200,450)
+		animation_data = (5,150,450,200,500)
+		animation_data = (5,150,500,200,550)
+		animation_data = (5,150,550,200,600)
+
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+
+
+ShotData{
+	//GREEN
+	id = 2082
+	collision = (4,0,8)
+    render = ADD_ARGB
+	AnimationData{
+		animation_data = (5,200,400,250,450)
+		animation_data = (5,200,450,250,500)
+		animation_data = (5,200,500,250,550)
+		animation_data = (5,200,550,250,600)
+
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+
+ShotData{
+	//MINT
+	id = 2083
+	collision = (4,0,8)
+    render = ADD_ARGB
+	AnimationData{
+		animation_data = (5,250,400,300,450)
+		animation_data = (5,250,450,300,500)
+		animation_data = (5,250,500,300,550)
+		animation_data = (5,250,550,300,600)
+
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+
+ShotData{
+	//AQUA
+	id = 2084
+	collision = (4,0,8)
+    render = ADD_ARGB
+	AnimationData{
+		animation_data = (5,300,400,350,450)
+		animation_data = (5,300,450,350,500)
+		animation_data = (5,300,500,350,550)
+		animation_data = (5,300,550,350,600)
+
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+
+ShotData{
+	//AZURE
+	id = 2085
+	collision = (4,0,8)
+    render = ADD_ARGB
+	AnimationData{
+		animation_data = (5,350,400,400,450)
+		animation_data = (5,350,450,400,500)
+		animation_data = (5,350,500,400,550)
+		animation_data = (5,350,550,400,600)
+
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+
+ShotData{
+	//BLUE
+	id = 2086
+	collision = (4,0,8)
+    render = ADD_ARGB
+	AnimationData{
+		animation_data = (5,400,400,450,450)
+		animation_data = (5,400,450,450,500)
+		animation_data = (5,400,500,450,550)
+		animation_data = (5,400,550,450,600)
+
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+
+ShotData{
+	//PURPLE
+	id = 2087
+	collision = (4,0,8)
+    render = ADD_ARGB
+	AnimationData{
+		animation_data = (5,450,400,500,450)
+		animation_data = (5,450,450,500,500)
+		animation_data = (5,450,500,500,550)
+		animation_data = (5,450,550,500,600)
+
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+
+ShotData{
+	//MAGENTA
+	id = 2088
+	collision = (4,0,8)
+    render = ADD_ARGB
+	AnimationData{
+		animation_data = (5,500,400,550,450)
+		animation_data = (5,500,450,550,500)
+		animation_data = (5,500,500,550,550)
+		animation_data = (5,500,550,550,600)
+
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+
+ShotData{
+	//PINK
+	id = 2089
+	collision = (4,0,8)
+    render = ADD_ARGB
+	AnimationData{
+		animation_data = (5,550,400,600,450)
+		animation_data = (5,550,450,600,500)
+		animation_data = (5,550,500,600,550)
+		animation_data = (5,550,550,600,600)
+
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+
+ShotData{
+	//GREY
+	id = 2090
+	collision = (4,0,8)
+    render = ADD_ARGB
+	AnimationData{
+		animation_data = (5,600,400,650,450)
+		animation_data = (5,600,450,650,500)
+		animation_data = (5,600,500,650,550)
+		animation_data = (5,600,550,650,600)
+
+	}
+	delay_color = (255,120,120)
+	delay_id = 0
+}
+
 
 /*
 ShotData{

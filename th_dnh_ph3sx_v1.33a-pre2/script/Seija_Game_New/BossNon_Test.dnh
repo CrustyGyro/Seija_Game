@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
 #Title["BossNon_Test"]
-#Background["./Stage/BG/STG_00.dnh"];
+//#Background["./Stage/BG/STG_00.dnh"];
 #Player[ "./Player/PL_Reimu.dnh" ]
 #System["./System/System_Main_Hud.dnh"]
 
@@ -32,7 +32,9 @@ let BossTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Test_Boss.
 	T_HitEffect( bossObj );
 	ObjEnemy_SetDamageRate( bossObj, 0, 0 );	
 
-	Render_WheelGhost_A1( bossObj, ENEMY_BLUE );
+	Init_Boss_Eternity( bossObj );
+
+	//Render_WheelGhost_A1( bossObj, ENEMY_BLUE );
 
 	ObjRender_SetTextureFilter( bossObj, FILTER_NONE, FILTER_NONE, FILTER_NONE );
 	
@@ -80,7 +82,7 @@ let BossTex = GetCurrentScriptDirectory() ~ "./Resource/Textures/Boss/Test_Boss.
 task T_Main {
 
 
-	NotifyEventAll( EV_BOSS_EFFECT, bossObj, CC_CYAN );
+	NotifyEventAll( EV_BOSS_EFFECT, bossObj, CC_YELLOW );
 	
 	//let Color = [ DOT_GRAY, DOT_RED, DOT_YELLOW, DOT_CYAN, DOT_PURPLE, DOT_GREEN ];
 
@@ -91,36 +93,70 @@ task T_Main {
 	//T_PlaySE( SE_CHARGE_00, 30 );
 	//T_Charge_A1( bossObj, 20, "Petal", CC_PINK );
 
-	//wait( 100 );	
+	wait( 100 );	
 	
 	ObjEnemy_SetDamageRate( bossObj, 1, 1 );
 
 	while( Boss_Is_Alive( bossObj ) ){
 		
-		int Shot_Count = 16;
+		int Shot_Count = 4;
+		float Spread = 32;
+		float Frame = 0;
+		float Dir = 0.1; 
+		float Radius = 0;
 		int[] Color = [ SHOT_ANIMATED_BUTTERFLY_RED, SHOT_ANIMATED_BUTTERFLY_YELLOW, SHOT_ANIMATED_BUTTERFLY_GREEN, SHOT_ANIMATED_BUTTERFLY_BLUE ];
+		float Base_Angle = GetAngleToPlayer( bossObj);
 
-		ascent ( a in 0..Shot_Count ) {
-			ascent ( b in 0..4 ) {
-				int Shot_Name_A = ShotR1( bossX, bossY, 32, 2 + b *0.5/4, 90 + a * 360/Shot_Count + b *8/4, SHOT_SEIJA_FIREBALL_RED, 8, DELAY_CLOUD_RED );
-				int Shot_Name_B = ShotR1( bossX, bossY, 32, 2 + b *0.5/4, 90 - a * 360/Shot_Count - b *8/4, SHOT_SEIJA_FIREBALL_AZURE, 8, DELAY_CLOUD_RED );
-				T_BulletTrail( Shot_Name_A, CC_RED, 6, SHOT_BALL_RED, 1 );
-				T_BulletTrail( Shot_Name_B, CC_BLUE, 6, SHOT_BALL_AZURE, 1 );
-				//int Shot_Name_B =CreateShotA1( bossX, bossY, 2 - b *0.5/4, 90 + a * 360/Shot_Count + b *8/4, SHOT_BALL_RED, 4 );
+		ascent ( b in 0..16 ) {
 
-				ObjMove_AddPatternA2( Shot_Name_A, 30, 0, NO_CHANGE, 0.01, 1 - b * 0.5/4, 0.3 );
-				ObjMove_AddPatternA2( Shot_Name_B, 30, 0, NO_CHANGE, 0.01, 1 - b * 0.5/4, -0.3 );
+			T_PlaySE( SE_SHOT_01, 30 );
 
+			ascent ( a in 0..Shot_Count ) {
+				ascent ( c in 0..2 ) {
+					int Shot_Name_A = ShotR1( bossX, bossY, 64 - Radius, 1, Base_Angle + a * ( Spread )/Shot_Count + c * 2/2, SHOT_DROP_DMINT, 8, DELAY_CLOUD_GREEN );
+					int Shot_Name_B = ShotR1( bossX, bossY, 64 - Radius, 1, Base_Angle - a * ( Spread )/Shot_Count - c * 2/2, SHOT_DROP_DYELLOW, 8, DELAY_CLOUD_YELLOW );
 
-				ObjMove_AddPatternA2( Shot_Name_A, 120, NO_CHANGE, NO_CHANGE, 0.01, 5, 0.1 );
-				ObjMove_AddPatternA2( Shot_Name_B, 120, NO_CHANGE, NO_CHANGE, 0.01, 5, -0.1 );				
-				//ObjMove_AddPatternA2( Shot_Name_B, 30, 0, NO_CHANGE, 0.01, 1 - b * 0.5/4, 0 );
+					ObjMove_AddPatternA2( Shot_Name_A, 24, 0, NO_CHANGE, 0.01, 8, Dir );
+					ObjMove_AddPatternA2( Shot_Name_B, 24, 0, NO_CHANGE, 0.01, 8, Dir );
+				}
+				//wait( 1 );
+
+				Dir = -Dir;
 			}
+			Frame+= 1;
 
-			wait( 10 );
+			Radius += 64/16;
+			Spread += 10;
+			Shot_Count+=1;
+			//yield;
+			wait( 8 + b * 10/16);
+		}	
+	
+		wait( 120 );
+
+		ObjMove_SetDestAtFrame( bossObj, GetStgFrameWidth()/2 +rand( -64, 64 ), GetStgFrameHeight()/3 + rand( -64, 16 ), 200, LERP_SMOOTHER );
+
+		async {
+
+			ascent ( a in 0..12 ) {
+
+				T_PlaySE( SE_CHIME_00, 30 );
+				float Angle_RNG = rand( -45, 45 );
+
+				ascent ( b in 0..4 ) {
+
+					int Shot_Name_A = ShotR1( bossX, bossY, 16, 2 + b * 0.2/4, GetAngleToPlayer(bossObj) + Angle_RNG, SHOT_BALL_RED, 8, DELAY_CLOUD_RED );
+					ObjMove_AddPatternA2( Shot_Name_A, 30, NO_CHANGE, NO_CHANGE, -0.05, 0.5+ b * 0.2/4, 0 );
+					//yield;
+
+				}
+
+				wait( 10 );
+			}	
+
 		}	
 
-		wait( 1 );
+		wait( 120 );
 		yield;
 
 	}

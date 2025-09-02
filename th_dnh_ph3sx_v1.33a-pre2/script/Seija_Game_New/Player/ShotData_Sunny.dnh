@@ -1,0 +1,17 @@
+//----------------------------------
+
+shot_image  = "./../Resource/Textures/Player/PL_Sunny.png"
+
+//----------------------------------
+
+ShotData { id = 1 rect = ( 32, 160, 64, 208 ) render = ADD_ARGB alpha = 100 collision = 16 } 	//-Star Needle-
+ShotData { id = 2 rect = ( 0, 144, 16, 160 ) render = ADD_ARGB alpha = 255 collision = 16 } 	//-Star-
+ShotData { id = 3 rect = ( 256, 0, 272, 512 ) render = ADD_ARGB alpha = 255 }   				//--Start Lase--
+ShotData { id = 4 rect = ( 16, 160, 32, 176 ) render = ADD_ARGB alpha = 255 }   				//-Dummy Laser-
+ShotData { id = 5 rect = ( 192, 144, 208, 192 ) render = ADD_ARGB alpha = 100 collision = 16 } 	//-Regular Needle-
+
+//----------------------------------
+
+//--Reimu Bomb Dummy Bullet--
+
+ShotData { id = 50 rect = ( 0, 0, 0, 0 ) render = ALPHA alpha = 120 collision = 64 } 	//-Pink-
