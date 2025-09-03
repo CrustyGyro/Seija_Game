@@ -395,6 +395,44 @@ task T_Burst_Circle_A2( Target, Fade_Time, Max_Scale, Color ){
 	
 }
 
+
+task T_Charge_Circle_A2( Target, Fade_In_Time, Fade_Out_Time, Initial_Scale, End_Scale, Color,Interpolation_Type ){
+	
+	float Scale = Initial_Scale;
+	float Scale_Time = Fade_In_Time + Fade_Out_Time;
+	
+	//wait( Delay );
+	
+	let Path = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Effect/CircleEff.png";
+	let Obj_EffCircle = Render2D_Texture_A1( Path, [ 0, 0, 128, 128 ], ObjMove_GetX( Target ), ObjMove_GetY( Target ), 0, 0.32 );
+	ObjRender_SetBlendType( Obj_EffCircle, BLEND_ADD_ARGB );
+	
+	ObjRender_SetColor( Obj_EffCircle, Color[ 0 ], Color[ 1 ], Color [2 ] );
+
+	async{
+
+		T_FadeIn_A1( Obj_EffCircle, Fade_In_Time, 255 );
+
+		wait( Fade_In_Time );
+
+		T_FadeOut_Delete( Obj_EffCircle, Fade_Out_Time, 255 );
+
+	}
+
+		
+	ascent (i in 0..Scale_Time) {
+				
+		ObjRender_SetScaleXYZ( Obj_EffCircle, Scale, Scale, Scale );
+				
+		Scale = Interpolate_X( Initial_Scale, End_Scale, i/Scale_Time, Interpolation_Type );	
+			
+		yield;
+				
+	}		
+	
+}
+
+
 task T_ShotDown_Inverted( X, Y ){
 	
 	let Path = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Effect/Invert.png";

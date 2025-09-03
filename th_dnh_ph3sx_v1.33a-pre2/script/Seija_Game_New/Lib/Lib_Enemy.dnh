@@ -113,6 +113,7 @@ function Create_Famliar_A1( X, Y, Type, Color, HP, HasHitbox, ShotRate, BombRate
 	case( GHOST_S_NORMAL ){ Render_Onibi_A1( Enemy_Obj, Color ); }
 	case( YINYANG_S_NORMAL ){ Render_WheelGhost_A1( Enemy_Obj, Color ); }	
 	case( PRISM_S_NORMAL ){ T_Render_Prism_A1( Enemy_Obj ); }	
+	case( FAMILIAR_S_NORMAL ){ T_Render_Familiar_A1( Enemy_Obj, Color, 0.5 ); }	
 
 	T_Handle_Familiar_A1( Enemy_Obj, 0, HasHitbox, ShotRate, BombRate, Margin );
 
@@ -193,8 +194,7 @@ task T_Handle_Familiar_A1( Enemy, Type, HasHitbox, ShotRate, BombRate, Margin ){
 
 	while( ObjEnemy_GetInfo( Enemy, INFO_LIFE ) > 0 ){
 		
-		if( HasHitbox == true ){ ObjEnemy_SetDamageRate( Enemy, ShotRate, BombRate ); ObjEnemy_SetIntersectionCircleToShot( Enemy, Enemy_X, Enemy_Y, 16 ); }
-		ObjEnemy_SetIntersectionCircleToPlayer( Enemy, Enemy_X, Enemy_Y, 8 );
+		if( HasHitbox == true ){ ObjEnemy_SetDamageRate( Enemy, ShotRate, BombRate ); ObjEnemy_SetIntersectionCircleToShot( Enemy, Enemy_X, Enemy_Y, 16 ); ObjEnemy_SetIntersectionCircleToPlayer( Enemy, Enemy_X, Enemy_Y, 8 ); }
 		
 		Enemy_X = ObjMove_GetX( Enemy );
 		Enemy_Y = ObjMove_GetY( Enemy );
@@ -865,6 +865,115 @@ task T_Render_Prism_A1( Obj ){
 }	
 
 //----------------------------------------------------------------------------------------------
+
+
+task T_Render_Familiar_A1( Obj, Color, Scale ){
+
+	let Fam_Tex = GetCurrentScriptDirectory() ~ "./../Resource/Textures/Effect/Familiar_A2.png";
+	
+	let Effect_Obj = Render2D_Texture_A1( Fam_Tex, [ 0, 0, 128, 128 ], ObjRender_GetX( Obj ), ObjRender_GetY( Obj ), 0, 0.26 );
+	ObjRender_SetColor( Effect_Obj, Color[0], Color[1], Color[2] );
+	ObjRender_SetBlendType( Effect_Obj, BLEND_ADD_ARGB );
+
+	let Effect_Obj_Dark = Render2D_Texture_A1( Fam_Tex, [ 0, 0, 128, 128 ], ObjRender_GetX( Obj ), ObjRender_GetY( Obj ), 0, 0.25 );
+	ObjRender_SetColor( Effect_Obj_Dark, Color[0]/2, Color[1]/2, Color[2]/2 );
+	//ObjRender_SetAlpha( Effect_Obj_Dark, 100 );
+	ObjRender_SetBlendType( Effect_Obj_Dark, BLEND_ADD_ARGB );	
+
+
+	//let Effect_Obj_Ring_B = Render2D_Texture_A1( Fam_Tex, [ 128, 0, 256, 128 ], ObjRender_GetX( Obj ), ObjRender_GetY( Obj ), Scale +0.1, 0.27 );
+	//ObjRender_SetBlendType( Effect_Obj_Ring_B, BLEND_ADD_ARGB );
+	//ObjRender_SetColor( Effect_Obj_Ring_B, Color[0], Color[1], Color[2] );
+
+	async{
+
+		float Scale_XYZ = 0;
+
+		ascent (i in 0..30) {
+
+			ObjRender_SetScaleXYZ( Effect_Obj, Scale_XYZ, Scale_XYZ, Scale_XYZ );
+			ObjRender_SetScaleXYZ( Effect_Obj_Dark, Scale_XYZ, Scale_XYZ, Scale_XYZ );
+
+			Scale_XYZ = Interpolate_Smoother( 0, Scale, i/30 );
+
+			yield;
+
+		}	
+
+	}		
+
+	async{
+
+		while( !Obj_IsDeleted( Obj )){
+
+			ObjRender_SetAngleZ( Effect_Obj, ObjRender_GetAngleZ( Effect_Obj ) + 1 );
+			ObjRender_SetPosition( Effect_Obj, ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0 );
+
+			ObjRender_SetAngleZ( Effect_Obj_Dark, ObjRender_GetAngleZ( Effect_Obj_Dark ) - 1 );
+			ObjRender_SetPosition( Effect_Obj_Dark, ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0 );			
+
+			//ObjRender_SetAngleZ( Effect_Obj_Ring, ObjRender_GetAngleZ( Effect_Obj_Ring ) + 1 );	
+			//ObjRender_SetPosition( Effect_Obj_Ring_B, ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0 );				
+
+			yield;
+		}
+
+		Obj_Delete( Effect_Obj );
+		Obj_Delete( Effect_Obj_Dark );
+
+	}
+
+	async{
+
+		wait( 30 );
+
+		while( !Obj_IsDeleted( Obj )){
+
+			T_CreatePulseRing();
+			wait( 16 );
+		}
+
+	}	
+
+	task T_CreatePulseRing(){
+
+		float Scale_XYZ = 0;
+
+		let Effect_Obj_Ring = Render2D_Texture_A1( Fam_Tex, [ 128, 0, 256, 128 ], ObjRender_GetX( Effect_Obj ), ObjRender_GetY( Effect_Obj ), Scale +0.1, 0.27 );
+		ObjRender_SetBlendType( Effect_Obj_Ring, BLEND_ADD_ARGB );
+		ObjRender_SetColor( Effect_Obj_Ring, Color[0], Color[1], Color[2] );	
+
+		async{
+			while( !Obj_IsDeleted( Obj )){
+
+				ObjRender_SetPosition( Effect_Obj_Ring, ObjMove_GetX( Obj ), ObjMove_GetY( Obj ), 0 );
+				yield;
+			}
+
+			Obj_Delete( Effect_Obj_Ring );
+		}					
+
+		async{
+
+			T_FadeOut_Delete( Effect_Obj_Ring, 20, 255 );
+
+			ascent (i in 0..20) {
+				
+				ObjRender_SetScaleXYZ( Effect_Obj_Ring, Scale_XYZ, Scale_XYZ, 0 );
+
+				Scale_XYZ = Interpolate_Decelerate( ( Scale ), ( Scale )*1.4, i/20 );
+				yield;
+			}
+
+			Obj_Delete( Effect_Obj_Ring );
+
+		}
+
+
+	}
+
+
+}
 
 task T_Enemy_Aura_A( Enemy, Color, Scale ){
 	

@@ -89,6 +89,7 @@
 	let FAIRY_B_NORMAL = 3;
 	let GHOST_S_NORMAL = 6;
 	let YINYANG_S_NORMAL = 7;
+	let FAMILIAR_S_NORMAL = 8;
 	let PRISM_S_NORMAL = 99;
 	
 	// -- Enemy Colors --

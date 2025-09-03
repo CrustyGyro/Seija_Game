@@ -2,7 +2,8 @@
 
 function Boss_Is_Alive( Boss ){
 	
-	return !Obj_IsDeleted( Boss );
+	return true;
+
 }
 
 function T_BossMove_A( Obj, X, Y, Clip_Min, Clip_Max, Base_Time ){

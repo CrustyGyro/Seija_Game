@@ -4,7 +4,7 @@
 //#Background["./Stage/STG_03/STG_BG.dnh"];
 #Background["./Stage/STG_05/FW_Stage_5.dnh"];
 //#Background["./Stage/STG_03/STG_BG.dnh"];
-#Player[ "./Player/PL_Reimu.dnh", "./Player/PL_Marisa.dnh", "./Player/PL_Remilia.dnh" ]
+#Player[ "./Player/PL_Reimu.dnh", "./Player/PL_Marisa.dnh", "./Player/PL_Luna.dnh" ]
 #System["./System/System_Main_Hud.dnh"]
 
 //-------------------------------------------------------------------------------
@@ -91,10 +91,12 @@ function Load_Boss(){
     ObjEnemyBossScene_Add( Boss_Obj, 2, CSD ~ "Nina_Spell_03.dnh" );
     ObjEnemyBossScene_Add( Boss_Obj, 3, CSD ~ "Nina_Non_03.dnh" );
     ObjEnemyBossScene_Add( Boss_Obj, 3, CSD ~ "Nina_Spell_04.dnh" );
-    ObjEnemyBossScene_Add( Boss_Obj, 4, CSD ~ "Nina_Non_01.dnh" );
-    ObjEnemyBossScene_Add( Boss_Obj, 4, CSD ~ "Nina_Spell_06.dnh" );	
-	ObjEnemyBossScene_Add( Boss_Obj, 5, CSD ~ "Nina_Non_01.dnh" );
-    ObjEnemyBossScene_Add( Boss_Obj, 5, CSD ~ "Nina_Spell_07.dnh" );	
+	ObjEnemyBossScene_Add( Boss_Obj, 4, CSD ~ "Nina_Non_01.dnh" );
+    ObjEnemyBossScene_Add( Boss_Obj, 4, CSD ~ "Nina_Spell_05.dnh" );
+    ObjEnemyBossScene_Add( Boss_Obj, 5, CSD ~ "Nina_Non_01.dnh" );
+    ObjEnemyBossScene_Add( Boss_Obj, 5, CSD ~ "Nina_Spell_06.dnh" );	
+	ObjEnemyBossScene_Add( Boss_Obj, 6, CSD ~ "Nina_Non_01.dnh" );
+    ObjEnemyBossScene_Add( Boss_Obj, 6, CSD ~ "Nina_Spell_07.dnh" );	
 	/*
     ObjEnemyBossScene_Add( Boss_Obj, 4, CSD ~ "Nina_Non_01.dnh" );
     ObjEnemyBossScene_Add( Boss_Obj, 4, CSD ~ "Nina_Spell_01.dnh" );

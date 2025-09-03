@@ -169,7 +169,7 @@ task T_Movement_A{
 
 task T_Boss_Shot_B{
 
-    float Dir = -0.3;
+    float Dir = -0.2;
     float Dir_Spawn = 100;
     float Pentacle_Radius = 256; //244;
     float Pentacle_Bullet_Delay = 300;
@@ -333,7 +333,7 @@ task T_Boss_Shot_B{
                 }
 
                 if( !Obj_IsDeleted( Connector ) ){
-                    ascent (a in 0..12) {
+                    ascent (a in 0..10) {
 
                         float Laser_Angle = ObjStLaser_GetAngle( Connector );
                         float Laser_Length = ObjLaser_GetLength( Connector );
@@ -341,8 +341,8 @@ task T_Boss_Shot_B{
                         float X_Pos = ObjMove_GetX( Connector );
                         float Y_Pos = ObjMove_GetY( Connector );   
 
-                        float Shot_X = X_Pos + a * Laser_Length/12 * cos( Laser_Angle );
-                        float Shot_Y = Y_Pos + a * Laser_Length/12 * sin( Laser_Angle );       
+                        float Shot_X = X_Pos + a * Laser_Length/10 * cos( Laser_Angle );
+                        float Shot_Y = Y_Pos + a * Laser_Length/10 * sin( Laser_Angle );       
 
                         int ShotObj_A = ShotA2( Shot_X, Shot_Y, 0, Laser_Angle + 90, SHOT_BALL_AURA_DRED, 10, SHOT_BALL_AURA_DRED );
                         T_Manage_SubShot( ShotObj_A );

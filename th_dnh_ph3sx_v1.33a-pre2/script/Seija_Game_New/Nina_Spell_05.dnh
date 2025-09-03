@@ -127,7 +127,7 @@ task T_Main {
 	
 	wait( 240 );
 
-    ObjEnemy_SetDamageRate( bossObj, 0.4, 0.4 );
+    ObjEnemy_SetDamageRate( bossObj, 0.3, 0.3 );
 
 	/*
 	while ( !Obj_IsDeleted( bossObj )) {
@@ -167,215 +167,135 @@ task T_Movement_A{
 
 task T_Boss_Shot_A(){
 
+	float Base_Angle = 0;
 
-    while( Boss_Is_Alive( bossObj ) ){
+	async{
 
-        //-------------------------------------------------------------------------------
-        /*
-        ascent ( a in 0..50 ) {
-            ascent ( i in 0..55 ) {
-                ascent ( b in 0..1 ) {
-                    int ShotObj_A = ShotR2( bossX, bossY, 32, 32, 6, i * 360/55, SHOT_RICE_INVERT_PURPLE, 0, SHOT_RICE_INVERT_PURPLE );
-                    ObjRender_SetBlendType( ShotObj_A, BLEND_ADD_ARGB );
-                    ObjRender_SetAlpha( ShotObj_A, 155 );
-                    ObjShot_SetIntersectionEnable( ShotObj_A, false );
-					ObjRender_SetColor( ShotObj_A, 255, 0, 155 );
-                }
-            }
+		wait( 300 );
 
-            wait( 2 );
-        }
-        //wait( 40 );
+		int Shot_Count = 24;
+		float Angle = 0;
+		float Dir = 0.08;
 
-        T_PlaySE( SE_CHARGE_00, 30 );
-        T_Charge_A1( bossObj, 20, "Petal", CC_PINK );
+		while( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ) {
 
-        wait( 30 );    
-        ascent ( i in 0..55 ) {
-            ascent ( b in 0..40 ) {
-                int ShotObj_A = ShotR2( bossX, bossY, 32, 32, 6 - b * 4/40, i * 360/55, SHOT_RICE_PINK, 10, SHOT_RICE_PINK );
-            }
-        }
+			ascent ( a in 0..Shot_Count ) {
+				ascent ( c in 0..2 ) {
+					int Shot_Name_A = ShotR1( bossX, bossY, 32, 1, Angle + a * ( 360 )/Shot_Count + c * 2/2, SHOT_BULLET_RED, 8, DELAY_CLOUD_RED );
+					int Shot_Name_B = ShotR1( bossX, bossY, 32, 1, Angle - a * ( 360 )/Shot_Count - c * 2/2, SHOT_BULLET_BLUE, 8, DELAY_CLOUD_BLUE );
 
-
-        wait( 100 );
-        
-        */
-		float Base_Angle = 0;
-
-		loop( 8 ){
-			ascent ( a in 0..6 ) {
-				ascent ( i in 0..12 ) {
-					ascent ( b in 0..1 ) {
-						int ShotObj_A = ShotR2( bossX, bossY, 32, 32, 8, Base_Angle + i * 360/12 + a * 6/6, SHOT_RICE_INVERT_PURPLE, 0, SHOT_RICE_INVERT_PURPLE );
-						ObjRender_SetBlendType( ShotObj_A, BLEND_ADD_ARGB );
-						ObjRender_SetAlpha( ShotObj_A, 155 );
-						ObjShot_SetIntersectionEnable( ShotObj_A, false );
-						ObjRender_SetColor( ShotObj_A, 255, 0, 155 );
-					}
+					ObjMove_AddPatternA2( Shot_Name_A, 24, 0, NO_CHANGE, 0.01, 8, Dir );
+					ObjMove_AddPatternA2( Shot_Name_B, 24, 0, NO_CHANGE, 0.01, 8, Dir );
 				}
+				//wait( 1 );
 
-				wait( 2 );
+				Dir = -Dir;
 			}
 
-			Base_Angle += 45;
+			Angle += 10;
+			wait( 26 );
+		}	
+
+	}
+
+    while( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ) {
+
+        //-------------------------------------------------------------------------------
+
+		//float Base_Angle = rand( -60, 60 );
+
+		async {
+			wait( 200 );
+			T_PlaySE( SE_CHARGE_03, 30 );
+			//T_Charge_A1( bossObj, 10, "Petal", CC_RED );
+			//T_Concentrate_Circle_A( bossX, bossY, 128, CC_RED );
+			if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ) {
+				T_Charge_Circle_A2( bossObj, 20, 20, 3, 0, CC_RED, LERP_SMOOTHER );
+			}
+			//T_Charge_B1( bossObj, prand( 0, 360 ), 2, 32, 15, 10, CC_RED );
+
+			wait( 40 );
+
+			if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ) {
+				T_Charge_Circle_A2( bossObj, 60, 10, 0, 8, CC_RED, LERP_SMOOTHER );
+				T_Charge_Burst_A( bossObj, "Petal", CC_RED );
+				T_PlaySE( SE_LASER_04, 30 );
+			}
 		}
-        T_PlaySE( SE_CHARGE_00, 30 );
-        T_Charge_A1( bossObj, 20, "Petal", CC_PINK );
 
-        wait( 100 );	
+		ascent ( a in 0..20 ) {
 
-		Base_Angle = 0;
+			if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ) {
+				
+				Base_Angle = rand( -45, 45 );
 
-		loop( 8 ){
-			ascent ( a in 0..6 ) {
-				ascent ( i in 0..12 ) {
-					ascent ( b in 0..1 ) {
-						int ShotObj_A = ShotR2( bossX, bossY, 32, 32, 8, Base_Angle + i * 360/12 + a * 6/6, SHOT_RICE_INVERT_PURPLE, 0, SHOT_RICE_INVERT_PURPLE );
-						//ObjRender_SetBlendType( ShotObj_A, BLEND_ADD_ARGB );
-						//ObjRender_SetAlpha( ShotObj_A, 155 );
-						//ObjShot_SetIntersectionEnable( ShotObj_A, false );
-						//ObjRender_SetColor( ShotObj_A, 255, 0, 155 );
-					}
-				}
+				T_PlaySE( SE_LASER_03, 30 );
 
-				wait( 2 );
+				T_Create_Prediction_Laser( -16, 0 + a * GetStgFrameHeight()/19, 0 + Base_Angle, 240 );
+				T_Create_Prediction_Laser( GetStgFrameWidth() + 16, 0 + a * GetStgFrameHeight()/19, 180 + Base_Angle, 240 );
+
 			}
 
-			Base_Angle += 45;
-		}			
-        //-------------------------------------------------------------------------------
-		/*
-        float Angle_Shot = 0;
+			wait( 2 );
 
-        ascent ( a in 0..20 ) {
-            ascent ( i in 0..25 ) {
-                ascent ( b in 0..1 ) {
-                    int ShotObj_A = ShotR2( bossX, bossY, 32, 32, 8.5, i * 360/25 + a * 16/20, SHOT_RICE_INVERT_PURPLE, 0, SHOT_RICE_INVERT_PURPLE );
-                    ObjRender_SetBlendType( ShotObj_A, BLEND_ADD_ARGB );
-                    ObjRender_SetAlpha( ShotObj_A, 155 );
-                    ObjShot_SetIntersectionEnable( ShotObj_A, false );
-					ObjRender_SetColor( ShotObj_A, 255, 0, 155 );
-                }
-            }
+		}	
 
-            wait( 2 );
-        }     
-
-       // float Angle_Shot = 0;
-
-        T_PlaySE( SE_CHARGE_00, 30 );
-        T_Charge_A1( bossObj, 20, "Petal", CC_PINK );
-
-        wait( 60 );    		
-
-        ascent ( a in 0..20 ) {
-            ascent ( i in 0..25 ) {
-                ascent ( b in 0..1 ) {
-                    int ShotObj_A = ShotR2( bossX, bossY, 32, 32, 8.5, i * 360/25 + a * 16/20, SHOT_RICE_PINK, 0, SHOT_RICE_PINK );
-
-                }
-            }
-
-            wait( 2 );
-        }    	
-
-		wait( 60 );    
-
-        descent ( a in 0..20 ) {
-            ascent ( i in 0..25 ) {
-                ascent ( b in 0..1 ) {
-                    int ShotObj_A = ShotR2( bossX, bossY, 32, 32, 8.5, i * 360/25 + a * 16/20, SHOT_RICE_INVERT_PURPLE, 0, SHOT_RICE_INVERT_PURPLE );
-                    ObjRender_SetBlendType( ShotObj_A, BLEND_ADD_ARGB );
-                    ObjRender_SetAlpha( ShotObj_A, 155 );
-                    ObjShot_SetIntersectionEnable( ShotObj_A, false );
-					ObjRender_SetColor( ShotObj_A, 255, 0, 155 );
-                }
-            }
-
-            wait( 2 );
-        }  
-
-        T_PlaySE( SE_CHARGE_00, 30 );
-        T_Charge_A1( bossObj, 20, "Petal", CC_PINK );
-
-        wait( 60 );    		
-
-        descent ( a in 0..20 ) {
-            ascent ( i in 0..25 ) {
-                ascent ( b in 0..1 ) {
-                    int ShotObj_A = ShotR2( bossX, bossY, 32, 32, 8.5, i * 360/25 + a * 16/20, SHOT_RICE_PINK, 0, SHOT_RICE_PINK );
-
-                }
-            }
-
-            wait( 2 );
-        }  		 
-
-		float X_Pos = GetPlayerX();
-		float Y_Pos = GetPlayerY();
-
-        //-------------------------------------------------------------------------------
-        */
-		/*
-		float X_Pos = GetPlayerX();
-		float Y_Pos = GetPlayerY();
-
-        ascent ( a in 0..6 ) {
-            ascent ( i in 0..20 ) {
-                ascent ( b in 0..1 ) {
-                    int ShotObj_A = ShotR2( X_Pos, Y_Pos, 64, 64, -0.5, i * 360/20 + a * 10/6, SHOT_RICE_INVERT_PURPLE, 0, SHOT_RICE_INVERT_PURPLE );
-					int ShotObj_B = ShotR2( X_Pos, Y_Pos, 70, 70, 0.5 , i * 360/20 - a * 10/6 , SHOT_RICE_INVERT_PURPLE, 0, SHOT_RICE_INVERT_PURPLE );
-                    ObjRender_SetBlendType( ShotObj_A, BLEND_ADD_ARGB );
-                    ObjRender_SetAlpha( ShotObj_A, 155 );
-                    ObjShot_SetIntersectionEnable( ShotObj_A, false );
-					ObjRender_SetColor( ShotObj_A, 255, 0, 155 );
-					ObjShot_SetDeleteFrame( ShotObj_A, 40 );
-                }
-            }
-
-            wait( 5 );
-        }	
-
-		wait( 60 );
-
-        ascent ( a in 0..6 ) {
-            ascent ( i in 0..20 ) {
-                ascent ( b in 0..1 ) {
-                    int ShotObj_A = ShotR2( X_Pos, Y_Pos, 64, 64, -0.5, i * 360/20 + a * 10/6, SHOT_RICE_INVERT_PURPLE, 0, SHOT_RICE_INVERT_PURPLE );
-					//int ShotObj_B = ShotR2( X_Pos, Y_Pos, 70, 70, 0.6 , i * 360/55, SHOT_RICE_INVERT_PURPLE, 0, SHOT_RICE_INVERT_PURPLE );
-                   // ObjRender_SetBlendType( ShotObj_A, BLEND_ADD_ARGB );
-                   // ObjRender_SetAlpha( ShotObj_A, 155 );
-                   // ObjShot_SetIntersectionEnable( ShotObj_A, false );
-					//ObjRender_SetColor( ShotObj_A, 255, 0, 155 );
-					//ObjShot_SetDeleteFrame( ShotObj_A, 40 );
-                }
-            }
-
-            wait( 5 );
-        }		
-		*/	  			   
-        /*
-        ascent ( i in 0..32 ) {
-            ascent ( b in 0..32 ) {
-                int ShotObj_A = ShotR2( bossX, bossY, 32, 32, 5 - b * 4/32, i * 360/32 + b * 90/32, SHOT_RICE_INVERT_PURPLE, 0, SHOT_RICE_INVERT_PURPLE );
-                ObjRender_SetAlpha( ShotObj_A, 100 );
-                ObjShot_SetIntersectionEnable( ShotObj_A, false );
-            }
-        }
-
-        wait( 40 );
-
-        T_PlaySE( SE_CHARGE_00, 30 );
-        T_Charge_A1( bossObj, 20, "Petal", CC_PINK );
-
-        wait( 60 );    
-
-        */
-        wait( 120 );
+		wait( 320 );
 
     }
 
+	task T_Create_Prediction_Laser( X, Y, Angle, Time ){
+
+		int Laser_Telgraph =  CreateStraightLaserA1( X, Y, Angle, 600, 16, 60, SHOT_LASER_RED, 60 );
+		ObjStLaser_SetPermitExpand( Laser_Telgraph, false );
+		T_FadeOut_Delete( Laser_Telgraph, 60, 255 );
+		T_LaserReady( Laser_Telgraph, 512, 30 );
+
+		async{
+
+			while( !Obj_IsDeleted( Laser_Telgraph ) ){
+
+				int Laser_Telgraph_Pulse =  CreateStraightLaserA1( X, Y, Angle, 512, 16, 60, SHOT_CURVY_LASER_RED, 0 );
+				T_FadeOut_Delete( Laser_Telgraph_Pulse, 30, 55 );
+				T_Manage_LaserPulse( Laser_Telgraph_Pulse );
+
+				ObjLaser_SetLength( Laser_Telgraph_Pulse, ObjLaser_GetLength( Laser_Telgraph ) );
+				ObjStLaser_SetSource( Laser_Telgraph_Pulse, false );
+				ObjShot_SetIntersectionEnable( Laser_Telgraph_Pulse, false );
+				wait( 20 );
+			}
+
+		}
+
+		wait( Time );
+		
+		if( ObjEnemy_GetInfo( bossObj, INFO_LIFE ) > 0 ) {
+
+			T_PlaySE( SE_LASER_05, 30 );
+			int Real_Laser_A = Laser_A1( X, Y, Angle, 600, 10, 80, SHOT_LASER_RED, 1 );
+
+		}
+		//int Real_Laser_L = CreateLooseLaserA1( X, Y, rand( 6, 15 ), Angle, 512, 12, SHOT_CURVY_LASER_RED, 1 );
+
+		task T_Manage_LaserPulse( Obj ){
+
+			ObjRender_SetColor( Obj, 255, 0, 0 );
+
+			float Width = 0;
+
+			while( !Obj_IsDeleted( Obj ) ){
+
+				ObjLaser_SetRenderWidth( Obj, 0 + Width );
+
+				Width+= 64/30;
+
+				yield;
+
+			}	
+
+		}
+
+	}
 
 }
 

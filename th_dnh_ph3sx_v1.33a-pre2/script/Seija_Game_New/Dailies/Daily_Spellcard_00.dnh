@@ -4,7 +4,7 @@
 //#Background["./Stage/BG/STG_00.dnh"];
 #Player[ "./../Player/PL_Reimu.dnh", "./../Player/PL_Luna.dnh" ]
 #System["./../System/System_Main_Hud.dnh"]
-#Text["Date: 0/0/25, Time: 30 Mins[r]User: ???, Name: \"???\"[r]Template Script for the other Dailies"]
+#Text["Date: 0/0/25, Time: 30 Mins[r]User: ???, Name: \"???\"[r]Template Script for the other Daylies"]
 
 //--------------------------------------------------Variables------------------------------------------------------
 
